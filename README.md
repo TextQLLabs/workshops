@@ -9,6 +9,13 @@ Each workshop is a **self-contained `index.html`** (plus a local `assets/` folde
 | Workshop | Audience | Time | Status |
 |---|---|---|---|
 | [Self-Service Analytics](self-service-analytics/) | Business users — no SQL, no data background | ~2 hours | ✅ Ready (screenshots pending — see [SHOT_LIST](self-service-analytics/SHOT_LIST.md)) |
+| [Dashboards & Reporting](dashboards-reporting/) | Anyone who turns analysis into something others consume | ~2 hours | ✅ Ready |
+| [Automation Deep-Dive](automation/) | Analysts/operators automating recurring analysis | ~2 hours | ✅ Ready |
+| [TextQL for Sales & GTM](sales-gtm/) | Sellers, sales leaders, RevOps, CS | ~90 min | ✅ Ready |
+| [Connect Your Data](connect-your-data/) | Data engineers, platform admins | ~2.5 hours | ✅ Ready |
+| [Ontology Operations](ontology-operations/) | Data teams running an ontology in production | ~2 hours | ✅ Ready |
+| [Admin & Governance](admin-governance/) | Workspace administrators | ~2.5 hours | ✅ Ready |
+| [Developer Workshop — API & MCP](developer/) | Developers and technical integrators | ~2 hours | ✅ Ready |
 | Build Your Ontology, End to End | Data teams | Half day | 🔜 Planned — see [ontology-workshop-guide](https://github.com/TextQLLabs/ontology-workshop-guide) |
 
 The repo root [`index.html`](index.html) is a catalog landing page listing all workshops.

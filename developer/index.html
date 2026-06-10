@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Developer Workshop — API & MCP · TextQL Workshops</title>
+<style>
+  :root{
+    --green:#58a68d; --green-dark:#2f6f5c; --green-soft:#e9f2ee;
+    --ink:#1c2b27; --muted:#5d6b67;
+    --bg:#ffffff; --bg-soft:#f4f8f6; --border:#dde7e3; --code-bg:#0f1f1b;
+    --gold:#e9c46a; --gold-soft:#fdf9ee; --gold-border:#f0e4c0; --gold-ink:#8a6d1f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.6}
+  a{color:var(--green-dark)}
+
+  /* ── Layout ─────────────────────────────── */
+  .layout{display:flex;min-height:100vh}
+  nav#sidebar{width:300px;min-width:300px;background:var(--bg-soft);border-right:1px solid var(--border);padding:24px 0 60px;position:fixed;top:0;bottom:0;overflow-y:auto;z-index:40}
+  main{margin-left:300px;flex:1;display:flex;justify-content:center;padding:44px 56px 110px}
+  .content{max-width:860px;width:100%}
+
+  /* ── Sidebar ────────────────────────────── */
+  .brand{padding:0 24px 16px;border-bottom:1px solid var(--border)}
+  .brand .logo{font-weight:800;font-size:18px;color:var(--green-dark);letter-spacing:.5px}
+  .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .progress-wrap{padding:14px 24px;border-bottom:1px solid var(--border)}
+  .progress-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+  .progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:var(--green);border-radius:4px;transition:width .4s}
+  .progress-pct{font-size:12px;color:var(--green-dark);font-weight:600;margin-top:4px}
+  nav .group-label{padding:16px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  nav a.nav-item{display:flex;align-items:center;gap:10px;padding:9px 24px;font-size:14px;color:var(--ink);text-decoration:none;border-left:3px solid transparent}
+  nav a.nav-item:hover{background:var(--green-soft)}
+  nav a.nav-item.active{border-left-color:var(--green);background:var(--green-soft);font-weight:600}
+  .nav-item .num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;min-width:22px;border-radius:50%;border:1.5px solid var(--muted);font-size:11px;font-weight:700;color:var(--muted)}
+  .nav-item.done .num{background:var(--green);border-color:var(--green);color:#fff;font-size:12px}
+  .nav-item .time{margin-left:auto;font-size:11px;color:var(--muted)}
+  .menu-btn{display:none;position:fixed;top:14px;left:14px;z-index:41;background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer}
+
+  /* ── Typography ─────────────────────────── */
+  .kicker{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);font-weight:700;margin-bottom:6px}
+  h1{font-size:30px;line-height:1.25;margin-bottom:10px;font-weight:700}
+  .page-meta{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-bottom:24px;flex-wrap:wrap}
+  .page-meta b{color:var(--ink)}
+  h2{font-size:20px;margin:34px 0 10px;padding-top:8px;font-weight:700}
+  h3{font-size:16px;margin:22px 0 8px;font-weight:700}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0 10px 24px}
+  li{margin:5px 0}
+  b,strong{font-weight:650}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:var(--bg-soft);font-weight:600}
+  code{background:#eef4f1;padding:2px 6px;border-radius:4px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  hr{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+  /* ── Hero cards (welcome) ───────────────── */
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+  .hero-card{border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:#fff}
+  .hero-card .n{font-size:12px;font-weight:700;color:var(--green);letter-spacing:1px}
+  .hero-card h3{margin:4px 0;font-size:15px}
+  .hero-card p{font-size:13px;color:var(--muted);margin:0}
+
+  /* ── Callouts ───────────────────────────── */
+  .callout{background:var(--bg-soft);border-left:4px solid var(--green);padding:12px 16px;border-radius:0 6px 6px 0;margin:14px 0;font-size:14px}
+  .callout.warn{border-left-color:var(--gold)}
+  .callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+  .callout .label{font-weight:700;display:block}
+
+  /* ── Prompt blocks ──────────────────────── */
+  .prompt{position:relative;background:var(--code-bg);color:#dff3ea;border-radius:8px;padding:20px;margin:16px 0 10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;line-height:1.55}
+  .prompt .tag{position:absolute;top:-9px;left:14px;background:var(--green);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px}
+  .prompt button{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.12);color:#dff3ea;border:none;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+  .prompt button:hover{background:rgba(255,255,255,.28)}
+  .prompt pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;padding-right:54px}
+  .yousee{background:var(--gold-soft);border:1px solid var(--gold-border);border-radius:8px;padding:12px 16px;margin:10px 0 18px;font-size:14px}
+  .yousee b{color:var(--gold-ink)}
+
+  /* ── Screenshots ────────────────────────── */
+  figure.shot{margin:16px 0 22px}
+  figure.shot img{display:block;max-width:100%;border:1px solid var(--border);border-radius:10px;box-shadow:0 2px 10px rgba(28,43,39,.08);cursor:zoom-in}
+  figure.shot figcaption{font-size:13px;color:var(--muted);margin-top:7px}
+  figure.shot.missing img,figure.shot.missing figcaption{display:none}
+  figure.shot.missing::after{content:"📷  Screenshot coming soon — " attr(data-todo);display:block;border:2px dashed var(--border);border-radius:10px;padding:22px 18px;color:var(--muted);font-size:13.5px;background:var(--bg-soft)}
+  #lightbox{display:none;position:fixed;inset:0;background:rgba(15,31,27,.92);z-index:200;cursor:zoom-out;align-items:center;justify-content:center;padding:30px}
+  #lightbox.show{display:flex}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:8px}
+
+  /* ── Steps ──────────────────────────────── */
+  ol.steps{list-style:none;margin-left:0;counter-reset:step}
+  ol.steps>li{counter-increment:step;position:relative;padding:0 0 16px 44px;border-left:2px solid var(--border);margin:0 0 0 15px}
+  ol.steps>li:last-child{border-left-color:transparent}
+  ol.steps>li::before{content:counter(step);position:absolute;left:-15px;top:-2px;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+
+  /* ── Checkpoint ─────────────────────────── */
+  .checkpoint{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:28px 0}
+  .checkpoint h4{margin:0 0 10px;color:var(--green-dark);font-size:15px}
+  .checkpoint label{display:flex;align-items:flex-start;gap:10px;padding:5px 0;font-size:14px;cursor:pointer}
+  .checkpoint input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;min-width:16px;cursor:pointer}
+  .checkpoint label.checked{color:var(--muted);text-decoration:line-through}
+
+  /* ── Expandable ─────────────────────────── */
+  details{border:1px solid var(--border);border-radius:8px;margin:12px 0;background:#fff}
+  details summary{cursor:pointer;padding:11px 14px;font-weight:600;font-size:14.5px;list-style:none}
+  details summary::before{content:"▸ ";color:var(--green)}
+  details[open] summary::before{content:"▾ "}
+  details .body{padding:2px 16px 12px}
+
+  /* ── Pager ──────────────────────────────── */
+  .pager{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--border);padding-top:22px}
+  .pager a{flex:1;max-width:330px;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-decoration:none;color:var(--ink)}
+  .pager a:hover{border-color:var(--green);background:var(--green-soft)}
+  .pager a .dir{font-size:12px;color:var(--muted);display:block}
+  .pager a .ttl{font-weight:600;color:var(--green-dark);font-size:15px}
+  .pager a.next{text-align:right;margin-left:auto}
+
+  .page{display:none}
+  .page.active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  footer.pagefoot{margin-top:46px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);padding-top:16px}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:210}
+  .toast.show{opacity:1}
+
+  @media(max-width:920px){
+    nav#sidebar{transform:translateX(-100%);transition:transform .2s;box-shadow:2px 0 14px rgba(0,0,0,.12)}
+    nav#sidebar.open{transform:none}
+    main{margin-left:0;padding:60px 22px 80px}
+    .menu-btn{display:block}
+    .hero-grid{grid-template-columns:1fr}
+  }
+  @media print{
+    nav#sidebar,.pager,.menu-btn,.toast{display:none!important}
+    main{margin-left:0}
+    .page{display:block!important;page-break-after:always}
+    figure.shot.missing{display:none}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+<div class="layout">
+<nav id="sidebar">
+  <div class="brand">
+    <div class="logo">TextQL Workshop</div>
+    <div class="sub">Developer Workshop — API & MCP</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">Your progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+    <div class="progress-pct" id="ppct">0% complete</div>
+  </div>
+  <div id="navlist"></div>
+</nav>
+
+<main><div class="content" id="content">
+
+<section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
+  <div class="kicker">Workshop</div>
+  <h1>TextQL Developer Workshop — API, MCP & Integrations</h1>
+
+<p>A hands-on workshop for <b>developers and technical integrators</b>: drive Ana programmatically through the REST API, stream responses into your apps, automate playbooks and dashboards from code, expose Ana inside Claude/Cursor/ChatGPT via MCP, and extend Ana outward with MCP tools.</p>
+<p>AWS-workshop style: copy-paste <code>curl</code>/Python, checkpoints. <b>~2 hours</b>.</p>
+<h2>What you'll be able to do</h2>
+<div class="hero-grid">
+<div class="hero-card"><div class="n">MODULE 1</div><h3>The Chat API</h3><p>Sync, SSE streaming, retrieval — the agentic loop as an endpoint.</p></div>
+<div class="hero-card"><div class="n">MODULE 2</div><h3>Resource APIs</h3><p>Connectors, playbooks, dashboards as code; the ETL-completion trigger.</p></div>
+<div class="hero-card"><div class="n">MODULE 3</div><h3>Sandbox API</h3><p>Warehouse data into DataFrames; your code in Ana's environment.</p></div>
+<div class="hero-card"><div class="n">MODULE 4</div><h3>Ana as MCP server</h3><p>Warehouse answers inside Claude, Cursor, and your IDE.</p></div>
+<div class="hero-card"><div class="n">MODULE 5</div><h3>MCP tools</h3><p>Extend Ana with Notion, GitHub, Jira — or your internal APIs.</p></div>
+<div class="hero-card"><div class="n">MODULE 6</div><h3>Production patterns</h3><p>Identity design, timeouts, cost, testing nondeterminism.</p></div>
+</div>
+<h2>Prerequisites</h2>
+<ul><li>API key access (Settings → Configuration → API Keys; creation may be role-gated)</li>
+<li><code>curl</code> or Python + <code>requests</code>; an MCP client for Modules 4–5</li>
+<li>A connected data source</li></ul>
+<div class="callout warn">API shapes follow the current reference at <a href="https://docs.textql.com/api-reference/v2/introduction" target="_blank">docs.textql.com</a>. Python SDK: <code>TextQLLabs/textql-python</code>. VPC deployments substitute their own host.</div>
+
+</section>
+
+<section class="page" id="m0" data-title="Module 0 · Keys &amp; First Call" data-group="Getting Started" data-time="15 min">
+  <div class="kicker">Module 0</div>
+  <h1>Module 0 · Keys, Bases & First Call</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b></span></div>
+
+<p><b>Goal:</b> get authenticated, understand the API surface, make your first successful call.</p>
+<h2>0.1 · The API surface</h2>
+<table><tr><th>Surface</th><th>Base</th><th>Style</th></tr>
+<tr><td><b>v2 REST API</b> (use this)</td><td><code>https://app.textql.com/v2</code></td><td>HTTP verbs, path params, JSON errors, SSE</td></tr>
+<tr><td>v1 (legacy)</td><td><code>https://app.textql.com</code></td><td>Connect-RPC, all-POST — replaced by v2</td></tr>
+<tr><td><b>Usage/Billing API</b></td><td><code>/v1/billing</code></td><td>ACU consumption records</td></tr>
+<tr><td><b>MCP endpoint</b></td><td><code>/mcp</code></td><td>Ana as a tool in MCP clients (Module 4)</td></tr></table>
+<p>v2 conventions: <code>GET/POST/PATCH/DELETE</code>, IDs in paths (<code>/v2/playbooks/{id}</code>), query-param pagination, errors as <code>{"error": {"code", "message"}}</code>, SSE via <code>text/event-stream</code>.</p>
+<h2>0.2 · Get a key</h2>
+  <div class="callout"><span class="label">Where to click</span><p>Settings → Configuration → <b>API Keys</b></p></div>
+<p>Vault it, name it for its purpose, rotate on policy. Key creation is permission-gated — if you can't create one, that's a role conversation (Admin workshop).</p>
+<h2>0.3 · First call</h2>
+<pre>curl "https://app.textql.com/v2/connectors" \
+  -H "Authorization: Bearer $TEXTQL_API_KEY"</pre>
+  <div class="yousee"><b>You'll see:</b> The connectors your key can reach. This is the authorization sanity-check — the API sees what your identity may see, nothing more.</div>
+<h2>0.4 · First question</h2>
+<pre>curl -X POST "https://app.textql.com/v2/chats" \
+  -H "Authorization: Bearer $TEXTQL_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"question": "What are the top 10 customers by revenue?", "connector_ids": [ID]}'</pre>
+  <div class="yousee"><b>You'll see:</b> A synchronous, warehouse-backed answer — and a real thread in the UI, fully auditable.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You have a vaulted API key and know where key creation is permission-gated</label>
+    <label><input type="checkbox"> You listed connectors and understand the key-sees-what-you-see rule</label>
+    <label><input type="checkbox"> Your first question returned a warehouse-backed answer</label>
+    <label><input type="checkbox"> You found the corresponding thread in the UI</label>
+  </div>
+</section>
+
+<section class="page" id="m1" data-title="Module 1 · The Chat API" data-group="Hands-On Modules" data-time="25 min">
+  <div class="kicker">Module 1</div>
+  <h1>Module 1 · The Chat API</h1>
+  <div class="page-meta"><span>⏱️ <b>25 min</b></span></div>
+
+<p><b>Goal:</b> the workhorse endpoint, three ways — synchronous, streaming, conversational.</p>
+<h2>1.1 · Synchronous</h2>
+<p><code>POST /v2/chats</code> with <code>question</code> + <code>connector_ids</code>. Blocks while Ana works — fine for scripts, wrong for UIs.</p>
+<h2>1.2 · Streaming: SSE for responsive apps</h2>
+<pre>curl -X POST "https://app.textql.com/v2/chats/stream" \
+  -H "Authorization: Bearer $TEXTQL_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Summarize last quarter sales"}' \
+  --no-buffer</pre>
+  <div class="yousee"><b>You'll see:</b> Server-sent events as Ana works — tool steps, partial output, final answer. Users watch the analysis happen instead of a spinner. A cancel endpoint exists for abandoning runs.</div>
+<pre>import requests, json
+resp = requests.post(
+    "https://app.textql.com/v2/chats/stream",
+    headers={"Authorization": f"Bearer {KEY}"},
+    json={"question": "...", "connector_ids": [CID]},
+    stream=True)
+for line in resp.iter_lines():
+    if line.startswith(b"data:"):
+        handle(json.loads(line[5:]))</pre>
+<h2>1.3 · Retrieve and continue</h2>
+<ul><li><code>GET /v2/chats/{id}</code> — full chat with messages and <b>assets</b> (charts, files, dashboards)</li>
+<li><code>GET /v2/chats?search=...</code> — list/search with pagination</li>
+<li>Follow-ups continue a chat — server-side conversation state, no prompt-stitching</li></ul>
+<h2>1.4 · Question phrasing is product surface</h2>
+<p>Your app's API questions are playbook prompts in miniature — nobody is there to clarify:</p>
+<div class="callout warn">Bad: "how are sales?"<br>Good: "Total closed revenue for the last complete month, compared to the prior month, as a single number plus one sentence of context."</div>
+<p>The second returns something your UI can render predictably.</p>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You made a sync call, a streaming call, and retrieved a chat with its assets</label>
+    <label><input type="checkbox"> Your stream handler distinguishes tool events from answer text</label>
+    <label><input type="checkbox"> You tested a vague vs specification-grade question and saw the difference</label>
+    <label><input type="checkbox"> You know follow-ups continue server-side conversation state</label>
+  </div>
+</section>
+
+<section class="page" id="m2" data-title="Module 2 · Resource APIs" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 2</div>
+  <h1>Module 2 · Connectors, Playbooks & Dashboards via API</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span></div>
+
+<p><b>Goal:</b> manage platform resources from code — infrastructure-as-code for everything the other workshops did in the UI.</p>
+<h2>2.1 · Connectors</h2>
+<ul><li><code>GET /v2/connectors/types</code> — supported types <b>and the fields each requires</b> (build dynamic forms from this)</li>
+<li><code>POST /v2/connectors/test</code> — <b>test a config without saving</b> — wire into CI for credential validation</li>
+<li><code>POST</code> / <code>PATCH</code> / <code>DELETE</code> — lifecycle</li></ul>
+<div class="callout">The killer pattern — <b>credential rotation as code</b>: secrets manager rotates → job calls <code>test</code> with the new credential → on pass, <code>PATCH</code> the connector → smoke-test via a chat call. Zero-touch rotation.</div>
+<h2>2.2 · Playbooks</h2>
+<ul><li><code>POST /v2/playbooks/{id}/run</code> — <b>execute now, get the report</b> — external schedulers (Airflow, Dagster) own timing; TextQL owns analysis</li>
+<li>Deploy/undeploy from code</li></ul>
+<p><b>The ETL-completion pattern</b> (the fix for "my playbook ran before the data loaded"): remove the playbook's schedule; the pipeline's last task calls <code>run</code> when the load finishes. Date-handling edge cases mostly disappear when the trigger <i>is</i> the data event.</p>
+<pre># last task in your DAG
+requests.post(f"https://app.textql.com/v2/playbooks/{PB_ID}/run",
+              headers={"Authorization": f"Bearer {KEY}"})</pre>
+<h2>2.3 · Dashboards</h2>
+<ul><li><code>POST /v2/dashboards</code> / <code>stream</code> — ask Ana to build a dashboard from code</li>
+<li><code>GET /v2/dashboards/{id}</code> — retrieve with assets</li></ul>
+<p>Use case: templated provisioning — a standard dashboard per new customer/team as part of onboarding automation.</p>
+<h2>2.4 · Agent webhooks</h2>
+<p>Feed agents accept webhook triggers — one POST with a JSON payload. The integration point for "ETL finished → agent validates the load," CI events, alert managers, anything that can send HTTP.</p>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You listed connector types and tested a config without saving it</label>
+    <label><input type="checkbox"> You ran a playbook via API and got the report back</label>
+    <label><input type="checkbox"> You can sketch the ETL-completion trigger pattern for your own pipeline</label>
+    <label><input type="checkbox"> You know where agent webhooks fit</label>
+  </div>
+</section>
+
+<section class="page" id="m3" data-title="Module 3 · Sandbox API" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 3</div>
+  <h1>Module 3 · The Sandbox API</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b></span></div>
+
+<p><b>Goal:</b> drive Ana's Python sandbox directly — the environment without the conversation.</p>
+<h2>3.1 · What it is</h2>
+<table><tr><th>Endpoint</th><th>Does</th></tr>
+<tr><td>Start / Stop</td><td>Create or destroy a sandbox</td></tr>
+<tr><td>Status</td><td>State, <b>loaded DataFrames</b>, memory usage</td></tr>
+<tr><td>Load Connector Data</td><td>SQL against a connector → named pandas DataFrame</td></tr>
+<tr><td>Execute</td><td>Run Python in the sandbox</td></tr>
+<tr><td>Upload</td><td>Put a file in the sandbox filesystem</td></tr></table>
+<h2>3.2 · The flow</h2>
+<pre># 1. start
+sb = post("/v2/sandbox/start")
+# 2. load warehouse data as a DataFrame
+post("/v2/sandbox/load", json={
+  "connector_id": CID,
+  "query": "SELECT region, SUM(amount) AS rev FROM orders GROUP BY region",
+  "dataframe_name": "rev_by_region"})
+# 3. compute
+post("/v2/sandbox/execute", json={
+  "code": "result = rev_by_region.sort_values('rev', ascending=False).head(3).to_dict()"})
+# 4. status / results, then stop
+get("/v2/sandbox/status"); post("/v2/sandbox/stop")</pre>
+<h2>3.3 · Chat API vs Sandbox API</h2>
+<table><tr><th>You want</th><th>Use</th></tr>
+<tr><td>Ana to decide how to answer</td><td><b>Chat API</b> — the agentic loop is the product</td></tr>
+<tr><td>Deterministic code you wrote, against warehouse data</td><td><b>Sandbox API</b></td></tr>
+<tr><td>Both interleaved</td><td>Sandbox for deterministic parts; chat for analytical hops</td></tr></table>
+<p>The sandbox shines for: productionized metric computations that must be exactly your code, data-quality check suites, pre-processing before a chat.</p>
+<h2>3.4 · Hygiene</h2>
+<p>Sandboxes hold state and memory. <b>Stop what you start</b> — created per job, destroyed after, in a <code>finally</code>. The status endpoint's memory readout is your leak detector.</p>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You started a sandbox, loaded a query as a DataFrame, executed code, and stopped it</label>
+    <label><input type="checkbox"> You can articulate chat-vs-sandbox for your use case</label>
+    <label><input type="checkbox"> Your job code stops sandboxes in a finally block</label>
+  </div>
+</section>
+
+<section class="page" id="m4" data-title="Module 4 · Ana as MCP Server" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 4</div>
+  <h1>Module 4 · Ana as an MCP Server</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b></span></div>
+
+<p><b>Goal:</b> warehouse-backed answers inside Claude, Cursor, ChatGPT, Copilot — zero context switching.</p>
+<h2>4.1 · The endpoint and the tool</h2>
+<p><b>MCP endpoint:</b> <code>https://app.textql.com/mcp</code> — exposing a single tool, <b><code>ask_question</code></b>. Natural language in; Ana runs the analysis through your connectors and Ontology; the answer comes back <b>with a link to the full TextQL thread</b>. Charts/dashboards/reports arrive as resource links. Same Ana, same governance, headless.</p>
+<h2>4.2 · Connect your client</h2>
+<p><b>Claude (web):</b> Settings → Integrations → Add MCP Server → <code>https://app.textql.com/mcp</code>, name <code>ana</code>. Auth happens automatically on first use.</p>
+<p><b>Cursor</b> — <code>~/.cursor/mcp.json</code>:</p>
+<pre>{
+  "mcpServers": {
+    "ana": { "url": "https://app.textql.com/mcp" }
+  }
+}</pre>
+<h2>4.3 · Use it like you mean it</h2>
+<div class="callout">"Ask ana: what was our revenue by month for the last 6 months, and which segment drove the change?"</div>
+<ul><li><b>Engineering context:</b> "ask ana whether the <code>orders</code> table has rows for yesterday" mid-code-review.</li>
+<li><b>The thread link is the handoff</b> — paste it to a teammate; they get the full analysis, charts, SQL.</li></ul>
+<h2>4.4 · Governance notes</h2>
+<p>MCP access authenticates as <i>you</i> — your role, connector scope, ontology folders. Every MCP question is a real thread, visible in Observability like any other.</p>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Ana is connected to at least one MCP client you actually use</label>
+    <label><input type="checkbox"> You asked a data question from inside that client and got a thread link back</label>
+    <label><input type="checkbox"> You know MCP calls run as your identity with your scopes</label>
+    <label><input type="checkbox"> You used the thread link as a share/audit artifact</label>
+  </div>
+</section>
+
+<section class="page" id="m5" data-title="Module 5 · MCP Tools" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 5</div>
+  <h1>Module 5 · Extending Ana with MCP Tools</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b></span></div>
+
+<p><b>Goal:</b> the other direction — give Ana new tools (Notion, GitHub, Jira, your internal APIs) via MCP.</p>
+<div class="callout warn">Admin-configured: MCP server config lives in Settings, gated by the <code>mcp</code> permission (members default to read).</div>
+<h2>5.1 · The one constraint that matters</h2>
+<p>TextQL supports <b>HTTP/SSE-based MCP servers only</b> — not stdio/local. The quick test on any MCP config JSON: <b>if you see <code>url</code>, it works; if you see <code>command</code>, it's stdio and won't.</b></p>
+<h2>5.2 · Add a server</h2>
+  <div class="callout"><span class="label">Where to click</span><p>Settings → MCP (admin) → add server → URL + auth per the server's docs</p></div>
+<p>Once added, the server's tools are available to Ana in chats — used when a question calls for them, the same way she chooses SQL or Python.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What MCP tools do you have available right now? Use the [server] tool to [simple read operation — e.g., list my Notion pages / open issues].</pre></div>
+<h2>5.3 · Wrapping your internal API</h2>
+<p>The high-leverage move: wrap internal services (deploy status, feature flags, provisioning state) as a small HTTP MCP server. Then Ana joins <i>operational</i> state with <i>warehouse</i> data in one answer:</p>
+<div class="callout">"Which enterprise customers are on the v2 flag but show declining usage since their migration date?" — flag state from your MCP tool, usage from the warehouse. That join is the payoff.</div>
+<h2>5.4 · Choose the right integration surface</h2>
+<table><tr><th>You want</th><th>Use</th></tr>
+<tr><td>Ana to <i>query</i> a SaaS product's data at scale</td><td>Warehouse mirror or API connector</td></tr>
+<tr><td>Ana to <i>act on / read</i> an operational system mid-analysis</td><td><b>MCP tool</b></td></tr>
+<tr><td>Your app to ask Ana questions</td><td>MCP server (Module 4) or REST API (Modules 0–2)</td></tr></table>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You (or your admin) added one MCP server and Ana used its tool on request</label>
+    <label><input type="checkbox"> You can apply the url-vs-command test to any MCP config</label>
+    <label><input type="checkbox"> You've identified one internal API worth wrapping and the cross-source question it unlocks</label>
+    <label><input type="checkbox"> You can place MCP tools vs API connectors vs the REST API on the right problems</label>
+  </div>
+</section>
+
+<section class="page" id="m6" data-title="Module 6 · Production Patterns" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 6</div>
+  <h1>Module 6 · Production Patterns</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b></span></div>
+
+<p><b>Goal:</b> the habits that separate a demo integration from a production one.</p>
+<h2>6.1 · Identity design</h2>
+<ul><li><b>Service identity</b> per system integration — dedicated key, named, minimum role.</li>
+<li><b>Per-user identity</b> when end users see answers — their role and RLS scope what your app shows. Proxying everyone through one privileged key is how data leaks across user boundaries.</li></ul>
+<h2>6.2 · Errors and timeouts</h2>
+<ul><li>Branch on <code>error.code</code>, log <code>error.message</code>.</li>
+<li>Analytical calls are <i>long</i>: stream for anything user-facing; sync timeouts in minutes; org limits (SQL 180s, cell 360s) bound the server side.</li>
+<li>Retry with backoff for transient failures — but <b>never blind-retry a write</b> without idempotency thinking.</li></ul>
+<h2>6.3 · Cost awareness</h2>
+<ul><li><b>Cache</b> repeated identical questions with a TTL.</li>
+<li><b>Aggregate</b> — one question returning a table beats fifty returning numbers.</li>
+<li><b>Monitor</b> — the Usage API (<code>/v1/billing</code>) is your integration's meter; alert before finance does.</li></ul>
+<h2>6.4 · Testing an AI integration</h2>
+<ul><li><b>Contract</b>: response shape, asset presence, thread-link validity.</li>
+<li><b>Data correctness at the source</b>: golden-query checks for the numbers your questions depend on.</li>
+<li><b>Specification-grade prompts</b> (1.4) — most "flaky AI" is under-specified questions.</li></ul>
+<h2>6.5 · Keep the audit trail connected</h2>
+<p>Every API chat is a real thread. Log the thread ID with your application events — when a user questions a number from three weeks ago, that ID is an immediate, full answer with SQL.</p>
+<h2>You're done</h2>
+<p>Sync and streaming chat, resources as code, the sandbox, Ana in your IDE, MCP extensions, and production discipline.</p>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Your integration has its own identity with minimum scope</label>
+    <label><input type="checkbox"> User-facing paths stream; sync paths have minutes-scale timeouts and code-based error handling</label>
+    <label><input type="checkbox"> You know your caching/aggregation plan and where the usage meter is</label>
+    <label><input type="checkbox"> Your tests assert contract + source-data correctness, not exact AI strings</label>
+    <label><input type="checkbox"> Thread IDs flow into your application logs</label>
+  </div>
+</section>
+
+<div class="pager" id="pager"></div>
+<footer class="pagefoot">© TextQL · Workshop: Developer Workshop — API & MCP · Example prompts are illustrative — adapt them to your own data.</footer>
+</div></main>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+<div id="lightbox" onclick="this.classList.remove('show')"><img src="" alt=""></div>
+
+<script>
+(function(){
+  const WS_KEY='textql-ws-developer';
+  const pages=[...document.querySelectorAll('section.page')];
+  const navlist=document.getElementById('navlist');
+  const pager=document.getElementById('pager');
+
+  // Build sidebar nav grouped by data-group
+  let group=null, num=0;
+  pages.forEach(p=>{
+    if(p.dataset.group!==group){
+      group=p.dataset.group;
+      const g=document.createElement('div');g.className='group-label';g.textContent=group;navlist.appendChild(g);
+    }
+    const a=document.createElement('a');a.className='nav-item';a.href='#/'+p.id;a.dataset.page=p.id;
+    a.innerHTML='<span class="num"><span>'+(num++)+'</span></span><span>'+p.dataset.title.replace(/^Module \d+ · /,'')+'</span>'+
+      (p.dataset.time?'<span class="time">'+p.dataset.time+'</span>':'');
+    navlist.appendChild(a);
+  });
+
+  function show(id){
+    let page=pages.find(p=>p.id===id)||pages[0];
+    pages.forEach(p=>p.classList.toggle('active',p===page));
+    navlist.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.page===page.id));
+    const i=pages.indexOf(page);
+    pager.innerHTML=
+      (i>0?'<a class="prev" href="#/'+pages[i-1].id+'"><span class="dir">← Previous</span><span class="ttl">'+pages[i-1].dataset.title+'</span></a>':'<span></span>')+
+      (i<pages.length-1?'<a class="next" href="#/'+pages[i+1].id+'"><span class="dir">Next →</span><span class="ttl">'+pages[i+1].dataset.title+'</span></a>':'');
+    window.scrollTo(0,0);
+    document.getElementById('sidebar').classList.remove('open');
+  }
+  const hashId=()=>location.hash.replace(/^#\/?/,'');
+  window.addEventListener('hashchange',()=>show(hashId()));
+  show(hashId());
+
+  // Copy buttons + toast
+  document.querySelectorAll('.prompt').forEach(box=>{
+    const btn=box.querySelector('button');
+    btn.addEventListener('click',()=>{
+      navigator.clipboard.writeText(box.querySelector('pre').textContent.trim()).then(()=>{
+        const t=document.getElementById('toast');
+        t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400);
+      });
+    });
+  });
+
+  // Screenshot lightbox
+  const lb=document.getElementById('lightbox');
+  document.querySelectorAll('figure.shot img').forEach(img=>{
+    img.addEventListener('click',()=>{lb.querySelector('img').src=img.src;lb.classList.add('show');});
+  });
+
+  // Checkpoint persistence + progress
+  let saved={};try{saved=JSON.parse(localStorage.getItem(WS_KEY)||'{}')}catch(e){}
+  const trackable=pages.filter(p=>p.querySelector('.checkpoint input'));
+  function refreshProgress(){
+    let done=0;
+    trackable.forEach(p=>{
+      const boxes=[...p.querySelectorAll('.checkpoint input')];
+      const allDone=boxes.length&&boxes.every(b=>b.checked);
+      const link=navlist.querySelector('a[data-page="'+p.id+'"]');
+      link.classList.toggle('done',allDone);
+      if(allDone){link.querySelector('.num').innerHTML='✓';done++;}
+      else{link.querySelector('.num').innerHTML='<span>'+pages.indexOf(p)+'</span>';}
+    });
+    const pct=trackable.length?Math.round(100*done/trackable.length):0;
+    document.getElementById('pfill').style.width=pct+'%';
+    document.getElementById('ppct').textContent=pct+'% complete';
+  }
+  document.querySelectorAll('.checkpoint input[type=checkbox]').forEach((cb,i)=>{
+    cb.checked=!!saved[i];
+    cb.closest('label').classList.toggle('checked',cb.checked);
+    cb.addEventListener('change',()=>{
+      saved[i]=cb.checked;
+      cb.closest('label').classList.toggle('checked',cb.checked);
+      try{localStorage.setItem(WS_KEY,JSON.stringify(saved))}catch(e){}
+      refreshProgress();
+    });
+  });
+  refreshProgress();
+})();
+</script>
+</body>
+</html>

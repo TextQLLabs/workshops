@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connect Your Data · TextQL Workshops</title>
+<style>
+  :root{
+    --green:#58a68d; --green-dark:#2f6f5c; --green-soft:#e9f2ee;
+    --ink:#1c2b27; --muted:#5d6b67;
+    --bg:#ffffff; --bg-soft:#f4f8f6; --border:#dde7e3; --code-bg:#0f1f1b;
+    --gold:#e9c46a; --gold-soft:#fdf9ee; --gold-border:#f0e4c0; --gold-ink:#8a6d1f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.6}
+  a{color:var(--green-dark)}
+
+  /* ── Layout ─────────────────────────────── */
+  .layout{display:flex;min-height:100vh}
+  nav#sidebar{width:300px;min-width:300px;background:var(--bg-soft);border-right:1px solid var(--border);padding:24px 0 60px;position:fixed;top:0;bottom:0;overflow-y:auto;z-index:40}
+  main{margin-left:300px;flex:1;display:flex;justify-content:center;padding:44px 56px 110px}
+  .content{max-width:860px;width:100%}
+
+  /* ── Sidebar ────────────────────────────── */
+  .brand{padding:0 24px 16px;border-bottom:1px solid var(--border)}
+  .brand .logo{font-weight:800;font-size:18px;color:var(--green-dark);letter-spacing:.5px}
+  .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .progress-wrap{padding:14px 24px;border-bottom:1px solid var(--border)}
+  .progress-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+  .progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:var(--green);border-radius:4px;transition:width .4s}
+  .progress-pct{font-size:12px;color:var(--green-dark);font-weight:600;margin-top:4px}
+  nav .group-label{padding:16px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  nav a.nav-item{display:flex;align-items:center;gap:10px;padding:9px 24px;font-size:14px;color:var(--ink);text-decoration:none;border-left:3px solid transparent}
+  nav a.nav-item:hover{background:var(--green-soft)}
+  nav a.nav-item.active{border-left-color:var(--green);background:var(--green-soft);font-weight:600}
+  .nav-item .num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;min-width:22px;border-radius:50%;border:1.5px solid var(--muted);font-size:11px;font-weight:700;color:var(--muted)}
+  .nav-item.done .num{background:var(--green);border-color:var(--green);color:#fff;font-size:12px}
+  .nav-item .time{margin-left:auto;font-size:11px;color:var(--muted)}
+  .menu-btn{display:none;position:fixed;top:14px;left:14px;z-index:41;background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer}
+
+  /* ── Typography ─────────────────────────── */
+  .kicker{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);font-weight:700;margin-bottom:6px}
+  h1{font-size:30px;line-height:1.25;margin-bottom:10px;font-weight:700}
+  .page-meta{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-bottom:24px;flex-wrap:wrap}
+  .page-meta b{color:var(--ink)}
+  h2{font-size:20px;margin:34px 0 10px;padding-top:8px;font-weight:700}
+  h3{font-size:16px;margin:22px 0 8px;font-weight:700}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0 10px 24px}
+  li{margin:5px 0}
+  b,strong{font-weight:650}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:var(--bg-soft);font-weight:600}
+  code{background:#eef4f1;padding:2px 6px;border-radius:4px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  hr{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+  /* ── Hero cards (welcome) ───────────────── */
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+  .hero-card{border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:#fff}
+  .hero-card .n{font-size:12px;font-weight:700;color:var(--green);letter-spacing:1px}
+  .hero-card h3{margin:4px 0;font-size:15px}
+  .hero-card p{font-size:13px;color:var(--muted);margin:0}
+
+  /* ── Callouts ───────────────────────────── */
+  .callout{background:var(--bg-soft);border-left:4px solid var(--green);padding:12px 16px;border-radius:0 6px 6px 0;margin:14px 0;font-size:14px}
+  .callout.warn{border-left-color:var(--gold)}
+  .callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+  .callout .label{font-weight:700;display:block}
+
+  /* ── Prompt blocks ──────────────────────── */
+  .prompt{position:relative;background:var(--code-bg);color:#dff3ea;border-radius:8px;padding:20px;margin:16px 0 10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;line-height:1.55}
+  .prompt .tag{position:absolute;top:-9px;left:14px;background:var(--green);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px}
+  .prompt button{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.12);color:#dff3ea;border:none;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+  .prompt button:hover{background:rgba(255,255,255,.28)}
+  .prompt pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;padding-right:54px}
+  .yousee{background:var(--gold-soft);border:1px solid var(--gold-border);border-radius:8px;padding:12px 16px;margin:10px 0 18px;font-size:14px}
+  .yousee b{color:var(--gold-ink)}
+
+  /* ── Screenshots ────────────────────────── */
+  figure.shot{margin:16px 0 22px}
+  figure.shot img{display:block;max-width:100%;border:1px solid var(--border);border-radius:10px;box-shadow:0 2px 10px rgba(28,43,39,.08);cursor:zoom-in}
+  figure.shot figcaption{font-size:13px;color:var(--muted);margin-top:7px}
+  figure.shot.missing img,figure.shot.missing figcaption{display:none}
+  figure.shot.missing::after{content:"📷  Screenshot coming soon — " attr(data-todo);display:block;border:2px dashed var(--border);border-radius:10px;padding:22px 18px;color:var(--muted);font-size:13.5px;background:var(--bg-soft)}
+  #lightbox{display:none;position:fixed;inset:0;background:rgba(15,31,27,.92);z-index:200;cursor:zoom-out;align-items:center;justify-content:center;padding:30px}
+  #lightbox.show{display:flex}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:8px}
+
+  /* ── Steps ──────────────────────────────── */
+  ol.steps{list-style:none;margin-left:0;counter-reset:step}
+  ol.steps>li{counter-increment:step;position:relative;padding:0 0 16px 44px;border-left:2px solid var(--border);margin:0 0 0 15px}
+  ol.steps>li:last-child{border-left-color:transparent}
+  ol.steps>li::before{content:counter(step);position:absolute;left:-15px;top:-2px;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+
+  /* ── Checkpoint ─────────────────────────── */
+  .checkpoint{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:28px 0}
+  .checkpoint h4{margin:0 0 10px;color:var(--green-dark);font-size:15px}
+  .checkpoint label{display:flex;align-items:flex-start;gap:10px;padding:5px 0;font-size:14px;cursor:pointer}
+  .checkpoint input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;min-width:16px;cursor:pointer}
+  .checkpoint label.checked{color:var(--muted);text-decoration:line-through}
+
+  /* ── Expandable ─────────────────────────── */
+  details{border:1px solid var(--border);border-radius:8px;margin:12px 0;background:#fff}
+  details summary{cursor:pointer;padding:11px 14px;font-weight:600;font-size:14.5px;list-style:none}
+  details summary::before{content:"▸ ";color:var(--green)}
+  details[open] summary::before{content:"▾ "}
+  details .body{padding:2px 16px 12px}
+
+  /* ── Pager ──────────────────────────────── */
+  .pager{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--border);padding-top:22px}
+  .pager a{flex:1;max-width:330px;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-decoration:none;color:var(--ink)}
+  .pager a:hover{border-color:var(--green);background:var(--green-soft)}
+  .pager a .dir{font-size:12px;color:var(--muted);display:block}
+  .pager a .ttl{font-weight:600;color:var(--green-dark);font-size:15px}
+  .pager a.next{text-align:right;margin-left:auto}
+
+  .page{display:none}
+  .page.active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  footer.pagefoot{margin-top:46px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);padding-top:16px}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:210}
+  .toast.show{opacity:1}
+
+  @media(max-width:920px){
+    nav#sidebar{transform:translateX(-100%);transition:transform .2s;box-shadow:2px 0 14px rgba(0,0,0,.12)}
+    nav#sidebar.open{transform:none}
+    main{margin-left:0;padding:60px 22px 80px}
+    .menu-btn{display:block}
+    .hero-grid{grid-template-columns:1fr}
+  }
+  @media print{
+    nav#sidebar,.pager,.menu-btn,.toast{display:none!important}
+    main{margin-left:0}
+    .page{display:block!important;page-break-after:always}
+    figure.shot.missing{display:none}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+<div class="layout">
+<nav id="sidebar">
+  <div class="brand">
+    <div class="logo">TextQL Workshop</div>
+    <div class="sub">Connect Your Data</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">Your progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+    <div class="progress-pct" id="ppct">0% complete</div>
+  </div>
+  <div id="navlist"></div>
+</nav>
+
+<main><div class="content" id="content">
+
+<section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
+  <div class="kicker">Workshop</div>
+  <h1>TextQL Connect Your Data Workshop</h1>
+
+<p>A hands-on workshop for <b>data engineers, platform admins, and technical leads</b>: get every kind of data source connected to TextQL correctly the first time — warehouses, private-network databases, BI tools, files, Google Drive, and external APIs — with credentials done right and a validation habit that catches problems before your users do.</p>
+<p>AWS-workshop style: short modules, exact setup steps, copy-paste commands, checkpoints. <b>~2.5 hours</b> end to end — but most teams run only the modules for sources they actually use.</p>
+<h2>What you'll be able to do</h2>
+<div class="hero-grid">
+<div class="hero-card"><div class="n">MODULE 1</div><h3>Network &amp; credentials</h3><p>Clear the firewall path; know every credential pattern.</p></div>
+<div class="hero-card"><div class="n">MODULE 2</div><h3>Warehouse connectors</h3><p>Snowflake, BigQuery, Redshift, Databricks, PostgreSQL — production-grade.</p></div>
+<div class="hero-card"><div class="n">MODULE 3</div><h3>Private networks</h3><p>SSH tunnels through a bastion for databases with no public endpoint.</p></div>
+<div class="hero-card"><div class="n">MODULE 4</div><h3>BI tools</h3><p>Tableau and Power BI — including the sync step everyone misses.</p></div>
+<div class="hero-card"><div class="n">MODULE 5</div><h3>Files, Drive &amp; APIs</h3><p>Zero-setup files, service-account Sheets, secure API access.</p></div>
+<div class="hero-card"><div class="n">MODULE 6</div><h3>Validate &amp; operate</h3><p>The five-question smoke test, rotation, resync, decommission.</p></div>
+</div>
+<h2>How to use this workshop</h2>
+<ol>
+<li>You need the <code>connector:write</code> permission (members have it by default unless your admin tightened it).</li>
+<li>Do <b>Modules 0–1 always</b> — they prevent the failure modes behind most connector tickets.</li>
+<li>Jump to the module for <b>your</b> source type; each warehouse section is self-contained.</li>
+<li>Finish with <b>Module 6 regardless of path</b> — the smoke test is the difference between "test passed" and "actually works."</li>
+</ol>
+<div class="callout warn">Setup steps follow current product docs at <a href="https://docs.textql.com/core/datasources/the-connectors-page" target="_blank">docs.textql.com</a>. SaaS deployment assumed; <b>VPC / on-prem deployments skip IP whitelisting</b> and confirm network requirements with their TextQL representative.</div>
+
+</section>
+
+<section class="page" id="m0" data-title="Module 0 · Before You Connect" data-group="Getting Started" data-time="15 min">
+  <div class="kicker">Module 0</div>
+  <h1>Module 0 · Before You Connect</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b></span></div>
+
+<p><b>Goal:</b> make the three decisions that determine everything downstream — source type, credential model, and scope — before touching any form.</p>
+<h2>0.1 · Know your options</h2>
+<table><tr><th>Path</th><th>Best for</th><th>Setup cost</th></tr>
+<tr><td><b>File upload</b> (CSV/Excel in a thread)</td><td>Instant analysis, POCs, one-off data</td><td>Zero — drag and drop</td></tr>
+<tr><td><b>Warehouse / database connector</b></td><td>Production use, live data, recurring questions</td><td>Minutes to an hour (this workshop)</td></tr>
+<tr><td><b>BI tool connector</b> (Tableau, Power BI)</td><td>Analyzing existing dashboards alongside warehouse data</td><td>Moderate (Module 4)</td></tr></table>
+<div class="callout">Starting a POC? Upload a file today, connect the warehouse when ready for production. Don't block a pilot on firewall tickets.</div>
+<p><b>Supported:</b> Snowflake, BigQuery, Redshift, Aurora (MySQL &amp; PostgreSQL), Azure Synapse, PostgreSQL, Supabase, MySQL, ClickHouse, Athena, Databricks. BI: Tableau, Power BI. Plus Google Drive and external APIs (Module 5).</p>
+<h2>0.2 · The Connectors page</h2>
+  <div class="callout"><span class="label">Where to click</span><p><b>Connectors</b> (left sidebar) — add connectors, preview synced tables, resync after schema drift, manage API accesses (API tab)</p></div>
+<p>Actions are gated by <code>connector:write</code> — without it, create/edit/delete/manage-access are hidden. Viewing and <i>using</i> connectors needs no write permission.</p>
+<h2>0.3 · Decision 1 — service account, not personal credentials</h2>
+<ul><li>A Snowflake service user with key-pair auth — not your own login</li>
+<li>A GCP service account with exactly two BigQuery roles — not an owner key</li>
+<li>A Databricks PAT from a service principal where possible — not your personal token</li></ul>
+<p>Personal credentials break when you leave or rotate a password, can't be least-privileged without affecting you, and muddy warehouse-side audit.</p>
+<h2>0.4 · Decision 2 — scope: what should Ana see?</h2>
+<ul><li><b>Database/schema scoping</b> — point at the analytics DB or mart schema, not the whole instance. Less noise = better SQL, faster sync, smaller blast radius.</li>
+<li><b>Read-only vs read-write</b> — read-only is the right default; read-write needs an owner and a reason.</li>
+<li><b>Grant-level scoping</b> — SELECT on what's needed, nothing more.</li></ul>
+<h2>0.5 · Decision 3 — who in TextQL gets this connector?</h2>
+<p>Public vs private is one dropdown at creation but a migration after users build on it. Production warehouses with sensitive data usually start private and get role-scoped.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>List the connectors that already exist in this org with their types and visibility. I'm about to add [source] — flag anything that looks like a duplicate or overlapping source.</pre></div>
+  <div class="yousee"><b>You'll see:</b> The current fleet — surprisingly often the source is already half-connected, and your job is consolidation, not creation.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You know which of the three intake paths fits your immediate need</label>
+    <label><input type="checkbox"> You can see the New Connector button (you have connector:write)</label>
+    <label><input type="checkbox"> You've decided: service identity, scope (DB/schema, RO/RW), visibility</label>
+    <label><input type="checkbox"> You checked for duplicates before creating anything</label>
+  </div>
+</section>
+
+<section class="page" id="m1" data-title="Module 1 · Network &amp; Credentials" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 1</div>
+  <h1>Module 1 · Networking & Credentials 101</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span></div>
+
+<p><b>Goal:</b> clear the network path and understand the credential patterns — the two causes of almost every "connection failed" ticket.</p>
+<h2>1.1 · The IP allowlist</h2>
+<p>For SaaS deployments, TextQL connects from two fixed IPs. Whitelist both:</p>
+<pre>44.229.62.69
+54.69.138.147</pre>
+<div class="callout warn"><b>VPC, on-prem, single-tenant: this does not apply to you</b> — confirm network requirements with your TextQL representative. BigQuery also needs no IP whitelisting (OAuth/service account over Google's API).</div>
+<h2>1.2 · Provider-specific firewall steps</h2>
+<p><b>AWS (RDS, Aurora, Redshift):</b> RDS Console → database → Connectivity &amp; Security → VPC security group → Inbound rules → Edit. Two rules per engine port, one per IP (<code>/32</code>):</p>
+<table><tr><th>Engine</th><th>Type</th><th>Port</th></tr>
+<tr><td>MySQL / Aurora MySQL</td><td>MYSQL/Aurora</td><td>3306</td></tr>
+<tr><td>PostgreSQL / Aurora PostgreSQL</td><td>PostgreSQL</td><td>5432</td></tr>
+<tr><td>Redshift</td><td>Redshift</td><td>5439</td></tr></table>
+<p><b>Azure:</b> resource → Networking → Firewalls → two rules, Start IP = End IP = each TextQL IP. <b>Google Cloud SQL:</b> instance → Connections → Authorized networks → two <code>/32</code> entries. <b>Databricks:</b> add both IPs to workspace IP access lists if used.</p>
+<h2>1.3 · Verify the path before you blame the credential</h2>
+<p>A <b>timeout</b> is almost always network (firewall, wrong host/port, private subnet); an <b>authentication error</b> is the credential. Fix in that order. No public endpoint at all → <b>Module 3</b>.</p>
+<h2>1.4 · The credential patterns you'll meet</h2>
+<table><tr><th>Pattern</th><th>Used by</th><th>You provide</th></tr>
+<tr><td><b>Username + password</b></td><td>PostgreSQL, MySQL, Redshift (default), Aurora</td><td>DB user + password</td></tr>
+<tr><td><b>Key-pair</b></td><td>Snowflake (required for new)</td><td>Username + RSA private key; public key registered in warehouse</td></tr>
+<tr><td><b>Service account JSON</b></td><td>BigQuery, Google Drive/GCP</td><td>GCP service account key file</td></tr>
+<tr><td><b>PAT</b></td><td>Databricks, Tableau</td><td>Token generated in the source</td></tr>
+<tr><td><b>App registration</b></td><td>Power BI (Azure AD)</td><td>Client ID + secret + tenant ID</td></tr>
+<tr><td><b>IAM role</b></td><td>Redshift (alternative)</td><td>Role ARN + region + cluster ID</td></tr>
+<tr><td><b>Per-member OAuth</b></td><td>Snowflake, Databricks (upgrade)</td><td>OAuth app; users authenticate as themselves</td></tr></table>
+<p><b>Handling rules:</b> dedicated service identity; copy in your <b>secrets manager</b> before pasting (forms redact after save); record the <b>rotation date</b> — credential expiry is the #1 "worked for months, just stopped" cause.</p>
+<h2>1.5 · Gather your details</h2>
+<pre>Host / account identifier : ____________
+Port                      : ____________
+Database / project        : ____________
+Schema / dataset          : ____________
+Service identity          : ____________
+Credential (in vault)     : ____________</pre>
+<p>Most providers show a connection string — <code>postgresql://user:pass@host:5432/db</code> — every field reads straight out of it.</p>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Both TextQL IPs whitelisted (or VPC rules confirmed instead)</label>
+    <label><input type="checkbox"> You can tell a network failure from a credential failure by symptom</label>
+    <label><input type="checkbox"> You know which credential pattern your source uses</label>
+    <label><input type="checkbox"> Six connection details gathered, secret vaulted</label>
+  </div>
+</section>
+
+<section class="page" id="m2" data-title="Module 2 · Warehouse Connectors" data-group="Hands-On Modules" data-time="40 min">
+  <div class="kicker">Module 2</div>
+  <h1>Module 2 · Warehouse Connectors</h1>
+  <div class="page-meta"><span>⏱️ <b>40 min</b></span></div>
+
+<p><b>Goal:</b> connect each major warehouse with production-grade auth. Every section: prepare the service identity → fill the form → test. <b>Do the sections you use (~10 min each).</b> All start: <b>Connectors → New Connector → pick the source.</b></p>
+<h2>2.1 · Snowflake</h2>
+<p><b>Auth: key-pair only for new connectors</b> (Snowflake deprecates single-factor passwords for service users by Oct 2026; TextQL connects as a service user).</p>
+<pre># Private key
+openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
+# Public key
+openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub</pre>
+<pre>ALTER USER textql_svc SET RSA_PUBLIC_KEY='&lt;public key, no header/footer lines&gt;';</pre>
+<table><tr><th>Field</th><th>Example</th></tr>
+<tr><td>Account Identifier</td><td><code>xy12345.us-east-1</code></td></tr>
+<tr><td>Database / Schema / Warehouse</td><td><code>ANALYTICS_DB</code> / <code>PUBLIC</code> / <code>COMPUTE_WH</code></td></tr>
+<tr><td>Role (optional)</td><td><code>TEXTQL_ROLE</code></td></tr>
+<tr><td>Username + Private Key</td><td>service user + entire <code>rsa_key.p8</code> <i>including</i> header/footer</td></tr></table>
+<div class="callout">The <b>Role</b> field is your governance lever: create a <code>TEXTQL_ROLE</code> with explicit SELECT grants rather than reusing a broad human role. Upgrade path: per-member OAuth (Admin workshop, Module 3).</div>
+<h2>2.2 · BigQuery</h2>
+<p><b>Prepare:</b> GCP Console → IAM → Service Accounts: create <code>textql-connector@...</code> with exactly <b>BigQuery Data Viewer</b> + <b>BigQuery Job User</b>; download a JSON key.</p>
+<p><b>Form:</b> Project ID · <b>Dataset ID (optional but recommended — scopes introspection and the test)</b> · Service Account Key (full JSON) · Region Qualifier.</p>
+<div class="callout warn">Test behavior: with a Dataset ID the test verifies that dataset; without one it checks the account can <i>list datasets in the project</i> — a key that reads one dataset but can't list will "fail" unscoped while being perfectly usable scoped. Scope it.</div>
+<h2>2.3 · Redshift</h2>
+<p><b>Password path:</b> Host (cluster endpoint), Port 5439, User, Password, Database, Schema, <b>Dialect</b> (Redshift native vs Postgres-compatible).</p>
+<p><b>IAM role path:</b> Role ARN · AWS Region · Cluster ID · Access Key ID/Secret (<b>both or neither</b> — omit both and TextQL's own IAM credentials assume the role) · Database User (provisioned clusters with Group Federation disabled).</p>
+<h2>2.4 · Databricks</h2>
+<p><b>Prepare:</b> SQL Warehouses → create/reuse → start it → Connection details → copy <b>Server hostname</b> and <b>HTTP path</b>. Generate a PAT (User Settings → Access tokens) — prefer a service principal's token; set a tracked expiration.</p>
+<p><b>Form:</b> Host (<i>without</i> https://) · Port 443 · HTTP Path · Catalog · Schema · PAT.</p>
+<div class="callout warn">The classic gotcha: a <b>stopped SQL warehouse</b>. The test may pass after a slow warm-up, then morning queries crawl. Set auto-stop sensibly; warn users about first-query warm-up.</div>
+<h2>2.5 · PostgreSQL (and the password family)</h2>
+<p>Host, Port 5432, Username, Password, Database, Schema — readable from <code>postgresql://user:pass@host:5432/db</code>. Same pattern: MySQL, Aurora, Supabase. Create a read-only user first:</p>
+<pre>CREATE USER textql_reader WITH PASSWORD '...';
+GRANT CONNECT ON DATABASE mydb TO textql_reader;
+GRANT USAGE ON SCHEMA analytics TO textql_reader;
+GRANT SELECT ON ALL TABLES IN SCHEMA analytics TO textql_reader;
+ALTER DEFAULT PRIVILEGES IN SCHEMA analytics
+  GRANT SELECT ON TABLES TO textql_reader;</pre>
+<p>The <code>ALTER DEFAULT PRIVILEGES</code> line keeps <i>future</i> tables visible — its absence is why "new tables don't show up" tickets happen. Private subnet → Module 3.</p>
+<h2>2.6 · After any connector: the first sync</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Pull the information schema for this connector. List the tables you can see with row counts where cheap to get, and flag any schemas you expected but can't access.</pre></div>
+  <div class="yousee"><b>You'll see:</b> What Ana actually sees — the credential's view, not yours. "Tables don't match the warehouse" is grants, not bugs: compare the service identity's grants to your own.</div>
+<h2>Troubleshooting</h2>
+<table><tr><th>Symptom</th><th>Likely cause</th></tr>
+<tr><td>Timeout on test</td><td>Firewall (Module 1), wrong host/port, private subnet (Module 3)</td></tr>
+<tr><td>Auth error on test</td><td>Wrong credential; Snowflake: public key not on that user; BigQuery: missing Job User</td></tr>
+<tr><td>Test passes, queries fail</td><td>Stopped warehouse (Databricks), role lacks SELECT, org limits</td></tr>
+<tr><td>New tables missing</td><td>Resync the connector; Postgres: missing default-privileges grant</td></tr></table>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Warehouse connector created with a dedicated service identity and least-privilege grants</label>
+    <label><input type="checkbox"> Connection test passed — and you know what the test actually verifies</label>
+    <label><input type="checkbox"> Ana's schema view matches what you intended to expose</label>
+    <label><input type="checkbox"> Credential vaulted with a rotation date; PAT expirations tracked</label>
+  </div>
+</section>
+
+<section class="page" id="m3" data-title="Module 3 · Private Networks" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 3</div>
+  <h1>Module 3 · Private Networks & SSH Tunnels</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b></span></div>
+
+<p><b>Goal:</b> connect a database with no public endpoint — through a bastion host (SSH tunnel). Currently supported for <b>PostgreSQL</b> connectors; other engines → VPC deployment conversation.</p>
+<h2>3.1 · When a tunnel is the right answer</h2>
+<ul><li>Database in a private VPC with no public endpoint</li>
+<li>Policy requires all external access through a bastion</li>
+<li>You can't or won't whitelist external IPs on the database itself</li></ul>
+<pre>TextQL  ──SSH──▶  Bastion Host  ──TCP──▶  PostgreSQL (private subnet)</pre>
+<p>The allowlist <i>moves</i>: TextQL's IPs go on the <b>bastion's</b> security group (inbound SSH), not the database's.</p>
+<h2>3.2 · Prepare the bastion</h2>
+<ol><li>Bastion reachable on its SSH port, inbound SSH allowed from <code>44.229.62.69</code> and <code>54.69.138.147</code></li>
+<li>A dedicated OS user (e.g., <code>textql-tunnel</code>) — not a shared admin</li>
+<li>SSH key pair: public key authorized on that user; keep the <b>PEM</b> private key</li>
+<li>Bastion → database route open on the DB port</li>
+<li>Recommended: the bastion's host public key — <code>/etc/ssh/ssh_host_ed25519_key.pub</code></li></ol>
+<h2>3.3 · Fill the form</h2>
+<p>In the PostgreSQL connector form, check <b>Connect via SSH tunnel (bastion host)</b>:</p>
+<table><tr><th>Field</th><th>Value</th></tr>
+<tr><td>SSH Host / Port</td><td>Bastion address; default 22</td></tr>
+<tr><td>SSH Username</td><td><code>textql-tunnel</code></td></tr>
+<tr><td>SSH Private Key</td><td>PEM (starts <code>-----BEGIN</code>)</td></tr>
+<tr><td>SSH Host Public Key</td><td>Optional, recommended — verifies bastion identity (MITM protection)</td></tr></table>
+<div class="callout warn">In the <b>main</b> connection fields: Host URL and Port are the database's <b>private</b> address — the one reachable <i>from the bastion</i>. Putting a public-looking endpoint there is the most common mistake.</div>
+<p>The SSH key is stored encrypted, never shown after save; rotate by editing the connector.</p>
+<h2>3.4 · Diagnose failures in order</h2>
+<table><tr><th>Error</th><th>Broken hop</th><th>Check</th></tr>
+<tr><td>"Failed to establish SSH tunnel"</td><td>TextQL → bastion</td><td>Bastion reachable; username/key correct; PEM format; TextQL IPs allowed inbound</td></tr>
+<tr><td>"Connection test failed" (tunnel OK)</td><td>Bastion → DB</td><td>Private host/port correct; bastion has network access; DB SG allows bastion</td></tr>
+<tr><td>"Host key verification failed"</td><td>Identity check</td><td>Host public key doesn't match — re-fetch from the bastion</td></tr></table>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Bastion has a dedicated TextQL OS user and inbound SSH from both TextQL IPs</label>
+    <label><input type="checkbox"> Connector uses the database's private address in the main fields</label>
+    <label><input type="checkbox"> Host public key provided (or consciously skipped)</label>
+    <label><input type="checkbox"> You can map each error message to its broken hop</label>
+  </div>
+</section>
+
+<section class="page" id="m4" data-title="Module 4 · BI Tools" data-group="Hands-On Modules" data-time="25 min">
+  <div class="kicker">Module 4</div>
+  <h1>Module 4 · BI Tools: Tableau & Power BI</h1>
+  <div class="page-meta"><span>⏱️ <b>25 min</b></span></div>
+
+<p><b>Goal:</b> connect the BI layer so Ana reads your existing dashboards — and never skip the post-creation <b>sync/collection step</b>, the top BI-connector support theme.</p>
+<div class="callout">Both BI integrations also have an org-level Capabilities toggle (Admin workshop, Module 4). Connector type missing? Look there first.</div>
+<h2>4.2 · Tableau</h2>
+<p><b>Prepare:</b> generate a <b>Personal Access Token</b>; note PAT name (ID) and value. Decompose your URL — from <code>https://10ax.online.tableau.com/#/site/textqldev/home</code>: <b>Server</b> = <code>https://10ax.online.tableau.com</code>, <b>Site</b> = <code>textqldev</code> (after <code>site/</code>).</p>
+<p><b>Form:</b> Connector Name · Server URL · Site · PAT ID · PAT Value → Create.</p>
+<div class="callout warn"><b>The step people miss:</b> creating the connector connects the <i>server</i>; Ana sees nothing until you build a collection.</div>
+  <div class="callout"><span class="label">Where to click</span><p>Connectors → your Tableau connector → <b>New collection</b> → project → workbook → select views (and linkable published datasources)</p></div>
+<p>Scope deliberately — expose certified, maintained workbooks, not all 400 on the server. Default limit: 10,000 rows per Tableau query.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What dashboards and views do you have access to from this Tableau connector? Summarize what each one shows.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Exactly the views in your collection — and only those.</div>
+<h2>4.3 · Power BI</h2>
+<p>The most setup-intensive connector: <b>Azure AD app registration</b> (service principal). Needs Azure portal access, Power BI workspace admin, Pro/Premium license.</p>
+<p><b>Step 1 — App registration:</b> portal.azure.com → Azure AD → App registrations → New registration (this directory only; no redirect URI) → record <b>Application (client) ID</b> and <b>Tenant ID</b> → Certificates &amp; secrets → <b>New client secret</b> → record the value immediately (shown once) <b>and calendar its expiry</b>.</p>
+<p><b>Step 2 — Power BI side:</b> tenant setting allowing service principals to use Power BI APIs (once, by the Power BI admin, usually via a security group); add the app as Member/Viewer on each workspace Ana should read.</p>
+<p><b>Step 3 — TextQL form:</b> Client ID · Client Secret · Tenant ID → Create.</p>
+<p><b>Step 4 — Sync:</b> select workspaces/datasets to expose, then verify in a chat.</p>
+<table><tr><th>Symptom</th><th>Cause</th></tr>
+<tr><td>Auth succeeds, no workspaces visible</td><td>Service principal not added to workspaces, or tenant API setting off</td></tr>
+<tr><td>Worked, then stopped after months</td><td><b>Client secret expired</b> (max 24 mo) — rotate in Azure, update connector</td></tr>
+<tr><td>Specific dataset queries fail</td><td>Dataset-level permissions, or Premium-only feature on a Pro license</td></tr></table>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Tableau: connector created from a PAT and a collection built exposing chosen views</label>
+    <label><input type="checkbox"> Power BI: app registration recorded, secret expiry calendared, workspace access granted, workspaces synced</label>
+    <label><input type="checkbox"> You verified in a chat that Ana lists the dashboards you exposed — and only those</label>
+    <label><input type="checkbox"> You can name the three Power BI failure modes</label>
+  </div>
+</section>
+
+<section class="page" id="m5" data-title="Module 5 · Files, Drive &amp; APIs" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 5</div>
+  <h1>Module 5 · Files, Google Drive & APIs</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span></div>
+
+<p><b>Goal:</b> the three non-warehouse intake paths — ad-hoc files, Drive/Sheets via service account, and external APIs through the secure proxy.</p>
+<h2>5.1 · File uploads — zero setup</h2>
+<p>Attach a CSV/Excel in a thread (the <b>"+"</b> button) and ask away. Right for: POCs, one-offs, data not in any warehouse. Know: 1M rows / 100 cols default; can be disabled org-wide (Capabilities); a file lives with its thread — not a governed source. <b>A recurring file is your signal to connect the system it came from.</b></p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Profile this file: columns, types, null rates, and anything that looks like a data quality problem. Then suggest three questions worth asking it.</pre></div>
+<h2>5.2 · Google Drive &amp; Sheets — the service account pattern</h2>
+<p><b>Part 1 — GCP Console:</b> create/reuse a project → enable <b>Google Drive API</b> and <b>Google Sheets API</b> → create a service account → download a <b>JSON key</b>.</p>
+<p><b>Part 2 — the step everyone forgets:</b> a service account sees nothing by default. <b>Share each file or folder with the service account's email</b> exactly like sharing with a person. Folder-level sharing covers contents.</p>
+<p><b>Part 3 — store the credential:</b></p>
+<table><tr><th></th><th>Option A — API Access (preferred)</th><th>Option B — Env var</th></tr>
+<tr><td>How</td><td>Connectors → API tab → + New API Access → Google Cloud template → paste JSON</td><td>JSON as an env var referenced in Python</td></tr>
+<tr><td>Security</td><td><b>Ana never sees the raw key</b> — proxy does JWT exchange, injects short-lived tokens</td><td>Key material in the sandbox env</td></tr></table>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Open the Google Sheet "[name]" and read me the first 10 rows of the first tab.</pre></div>
+  <div class="yousee"><b>You'll see:</b> The sheet contents — or a failure that is, 90% of the time, Part 2: the sheet isn't shared with the service account email.</div>
+<h2>5.3 · External API connectors</h2>
+  <div class="callout"><span class="label">Where to click</span><p>Connectors → <b>API tab</b> → <b>+ New API Access</b></p></div>
+<ul><li><b>Templates</b> for common providers — paste token, <b>Test Connection</b>.</li>
+<li><b>Custom</b> — whitelist the domain, attach token/OAuth auth (or none for public APIs); Advanced Options for the unusual.</li>
+<li><b>GCP-style</b> — service-account JSON; proxy does the JWT exchange; sandbox sees only a placeholder env var.</li></ul>
+<p><b>Governance:</b> the API tab can be disabled org-wide (missing = admin decision, not a bug). A user reaches a domain when they can access at least one connector for it — <b>domain whitelisting is the perimeter</b>; document who approves additions. Rate limits are the API's: for high-volume sources (CRMs), prefer a warehouse mirror for reads, keep the API for writes.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Using the [name] API access, make a simple authenticated request (e.g., fetch my account info or list one page of records) and show me the response status.</pre></div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You uploaded and profiled a file — and know when files stop being the right tool</label>
+    <label><input type="checkbox"> Drive: service account created, APIs enabled, content shared with the bot email, credential stored</label>
+    <label><input type="checkbox"> You created or reviewed one API access and tested it from a chat</label>
+    <label><input type="checkbox"> You know the domain-whitelisting perimeter and who approves additions</label>
+  </div>
+</section>
+
+<section class="page" id="m6" data-title="Module 6 · Validate &amp; Operate" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 6</div>
+  <h1>Module 6 · Validate & Operate</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span></div>
+
+<p><b>Goal:</b> the difference between "the test passed" and "production-ready" — a repeatable smoke test, plus rotation, resync, monitoring, and decommission habits.</p>
+<h2>6.1 · The five-question smoke test</h2>
+<p>Run in a fresh chat against <b>every</b> new connector before announcing it:</p>
+<p><b>1 · Visibility</b></p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>List the schemas and tables you can see through this connector. Anything you'd expect for [domain] that's missing?</pre></div>
+<p><b>2 · Read</b></p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Run a trivial query: count rows in [small table] and show 5 sample rows.</pre></div>
+<p><b>3 · Breadth</b></p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Query [table in a different schema you intend to expose]. Does access work across all intended schemas?</pre></div>
+<p><b>4 · Write protection</b> (read-only connectors)</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Attempt to create a temp table. I expect this to FAIL — confirm the connector is read-only.</pre></div>
+<p><b>5 · Scale behavior</b></p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Run a realistic analytical query for this source: [a join + aggregation typical of real use]. How long did it take?</pre></div>
+  <div class="yousee"><b>You'll see:</b> Pass/fail on each. #1 catches grant gaps, #4 catches accidentally read-write connectors, #5 catches the stopped-warehouse / timeout class before a user does.</div>
+<h2>6.2 · Schema drift and resync</h2>
+<p>Warehouses evolve; the schema snapshot doesn't follow automatically. <b>Connectors → connector → Resync</b> after tables are added/renamed/dropped. Habit: wire resync into your dbt/ETL release checklist. "Ana doesn't see the new table" → resync is triage step 1 (and check the Postgres default-privileges grant, Module 2.5).</p>
+<h2>6.3 · Credential rotation</h2>
+<table><tr><th>Credential</th><th>Rotation reality</th></tr>
+<tr><td>Snowflake key-pair</td><td>New pair → <code>ALTER USER ... SET RSA_PUBLIC_KEY</code> → update connector</td></tr>
+<tr><td>Databricks / Tableau PAT</td><td><b>They expire.</b> Calendar at creation; regenerate + edit connector</td></tr>
+<tr><td>Power BI client secret</td><td>Expires (max 24 mo) — the #1 "worked then stopped" cause</td></tr>
+<tr><td>GCP JSON keys</td><td>New key on same service account → update → delete old key</td></tr>
+<tr><td>DB passwords</td><td>Per your security schedule</td></tr></table>
+<div class="callout warn">Always rerun the smoke test immediately after rotation — a typo'd key otherwise fails at a <i>user's</i> next query.</div>
+<h2>6.4 · Monitor the fleet</h2>
+<ul><li><b>Observability</b> (admin sidebar) — connector errors surface as thread warnings; weekly triage catches degradation early.</li>
+<li><b>Stale data symptoms</b> — usually upstream ETL; connector-level causes: stale replica, deprecated table. Document refresh cadence on the connector description.</li>
+<li><b>Quarterly review</b> — still used? rotation current? scope right? owner present?</li></ul>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>For each connector in this org, when was it last successfully used in a thread? Flag any unused for 60+ days as decommission candidates.</pre></div>
+<h2>6.5 · Decommission without breakage</h2>
+<ol><li>Ask: which dashboards, playbooks, and recent threads depend on it?</li>
+<li>Migrate or archive dependents; announce.</li>
+<li>Delete in a maintenance window; <b>revoke the credential at the source too</b> (warehouse user / PAT / app registration).</li>
+<li>Confirm in the audit log.</li></ol>
+<h2>You're done</h2>
+<p>Your data layer is connected with dedicated service identities, least-privilege scopes, a cleared network path, validated behavior, and operating habits for rotation, drift, and decommission.</p>
+<ul><li>Run your users through the <b>Self-Service Analytics workshop</b></li>
+<li>Role-scoped access + weekly review playbook — <b>Admin &amp; Governance workshop</b></li>
+<li>Start the semantic layer — the <a href="https://github.com/TextQLLabs/ontology-workshop-guide" target="_blank">ontology workshop</a></li></ul>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Every connector created in this workshop passed the five-question smoke test</label>
+    <label><input type="checkbox"> Resync is wired into your schema-change/release process</label>
+    <label><input type="checkbox"> Every expiring credential has a calendared expiry</label>
+    <label><input type="checkbox"> You know the decommission sequence, including source-side revocation</label>
+  </div>
+</section>
+
+<section class="page" id="reference" data-title="Connection Reference" data-group="Reference">
+  <div class="kicker">Reference</div>
+  <h1>Connection Reference</h1>
+  <p>One-page lookup for every connector type. Full walkthroughs in Modules 2–5; authoritative field-level docs at <a href="https://docs.textql.com/core/datasources/the-connectors-page" target="_blank" rel="noopener">docs.textql.com</a>.</p>
+  <h2>TextQL egress IPs (SaaS only — whitelist both)</h2>
+  <p>``<code> 44.229.62.69 54.69.138.147 </code>``</p>
+  <p>Not applicable to VPC / on-prem / single-tenant deployments. BigQuery needs no IP whitelisting.</p>
+  <h2>Warehouses &amp; databases</h2>
+  <table>
+    <tr><th>Source</th><th>Auth</th><th>Key fields</th><th>Default port</th><th>Gotchas</th></tr>
+    <tr><td><b>Snowflake</b></td><td>Key-pair (required for new)</td><td>Account identifier, DB, schema, warehouse, role, username, RSA private key</td><td>—</td><td>Public key must be set on the user; Role field = governance lever; passwords deprecated for service users by Oct 2026</td></tr>
+    <tr><td><b>BigQuery</b></td><td>Service account JSON</td><td>Project ID, Dataset ID (optional), key JSON, region</td><td>—</td><td>Needs Data Viewer + Job User roles; unscoped test requires dataset-list permission — scope with Dataset ID</td></tr>
+    <tr><td><b>Redshift</b></td><td>Password or IAM role</td><td>Host, port, user/pass, DB, schema, dialect; or Role ARN + region + cluster ID</td><td>5439</td><td>IAM: access key ID + secret both-or-neither; provisioned + no Group Federation needs Database User</td></tr>
+    <tr><td><b>Databricks</b></td><td>PAT</td><td>Host (no https://), port, HTTP path, catalog, schema, PAT</td><td>443</td><td>SQL warehouse must be running; PATs expire — calendar it</td></tr>
+    <tr><td><b>PostgreSQL</b></td><td>Password (+ optional SSH tunnel)</td><td>Host, port, user/pass, DB, schema</td><td>5432</td><td><code>ALTER DEFAULT PRIVILEGES</code> for future tables; private subnet → SSH tunnel</td></tr>
+    <tr><td><b>MySQL / Aurora MySQL</b></td><td>Password</td><td>Same pattern</td><td>3306</td><td>—</td></tr>
+    <tr><td><b>Aurora PostgreSQL / Supabase</b></td><td>Password</td><td>Same pattern</td><td>5432</td><td>—</td></tr>
+    <tr><td><b>Azure Synapse</b></td><td>Password</td><td>Same pattern</td><td>1433</td><td>Azure firewall rules per IP</td></tr>
+    <tr><td><b>ClickHouse / Athena</b></td><td>Per docs</td><td>Per docs</td><td>—</td><td>—</td></tr>
+  </table>
+  <h2>SSH tunnel (PostgreSQL)</h2>
+  <table>
+    <tr><th>Field</th><th>Note</th></tr>
+    <tr><td>SSH Host / Port</td><td>Bastion address; default 22</td></tr>
+    <tr><td>SSH Username</td><td>Dedicated OS user for TextQL</td></tr>
+    <tr><td>SSH Private Key</td><td>PEM format (<code>-----BEGIN ...</code>)</td></tr>
+    <tr><td>SSH Host Public Key</td><td>Optional, recommended — MITM protection (<code>/etc/ssh/ssh_host_ed25519_key.pub</code>)</td></tr>
+    <tr><td>Main Host/Port</td><td>The database's <b>private</b> address (reachable from bastion)</td></tr>
+  </table>
+  <p>Whitelist TextQL IPs on the <b>bastion</b>, not the DB. Error → hop: "Failed to establish SSH tunnel" = TextQL→bastion; "Connection test failed" = bastion→DB; "Host key verification failed" = wrong host public key.</p>
+  <h2>BI tools</h2>
+  <table>
+    <tr><th>Source</th><th>Auth</th><th>Key fields</th><th>Post-creation step</th></tr>
+    <tr><td><b>Tableau</b></td><td>PAT</td><td>Server (base URL), Site (after <code>site/</code>), PAT ID, PAT value</td><td><b>Build a collection</b>: connector → New collection → project → workbook → views. 10k row default limit</td></tr>
+    <tr><td><b>Power BI</b></td><td>Azure AD app registration</td><td>Client ID, client secret, tenant ID</td><td>Tenant setting for service principals + workspace access grants; then sync workspaces. <b>Secrets expire (max 24 mo)</b></td></tr>
+  </table>
+  <h2>Files, Drive, APIs</h2>
+  <table>
+    <tr><th>Path</th><th>Auth</th><th>Notes</th></tr>
+    <tr><td><b>File upload</b></td><td>—</td><td>In-thread; 1M rows / 100 cols default; not a governed source</td></tr>
+    <tr><td><b>Google Drive/Sheets</b></td><td>GCP service account JSON</td><td>Enable Drive + Sheets APIs; <b>share content with the service account email</b>; store via API Access (preferred) or env var</td></tr>
+    <tr><td><b>External APIs</b></td><td>Token / OAuth / GCP SA</td><td>Connectors → API tab → + New API Access; templates for common providers; domain whitelist = perimeter; proxy injects credentials — Ana never sees tokens</td></tr>
+  </table>
+  <h2>The five-question smoke test (run on every new connector)</h2>
+  <ol>
+    <li>List visible schemas/tables — anything missing?</li>
+    <li>Trivial read: count + 5 sample rows</li>
+    <li>Cross-schema read on intended scope</li>
+    <li>Attempted write on a read-only connector — must FAIL</li>
+    <li>One realistic join+aggregation — timing sane?</li>
+  </ol>
+  <h2>Org default limits (triage before escalating)</h2>
+  <table>
+    <tr><th>Limit</th><th>Default</th></tr>
+    <tr><td>Max SQL rows</td><td>2,000,000</td></tr>
+    <tr><td>Max CSV rows / cols</td><td>1,000,000 / 100</td></tr>
+    <tr><td>Max Tableau rows</td><td>10,000</td></tr>
+    <tr><td>SQL runtime</td><td>180s</td></tr>
+    <tr><td>Cell runtime</td><td>360s</td></tr>
+  </table>
+</section>
+
+<div class="pager" id="pager"></div>
+<footer class="pagefoot">© TextQL · Workshop: Connect Your Data · Example prompts are illustrative — adapt them to your own data.</footer>
+</div></main>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+<div id="lightbox" onclick="this.classList.remove('show')"><img src="" alt=""></div>
+
+<script>
+(function(){
+  const WS_KEY='textql-ws-connect-your-data';
+  const pages=[...document.querySelectorAll('section.page')];
+  const navlist=document.getElementById('navlist');
+  const pager=document.getElementById('pager');
+
+  // Build sidebar nav grouped by data-group
+  let group=null, num=0;
+  pages.forEach(p=>{
+    if(p.dataset.group!==group){
+      group=p.dataset.group;
+      const g=document.createElement('div');g.className='group-label';g.textContent=group;navlist.appendChild(g);
+    }
+    const a=document.createElement('a');a.className='nav-item';a.href='#/'+p.id;a.dataset.page=p.id;
+    a.innerHTML='<span class="num"><span>'+(num++)+'</span></span><span>'+p.dataset.title.replace(/^Module \d+ · /,'')+'</span>'+
+      (p.dataset.time?'<span class="time">'+p.dataset.time+'</span>':'');
+    navlist.appendChild(a);
+  });
+
+  function show(id){
+    let page=pages.find(p=>p.id===id)||pages[0];
+    pages.forEach(p=>p.classList.toggle('active',p===page));
+    navlist.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.page===page.id));
+    const i=pages.indexOf(page);
+    pager.innerHTML=
+      (i>0?'<a class="prev" href="#/'+pages[i-1].id+'"><span class="dir">← Previous</span><span class="ttl">'+pages[i-1].dataset.title+'</span></a>':'<span></span>')+
+      (i<pages.length-1?'<a class="next" href="#/'+pages[i+1].id+'"><span class="dir">Next →</span><span class="ttl">'+pages[i+1].dataset.title+'</span></a>':'');
+    window.scrollTo(0,0);
+    document.getElementById('sidebar').classList.remove('open');
+  }
+  const hashId=()=>location.hash.replace(/^#\/?/,'');
+  window.addEventListener('hashchange',()=>show(hashId()));
+  show(hashId());
+
+  // Copy buttons + toast
+  document.querySelectorAll('.prompt').forEach(box=>{
+    const btn=box.querySelector('button');
+    btn.addEventListener('click',()=>{
+      navigator.clipboard.writeText(box.querySelector('pre').textContent.trim()).then(()=>{
+        const t=document.getElementById('toast');
+        t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400);
+      });
+    });
+  });
+
+  // Screenshot lightbox
+  const lb=document.getElementById('lightbox');
+  document.querySelectorAll('figure.shot img').forEach(img=>{
+    img.addEventListener('click',()=>{lb.querySelector('img').src=img.src;lb.classList.add('show');});
+  });
+
+  // Checkpoint persistence + progress
+  let saved={};try{saved=JSON.parse(localStorage.getItem(WS_KEY)||'{}')}catch(e){}
+  const trackable=pages.filter(p=>p.querySelector('.checkpoint input'));
+  function refreshProgress(){
+    let done=0;
+    trackable.forEach(p=>{
+      const boxes=[...p.querySelectorAll('.checkpoint input')];
+      const allDone=boxes.length&&boxes.every(b=>b.checked);
+      const link=navlist.querySelector('a[data-page="'+p.id+'"]');
+      link.classList.toggle('done',allDone);
+      if(allDone){link.querySelector('.num').innerHTML='✓';done++;}
+      else{link.querySelector('.num').innerHTML='<span>'+pages.indexOf(p)+'</span>';}
+    });
+    const pct=trackable.length?Math.round(100*done/trackable.length):0;
+    document.getElementById('pfill').style.width=pct+'%';
+    document.getElementById('ppct').textContent=pct+'% complete';
+  }
+  document.querySelectorAll('.checkpoint input[type=checkbox]').forEach((cb,i)=>{
+    cb.checked=!!saved[i];
+    cb.closest('label').classList.toggle('checked',cb.checked);
+    cb.addEventListener('change',()=>{
+      saved[i]=cb.checked;
+      cb.closest('label').classList.toggle('checked',cb.checked);
+      try{localStorage.setItem(WS_KEY,JSON.stringify(saved))}catch(e){}
+      refreshProgress();
+    });
+  });
+  refreshProgress();
+})();
+</script>
+</body>
+</html>

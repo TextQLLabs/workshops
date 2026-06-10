@@ -10,16 +10,19 @@
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg-soft)}
   header{background:#0f1f1b;color:#fff;padding:0 28px;height:56px;display:flex;align-items:center}
   header .logo{font-weight:800;font-size:16px}header .logo span{color:var(--green)}
-  .hero{background:linear-gradient(135deg,#0f1f1b 0%,#2f6f5c 100%);color:#fff;padding:56px 28px 64px;text-align:center}
+  .hero{background:linear-gradient(135deg,#0f1f1b 0%,#2f6f5c 100%);color:#fff;padding:52px 28px 60px;text-align:center}
   .hero h1{font-size:34px;margin-bottom:10px}
-  .hero p{color:#d7eee6;font-size:17px;max-width:640px;margin:0 auto}
-  .catalog{max-width:1060px;margin:-30px auto 60px;padding:0 24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:22px}
+  .hero p{color:#d7eee6;font-size:17px;max-width:680px;margin:0 auto}
+  .wrap{max-width:1060px;margin:0 auto 60px;padding:0 24px}
+  .wrap>h2{font-size:15px;text-transform:uppercase;letter-spacing:1.5px;color:var(--green-dark);margin:38px 0 16px}
+  .wrap>h2:first-of-type{margin-top:30px}
+  .catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:22px}
   .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 3px rgba(28,43,39,.06);transition:box-shadow .15s,transform .15s}
   .card:hover{box-shadow:0 8px 24px rgba(47,111,92,.18);transform:translateY(-2px)}
   .card .tags{display:flex;gap:8px;flex-wrap:wrap}
   .tag{font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:99px;background:var(--green-soft);color:var(--green-dark)}
   .tag.level{background:#fdf9ee;color:#8a6d1f}
-  .card h2{font-size:19px;line-height:1.3}
+  .card h3{font-size:19px;line-height:1.3}
   .card p{font-size:14.5px;color:var(--muted);flex:1}
   .card .meta{font-size:13px;color:var(--muted);display:flex;gap:14px;border-top:1px solid var(--border);padding-top:12px}
   .card.soon{opacity:.6;pointer-events:none}
@@ -32,21 +35,73 @@
   <h1>TextQL Workshops</h1>
   <p>Hands-on, self-paced guides for learning the TextQL platform — run them yourself, or follow along with your TextQL team.</p>
 </div>
-<div class="catalog">
+<div class="wrap">
 
+<h2>For business teams</h2>
+<div class="catalog">
   <a class="card" href="self-service-analytics/index.html">
     <div class="tags"><span class="tag">Analytics</span><span class="tag level">Beginner · Non-technical</span></div>
-    <h2>Self-Service Analytics</h2>
+    <h3>Self-Service Analytics</h3>
     <p>Answer your own questions, build your own charts and dashboards, and automate your own reporting — in plain English, with Ana. No SQL required.</p>
     <div class="meta"><span>⏱️ ~2 hours</span><span>💻 Browser only</span></div>
   </a>
+  <a class="card" href="dashboards-reporting/index.html">
+    <div class="tags"><span class="tag">Dashboards</span><span class="tag level">Beginner–Intermediate</span></div>
+    <h3>Dashboards &amp; Reporting</h3>
+    <p>Charts that communicate, polished reports, and live interactive dashboards — built through conversation, then published and maintained like real products.</p>
+    <div class="meta"><span>⏱️ ~2 hours</span><span>💻 Browser only</span></div>
+  </a>
+  <a class="card" href="automation/index.html">
+    <div class="tags"><span class="tag">Automation</span><span class="tag level">Intermediate</span></div>
+    <h3>Automation Deep-Dive</h3>
+    <p>Make analysis run without you: scheduled playbooks, templates that batch across entities, and feed agents that watch your data continuously.</p>
+    <div class="meta"><span>⏱️ ~2 hours</span><span>💻 Browser only</span></div>
+  </a>
+  <a class="card" href="sales-gtm/index.html">
+    <div class="tags"><span class="tag">Sales &amp; GTM</span><span class="tag level">Beginner · Non-technical</span></div>
+    <h3>TextQL for Sales &amp; GTM</h3>
+    <p>Pipeline answers in plain English, account research that combines CRM with the outside world, meeting prep that writes itself, automated deal hygiene.</p>
+    <div class="meta"><span>⏱️ ~90 min</span><span>💻 Browser only</span></div>
+  </a>
+</div>
 
+<h2>For data &amp; platform teams</h2>
+<div class="catalog">
+  <a class="card" href="connect-your-data/index.html">
+    <div class="tags"><span class="tag">Connectors</span><span class="tag level">Technical</span></div>
+    <h3>Connect Your Data</h3>
+    <p>Every kind of data source connected correctly the first time — warehouses, private networks, BI tools, files, Drive, and APIs — with credentials done right.</p>
+    <div class="meta"><span>⏱️ ~2.5 hours</span><span>🎯 Data engineers &amp; admins</span></div>
+  </a>
+  <a class="card" href="ontology-operations/index.html">
+    <div class="tags"><span class="tag">Ontology</span><span class="tag level">Technical</span></div>
+    <h3>Ontology Operations</h3>
+    <p>Run a governed semantic layer in production: git workflows, access control, accuracy testing with golden datasets, and scaling across teams.</p>
+    <div class="meta"><span>⏱️ ~2 hours</span><span>🎯 Data teams</span></div>
+  </a>
+  <a class="card" href="admin-governance/index.html">
+    <div class="tags"><span class="tag">Admin</span><span class="tag level">Technical</span></div>
+    <h3>Admin &amp; Governance</h3>
+    <p>Identity and SSO, roles and permissions, connector governance, capability and model controls, monitoring, and day-to-day operations at scale.</p>
+    <div class="meta"><span>⏱️ ~2.5 hours</span><span>🎯 Workspace admins</span></div>
+  </a>
   <a class="card soon" href="#">
     <div class="tags"><span class="tag">Coming soon</span></div>
-    <h2>Build Your Ontology, End to End</h2>
-    <p>For data teams: turn databases and documents into a governed, queryable ontology — and keep it current as new information arrives.</p>
-    <div class="meta"><span>⏱️ Half day</span><span>🎯 Intermediate</span></div>
+    <h3>Build Your Ontology, End to End</h3>
+    <p>Turn databases and documents into a governed, queryable ontology — and keep it current as new information arrives.</p>
+    <div class="meta"><span>⏱️ Half day</span><span>🎯 Data teams</span></div>
   </a>
+</div>
+
+<h2>For developers</h2>
+<div class="catalog">
+  <a class="card" href="developer/index.html">
+    <div class="tags"><span class="tag">API &amp; MCP</span><span class="tag level">Technical</span></div>
+    <h3>Developer Workshop — API &amp; MCP</h3>
+    <p>Drive Ana programmatically: REST API, streaming, playbooks and dashboards as code, Ana inside Claude/Cursor via MCP, and custom MCP tools.</p>
+    <div class="meta"><span>⏱️ ~2 hours</span><span>🎯 Developers</span></div>
+  </a>
+</div>
 
 </div>
 <footer>© TextQL · Questions? Contact your TextQL account team.</footer>
