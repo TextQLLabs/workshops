@@ -8,7 +8,7 @@ Each workshop is a **self-contained `index.html`** (plus a local `assets/` folde
 
 | Workshop | Audience | Time | Status |
 |---|---|---|---|
-| [Self-Service Analytics for Business Users](self-service-analytics/) | Business users — no SQL, no data background | ~2 hours | ✅ Ready (screenshots pending — see [SHOT_LIST](self-service-analytics/SHOT_LIST.md)) |
+| [Self-Service Analytics](self-service-analytics/) | Business users — no SQL, no data background | ~2 hours | ✅ Ready (screenshots pending — see [SHOT_LIST](self-service-analytics/SHOT_LIST.md)) |
 | Build Your Ontology, End to End | Data teams | Half day | 🔜 Planned — see [ontology-workshop-guide](https://github.com/TextQLLabs/ontology-workshop-guide) |
 
 The repo root [`index.html`](index.html) is a catalog landing page listing all workshops.
