@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TextQL Workshops</title>
+<style>
+  :root{--header-bg:#0b1220;--accent:#4f46e5;--border:#e2e8f0;--text:#1e293b;--muted:#64748b}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--text);background:#f8fafc}
+  header{background:var(--header-bg);color:#fff;padding:0 28px;height:56px;display:flex;align-items:center}
+  header .logo{font-weight:700;font-size:15px}header .logo span{color:#a5b4fc}
+  .hero{background:linear-gradient(135deg,#0b1220 0%,#1e1b4b 100%);color:#fff;padding:56px 28px 64px;text-align:center}
+  .hero h1{font-size:34px;margin-bottom:10px}
+  .hero p{color:#c7d2fe;font-size:17px;max-width:640px;margin:0 auto}
+  .catalog{max-width:1060px;margin:-30px auto 60px;padding:0 24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:22px}
+  .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 3px rgba(15,23,42,.06);transition:box-shadow .15s,transform .15s}
+  .card:hover{box-shadow:0 8px 24px rgba(79,70,229,.15);transform:translateY(-2px)}
+  .card .tags{display:flex;gap:8px;flex-wrap:wrap}
+  .tag{font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:99px;background:#eef2ff;color:var(--accent)}
+  .tag.level{background:#f0fdf4;color:#16a34a}
+  .card h2{font-size:19px;line-height:1.3}
+  .card p{font-size:14.5px;color:var(--muted);flex:1}
+  .card .meta{font-size:13px;color:var(--muted);display:flex;gap:14px;border-top:1px solid var(--border);padding-top:12px}
+  .card.soon{opacity:.6;pointer-events:none}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:30px}
+</style>
+</head>
+<body>
+<header><div class="logo">TextQL <span>Workshops</span></div></header>
+<div class="hero">
+  <h1>TextQL Workshops</h1>
+  <p>Hands-on, self-paced guides for learning the TextQL platform — run them yourself, or follow along with your TextQL team.</p>
+</div>
+<div class="catalog">
+
+  <a class="card" href="self-service-analytics/index.html">
+    <div class="tags"><span class="tag">Analytics</span><span class="tag level">Beginner · Non-technical</span></div>
+    <h2>Self-Service Analytics for Business Users</h2>
+    <p>Get answers from your company's data by asking questions in plain English. Ask, refine, chart, verify, and share — no code, no dashboards to hunt through.</p>
+    <div class="meta"><span>⏱️ 60–90 min</span><span>💻 Browser only</span></div>
+  </a>
+
+  <a class="card soon" href="#">
+    <div class="tags"><span class="tag">Coming soon</span></div>
+    <h2>Build Your Ontology, End to End</h2>
+    <p>For data teams: turn databases and documents into a governed, queryable ontology — and keep it current as new information arrives.</p>
+    <div class="meta"><span>⏱️ Half day</span><span>🎯 Intermediate</span></div>
+  </a>
+
+</div>
+<footer>© TextQL · Questions? Contact your TextQL account team.</footer>
+</body>
+</html>
