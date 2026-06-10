@@ -6,195 +6,226 @@
 <title>WORKSHOP TITLE · TextQL Workshops</title>
 <style>
   :root{
-    --header-bg:#0b1220;
-    --accent:#4f46e5;
-    --accent-soft:#eef2ff;
-    --sidebar-bg:#f8fafc;
-    --border:#e2e8f0;
-    --text:#1e293b;
-    --muted:#64748b;
-    --info-bg:#eff6ff;   --info-border:#3b82f6;
-    --tip-bg:#f0fdf4;    --tip-border:#22c55e;
-    --warn-bg:#fffbeb;   --warn-border:#f59e0b;
-    --prompt-bg:#0f172a;
+    --green:#58a68d; --green-dark:#2f6f5c; --green-soft:#e9f2ee;
+    --ink:#1c2b27; --muted:#5d6b67;
+    --bg:#ffffff; --bg-soft:#f4f8f6; --border:#dde7e3; --code-bg:#0f1f1b;
+    --gold:#e9c46a; --gold-soft:#fdf9ee; --gold-border:#f0e4c0; --gold-ink:#8a6d1f;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--text);background:#fff;font-size:16px;line-height:1.65}
-
-  /* ── Header ─────────────────────────────── */
-  header{position:fixed;top:0;left:0;right:0;height:56px;background:var(--header-bg);color:#fff;display:flex;align-items:center;padding:0 20px;z-index:100;gap:14px}
-  header .logo{font-weight:700;font-size:15px;letter-spacing:.3px;white-space:nowrap}
-  header .logo span{color:#a5b4fc}
-  header .divider{width:1px;height:24px;background:rgba(255,255,255,.25)}
-  header .ws-title{font-size:14px;color:#cbd5e1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  header .menu-btn{display:none;background:none;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:4px 10px;font-size:14px;cursor:pointer}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.6}
+  a{color:var(--green-dark)}
 
   /* ── Layout ─────────────────────────────── */
-  .wrap{display:flex;padding-top:56px;min-height:100vh}
-  nav#sidebar{width:300px;min-width:300px;background:var(--sidebar-bg);border-right:1px solid var(--border);padding:24px 0 60px;position:fixed;top:56px;bottom:0;overflow-y:auto}
-  main{margin-left:300px;flex:1;display:flex;justify-content:center;padding:36px 48px 80px}
-  .content{max-width:840px;width:100%}
+  .layout{display:flex;min-height:100vh}
+  nav#sidebar{width:300px;min-width:300px;background:var(--bg-soft);border-right:1px solid var(--border);padding:24px 0 60px;position:fixed;top:0;bottom:0;overflow-y:auto;z-index:40}
+  main{margin-left:300px;flex:1;display:flex;justify-content:center;padding:44px 56px 110px}
+  .content{max-width:860px;width:100%}
 
-  /* ── Sidebar nav ────────────────────────── */
-  nav .group-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:18px 22px 6px}
-  nav a{display:flex;gap:10px;align-items:baseline;padding:8px 22px;color:var(--text);text-decoration:none;font-size:14px;border-left:3px solid transparent}
-  nav a .num{color:var(--muted);font-size:12px;min-width:18px;font-variant-numeric:tabular-nums}
-  nav a:hover{background:#eef2f7}
-  nav a.active{background:var(--accent-soft);border-left-color:var(--accent);font-weight:600;color:var(--accent)}
-  nav a.active .num{color:var(--accent)}
-  nav a.done .num::after{content:" ✓";color:#16a34a}
+  /* ── Sidebar ────────────────────────────── */
+  .brand{padding:0 24px 16px;border-bottom:1px solid var(--border)}
+  .brand .logo{font-weight:800;font-size:18px;color:var(--green-dark);letter-spacing:.5px}
+  .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .progress-wrap{padding:14px 24px;border-bottom:1px solid var(--border)}
+  .progress-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+  .progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:var(--green);border-radius:4px;transition:width .4s}
+  .progress-pct{font-size:12px;color:var(--green-dark);font-weight:600;margin-top:4px}
+  nav .group-label{padding:16px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  nav a.nav-item{display:flex;align-items:center;gap:10px;padding:9px 24px;font-size:14px;color:var(--ink);text-decoration:none;border-left:3px solid transparent}
+  nav a.nav-item:hover{background:var(--green-soft)}
+  nav a.nav-item.active{border-left-color:var(--green);background:var(--green-soft);font-weight:600}
+  .nav-item .num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;min-width:22px;border-radius:50%;border:1.5px solid var(--muted);font-size:11px;font-weight:700;color:var(--muted)}
+  .nav-item.done .num{background:var(--green);border-color:var(--green);color:#fff;font-size:12px}
+  .nav-item .time{margin-left:auto;font-size:11px;color:var(--muted)}
+  .menu-btn{display:none;position:fixed;top:14px;left:14px;z-index:41;background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer}
 
-  /* ── Content typography ─────────────────── */
-  .breadcrumb{font-size:13px;color:var(--muted);margin-bottom:14px}
-  .breadcrumb a{color:var(--accent);text-decoration:none}
-  h1{font-size:30px;line-height:1.25;margin-bottom:6px;font-weight:700}
-  .page-meta{color:var(--muted);font-size:14px;margin-bottom:26px;display:flex;gap:18px;flex-wrap:wrap}
-  h2{font-size:21px;margin:34px 0 12px;padding-top:10px;font-weight:700}
-  h3{font-size:17px;margin:26px 0 10px;font-weight:700}
-  p{margin:0 0 14px}
-  ul,ol{margin:0 0 16px 26px}
-  li{margin-bottom:6px}
+  /* ── Typography ─────────────────────────── */
+  .kicker{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);font-weight:700;margin-bottom:6px}
+  h1{font-size:30px;line-height:1.25;margin-bottom:10px;font-weight:700}
+  .page-meta{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-bottom:24px;flex-wrap:wrap}
+  .page-meta b{color:var(--ink)}
+  h2{font-size:20px;margin:34px 0 10px;padding-top:8px;font-weight:700}
+  h3{font-size:16px;margin:22px 0 8px;font-weight:700}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0 10px 24px}
+  li{margin:5px 0}
   b,strong{font-weight:650}
-  hr{border:none;border-top:1px solid var(--border);margin:30px 0}
-  table{border-collapse:collapse;width:100%;margin:14px 0 20px;font-size:14.5px}
-  th,td{border:1px solid var(--border);padding:9px 12px;text-align:left;vertical-align:top}
-  th{background:var(--sidebar-bg);font-weight:650}
-  img{max-width:100%;border:1px solid var(--border);border-radius:8px}
-  kbd{background:#f1f5f9;border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;padding:1px 6px;font-size:13px;font-family:inherit}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:var(--bg-soft);font-weight:600}
+  code{background:#eef4f1;padding:2px 6px;border-radius:4px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  hr{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+  /* ── Hero cards (welcome) ───────────────── */
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+  .hero-card{border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:#fff}
+  .hero-card .n{font-size:12px;font-weight:700;color:var(--green);letter-spacing:1px}
+  .hero-card h3{margin:4px 0;font-size:15px}
+  .hero-card p{font-size:13px;color:var(--muted);margin:0}
+
+  /* ── Callouts ───────────────────────────── */
+  .callout{background:var(--bg-soft);border-left:4px solid var(--green);padding:12px 16px;border-radius:0 6px 6px 0;margin:14px 0;font-size:14px}
+  .callout.warn{border-left-color:var(--gold)}
+  .callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+  .callout .label{font-weight:700;display:block}
+
+  /* ── Prompt blocks ──────────────────────── */
+  .prompt{position:relative;background:var(--code-bg);color:#dff3ea;border-radius:8px;padding:20px;margin:16px 0 10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;line-height:1.55}
+  .prompt .tag{position:absolute;top:-9px;left:14px;background:var(--green);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px}
+  .prompt button{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.12);color:#dff3ea;border:none;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+  .prompt button:hover{background:rgba(255,255,255,.28)}
+  .prompt pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;padding-right:54px}
+  .yousee{background:var(--gold-soft);border:1px solid var(--gold-border);border-radius:8px;padding:12px 16px;margin:10px 0 18px;font-size:14px}
+  .yousee b{color:var(--gold-ink)}
+
+  /* ── Screenshots ────────────────────────── */
+  figure.shot{margin:16px 0 22px}
+  figure.shot img{display:block;max-width:100%;border:1px solid var(--border);border-radius:10px;box-shadow:0 2px 10px rgba(28,43,39,.08);cursor:zoom-in}
+  figure.shot figcaption{font-size:13px;color:var(--muted);margin-top:7px}
+  figure.shot.missing img,figure.shot.missing figcaption{display:none}
+  figure.shot.missing::after{content:"📷  Screenshot coming soon — " attr(data-todo);display:block;border:2px dashed var(--border);border-radius:10px;padding:22px 18px;color:var(--muted);font-size:13.5px;background:var(--bg-soft)}
+  #lightbox{display:none;position:fixed;inset:0;background:rgba(15,31,27,.92);z-index:200;cursor:zoom-out;align-items:center;justify-content:center;padding:30px}
+  #lightbox.show{display:flex}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:8px}
 
   /* ── Steps ──────────────────────────────── */
   ol.steps{list-style:none;margin-left:0;counter-reset:step}
-  ol.steps>li{counter-increment:step;position:relative;padding:0 0 18px 46px;border-left:2px solid var(--border);margin:0 0 0 16px}
+  ol.steps>li{counter-increment:step;position:relative;padding:0 0 16px 44px;border-left:2px solid var(--border);margin:0 0 0 15px}
   ol.steps>li:last-child{border-left-color:transparent}
-  ol.steps>li::before{content:counter(step);position:absolute;left:-16px;top:-2px;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
-
-  /* ── Callouts ───────────────────────────── */
-  .callout{border-radius:8px;padding:14px 16px 14px 46px;margin:16px 0;position:relative;font-size:15px}
-  .callout::before{position:absolute;left:14px;top:13px;font-size:17px}
-  .callout p:last-child{margin-bottom:0}
-  .callout.info{background:var(--info-bg);border:1px solid #bfdbfe}.callout.info::before{content:"ℹ️"}
-  .callout.tip{background:var(--tip-bg);border:1px solid #bbf7d0}.callout.tip::before{content:"💡"}
-  .callout.warn{background:var(--warn-bg);border:1px solid #fde68a}.callout.warn::before{content:"⚠️"}
-  .callout .label{font-weight:700;display:block;margin-bottom:2px}
-
-  /* ── Prompt boxes (things you type to Ana) ─ */
-  .prompt{background:var(--prompt-bg);color:#e2e8f0;border-radius:10px;margin:14px 0 18px;overflow:hidden}
-  .prompt .bar{display:flex;justify-content:space-between;align-items:center;padding:7px 14px;background:rgba(255,255,255,.06);font-size:12px;color:#94a3b8;letter-spacing:.04em}
-  .prompt .bar button{background:#334155;color:#e2e8f0;border:none;border-radius:6px;padding:4px 12px;font-size:12px;cursor:pointer}
-  .prompt .bar button:hover{background:var(--accent)}
-  .prompt pre{padding:14px 16px;white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:15px;line-height:1.55}
-
-  /* ── "What you'll see" panels ───────────── */
-  .yousee{border:1px dashed #c7d2fe;background:#fafaff;border-radius:10px;padding:14px 16px;margin:0 0 18px}
-  .yousee .label{font-weight:700;color:var(--accent);font-size:13px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px}
-  .yousee p:last-child{margin-bottom:0}
+  ol.steps>li::before{content:counter(step);position:absolute;left:-15px;top:-2px;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
 
   /* ── Checkpoint ─────────────────────────── */
-  .checkpoint{border:1px solid #bbf7d0;background:var(--tip-bg);border-radius:10px;padding:16px 18px;margin:26px 0}
-  .checkpoint h4{font-size:15px;margin-bottom:10px}
-  .checkpoint label{display:flex;gap:10px;align-items:baseline;margin-bottom:8px;font-size:15px;cursor:pointer}
-  .checkpoint input{transform:translateY(2px)}
-  .checkpoint label.checked{color:#15803d;text-decoration:line-through}
+  .checkpoint{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:28px 0}
+  .checkpoint h4{margin:0 0 10px;color:var(--green-dark);font-size:15px}
+  .checkpoint label{display:flex;align-items:flex-start;gap:10px;padding:5px 0;font-size:14px;cursor:pointer}
+  .checkpoint input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;min-width:16px;cursor:pointer}
+  .checkpoint label.checked{color:var(--muted);text-decoration:line-through}
 
   /* ── Expandable ─────────────────────────── */
-  details{border:1px solid var(--border);border-radius:8px;margin:14px 0;background:#fff}
-  details summary{cursor:pointer;padding:11px 14px;font-weight:600;font-size:15px;list-style:none}
-  details summary::before{content:"▸ ";color:var(--accent)}
+  details{border:1px solid var(--border);border-radius:8px;margin:12px 0;background:#fff}
+  details summary{cursor:pointer;padding:11px 14px;font-weight:600;font-size:14.5px;list-style:none}
+  details summary::before{content:"▸ ";color:var(--green)}
   details[open] summary::before{content:"▾ "}
-  details .body{padding:2px 16px 14px}
+  details .body{padding:2px 16px 12px}
 
   /* ── Pager ──────────────────────────────── */
   .pager{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--border);padding-top:22px}
-  .pager a{flex:1;max-width:330px;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-decoration:none;color:var(--text)}
-  .pager a:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .pager a{flex:1;max-width:330px;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-decoration:none;color:var(--ink)}
+  .pager a:hover{border-color:var(--green);background:var(--green-soft)}
   .pager a .dir{font-size:12px;color:var(--muted);display:block}
-  .pager a .ttl{font-weight:600;color:var(--accent);font-size:15px}
+  .pager a .ttl{font-weight:600;color:var(--green-dark);font-size:15px}
   .pager a.next{text-align:right;margin-left:auto}
 
   .page{display:none}
-  .page.active{display:block;animation:fade .18s ease}
-  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-
+  .page.active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
   footer.pagefoot{margin-top:46px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);padding-top:16px}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:210}
+  .toast.show{opacity:1}
 
   @media(max-width:920px){
-    nav#sidebar{transform:translateX(-100%);transition:transform .2s;z-index:90;box-shadow:2px 0 14px rgba(0,0,0,.12)}
+    nav#sidebar{transform:translateX(-100%);transition:transform .2s;box-shadow:2px 0 14px rgba(0,0,0,.12)}
     nav#sidebar.open{transform:none}
-    main{margin-left:0;padding:28px 22px 70px}
-    header .menu-btn{display:block}
+    main{margin-left:0;padding:60px 22px 80px}
+    .menu-btn{display:block}
+    .hero-grid{grid-template-columns:1fr}
   }
   @media print{
-    header,nav#sidebar,.pager,.menu-btn{display:none!important}
-    .wrap{padding-top:0}main{margin-left:0}
+    nav#sidebar,.pager,.menu-btn,.toast{display:none!important}
+    main{margin-left:0}
     .page{display:block!important;page-break-after:always}
+    figure.shot.missing{display:none}
   }
 </style>
 </head>
 <body>
 
-<header>
-  <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
-  <div class="logo">TextQL <span>Workshops</span></div>
-  <div class="divider"></div>
-  <div class="ws-title">WORKSHOP TITLE</div>
-</header>
+<button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+<div class="layout">
+<nav id="sidebar">
+  <div class="brand">
+    <div class="logo">TextQL Workshop</div>
+    <div class="sub">WORKSHOP TITLE</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">Your progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+    <div class="progress-pct" id="ppct">0% complete</div>
+  </div>
+  <div id="navlist"></div>
+</nav>
 
-<div class="wrap">
-<nav id="sidebar"></nav>
 <main><div class="content" id="content">
 <!-- ════════════════ HOW TO USE THIS TEMPLATE ════════════════
   1. Copy this folder, rename it to your workshop slug (kebab-case).
-  2. Update <title>, the header .ws-title, WS_KEY in the script (unique per workshop), and the footer.
+  2. Update <title>, the sidebar .brand .sub, WS_KEY in the script (unique per workshop), and the footer.
   3. Replace the <section class="page"> blocks below. Each section needs:
-       id (unique, used in the URL hash), data-title (sidebar label), data-group (sidebar group header)
-  4. Components available (copy from self-service-analytics/index.html for live examples):
-       <ol class="steps">           numbered step circles
-       <div class="prompt">         dark "type this to Ana" box with Copy button
-       <div class="yousee">         "What you'll see" panel
-       <div class="callout info|tip|warn">  callout boxes
-       <div class="checkpoint">     checklist (auto-persists via localStorage)
-       <details>/<summary>          expandable FAQ items
-  5. Add a card for the new workshop in the repo root index.html catalog.
+       id (unique, used in #/<id> URLs), data-title (sidebar label), data-group (sidebar group header),
+       optional data-time (shown in nav)
+  4. Components available (copy live examples from self-service-analytics/index.html):
+       <div class="kicker">          small green eyebrow label above the h1
+       <ol class="steps">            numbered step circles
+       <div class="prompt">          dark "PROMPT" box with Copy button + toast
+       <div class="yousee">          gold "You'll see" panel
+       <figure class="shot">         screenshot w/ lightbox; missing files show a "coming soon" placeholder
+                                     (img onerror adds .missing; set data-todo to the capture description)
+       <div class="callout">         green callout; add .warn for gold
+       <div class="checkpoint">      outcome-based checklist (persists via localStorage, drives progress bar)
+       <details>/<summary>           expandable FAQ items
+       <div class="hero-grid">       module-overview cards for the welcome page
+  5. Screenshots go in assets/ — keep a SHOT_LIST.md of filename → what to capture.
+  6. Add a card for the new workshop in the repo root index.html catalog and the README table.
 -->
 
-<section class="page" id="welcome" data-title="Welcome" data-group="Introduction">
+<section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
+  <div class="kicker">Workshop</div>
   <h1>Workshop Title Here</h1>
-  <div class="page-meta"><span>⏱️ XX minutes</span><span>🎯 Level: Beginner</span><span>💻 Just a web browser</span></div>
+  <div class="page-meta"><span>⏱️ About <b>XX minutes</b></span><span>🎯 Level: Beginner</span><span>💻 Just a web browser</span></div>
   <p>One-paragraph pitch: what the learner will be able to do by the end.</p>
-  <h2>What you'll learn</h2>
-  <ul><li><b>Module 1:</b> …</li><li><b>Module 2:</b> …</li></ul>
-  <div class="callout info"><span class="label">Note</span><p>Who this is for, how to run it (self-paced vs. guided).</p></div>
+  <h2>What you'll be able to do</h2>
+  <div class="hero-grid">
+    <div class="hero-card"><div class="n">MODULE 1</div><h3>First skill</h3><p>One line.</p></div>
+    <div class="hero-card"><div class="n">MODULE 2</div><h3>Second skill</h3><p>One line.</p></div>
+  </div>
+  <div class="callout"><span class="label">Note</span><p>Who this is for; self-paced vs. guided.</p></div>
 </section>
 
-<section class="page" id="module1" data-title="Module 1 · First Module" data-group="Hands-On Modules">
-  <h1>Module 1 · First Module</h1>
-  <div class="page-meta"><span>⏱️ XX minutes</span><span>🎯 Goal: …</span></div>
-  <h2>Step 1 — Do the thing</h2>
-  <div class="prompt"><div class="bar"><span>TYPE THIS TO ANA</span><button>Copy</button></div>
-<pre>Example prompt the learner types, verbatim.</pre></div>
-  <div class="yousee"><span class="label">What you'll see</span><p>Describe the expected result so the learner knows they're on track.</p></div>
-  <div class="callout tip"><span class="label">Tip</span><p>A helpful aside.</p></div>
+<section class="page" id="m1" data-title="Module 1 · First Module" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 1</div>
+  <h1>First Module</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b></span><span>🎯 Goal: …</span></div>
+  <h2>1.1 · Do the thing</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Example prompt the learner types, verbatim. Adapt anything in [brackets].</pre></div>
+  <div class="yousee"><b>You'll see:</b> describe the expected result so the learner knows they're on track.</div>
+  <figure class="shot" data-todo="what to capture for this step">
+    <img src="assets/m1-example.png" alt="Example screenshot" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Caption shown under the screenshot.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
-    <label><input type="checkbox"> I did the thing</label>
+    <label><input type="checkbox"> An outcome the learner can verify happened</label>
   </div>
 </section>
 
-<section class="page" id="wrapup" data-title="Wrap-Up" data-group="Wrap-Up">
+<section class="page" id="wrapup" data-title="Wrap-Up" data-group="Reference">
+  <div class="kicker">Wrap-Up</div>
   <h1>Wrap-Up 🎉</h1>
-  <p>Recap what was learned, link next steps, and point to the cheat sheet.</p>
+  <p>Recap, capstone prompt, cheat-sheet table, next steps.</p>
 </section>
 
 <div class="pager" id="pager"></div>
-<footer class="pagefoot">© TextQL · Workshop: WORKSHOP TITLE · Examples are illustrative — adapt them to your own data.</footer>
+<footer class="pagefoot">© TextQL · Workshop: WORKSHOP TITLE · Example prompts are illustrative — adapt them to your own data.</footer>
 </div></main>
 </div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+<div id="lightbox" onclick="this.classList.remove('show')"><img src="" alt=""></div>
 
 <script>
 (function(){
   const WS_KEY='textql-ws-CHANGE-ME';
   const pages=[...document.querySelectorAll('section.page')];
-  const sidebar=document.getElementById('sidebar');
+  const navlist=document.getElementById('navlist');
   const pager=document.getElementById('pager');
 
   // Build sidebar nav grouped by data-group
@@ -202,40 +233,63 @@
   pages.forEach(p=>{
     if(p.dataset.group!==group){
       group=p.dataset.group;
-      const g=document.createElement('div');g.className='group-label';g.textContent=group;sidebar.appendChild(g);
+      const g=document.createElement('div');g.className='group-label';g.textContent=group;navlist.appendChild(g);
     }
-    const a=document.createElement('a');a.href='#/'+p.id;a.dataset.page=p.id;
-    a.innerHTML='<span class="num">'+(num++)+'</span><span>'+p.dataset.title+'</span>';
-    sidebar.appendChild(a);
+    const a=document.createElement('a');a.className='nav-item';a.href='#/'+p.id;a.dataset.page=p.id;
+    a.innerHTML='<span class="num"><span>'+(num++)+'</span></span><span>'+p.dataset.title.replace(/^Module \d+ · /,'')+'</span>'+
+      (p.dataset.time?'<span class="time">'+p.dataset.time+'</span>':'');
+    navlist.appendChild(a);
   });
 
   function show(id){
     let page=pages.find(p=>p.id===id)||pages[0];
     pages.forEach(p=>p.classList.toggle('active',p===page));
-    sidebar.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.page===page.id));
+    navlist.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.page===page.id));
     const i=pages.indexOf(page);
     pager.innerHTML=
       (i>0?'<a class="prev" href="#/'+pages[i-1].id+'"><span class="dir">← Previous</span><span class="ttl">'+pages[i-1].dataset.title+'</span></a>':'<span></span>')+
       (i<pages.length-1?'<a class="next" href="#/'+pages[i+1].id+'"><span class="dir">Next →</span><span class="ttl">'+pages[i+1].dataset.title+'</span></a>':'');
-    document.querySelector('main').scrollTo?.(0,0);window.scrollTo(0,0);
-    sidebar.classList.remove('open');
+    window.scrollTo(0,0);
+    document.getElementById('sidebar').classList.remove('open');
   }
   const hashId=()=>location.hash.replace(/^#\/?/,'');
   window.addEventListener('hashchange',()=>show(hashId()));
   show(hashId());
 
-  // Copy buttons
+  // Copy buttons + toast
   document.querySelectorAll('.prompt').forEach(box=>{
     const btn=box.querySelector('button');
     btn.addEventListener('click',()=>{
       navigator.clipboard.writeText(box.querySelector('pre').textContent.trim()).then(()=>{
-        btn.textContent='Copied ✓';setTimeout(()=>btn.textContent='Copy',1600);
+        const t=document.getElementById('toast');
+        t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400);
       });
     });
   });
 
-  // Checkpoint persistence (localStorage)
+  // Screenshot lightbox
+  const lb=document.getElementById('lightbox');
+  document.querySelectorAll('figure.shot img').forEach(img=>{
+    img.addEventListener('click',()=>{lb.querySelector('img').src=img.src;lb.classList.add('show');});
+  });
+
+  // Checkpoint persistence + progress
   let saved={};try{saved=JSON.parse(localStorage.getItem(WS_KEY)||'{}')}catch(e){}
+  const trackable=pages.filter(p=>p.querySelector('.checkpoint input'));
+  function refreshProgress(){
+    let done=0;
+    trackable.forEach(p=>{
+      const boxes=[...p.querySelectorAll('.checkpoint input')];
+      const allDone=boxes.length&&boxes.every(b=>b.checked);
+      const link=navlist.querySelector('a[data-page="'+p.id+'"]');
+      link.classList.toggle('done',allDone);
+      if(allDone){link.querySelector('.num').innerHTML='✓';done++;}
+      else{link.querySelector('.num').innerHTML='<span>'+pages.indexOf(p)+'</span>';}
+    });
+    const pct=trackable.length?Math.round(100*done/trackable.length):0;
+    document.getElementById('pfill').style.width=pct+'%';
+    document.getElementById('ppct').textContent=pct+'% complete';
+  }
   document.querySelectorAll('.checkpoint input[type=checkbox]').forEach((cb,i)=>{
     cb.checked=!!saved[i];
     cb.closest('label').classList.toggle('checked',cb.checked);
@@ -243,22 +297,10 @@
       saved[i]=cb.checked;
       cb.closest('label').classList.toggle('checked',cb.checked);
       try{localStorage.setItem(WS_KEY,JSON.stringify(saved))}catch(e){}
-      // mark nav item done if all its page's boxes are checked
-      pages.forEach(p=>{
-        const boxes=[...p.querySelectorAll('.checkpoint input')];
-        if(boxes.length){
-          const link=sidebar.querySelector('a[data-page="'+p.id+'"]');
-          link.classList.toggle('done',boxes.every(b=>b.checked));
-        }
-      });
+      refreshProgress();
     });
   });
-  // initial done-state
-  pages.forEach(p=>{
-    const boxes=[...p.querySelectorAll('.checkpoint input')];
-    if(boxes.length&&boxes.every(b=>b.checked))
-      sidebar.querySelector('a[data-page="'+p.id+'"]').classList.add('done');
-  });
+  refreshProgress();
 })();
 </script>
 </body>

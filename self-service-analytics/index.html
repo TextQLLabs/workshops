@@ -6,517 +6,780 @@
 <title>Self-Service Analytics for Business Users · TextQL Workshops</title>
 <style>
   :root{
-    --header-bg:#0b1220;
-    --accent:#4f46e5;
-    --accent-soft:#eef2ff;
-    --sidebar-bg:#f8fafc;
-    --border:#e2e8f0;
-    --text:#1e293b;
-    --muted:#64748b;
-    --info-bg:#eff6ff;   --info-border:#3b82f6;
-    --tip-bg:#f0fdf4;    --tip-border:#22c55e;
-    --warn-bg:#fffbeb;   --warn-border:#f59e0b;
-    --prompt-bg:#0f172a;
+    --green:#58a68d; --green-dark:#2f6f5c; --green-soft:#e9f2ee;
+    --ink:#1c2b27; --muted:#5d6b67;
+    --bg:#ffffff; --bg-soft:#f4f8f6; --border:#dde7e3; --code-bg:#0f1f1b;
+    --gold:#e9c46a; --gold-soft:#fdf9ee; --gold-border:#f0e4c0; --gold-ink:#8a6d1f;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--text);background:#fff;font-size:16px;line-height:1.65}
-
-  /* ── Header ─────────────────────────────── */
-  header{position:fixed;top:0;left:0;right:0;height:56px;background:var(--header-bg);color:#fff;display:flex;align-items:center;padding:0 20px;z-index:100;gap:14px}
-  header .logo{font-weight:700;font-size:15px;letter-spacing:.3px;white-space:nowrap}
-  header .logo span{color:#a5b4fc}
-  header .divider{width:1px;height:24px;background:rgba(255,255,255,.25)}
-  header .ws-title{font-size:14px;color:#cbd5e1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  header .menu-btn{display:none;background:none;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:4px 10px;font-size:14px;cursor:pointer}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.6}
+  a{color:var(--green-dark)}
 
   /* ── Layout ─────────────────────────────── */
-  .wrap{display:flex;padding-top:56px;min-height:100vh}
-  nav#sidebar{width:300px;min-width:300px;background:var(--sidebar-bg);border-right:1px solid var(--border);padding:24px 0 60px;position:fixed;top:56px;bottom:0;overflow-y:auto}
-  main{margin-left:300px;flex:1;display:flex;justify-content:center;padding:36px 48px 80px}
-  .content{max-width:840px;width:100%}
+  .layout{display:flex;min-height:100vh}
+  nav#sidebar{width:300px;min-width:300px;background:var(--bg-soft);border-right:1px solid var(--border);padding:24px 0 60px;position:fixed;top:0;bottom:0;overflow-y:auto;z-index:40}
+  main{margin-left:300px;flex:1;display:flex;justify-content:center;padding:44px 56px 110px}
+  .content{max-width:860px;width:100%}
 
-  /* ── Sidebar nav ────────────────────────── */
-  nav .group-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:18px 22px 6px}
-  nav a{display:flex;gap:10px;align-items:baseline;padding:8px 22px;color:var(--text);text-decoration:none;font-size:14px;border-left:3px solid transparent}
-  nav a .num{color:var(--muted);font-size:12px;min-width:18px;font-variant-numeric:tabular-nums}
-  nav a:hover{background:#eef2f7}
-  nav a.active{background:var(--accent-soft);border-left-color:var(--accent);font-weight:600;color:var(--accent)}
-  nav a.active .num{color:var(--accent)}
-  nav a.done .num::after{content:" ✓";color:#16a34a}
+  /* ── Sidebar ────────────────────────────── */
+  .brand{padding:0 24px 16px;border-bottom:1px solid var(--border)}
+  .brand .logo{font-weight:800;font-size:18px;color:var(--green-dark);letter-spacing:.5px}
+  .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .progress-wrap{padding:14px 24px;border-bottom:1px solid var(--border)}
+  .progress-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+  .progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:var(--green);border-radius:4px;transition:width .4s}
+  .progress-pct{font-size:12px;color:var(--green-dark);font-weight:600;margin-top:4px}
+  nav .group-label{padding:16px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  nav a.nav-item{display:flex;align-items:center;gap:10px;padding:9px 24px;font-size:14px;color:var(--ink);text-decoration:none;border-left:3px solid transparent}
+  nav a.nav-item:hover{background:var(--green-soft)}
+  nav a.nav-item.active{border-left-color:var(--green);background:var(--green-soft);font-weight:600}
+  .nav-item .num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;min-width:22px;border-radius:50%;border:1.5px solid var(--muted);font-size:11px;font-weight:700;color:var(--muted)}
+  .nav-item.done .num{background:var(--green);border-color:var(--green);color:#fff;font-size:12px}
+  .nav-item .time{margin-left:auto;font-size:11px;color:var(--muted)}
+  .menu-btn{display:none;position:fixed;top:14px;left:14px;z-index:41;background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer}
 
-  /* ── Content typography ─────────────────── */
-  .breadcrumb{font-size:13px;color:var(--muted);margin-bottom:14px}
-  .breadcrumb a{color:var(--accent);text-decoration:none}
-  h1{font-size:30px;line-height:1.25;margin-bottom:6px;font-weight:700}
-  .page-meta{color:var(--muted);font-size:14px;margin-bottom:26px;display:flex;gap:18px;flex-wrap:wrap}
-  h2{font-size:21px;margin:34px 0 12px;padding-top:10px;font-weight:700}
-  h3{font-size:17px;margin:26px 0 10px;font-weight:700}
-  p{margin:0 0 14px}
-  ul,ol{margin:0 0 16px 26px}
-  li{margin-bottom:6px}
+  /* ── Typography ─────────────────────────── */
+  .kicker{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);font-weight:700;margin-bottom:6px}
+  h1{font-size:30px;line-height:1.25;margin-bottom:10px;font-weight:700}
+  .page-meta{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-bottom:24px;flex-wrap:wrap}
+  .page-meta b{color:var(--ink)}
+  h2{font-size:20px;margin:34px 0 10px;padding-top:8px;font-weight:700}
+  h3{font-size:16px;margin:22px 0 8px;font-weight:700}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0 10px 24px}
+  li{margin:5px 0}
   b,strong{font-weight:650}
-  hr{border:none;border-top:1px solid var(--border);margin:30px 0}
-  table{border-collapse:collapse;width:100%;margin:14px 0 20px;font-size:14.5px}
-  th,td{border:1px solid var(--border);padding:9px 12px;text-align:left;vertical-align:top}
-  th{background:var(--sidebar-bg);font-weight:650}
-  img{max-width:100%;border:1px solid var(--border);border-radius:8px}
-  kbd{background:#f1f5f9;border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;padding:1px 6px;font-size:13px;font-family:inherit}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:var(--bg-soft);font-weight:600}
+  code{background:#eef4f1;padding:2px 6px;border-radius:4px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  hr{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+  /* ── Hero cards (welcome) ───────────────── */
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+  .hero-card{border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:#fff}
+  .hero-card .n{font-size:12px;font-weight:700;color:var(--green);letter-spacing:1px}
+  .hero-card h3{margin:4px 0;font-size:15px}
+  .hero-card p{font-size:13px;color:var(--muted);margin:0}
+
+  /* ── Callouts ───────────────────────────── */
+  .callout{background:var(--bg-soft);border-left:4px solid var(--green);padding:12px 16px;border-radius:0 6px 6px 0;margin:14px 0;font-size:14px}
+  .callout.warn{border-left-color:var(--gold)}
+  .callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+  .callout .label{font-weight:700;display:block}
+
+  /* ── Prompt blocks ──────────────────────── */
+  .prompt{position:relative;background:var(--code-bg);color:#dff3ea;border-radius:8px;padding:20px;margin:16px 0 10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;line-height:1.55}
+  .prompt .tag{position:absolute;top:-9px;left:14px;background:var(--green);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px}
+  .prompt button{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.12);color:#dff3ea;border:none;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+  .prompt button:hover{background:rgba(255,255,255,.28)}
+  .prompt pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;padding-right:54px}
+  .yousee{background:var(--gold-soft);border:1px solid var(--gold-border);border-radius:8px;padding:12px 16px;margin:10px 0 18px;font-size:14px}
+  .yousee b{color:var(--gold-ink)}
+
+  /* ── Screenshots ────────────────────────── */
+  figure.shot{margin:16px 0 22px}
+  figure.shot img{display:block;max-width:100%;border:1px solid var(--border);border-radius:10px;box-shadow:0 2px 10px rgba(28,43,39,.08);cursor:zoom-in}
+  figure.shot figcaption{font-size:13px;color:var(--muted);margin-top:7px}
+  figure.shot.missing img,figure.shot.missing figcaption{display:none}
+  figure.shot.missing::after{content:"📷  Screenshot coming soon — " attr(data-todo);display:block;border:2px dashed var(--border);border-radius:10px;padding:22px 18px;color:var(--muted);font-size:13.5px;background:var(--bg-soft)}
+  #lightbox{display:none;position:fixed;inset:0;background:rgba(15,31,27,.92);z-index:200;cursor:zoom-out;align-items:center;justify-content:center;padding:30px}
+  #lightbox.show{display:flex}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:8px}
 
   /* ── Steps ──────────────────────────────── */
   ol.steps{list-style:none;margin-left:0;counter-reset:step}
-  ol.steps>li{counter-increment:step;position:relative;padding:0 0 18px 46px;border-left:2px solid var(--border);margin:0 0 0 16px}
+  ol.steps>li{counter-increment:step;position:relative;padding:0 0 16px 44px;border-left:2px solid var(--border);margin:0 0 0 15px}
   ol.steps>li:last-child{border-left-color:transparent}
-  ol.steps>li::before{content:counter(step);position:absolute;left:-16px;top:-2px;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
-
-  /* ── Callouts ───────────────────────────── */
-  .callout{border-radius:8px;padding:14px 16px 14px 46px;margin:16px 0;position:relative;font-size:15px}
-  .callout::before{position:absolute;left:14px;top:13px;font-size:17px}
-  .callout p:last-child{margin-bottom:0}
-  .callout.info{background:var(--info-bg);border:1px solid #bfdbfe}.callout.info::before{content:"ℹ️"}
-  .callout.tip{background:var(--tip-bg);border:1px solid #bbf7d0}.callout.tip::before{content:"💡"}
-  .callout.warn{background:var(--warn-bg);border:1px solid #fde68a}.callout.warn::before{content:"⚠️"}
-  .callout .label{font-weight:700;display:block;margin-bottom:2px}
-
-  /* ── Prompt boxes (things you type to Ana) ─ */
-  .prompt{background:var(--prompt-bg);color:#e2e8f0;border-radius:10px;margin:14px 0 18px;overflow:hidden}
-  .prompt .bar{display:flex;justify-content:space-between;align-items:center;padding:7px 14px;background:rgba(255,255,255,.06);font-size:12px;color:#94a3b8;letter-spacing:.04em}
-  .prompt .bar button{background:#334155;color:#e2e8f0;border:none;border-radius:6px;padding:4px 12px;font-size:12px;cursor:pointer}
-  .prompt .bar button:hover{background:var(--accent)}
-  .prompt pre{padding:14px 16px;white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:15px;line-height:1.55}
-
-  /* ── "What you'll see" panels ───────────── */
-  .yousee{border:1px dashed #c7d2fe;background:#fafaff;border-radius:10px;padding:14px 16px;margin:0 0 18px}
-  .yousee .label{font-weight:700;color:var(--accent);font-size:13px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px}
-  .yousee p:last-child{margin-bottom:0}
+  ol.steps>li::before{content:counter(step);position:absolute;left:-15px;top:-2px;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
 
   /* ── Checkpoint ─────────────────────────── */
-  .checkpoint{border:1px solid #bbf7d0;background:var(--tip-bg);border-radius:10px;padding:16px 18px;margin:26px 0}
-  .checkpoint h4{font-size:15px;margin-bottom:10px}
-  .checkpoint label{display:flex;gap:10px;align-items:baseline;margin-bottom:8px;font-size:15px;cursor:pointer}
-  .checkpoint input{transform:translateY(2px)}
-  .checkpoint label.checked{color:#15803d;text-decoration:line-through}
+  .checkpoint{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:28px 0}
+  .checkpoint h4{margin:0 0 10px;color:var(--green-dark);font-size:15px}
+  .checkpoint label{display:flex;align-items:flex-start;gap:10px;padding:5px 0;font-size:14px;cursor:pointer}
+  .checkpoint input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;min-width:16px;cursor:pointer}
+  .checkpoint label.checked{color:var(--muted);text-decoration:line-through}
 
   /* ── Expandable ─────────────────────────── */
-  details{border:1px solid var(--border);border-radius:8px;margin:14px 0;background:#fff}
-  details summary{cursor:pointer;padding:11px 14px;font-weight:600;font-size:15px;list-style:none}
-  details summary::before{content:"▸ ";color:var(--accent)}
+  details{border:1px solid var(--border);border-radius:8px;margin:12px 0;background:#fff}
+  details summary{cursor:pointer;padding:11px 14px;font-weight:600;font-size:14.5px;list-style:none}
+  details summary::before{content:"▸ ";color:var(--green)}
   details[open] summary::before{content:"▾ "}
-  details .body{padding:2px 16px 14px}
+  details .body{padding:2px 16px 12px}
 
   /* ── Pager ──────────────────────────────── */
   .pager{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--border);padding-top:22px}
-  .pager a{flex:1;max-width:330px;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-decoration:none;color:var(--text)}
-  .pager a:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .pager a{flex:1;max-width:330px;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-decoration:none;color:var(--ink)}
+  .pager a:hover{border-color:var(--green);background:var(--green-soft)}
   .pager a .dir{font-size:12px;color:var(--muted);display:block}
-  .pager a .ttl{font-weight:600;color:var(--accent);font-size:15px}
+  .pager a .ttl{font-weight:600;color:var(--green-dark);font-size:15px}
   .pager a.next{text-align:right;margin-left:auto}
 
   .page{display:none}
-  .page.active{display:block;animation:fade .18s ease}
-  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-
+  .page.active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
   footer.pagefoot{margin-top:46px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);padding-top:16px}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:210}
+  .toast.show{opacity:1}
 
   @media(max-width:920px){
-    nav#sidebar{transform:translateX(-100%);transition:transform .2s;z-index:90;box-shadow:2px 0 14px rgba(0,0,0,.12)}
+    nav#sidebar{transform:translateX(-100%);transition:transform .2s;box-shadow:2px 0 14px rgba(0,0,0,.12)}
     nav#sidebar.open{transform:none}
-    main{margin-left:0;padding:28px 22px 70px}
-    header .menu-btn{display:block}
+    main{margin-left:0;padding:60px 22px 80px}
+    .menu-btn{display:block}
+    .hero-grid{grid-template-columns:1fr}
   }
   @media print{
-    header,nav#sidebar,.pager,.menu-btn{display:none!important}
-    .wrap{padding-top:0}main{margin-left:0}
+    nav#sidebar,.pager,.menu-btn,.toast{display:none!important}
+    main{margin-left:0}
     .page{display:block!important;page-break-after:always}
+    figure.shot.missing{display:none}
   }
 </style>
 </head>
 <body>
 
-<header>
-  <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
-  <div class="logo">TextQL <span>Workshops</span></div>
-  <div class="divider"></div>
-  <div class="ws-title">Self-Service Analytics for Business Users</div>
-</header>
+<button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+<div class="layout">
+<nav id="sidebar">
+  <div class="brand">
+    <div class="logo">TextQL Workshop</div>
+    <div class="sub">Self-Service Analytics for Business Users</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">Your progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+    <div class="progress-pct" id="ppct">0% complete</div>
+  </div>
+  <div id="navlist"></div>
+</nav>
 
-<div class="wrap">
-<nav id="sidebar"></nav>
 <main><div class="content" id="content">
 
-<!-- ════════════════ 0 · WELCOME ════════════════ -->
-<section class="page" id="welcome" data-title="Welcome" data-group="Introduction">
+<!-- ════════════════ WELCOME ════════════════ -->
+<section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
+  <div class="kicker">Workshop</div>
   <h1>Self-Service Analytics for Business Users</h1>
-  <div class="page-meta"><span>⏱️ 60–90 minutes</span><span>🎯 Level: Beginner — no technical background needed</span><span>💻 Just a web browser</span></div>
+  <div class="page-meta"><span>⏱️ About <b>2 hours</b> (or pick individual modules)</span><span>🎯 <b>No SQL</b>, no data background needed</span><span>💻 Just a web browser</span></div>
 
-  <p>Welcome! In this workshop you'll learn how to get answers from your company's data <b>by simply asking questions in plain English</b> — no spreadsheets to wrangle, no dashboards to hunt through, and absolutely no code.</p>
-  <p>You'll work with <b>Ana</b>, TextQL's AI data analyst. Think of Ana as a skilled analyst who sits next to you, has already studied your company's data, and is available 24/7. You ask a question the way you'd ask a colleague; Ana does the technical work and brings back the answer — with her work shown.</p>
+  <p>A hands-on workshop that teaches business users — <b>no SQL, no data engineering background</b> — how to answer their own questions, build their own charts and dashboards, and automate their own reporting with TextQL's analytics agent, <b>Ana</b>.</p>
+  <p>It runs like an AWS workshop: short modules, each with a goal, copy-paste prompts, what you'll see, and a checkpoint before moving on.</p>
 
-  <h2>What you'll learn</h2>
-  <ul>
-    <li><b>Module 1:</b> Ask your first question and get a real answer</li>
-    <li><b>Module 2:</b> Refine answers with follow-up questions, like a conversation</li>
-    <li><b>Module 3:</b> Turn answers into charts and visuals</li>
-    <li><b>Module 4:</b> Understand <i>why</i> you can trust the numbers</li>
-    <li><b>Module 5:</b> Save your work and share it with your team</li>
-    <li><b>Module 6:</b> Patterns for asking great questions (the cheat sheet)</li>
-  </ul>
-
-  <h2>Who this is for</h2>
-  <p>Anyone who needs answers from data to do their job: operations, finance, marketing, sales, customer service, HR, leadership. If you can write an email, you can do everything in this workshop.</p>
-
-  <div class="callout info"><span class="label">Two ways to run this workshop</span>
-    <p><b>Self-paced:</b> work through it on your own, top to bottom — every step tells you exactly what to type.<br>
-    <b>Guided:</b> a TextQL team member or your internal champion leads the group, and you follow along hands-on.</p>
+  <h2>What you'll be able to do</h2>
+  <div class="hero-grid">
+    <div class="hero-card"><div class="n">MODULE 1</div><h3>Ask in plain English</h3><p>Real business questions, refined conversationally — no SQL.</p></div>
+    <div class="hero-card"><div class="n">MODULE 2</div><h3>Trust the answer</h3><p>Audit how every number was produced; reconcile against what you know.</p></div>
+    <div class="hero-card"><div class="n">MODULE 3</div><h3>Visualize and go deeper</h3><p>Charts, segmentation, root-cause, trends, and forecasts.</p></div>
+    <div class="hero-card"><div class="n">MODULE 4</div><h3>Create shareable assets</h3><p>Reports, live dashboards, and exports from any analysis.</p></div>
+    <div class="hero-card"><div class="n">MODULE 5</div><h3>Automate it</h3><p>Scheduled playbooks and proactive feed agents.</p></div>
+    <div class="hero-card"><div class="n">MODULE 6</div><h3>Make it smarter</h3><p>Teach the platform your definitions so everyone's answers improve.</p></div>
   </div>
 
-  <div class="callout tip"><span class="label">A note on the examples</span>
-    <p>The example questions in this workshop use everyday business terms like <i>orders, customers, revenue,</i> and <i>region</i>. Your data has its own vocabulary — <b>swap in the metrics and categories your team actually uses</b>. The patterns work the same.</p>
-  </div>
-</section>
-
-<!-- ════════════════ 1 · BEFORE YOU BEGIN ════════════════ -->
-<section class="page" id="setup" data-title="Before You Begin" data-group="Introduction">
-  <h1>Before You Begin</h1>
-  <div class="page-meta"><span>⏱️ 5 minutes</span></div>
-
-  <h2>What you need</h2>
-  <ul>
-    <li>A web browser (Chrome, Edge, Safari, or Firefox)</li>
-    <li>Your TextQL workspace address and login — provided by your administrator or your TextQL team</li>
-    <li>That's it. Nothing to install.</li>
-  </ul>
-
-  <h2>Log in and look around</h2>
-  <ol class="steps">
-    <li><b>Open your workspace.</b> Go to the TextQL web address your team gave you and sign in (most teams use their normal company login).</li>
-    <li><b>Find the chat.</b> The heart of TextQL is a chat with Ana. Look for a <b>“New chat”</b> or <b>“Ask Ana”</b> button — it's the most prominent thing on the screen.</li>
-    <li><b>Notice your history.</b> A sidebar lists your past conversations (called <i>threads</i>). Every conversation is saved automatically, so you can always come back to an answer.</li>
+  <h2>How to use this workshop</h2>
+  <ol>
+    <li>Read <b>Meet Ana</b> (5 minutes) so you know what's happening behind the chat.</li>
+    <li>Complete <b>Module 0</b> to get connected and oriented.</li>
+    <li>Work through modules <b>1 → 6 in order</b> — each builds on the last.</li>
+    <li>Every step has a <b>Prompt</b> block — click <b>Copy</b>, paste into Ana, and adapt anything in <code>[brackets]</code> to your data.</li>
+    <li>Tick off the <b>Checkpoints</b> — your progress is saved in this browser.</li>
   </ol>
 
-  <div class="callout info"><span class="label">What can Ana actually see?</span>
-    <p>Ana is connected to the data sources your organization chose to connect, and she respects your company's access rules — you can only get answers from data you're allowed to see. If you're curious what's available, you'll ask Ana directly in Module 1.</p>
+  <div class="callout"><span class="label">Two ways to run it</span>
+    <p><b>Self-paced:</b> work top to bottom on your own — every step tells you exactly what to type. <b>Guided:</b> a TextQL team member or your internal champion leads the group while everyone follows hands-on in their own workspace.</p>
   </div>
-
-  <div class="callout warn"><span class="label">If you can't log in</span>
-    <p>Contact your workspace administrator or your TextQL contact. You need a working login before the next module — everything from here on is hands-on.</p>
-  </div>
-
-  <div class="checkpoint"><h4>✅ Checkpoint — ready to go when you can:</h4>
-    <label><input type="checkbox"> I'm logged in to my TextQL workspace</label>
-    <label><input type="checkbox"> I can see where to start a new chat with Ana</label>
+  <div class="callout"><span class="label">A note on the examples</span>
+    <p>The example prompts use a generic sales/usage framing so they work in most environments. The <b>method</b> is what matters — it generalizes to any domain. Building the governed semantic layer itself is covered in the companion <a href="https://github.com/TextQLLabs/ontology-workshop-guide" target="_blank" rel="noopener">ontology workshop</a>.</p>
   </div>
 </section>
 
-<!-- ════════════════ 2 · MEET ANA ════════════════ -->
-<section class="page" id="meet-ana" data-title="Meet Ana" data-group="Introduction">
+<!-- ════════════════ MEET ANA ════════════════ -->
+<section class="page" id="meet-ana" data-title="Meet Ana" data-group="Getting Started">
+  <div class="kicker">Getting Started</div>
   <h1>Meet Ana, Your Data Analyst</h1>
-  <div class="page-meta"><span>⏱️ 5 minutes · reading only</span></div>
+  <div class="page-meta"><span>⏱️ <b>5 min</b> · reading only</span></div>
 
-  <p>Before you type anything, it helps to know what's actually happening on the other side of the chat — in plain terms.</p>
+  <p>Think of Ana as a skilled analyst who sits next to you, has already studied your company's data, and is available 24/7. The core idea of self-service analytics: <b>you bring the business question; Ana brings the SQL, the statistics, and the charts.</b></p>
 
   <h2>What Ana does with your question</h2>
-  <p>When you ask something like <i>“How did sales do last quarter?”</i>, Ana:</p>
   <ol>
-    <li><b>Figures out what you mean.</b> She knows your company's definitions — what counts as a “sale,” when your fiscal quarter starts, which system is the source of truth.</li>
-    <li><b>Does the analyst work.</b> She finds the right data, writes and runs the technical queries, and double-checks the result. You'll see her narrate her steps as she goes.</li>
-    <li><b>Answers in plain English.</b> You get the number, the context, and often a chart — plus the full detail of <i>how</i> she got it, if you ever want to look.</li>
+    <li><b>Figures out what you mean.</b> She knows your company's definitions — what counts as a "sale," when your fiscal quarter starts, which system is the source of truth.</li>
+    <li><b>Does the analyst work.</b> She finds the right data, writes and runs the technical queries, and double-checks the result — narrating her steps as she goes.</li>
+    <li><b>Answers in plain English.</b> You get the number, the context, often a chart — plus the full detail of <i>how</i> she got it, whenever you want to look.</li>
   </ol>
 
   <h2>Why her answers are consistent</h2>
-  <p>Behind the scenes, your organization maintains something called an <b>ontology</b> — think of it as <b>your company's official dictionary for data</b>. It records, for example, exactly what “revenue” means, how “active customer” is calculated, and which numbers are the governed, agreed-upon versions. Ana always answers from that dictionary, which means:</p>
+  <p>Behind the scenes, your organization maintains an <b>ontology</b> — think of it as <b>your company's official dictionary for data</b>. It records exactly what "revenue" means, how "active customer" is calculated, and which numbers are the governed, agreed-upon versions. Because Ana answers from that dictionary:</p>
   <ul>
-    <li>You and your colleague asking the same question get <b>the same answer</b>.</li>
+    <li>You and a colleague asking the same question get <b>the same answer</b>.</li>
     <li>The answer matches what finance or analytics would have produced by hand.</li>
     <li>When a definition changes, it changes in one place — and everyone's answers update with it.</li>
   </ul>
-  <p>You'll see this in action in <b>Module 4: Can I Trust This Number?</b></p>
+  <p>You'll verify this yourself in <b>Module 2</b>, and in <b>Module 6</b> you'll add to the dictionary.</p>
 
   <h2>Three habits that make this easy</h2>
   <table>
     <tr><th>Habit</th><th>Why it helps</th></tr>
-    <tr><td><b>Ask like you'd ask a person.</b></td><td>Full, natural questions work better than keyword fragments. “Which products grew fastest this year?” beats “product growth.”</td></tr>
-    <tr><td><b>It's a conversation, not a search box.</b></td><td>Don't try to cram everything into one perfect question. Ask, look, then refine: “now just the West region,” “compare to last year.”</td></tr>
-    <tr><td><b>When unsure, ask Ana about the data itself.</b></td><td>“What data do you have about customers?” is a perfectly good question — and a great way to discover what's possible.</td></tr>
+    <tr><td><b>Ask like you'd ask a person.</b></td><td>Full, natural questions beat keyword fragments. "Which products grew fastest this year?" beats "product growth."</td></tr>
+    <tr><td><b>It's a conversation, not a search box.</b></td><td>Don't craft one perfect question. Ask, look, then refine: "now just the West region," "compare to last year."</td></tr>
+    <tr><td><b>When unsure, ask about the data itself.</b></td><td>"What data do you have about customers?" is a perfectly good question — and the best way to discover what's possible.</td></tr>
   </table>
 </section>
 
-<!-- ════════════════ 3 · MODULE 1 ════════════════ -->
-<section class="page" id="module1" data-title="Module 1 · Your First Question" data-group="Hands-On Modules">
-  <h1>Module 1 · Ask Your First Question</h1>
-  <div class="page-meta"><span>⏱️ 10 minutes</span><span>🎯 Goal: get a real answer from your data</span></div>
+<!-- ════════════════ MODULE 0 ════════════════ -->
+<section class="page" id="m0" data-title="Module 0 · Setup & Orientation" data-group="Getting Started" data-time="10 min">
+  <div class="kicker">Module 0</div>
+  <h1>Setup &amp; Orientation</h1>
+  <div class="page-meta"><span>⏱️ <b>10 min</b></span><span>🎯 Goal: signed in, connected to a data source, and oriented — so every later module is pure analysis</span></div>
 
-  <h2>Step 1 — See what's available</h2>
-  <p>Start by asking Ana what she can work with. This is the best icebreaker — it tells you what's possible before you ask anything specific.</p>
-  <div class="prompt"><div class="bar"><span>TYPE THIS TO ANA</span><button>Copy</button></div>
-<pre>What data do you have access to? Give me a quick plain-English tour of what I could ask about.</pre></div>
-  <div class="yousee"><span class="label">What you'll see</span>
-    <p>Ana describes the connected data areas in business terms — for example sales, customers, products, support tickets — rather than technical table names. Pick the area most relevant to your job; you'll use it for the rest of the workshop.</p>
-  </div>
-
-  <h2>Step 2 — Ask your first real question</h2>
-  <p>Now ask one simple, concrete question about a number you care about. Use one of these as a pattern and swap in your own terms:</p>
-  <div class="prompt"><div class="bar"><span>TYPE THIS TO ANA (PICK ONE & ADAPT)</span><button>Copy</button></div>
-<pre>How many orders did we have last month?</pre></div>
-  <div class="prompt"><div class="bar"><span>OR</span><button>Copy</button></div>
-<pre>What was our total revenue last quarter?</pre></div>
-  <div class="prompt"><div class="bar"><span>OR</span><button>Copy</button></div>
-<pre>How many new customers did we add this year?</pre></div>
-
-  <h2>Step 3 — Watch Ana work</h2>
-  <p>Don't skip this part — it's the most important 30 seconds of the workshop. While Ana works, she <b>narrates her steps</b>: what she's looking at, what she's checking, what she found. This isn't a black box spitting out a number; it's an analyst showing her work.</p>
-  <div class="yousee"><span class="label">What you'll see</span>
-    <p>A short series of working steps, then a plain-English answer — e.g. <i>“You had 12,408 orders in May, up 6% from April.”</i> — often with a small table or chart, and an expandable view of exactly how it was calculated.</p>
-  </div>
-
-  <div class="callout tip"><span class="label">If Ana asks you a question back</span>
-    <p>That's a good sign, not a problem. If your question is ambiguous (“sales” could mean bookings or invoiced revenue), Ana asks which one you mean instead of guessing. Just answer her like you would a colleague.</p>
-  </div>
-
-  <div class="checkpoint"><h4>✅ Checkpoint</h4>
-    <label><input type="checkbox"> I asked Ana what data is available</label>
-    <label><input type="checkbox"> I asked a real question and got a plain-English answer</label>
-    <label><input type="checkbox"> I watched Ana narrate her working steps</label>
-  </div>
-</section>
-
-<!-- ════════════════ 4 · MODULE 2 ════════════════ -->
-<section class="page" id="module2" data-title="Module 2 · Make It a Conversation" data-group="Hands-On Modules">
-  <h1>Module 2 · Make It a Conversation</h1>
-  <div class="page-meta"><span>⏱️ 15 minutes</span><span>🎯 Goal: refine an answer with follow-ups instead of new searches</span></div>
-
-  <p>Here's the mindset shift that makes self-service analytics click: <b>you don't need the perfect question.</b> Ana remembers everything in the current thread, so you can start broad and steer — exactly like talking to an analyst at your desk.</p>
-  <p>Stay in the same chat from Module 1 and run these follow-ups in order (adapting the words to your data):</p>
-
-  <h2>Step 1 — Break it down</h2>
-  <div class="prompt"><div class="bar"><span>TYPE THIS TO ANA</span><button>Copy</button></div>
-<pre>Break that down by region.</pre></div>
-  <div class="yousee"><span class="label">What you'll see</span><p>The same number, split into a small table — notice you didn't have to repeat the question, the time period, or anything else. “That” was enough.</p></div>
-
-  <h2>Step 2 — Narrow it</h2>
-  <div class="prompt"><div class="bar"><span>TYPE THIS TO ANA</span><button>Copy</button></div>
-<pre>Just show the top 5, and add what % of the total each one represents.</pre></div>
-
-  <h2>Step 3 — Compare over time</h2>
-  <div class="prompt"><div class="bar"><span>TYPE THIS TO ANA</span><button>Copy</button></div>
-<pre>How does that compare to the same period last year?</pre></div>
-  <div class="yousee"><span class="label">What you'll see</span><p>A side-by-side comparison with the change, usually as both absolute numbers and percentages.</p></div>
-
-  <h2>Step 4 — Ask "why"</h2>
-  <p>This is where Ana goes beyond a dashboard. Dashboards show you <i>what</i>; Ana can dig into <i>why</i>.</p>
-  <div class="prompt"><div class="bar"><span>TYPE THIS TO ANA</span><button>Copy</button></div>
-<pre>The biggest change in that comparison — what's driving it? Dig one level deeper and tell me what stands out.</pre></div>
-  <div class="yousee"><span class="label">What you'll see</span><p>Ana investigates — splitting the change by product, customer segment, or whatever's relevant — and comes back with a short narrative: <i>“Most of the increase comes from two enterprise accounts that ramped up in Q2…”</i></p></div>
-
-  <div class="callout tip"><span class="label">Course-correct freely</span>
-    <p>Said the wrong thing? Just say so: <i>“Actually, use calendar year, not fiscal year”</i> or <i>“I meant units sold, not revenue.”</i> Ana adjusts without starting over.</p>
-  </div>
-
-  <div class="callout info"><span class="label">When to start a new thread</span>
-    <p>Stay in one thread while you're digging into one topic. Start a <b>new chat</b> when you switch topics — it keeps your history tidy and your answers focused.</p>
-  </div>
-
-  <div class="checkpoint"><h4>✅ Checkpoint</h4>
-    <label><input type="checkbox"> I refined an answer with at least three follow-ups in one thread</label>
-    <label><input type="checkbox"> I asked a “why / what's driving it” question and got a narrative answer</label>
-  </div>
-</section>
-
-<!-- ════════════════ 5 · MODULE 3 ════════════════ -->
-<section class="page" id="module3" data-title="Module 3 · Charts & Visuals" data-group="Hands-On Modules">
-  <h1>Module 3 · Charts &amp; Visuals</h1>
-  <div class="page-meta"><span>⏱️ 10 minutes</span><span>🎯 Goal: turn answers into presentation-ready visuals</span></div>
-
-  <p>Any answer can become a chart — just ask. Ana often charts things automatically when it helps, but you're in control of the format.</p>
-
-  <h2>Step 1 — Ask for a trend</h2>
-  <div class="prompt"><div class="bar"><span>TYPE THIS TO ANA</span><button>Copy</button></div>
-<pre>Show me that as a monthly trend for the last 12 months, as a line chart.</pre></div>
-
-  <h2>Step 2 — Change the visual</h2>
-  <p>Don't like the format? Say so in plain English:</p>
-  <div class="prompt"><div class="bar"><span>TYPE THIS TO ANA</span><button>Copy</button></div>
-<pre>Make that a bar chart instead, sorted from largest to smallest, and label the values.</pre></div>
-
-  <h2>Step 3 — Build a "one-slide" view</h2>
-  <div class="prompt"><div class="bar"><span>TYPE THIS TO ANA</span><button>Copy</button></div>
-<pre>Put this together as one summary I could paste into a slide: the headline number, the trend chart, and 3 bullet takeaways in plain English.</pre></div>
-  <div class="yousee"><span class="label">What you'll see</span><p>A tidy package — number, chart, and takeaways — ready to drop into your Monday meeting deck.</p></div>
-
-  <div class="callout tip"><span class="label">Getting visuals out</span>
-    <p>Charts and tables can be downloaded (chart as an image, table as a spreadsheet file) using the controls on the result — or just share the whole thread, which you'll do in Module 5.</p>
-  </div>
-
-  <div class="checkpoint"><h4>✅ Checkpoint</h4>
-    <label><input type="checkbox"> I produced a trend chart from a plain-English request</label>
-    <label><input type="checkbox"> I changed a chart's format by just asking</label>
-  </div>
-</section>
-
-<!-- ════════════════ 6 · MODULE 4 ════════════════ -->
-<section class="page" id="module4" data-title="Module 4 · Can I Trust This Number?" data-group="Hands-On Modules">
-  <h1>Module 4 · Can I Trust This Number?</h1>
-  <div class="page-meta"><span>⏱️ 10 minutes</span><span>🎯 Goal: know how to verify any answer — without reading code</span></div>
-
-  <p>This is the question every business user should ask — and the reason TextQL is built the way it is. You never have to take a number on faith. Three things protect you:</p>
-
-  <h2>1 · Ana shows her work</h2>
-  <p>Every answer comes with the full trail: the steps Ana took, the data she used, and the exact query she ran. You don't need to read the technical parts — the point is that <b>someone can</b>. If a number ever gets challenged in a meeting, the receipt exists.</p>
-  <div class="prompt"><div class="bar"><span>TYPE THIS TO ANA</span><button>Copy</button></div>
-<pre>How did you calculate that? Explain it step by step in plain English.</pre></div>
-  <div class="yousee"><span class="label">What you'll see</span><p>A plain-English explanation: which data, which time window, what was included and excluded, and any definitions applied.</p></div>
-
-  <h2>2 · Governed definitions — the company dictionary</h2>
-  <p>Remember the <b>ontology</b> from “Meet Ana”? When your question touches an official metric, Ana uses the <b>governed definition</b> — the version your data team has reviewed and approved — not an improvised one. Try asking:</p>
-  <div class="prompt"><div class="bar"><span>TYPE THIS TO ANA</span><button>Copy</button></div>
-<pre>What definition of revenue did you use? Is that the official, governed definition — and what does it include and exclude?</pre></div>
-  <div class="yousee"><span class="label">What you'll see</span><p>The definition spelled out — e.g. <i>“invoiced revenue net of refunds, recognized on invoice date”</i> — and where it comes from. This is why your number matches finance's number.</p></div>
-
-  <h2>3 · You can challenge an answer</h2>
-  <p>Healthy skepticism is part of the workflow. If something looks off, push back:</p>
-  <div class="prompt"><div class="bar"><span>TYPE THIS TO ANA</span><button>Copy</button></div>
-<pre>That looks higher than I expected. Double-check it: is anything double-counted, and does the time window match what I asked for?</pre></div>
-
-  <div class="callout warn"><span class="label">When Ana says the data isn't there</span>
-    <p>Sometimes the honest answer is “that isn't in the connected data.” That's a feature — Ana tells you instead of inventing something. Note what you wanted; it's exactly the feedback your data team needs to expand coverage.</p>
-  </div>
-
-  <div class="checkpoint"><h4>✅ Checkpoint</h4>
-    <label><input type="checkbox"> I asked Ana to explain a calculation in plain English</label>
-    <label><input type="checkbox"> I asked which definition was used for a metric</label>
-    <label><input type="checkbox"> I challenged an answer and saw Ana re-verify it</label>
-  </div>
-</section>
-
-<!-- ════════════════ 7 · MODULE 5 ════════════════ -->
-<section class="page" id="module5" data-title="Module 5 · Save & Share" data-group="Hands-On Modules">
-  <h1>Module 5 · Save &amp; Share Your Work</h1>
-  <div class="page-meta"><span>⏱️ 10 minutes</span><span>🎯 Goal: make your analysis useful to other people</span></div>
-
-  <p>An answer only you saw has limited value. Everything you've built in this workshop is already saved — now make it shareable.</p>
-
+  <h2>0.1 · Sign in and start a thread</h2>
   <ol class="steps">
-    <li><b>Name your thread.</b> Rename this conversation to something findable — e.g. <i>“Q2 regional sales review.”</i> Future-you will thank present-you.</li>
-    <li><b>Share the thread.</b> Use the share option to send the conversation to a colleague. They see the full chain — questions, answers, charts, and the verification trail — not just a screenshot of a number.</li>
-    <li><b>Export what you need.</b> Download a table as a spreadsheet or a chart as an image for decks and docs.</li>
-    <li><b>Make it repeatable.</b> For a question you'll ask every week, ask Ana to package it:</li>
+    <li>Open your TextQL workspace (typically <code>app.textql.com</code> or your company's dedicated URL) and sign in.</li>
+    <li>Click <b>New Thread</b> in the sidebar. Each thread is a self-contained conversation with Ana.</li>
   </ol>
+  <figure class="shot" data-todo="the workspace home screen with the New Thread button visible">
+    <img src="assets/m0-new-thread.png" alt="Starting a new thread" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Starting a new thread from the sidebar.</figcaption>
+  </figure>
 
-  <div class="prompt"><div class="bar"><span>TYPE THIS TO ANA</span><button>Copy</button></div>
-<pre>I'll want this same view every Monday. Save this analysis as a report I can re-run, and tell me how to get it refreshed regularly.</pre></div>
-  <div class="yousee"><span class="label">What you'll see</span><p>Ana sets up a re-runnable version of your analysis. Depending on how your workspace is configured, recurring delivery (for example to email or Slack) may be available — Ana will tell you what's enabled for your team.</p></div>
-
-  <div class="callout tip"><span class="label">Sharing > screenshotting</span>
-    <p>A shared thread keeps the context and the “show your work” trail attached to the number. A screenshot strips all of that away. When a decision rides on the number, share the thread.</p>
+  <h2>0.2 · Attach a data source</h2>
+  <p>Before sending your first message, click the <b>"+" button</b> at the bottom-left of the chat input:</p>
+  <ul>
+    <li><b>Connectors</b> — select the database(s) your team uses. Missing one? Ask your admin (Connectors page).</li>
+    <li><b>Tools</b> — make sure <b>Text to SQL</b> and <b>Ontology</b> are on.</li>
+    <li><b>Output format</b> — leave on <b>Chat</b> for this workshop.</li>
+  </ul>
+  <figure class="shot" data-todo="the + menu open on a new thread, showing Connectors and Tools">
+    <img src="assets/m0-attach-connector.png" alt="Attaching a connector via the + menu" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Attach connectors and tools via the "+" menu — before the first message.</figcaption>
+  </figure>
+  <div class="callout warn"><span class="label">Heads up</span>
+    <p>Connectors and tools are chosen <b>before the first message</b> of a thread. To change them later, start a new thread.</p>
   </div>
 
-  <div class="checkpoint"><h4>✅ Checkpoint</h4>
-    <label><input type="checkbox"> I renamed my thread something I can find later</label>
-    <label><input type="checkbox"> I shared a thread (or know exactly how to)</label>
-    <label><input type="checkbox"> I exported a table or chart</label>
-  </div>
-</section>
-
-<!-- ════════════════ 8 · MODULE 6 ════════════════ -->
-<section class="page" id="module6" data-title="Module 6 · Asking Great Questions" data-group="Hands-On Modules">
-  <h1>Module 6 · Asking Great Questions</h1>
-  <div class="page-meta"><span>⏱️ 10 minutes</span><span>🎯 Goal: the patterns that get great answers, every time</span></div>
-
-  <p>You don't need to be precise — Ana will ask when she needs clarity — but a little structure gets you to the answer faster. A strong question usually names three things:</p>
-  <p style="text-align:center;font-size:18px"><b>📏 a metric</b> &nbsp;+&nbsp; <b>🗓️ a time period</b> &nbsp;+&nbsp; <b>🧩 a grouping or filter</b></p>
-  <p style="text-align:center"><i>“What was <b>revenue</b> (metric) <b>last quarter</b> (time), <b>by product line</b> (grouping)?”</i></p>
-
-  <h2>Vague → better</h2>
+  <h2>0.3 · Orientation — what's where</h2>
   <table>
-    <tr><th>Instead of…</th><th>Try…</th></tr>
-    <tr><td>“sales numbers”</td><td>“What was total revenue last month, and how does it compare to the month before?”</td></tr>
-    <tr><td>“customer info”</td><td>“How many active customers do we have today, and how many did we add this quarter?”</td></tr>
-    <tr><td>“how is marketing doing”</td><td>“Which marketing channel drove the most new customers this quarter, and at what cost per customer?”</td></tr>
-    <tr><td>“show me problems”</td><td>“Which 5 products had the biggest drop in sales vs. last quarter?”</td></tr>
+    <tr><th>Sidebar item</th><th>What it is</th></tr>
+    <tr><td><b>Threads</b></td><td>Your past conversations — every analysis is saved and shareable</td></tr>
+    <tr><td><b>Dashboards</b></td><td>Live, interactive dashboards you or teammates published</td></tr>
+    <tr><td><b>Playbooks</b></td><td>Scheduled analyses delivered to email/Slack</td></tr>
+    <tr><td><b>Connectors</b></td><td>The databases and APIs your org has plugged in</td></tr>
+    <tr><td><b>Ontology</b></td><td>Your org's governed definitions — metrics, terms, business logic</td></tr>
+    <tr><td><b>Context Library</b></td><td>Reference docs Ana reads to understand your business</td></tr>
+  </table>
+  <figure class="shot" data-todo="the full app with the sidebar items labeled/visible">
+    <img src="assets/m0-sidebar-tour.png" alt="The TextQL sidebar" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The lay of the land: Threads, Dashboards, Playbooks, Connectors, Ontology, Context Library.</figcaption>
+  </figure>
+
+  <h2>0.4 · Say hello</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What data sources do I have access to in this thread, and what kinds of questions are they good for? Give me 5 example questions I could ask.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana lists the attached connectors, summarizes what's in them, and suggests starter questions tailored to your actual data.</div>
+  <figure class="shot" data-todo="Ana's answer to the hello prompt, listing data sources and example questions">
+    <img src="assets/m0-hello.png" alt="Ana describing available data sources" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Ana's tour of your data — keep her suggested questions handy for Module 1.</figcaption>
+  </figure>
+
+  <h2>Troubleshooting</h2>
+  <table>
+    <tr><th>Symptom</th><th>Fix</th></tr>
+    <tr><td>No connectors listed under "+"</td><td>Ask your org admin to grant access on the Connectors page</td></tr>
+    <tr><td>Ana can't see a data source</td><td>It wasn't attached before the first message — start a new thread and attach it first</td></tr>
+    <tr><td>Suggested questions look wrong for your team</td><td>That's fine — Module 6 covers teaching the platform your context</td></tr>
   </table>
 
-  <h2>Power moves</h2>
-  <ul>
-    <li><b>Discover first:</b> <i>“What data do you have about ___?”</i> before diving in.</li>
-    <li><b>Anchor to a decision:</b> <i>“I'm deciding whether to ___ — what should I look at?”</i> Ana proposes the analysis.</li>
-    <li><b>Ask for the 'so what':</b> end with <i>“…and give me 3 takeaways in plain English.”</i></li>
-    <li><b>Set a recurring rhythm:</b> for anything you ask weekly, save it as a report (Module 5).</li>
-    <li><b>Verify when stakes are high:</b> <i>“How did you calculate that?”</i> (Module 4).</li>
-  </ul>
-
-  <h2>Your turn — the capstone</h2>
-  <p>Finish with a question that matters to <b>your actual job this week</b>. Use the full pattern:</p>
-  <div class="prompt"><div class="bar"><span>TYPE THIS TO ANA (FILL IN THE BLANKS)</span><button>Copy</button></div>
-<pre>I'm preparing for [a meeting / a decision] about [topic]. Show me [metric] for [time period], broken down by [grouping], compare it to [a benchmark period], and give me 3 plain-English takeaways.</pre></div>
-
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
-    <label><input type="checkbox"> I ran a capstone question about my real work</label>
-    <label><input type="checkbox"> I got an answer I could take into a meeting today</label>
+    <label><input type="checkbox"> You have a thread open with at least one connector attached</label>
+    <label><input type="checkbox"> Ana answered the hello prompt with a real description of your data</label>
+    <label><input type="checkbox"> You can see Threads, Dashboards, and Playbooks in the sidebar</label>
   </div>
 </section>
 
-<!-- ════════════════ 9 · TROUBLESHOOTING ════════════════ -->
-<section class="page" id="faq" data-title="FAQ & Troubleshooting" data-group="Wrap-Up">
-  <h1>FAQ &amp; Troubleshooting</h1>
+<!-- ════════════════ MODULE 1 ════════════════ -->
+<section class="page" id="m1" data-title="Module 1 · Your First Question" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 1</div>
+  <h1>Your First Question</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b></span><span>🎯 Goal: ask real business questions in plain English, refine them conversationally, and understand what Ana does on your behalf</span></div>
 
-  <details open><summary>Ana asked me a clarifying question. What do I do?</summary><div class="body"><p>Just answer it in plain English. This is Ana being careful instead of guessing — pick the meaning you intended (“invoiced revenue”) and she'll continue.</p></div></details>
+  <h2>1.1 · Ask a simple, concrete question</h2>
+  <p>Start with something you'd normally ask an analyst.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>How many [orders / signups / tickets / sessions] did we have last month? How does that compare to the month before?</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana find the right table on her own, write and run the query, and answer with the numbers plus the month-over-month change. Tool steps appear as collapsed cells — expandable, but optional.</div>
+  <figure class="shot" data-todo="a first answer with the collapsed tool cells visible above it">
+    <img src="assets/m1-first-answer.png" alt="Ana answering a first question" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The answer in plain English — with Ana's working steps collapsed above it.</figcaption>
+  </figure>
 
-  <details><summary>The answer doesn't match a number I've seen elsewhere.</summary><div class="body"><p>This is usually a <b>definition difference</b>, not an error — e.g. calendar vs. fiscal quarter, gross vs. net. Ask: <i>“What definition and time window did you use? Why might this differ from [the other report]?”</i> Ana will reconcile them. If they truly conflict, flag it to your data team — finding these is valuable.</p></div></details>
+  <h2>1.2 · Refine it — a conversation, not a query builder</h2>
+  <p>You don't have to get the question perfect on the first try. Follow up naturally.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Break that down by [region / product / channel / team]. Which one drove the change?</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana reuse the context from the previous answer — no restating — and return a breakdown with the main driver called out.</div>
 
-  <details><summary>Ana says she doesn't have the data I asked about.</summary><div class="body"><p>The data source may not be connected yet, or you may not have access to it. Note exactly what you asked and send it to your data team or TextQL contact — requests like this drive what gets connected next.</p></div></details>
+  <h2>1.3 · Ask a vague question on purpose</h2>
+  <p>Real questions are fuzzy. Watch how ambiguity is handled.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Are we doing well this quarter?</pre></div>
+  <div class="yousee"><b>You'll see:</b> one of two good behaviors — Ana either asks <b>which metric you mean</b> (revenue? volume? retention?), or states the assumption she's making before answering. Both are correct: ambiguity gets surfaced, not silently guessed.</div>
+
+  <h2>1.4 · Ask something the data can't answer</h2>
+  <p>Trust also means knowing the limits.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What was our customer satisfaction score in 2015?</pre></div>
+  <div class="yousee"><b>You'll see:</b> if the data doesn't go back that far (or isn't tracked), Ana says so plainly — what's missing and what <i>would</i> be needed — rather than inventing a number. No data, no answer.</div>
+
+  <h2>1.5 · The question patterns that work best</h2>
+  <table>
+    <tr><th>Pattern</th><th>Example</th></tr>
+    <tr><td><b>Measure + time window</b></td><td>"Revenue in Q1 2026"</td></tr>
+    <tr><td><b>Comparison</b></td><td>"…compared to Q4 2025"</td></tr>
+    <tr><td><b>Breakdown</b></td><td>"…by region"</td></tr>
+    <tr><td><b>Ranking</b></td><td>"Top 10 customers by spend this year"</td></tr>
+    <tr><td><b>Trend</b></td><td>"Weekly active users over the last 6 months"</td></tr>
+    <tr><td><b>Filter</b></td><td>"…for the Enterprise segment only"</td></tr>
+    <tr><td><b>Why</b></td><td>"Why did churn spike in March?"</td></tr>
+  </table>
+  <p>Stack them: <i>"Top 5 products by revenue this quarter vs last, Enterprise only — and why did the leader change?"</i></p>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You got a correct answer to a concrete question about your data</label>
+    <label><input type="checkbox"> You refined it with a follow-up without restating the original question</label>
+    <label><input type="checkbox"> Ana clarified or stated an assumption on a vague question</label>
+    <label><input type="checkbox"> Ana declined to invent an answer when data was missing</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 2 ════════════════ -->
+<section class="page" id="m2" data-title="Module 2 · Trusting the Answer" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 2</div>
+  <h1>Trusting the Answer</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b></span><span>🎯 Goal: verify how an answer was produced — defend the number in a meeting, challenge it when something looks off</span></div>
+
+  <p>This is the question every business user should ask — and the reason TextQL is built the way it is. <b>Every answer is auditable.</b></p>
+
+  <h2>2.1 · Open the work</h2>
+  <p>Take any answer from Module 1 and expand the collapsed tool cells above it. You'll see the exact SQL that ran, the rows that came back, and any analysis code. You don't need to read SQL — but it's there, and your data team can review it in seconds.</p>
+  <figure class="shot" data-todo="an expanded tool cell showing the SQL behind an answer">
+    <img src="assets/m2-open-the-work.png" alt="Expanded tool cell showing SQL" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The receipt behind every number: the exact query, expandable in one click.</figcaption>
+  </figure>
+
+  <h2>2.2 · Ask Ana to explain her own work</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Explain in plain English exactly how you calculated that number: which table, which filters, which time window, and what you counted. What assumptions did you make?</pre></div>
+  <div class="yousee"><b>You'll see:</b> a step-by-step explanation a non-technical stakeholder could follow — table, filters, definitions, assumptions, caveats.</div>
+
+  <h2>2.3 · Check it against a number you already know</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What was [metric you already know] for [period]? I have a reference number — I want to see if we match.</pre></div>
+  <div class="yousee"><b>You'll see:</b> either a match (calibration confirmed) or a mismatch. A mismatch is useful — follow with <i>"Why might your number differ from [reference]?"</i> Common causes: time zones, filters (test accounts? refunds?), definitions. You just found a definitional gap; Module 6 fixes it for everyone.</div>
+
+  <h2>2.4 · Governed answers vs. ad-hoc answers</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>For the metrics you just gave me, which came from governed ontology definitions and which did you compute ad hoc? What's the difference in how much I should trust each?</pre></div>
+  <div class="yousee"><b>You'll see:</b> which numbers carry your org's stamp of approval and which are best-effort. Governed numbers are consistent for everyone who asks; ad-hoc ones are transparent but not yet standardized.</div>
+
+  <h2>2.5 · The trust checklist</h2>
+  <ol>
+    <li><b>Source</b> — which table/connector?</li>
+    <li><b>Window</b> — what time range and time zone?</li>
+    <li><b>Filters</b> — what was included/excluded?</li>
+    <li><b>Definition</b> — governed, or on the fly?</li>
+    <li><b>Freshness</b> — when was the data last updated?</li>
+  </ol>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Give me a "methodology footnote" for that answer: source, time window, filters, whether the definition is governed, and data freshness.</pre></div>
+  <div class="yousee"><b>You'll see:</b> all five trust dimensions in one footnote you can paste under any chart in a deck.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You expanded a tool cell and saw the actual SQL behind an answer</label>
+    <label><input type="checkbox"> Ana explained a calculation in plain English on request</label>
+    <label><input type="checkbox"> You reconciled (or explained a difference vs.) a number you already knew</label>
+    <label><input type="checkbox"> You know how to ask whether a metric is governed</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 3 ════════════════ -->
+<section class="page" id="m3" data-title="Module 3 · Visualize & Go Deeper" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 3</div>
+  <h1>Visualize &amp; Go Deeper</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: turn answers into charts, and go beyond "what happened" into segmentation, trends, and "why"</span></div>
+
+  <h2>3.1 · Your first chart</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Show me [metric] by month for the last 12 months as a chart.</pre></div>
+  <div class="yousee"><b>You'll see:</b> an interactive chart rendered in the thread — hover for values; it's saved with the conversation.</div>
+  <figure class="shot" data-todo="an interactive chart rendered inside a thread">
+    <img src="assets/m3-first-chart.png" alt="A chart rendered in the thread" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Charts render right in the conversation and stay saved with it.</figcaption>
+  </figure>
+
+  <h2>3.2 · Direct the visualization</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Make that a stacked bar chart by [segment], add the trend as a line on top, and highlight the months where we declined.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the chart rebuilt to spec. Other useful asks: "log scale", "sort descending", "show only top 8 and group the rest as Other", "add a target line at [value]".</div>
+
+  <h2>3.3 · Segment — who's driving the number</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Segment [metric] by [customer tier / region / plan / cohort]. Which segments are growing, which are shrinking, and which one explains most of the overall change?</pre></div>
+  <div class="yousee"><b>You'll see:</b> a segment-level view plus a narrative pointing at the segments that matter. This is the workhorse move of self-service analytics.</div>
+
+  <h2>3.4 · Trends and seasonality</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Plot [metric] weekly for the past year. Is there a trend after accounting for seasonality? Anything unusual — spikes, drops, level shifts — I should know about?</pre></div>
+  <div class="yousee"><b>You'll see:</b> trend analysis with anomalies flagged and quantified, not just eyeballed.</div>
+
+  <h2>3.5 · Ask "why" — root-cause a change</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>[Metric] changed by [amount] in [period]. Decompose the change: how much came from each segment, and was it driven by volume, price/intensity, or mix? Rank the contributors.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a contribution breakdown — the kind of analysis that used to take an analyst a spreadsheet afternoon — in one turn.</div>
+
+  <h2>3.6 · Compare and correlate</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Is there a relationship between [metric A] and [metric B] across [customers / regions / weeks]? Show a scatter and tell me how strong the relationship is — and warn me about anything that would make it misleading.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the relationship quantified, with honest caveats (correlation is not causation, outliers, confounders).</div>
+
+  <h2>3.7 · A quick forecast</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Based on the trend, project [metric] for the next quarter. Show the range of uncertainty, and list the assumptions baked into the projection.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a forward projection with confidence bands and explicit assumptions — clearly labeled as a projection.</div>
+
+  <h2>Troubleshooting</h2>
+  <table>
+    <tr><th>Symptom</th><th>Fix</th></tr>
+    <tr><td>Chart is too busy</td><td>"Show only the top 5, group the rest as Other"</td></tr>
+    <tr><td>Wrong chart type for the story</td><td>Name the type: "make it a line chart" / "horizontal bars"</td></tr>
+    <tr><td>Forecast seems overconfident</td><td>Ask: "what would have to be true for this to be wrong?"</td></tr>
+  </table>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You produced and restyled a chart with plain-English direction</label>
+    <label><input type="checkbox"> You ran a segmentation and identified the driving segment</label>
+    <label><input type="checkbox"> You decomposed a metric change into contributors</label>
+    <label><input type="checkbox"> You got a forecast with uncertainty and assumptions stated</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 4 ════════════════ -->
+<section class="page" id="m4" data-title="Module 4 · From Answers to Assets" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 4</div>
+  <h1>From Answers to Assets</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: turn a one-off analysis into something durable — a shareable report, a live dashboard, or an exportable file</span></div>
+
+  <h2>4.1 · Share the thread itself</h2>
+  <p>Every thread has a shareable link — your analysis, charts, and the audit trail, in one place. Open a Module 3 thread, use the share option, and send it to a teammate.</p>
+  <div class="callout"><span class="label">Sharing &gt; screenshotting</span>
+    <p>A shared thread keeps the context and the "show your work" trail attached to the number. A screenshot strips all of that away. When a decision rides on the number, share the thread.</p>
+  </div>
+
+  <h2>4.2 · Generate a polished report</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Turn this analysis into a polished report: an executive summary up top, then the key charts with one-paragraph takeaways each, then a methodology appendix. Make it something I can send to my VP.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a structured report assembled from the thread. Ask for a PDF or a slide deck version if you need a specific format.</div>
+
+  <h2>4.3 · Build a live dashboard</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Build a dashboard from this analysis with: [metric] by month, the segment breakdown, and the top-10 table. Add a filter so viewers can pick their own region and date range.</pre></div>
+  <div class="yousee"><b>You'll see:</b> an interactive dashboard created and linked. It appears under Dashboards, viewers can use the filters, and the data refreshes from the source — no more screenshot-and-paste reporting.</div>
+  <figure class="shot" data-todo="a generated dashboard with filters visible">
+    <img src="assets/m4-dashboard.png" alt="A live dashboard built from the analysis" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>From conversation to live, filterable dashboard — in one prompt.</figcaption>
+  </figure>
+
+  <h2>4.4 · Iterate on the dashboard</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>On that dashboard: add a week-over-week comparison card at the top, move the table to the bottom, and default the date range to the last 90 days.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the dashboard updated in place. Only the creator can edit; everyone else gets view + filter.</div>
+
+  <h2>4.5 · Export the underlying data</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Export the segment breakdown as a CSV I can download. Also give me the chart as a standalone image.</pre></div>
+  <div class="yousee"><b>You'll see:</b> downloadable files attached to the thread — CSV for spreadsheets, images for decks.</div>
+
+  <h2>4.6 · Which asset, when?</h2>
+  <table>
+    <tr><th>You need…</th><th>Use</th></tr>
+    <tr><td>A teammate to see your analysis + how you got it</td><td><b>Share the thread</b></td></tr>
+    <tr><td>A point-in-time narrative for leadership</td><td><b>Report / PDF / deck</b></td></tr>
+    <tr><td>A number people check weekly</td><td><b>Dashboard</b></td></tr>
+    <tr><td>To keep working in Excel/Sheets</td><td><b>CSV export</b></td></tr>
+    <tr><td>The same question answered every Monday</td><td><b>Playbook — next module</b></td></tr>
+  </table>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You shared a thread link</label>
+    <label><input type="checkbox"> You generated a report with summary + charts + methodology</label>
+    <label><input type="checkbox"> You created a dashboard with at least one filter</label>
+    <label><input type="checkbox"> You exported a CSV</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 5 ════════════════ -->
+<section class="page" id="m5" data-title="Module 5 · Automate It" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 5</div>
+  <h1>Automate It</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: stop re-asking the same questions — schedule recurring analyses, and set up an agent that watches your domain proactively</span></div>
+
+  <h2>5.1 · Playbooks — the scheduled report, reinvented</h2>
+  <p>A <b>playbook</b> is a saved analysis instruction that runs on a schedule and delivers to email or Slack — a weekly report that writes itself.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Create a playbook called "[Team] Weekly Snapshot" that runs every Monday at 9am: [metric 1] and [metric 2] for last week vs the week before, the segment breakdown, and anything unusual flagged at the top. Email it to me.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the playbook created and visible under Playbooks in the sidebar. Confirm the schedule and delivery before relying on it.</div>
+  <figure class="shot" data-todo="a created playbook in the Playbooks list with its schedule">
+    <img src="assets/m5-playbook.png" alt="A scheduled playbook" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The Monday report that writes itself.</figcaption>
+  </figure>
+
+  <h2>5.2 · Tune the output</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Make that playbook's report style concise — headline numbers and flags only, no methodology section. Also send it to our team Slack channel [#channel-name].</pre></div>
+  <div class="yousee"><b>You'll see:</b> delivery and style updated. Playbooks support email recipients, Slack channels, and executive / verbose / concise styles.</div>
+
+  <h2>5.3 · Feed agents — analysis that comes to you</h2>
+  <p>Playbooks answer a <b>known question</b> on a schedule. <b>Feed agents</b> investigate a <i>domain</i>, remember what they found before, and post anything noteworthy to your org's feed — including things you didn't think to ask.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Create a feed agent that keeps an eye on [your domain — e.g., "our sales pipeline" / "product usage" / "support tickets"]. Every morning, look for meaningful changes, anomalies, or trends worth knowing about, and post only when there's something genuinely interesting. Build on what you found in previous runs.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the agent created. Its posts appear in the Feed, where teammates can comment — and the agent responds.</div>
+
+  <h2>5.4 · Playbook or feed agent?</h2>
+  <table>
+    <tr><th></th><th>Playbook</th><th>Feed agent</th></tr>
+    <tr><td>Question</td><td>Known, fixed</td><td>Open-ended domain</td></tr>
+    <tr><td>Output</td><td>Same report each run</td><td>Posts only when noteworthy</td></tr>
+    <tr><td>Memory</td><td>Stateless</td><td>Remembers prior findings</td></tr>
+    <tr><td>Audience</td><td>Email/Slack recipients</td><td>Org feed (+ optional relay)</td></tr>
+    <tr><td>Use for</td><td>"Send me the weekly numbers"</td><td>"Keep an eye on this for me"</td></tr>
+  </table>
+
+  <h2>5.5 · One-off reminders</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Remind me next Friday at 3pm to review the Q2 dashboard before the leadership meeting.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a one-time future message scheduled to you.</div>
+
+  <h2>Troubleshooting</h2>
+  <table>
+    <tr><th>Symptom</th><th>Fix</th></tr>
+    <tr><td>Playbook created but never runs</td><td>Check it has a schedule AND is Active — ask Ana to confirm both</td></tr>
+    <tr><td>Report goes to the wrong people</td><td>Recipients replace, not append — restate the full list</td></tr>
+    <tr><td>Feed agent posts too much noise</td><td>Tighten its prompt: "post only when [specific threshold] changes"</td></tr>
+  </table>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You created a playbook with a schedule and a delivery target</label>
+    <label><input type="checkbox"> You adjusted its style and/or added a Slack channel</label>
+    <label><input type="checkbox"> You created (or scoped out) a feed agent for a domain you care about</label>
+    <label><input type="checkbox"> You can explain playbook vs. feed agent in one sentence each</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 6 ════════════════ -->
+<section class="page" id="m6" data-title="Module 6 · Make It Smarter" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 6</div>
+  <h1>Make It Smarter</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b></span><span>🎯 Goal: teach the platform your team's language, definitions, and preferences — so every future answer gets better. This is where self-service compounds.</span></div>
+
+  <h2>6.1 · Fix a definition for everyone</h2>
+  <p>Remember the metric mismatch from Module 2? Make the right definition permanent.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Our official definition of [metric] is: [definition — e.g., "active user = logged in AND took at least one action, excluding internal accounts"]. Save this to the ontology so it's used consistently from now on.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a change proposal (patch) created for your org's context library — like a pull request for business logic. Once an admin approves, everyone's answers use your definition.</div>
+  <div class="callout"><span class="label">Governed by design</span>
+    <p>You propose, an owner approves, every change is versioned and revertible. That's why teaching the platform is safe.</p>
+  </div>
+  <figure class="shot" data-todo="a proposed ontology patch / change proposal awaiting approval">
+    <img src="assets/m6-patch.png" alt="A proposed definition patch" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>A definition change proposed for review — a pull request for business logic.</figcaption>
+  </figure>
+
+  <h2>6.2 · Teach it your vocabulary</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Some vocabulary to remember: "NRR" means net revenue retention; "the big three" means our top 3 enterprise accounts: [names]; "EOQ crunch" means the last 2 weeks of a quarter. Save these to the ontology.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a patch proposing the glossary additions. After approval, asking "how did the big three trend through EOQ crunch?" just works.</div>
+
+  <h2>6.3 · Set your personal preferences</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Remember my preferences: I want concise answers with the headline number first; I work in [timezone]; when I say "my accounts" I mean accounts where I'm the owner; default time windows to the current quarter.</pre></div>
+  <div class="yousee"><b>You'll see:</b> your personal context file created/updated. Future threads pick it up automatically.</div>
+
+  <h2>6.4 · Capture a recurring workflow</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Save this as my "[name]" workflow: every month I (1) pull [metric] by segment, (2) compare to the plan numbers, (3) flag segments more than 10% off plan, (4) format as an email draft to [audience]. Next time I say "run my [name] workflow," do all of it.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the workflow documented in your context. One sentence now replaces a 30-minute ritual.</div>
+
+  <h2>6.5 · Know the escalation path</h2>
+  <table>
+    <tr><th>You want to…</th><th>Path</th></tr>
+    <tr><td>Fix a metric definition</td><td>Propose a patch (6.1) — admin approves</td></tr>
+    <tr><td>Add vocabulary / context docs</td><td>Propose a patch (6.2)</td></tr>
+    <tr><td>Personal preferences and workflows</td><td>Your own context — immediate</td></tr>
+    <tr><td>New data source connected</td><td>Ask your admin (Connectors page)</td></tr>
+    <tr><td>New governed metric surface</td><td>Data team — see the <a href="https://github.com/TextQLLabs/ontology-workshop-guide" target="_blank" rel="noopener">ontology workshop</a></td></tr>
+  </table>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You proposed at least one definition or vocabulary patch</label>
+    <label><input type="checkbox"> You set personal preferences</label>
+    <label><input type="checkbox"> You know org-level (reviewed) vs personal (immediate) context</label>
+    <label><input type="checkbox"> You know where self-service ends and the data team's ontology work begins</label>
+  </div>
+</section>
+
+<!-- ════════════════ PROMPT COOKBOOK ════════════════ -->
+<section class="page" id="cookbook" data-title="Prompt Cookbook" data-group="Reference">
+  <div class="kicker">Reference</div>
+  <h1>Prompt Cookbook</h1>
+  <div class="page-meta"><span>📋 Copy-paste recipes, organized by what you're trying to do. Replace anything in <code>[brackets]</code>.</span></div>
+
+  <h2>Getting oriented</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What data do I have access to here, and what are 5 good questions I could ask it?</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Describe the [orders] table in business terms: what's a row, what are the key fields, how fresh is it?</pre></div>
+
+  <h2>Everyday questions</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What was [metric] [last week / last month / this quarter]? Compare to the previous period and tell me if the change is meaningful or noise.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Top 10 [customers / products / pages] by [metric] this [period], with each one's share of the total.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>[Metric] by [day/week/month] for the last [N] [periods], as a chart, with a trend line.</pre></div>
+
+  <h2>Verifying and trust</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Explain exactly how you calculated that: source table, filters, time window, definition. What assumptions did you make?</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Give me a methodology footnote for that answer: source, window, filters, governed vs ad hoc, data freshness.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>I expected [value] based on [reference report]. Why might your number differ?</pre></div>
+
+  <h2>Segmentation and drivers</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Segment [metric] by [dimension]. Which segments drive the total, which are growing or shrinking fastest?</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>[Metric] moved from [A] to [B] between [period 1] and [period 2]. Decompose the change by [dimension] and rank the contributors.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Compare [segment A] vs [segment B] on [metrics]. Where are they most different, and is the difference statistically meaningful?</pre></div>
+
+  <h2>Trends, anomalies, forecasts</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Plot [metric] weekly for the past year. Flag anomalies and tell me if the trend is changing after seasonality.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Did anything unusual happen in our data [yesterday / last week]? Check the main metrics and flag outliers.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Project [metric] through [horizon] with uncertainty bands. State the assumptions and what would break them.</pre></div>
+
+  <h2>Charts and formatting</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Make that a [bar / line / stacked area / scatter] chart. Show top [N] only, group the rest as "Other," sort descending.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Add a target line at [value] and annotate the months we missed it.</pre></div>
+
+  <h2>Reports, dashboards, exports</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Turn this thread into an executive report: summary up top, charts with takeaways, methodology appendix. PDF please.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Build a dashboard with [chart 1], [chart 2], and [table], with filters for [date range] and [dimension].</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Export that table as CSV.</pre></div>
+
+  <h2>Automation</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Create a playbook "[name]" that runs [every Monday 9am]: [contents]. Email it to [me / list] and post to [#channel].</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Create a feed agent that watches [domain] daily and posts only when something genuinely changes. Build on prior findings.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Remind me [when] to [do thing].</pre></div>
+
+  <h2>Teaching the platform</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Our official definition of [metric] is [definition]. Save it to the ontology (propose the patch).</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Vocabulary: "[term]" means [meaning]. Save to the ontology.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Remember my preferences: [concise answers / timezone / default windows / what "my accounts" means].</pre></div>
+
+  <h2>When something looks wrong</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>That number looks off. Walk me through the calculation step by step, and list everything that was excluded.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Recalculate using [other definition] and show both side by side.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What data would we need to answer this properly?</pre></div>
+</section>
+
+<!-- ════════════════ FAQ ════════════════ -->
+<section class="page" id="faq" data-title="FAQ" data-group="Reference">
+  <div class="kicker">Reference</div>
+  <h1>FAQ</h1>
+
+  <details open><summary>Ana asked me a clarifying question. What do I do?</summary><div class="body"><p>Just answer it in plain English. This is Ana being careful instead of guessing — pick the meaning you intended ("invoiced revenue") and she'll continue.</p></div></details>
+
+  <details><summary>The answer doesn't match a number I've seen elsewhere.</summary><div class="body"><p>This is usually a <b>definition difference</b>, not an error — calendar vs. fiscal quarter, gross vs. net, test accounts in or out. Run the Module 2.3 reconciliation: <i>"Why might your number differ from [the other report]?"</i> If they truly conflict, propose the right definition as a patch (Module 6.1) — finding these is valuable.</p></div></details>
+
+  <details><summary>Ana says she doesn't have the data I asked about.</summary><div class="body"><p>The data source may not be connected yet, or it wasn't attached to this thread (Module 0.2), or you may not have access. Note exactly what you asked and send it to your data team — requests like this drive what gets connected next.</p></div></details>
+
+  <details><summary>Will it make numbers up?</summary><div class="body"><p>No — missing data is reported as missing. You proved this yourself in Module 1.4. And every number that <i>is</i> answered comes with the full audit trail (Module 2).</p></div></details>
 
   <details><summary>My question is taking a while.</summary><div class="body"><p>Bigger questions (long time ranges, many breakdowns) take longer — Ana narrates what she's doing in the meantime. For a faster first pass, narrow the time window and broaden later.</p></div></details>
 
-  <details><summary>Can I ask about data in a document or spreadsheet I have?</summary><div class="body"><p>Often yes — many workspaces let you upload a file into the chat for Ana to analyze alongside your connected data. Try attaching it, or ask your TextQL contact what's enabled.</p></div></details>
+  <details><summary>Can it replace our BI dashboards?</summary><div class="body"><p>It can build and refresh dashboards (Module 4) — and answer the questions dashboards can't (Module 3).</p></div></details>
 
-  <details><summary>Who do I contact for help?</summary><div class="body"><p>Your internal workspace administrator for access issues; your TextQL team (FDE/account team) for anything else. If you're in a guided session, just ask your facilitator.</p></div></details>
+  <details><summary>Who do I contact for help?</summary><div class="body"><p>Your workspace administrator for access issues; your TextQL team for anything else. In a guided session, just ask your facilitator.</p></div></details>
 </section>
 
-<!-- ════════════════ 10 · WRAP-UP ════════════════ -->
-<section class="page" id="wrapup" data-title="Wrap-Up & Next Steps" data-group="Wrap-Up">
+<!-- ════════════════ WRAP-UP ════════════════ -->
+<section class="page" id="wrapup" data-title="Wrap-Up & Capstone" data-group="Reference">
+  <div class="kicker">Wrap-Up</div>
   <h1>Wrap-Up 🎉</h1>
-  <p>That's the whole workflow. Today you:</p>
-  <ul>
-    <li>Got real answers from your company's data by <b>asking in plain English</b></li>
-    <li>Refined answers in <b>conversation</b> — breakdowns, comparisons, and “why” questions</li>
-    <li>Produced <b>charts and a slide-ready summary</b> on demand</li>
-    <li>Learned to <b>verify any number</b> — show the work, check the definition, challenge the result</li>
-    <li><b>Saved and shared</b> analysis your team can build on</li>
-  </ul>
+  <p>You can now: ask and refine questions, audit any answer, segment and root-cause, build charts, reports and dashboards, automate recurring analysis, and improve the platform as you go.</p>
+
+  <h2>The capstone — make it real</h2>
+  <p>Before you close this tab, run one question that matters to <b>your actual job this week</b>:</p>
+  <div class="prompt"><span class="tag">PROMPT — FILL IN THE BLANKS</span><button>Copy</button>
+<pre>I'm preparing for [a meeting / a decision] about [topic]. Show me [metric] for [time period], broken down by [grouping], compare it to [a benchmark period], and give me 3 plain-English takeaways.</pre></div>
+  <p>Then make it permanent: save it as a playbook (Module 5) so it's waiting in your inbox next week.</p>
 
   <h2>The pocket cheat sheet</h2>
   <table>
     <tr><th>You want to…</th><th>Say to Ana…</th></tr>
-    <tr><td>Discover what's possible</td><td>“What data do you have about ___?”</td></tr>
-    <tr><td>Get a number</td><td>“What was [metric] in [time period]?”</td></tr>
-    <tr><td>Break it down</td><td>“Break that down by ___ / show the top 5.”</td></tr>
-    <tr><td>Compare</td><td>“How does that compare to [period]?”</td></tr>
-    <tr><td>Understand why</td><td>“What's driving that change? Dig one level deeper.”</td></tr>
-    <tr><td>Visualize</td><td>“Show that as a [line/bar] chart.”</td></tr>
-    <tr><td>Verify</td><td>“How did you calculate that? What definition did you use?”</td></tr>
-    <tr><td>Reuse</td><td>“Save this as a report I can re-run.”</td></tr>
+    <tr><td>Discover what's possible</td><td>"What data do you have about ___?"</td></tr>
+    <tr><td>Get a number</td><td>"What was [metric] in [time period]?"</td></tr>
+    <tr><td>Break it down</td><td>"Break that down by ___ / show the top 5."</td></tr>
+    <tr><td>Compare</td><td>"How does that compare to [period]?"</td></tr>
+    <tr><td>Understand why</td><td>"What's driving that change? Decompose it."</td></tr>
+    <tr><td>Visualize</td><td>"Show that as a [line/bar] chart."</td></tr>
+    <tr><td>Verify</td><td>"How did you calculate that? Is the definition governed?"</td></tr>
+    <tr><td>Make it durable</td><td>"Turn this into a report / dashboard."</td></tr>
+    <tr><td>Automate</td><td>"Create a playbook that runs every Monday…"</td></tr>
+    <tr><td>Teach it</td><td>"Our official definition of [metric] is… save it."</td></tr>
   </table>
-  <p class="callout tip"><b>Print this page</b> (it prints cleanly) or keep the link handy for your first week of real questions.</p>
+  <div class="callout"><span class="label">Keep it handy</span><p><b>Print this page</b> (it prints cleanly) or bookmark the <a href="#/cookbook">Prompt Cookbook</a> for your first week of real questions.</p></div>
 
   <h2>Where to go from here</h2>
   <ul>
-    <li><b>Use it for real this week.</b> The habit forms fast: next time you'd ping an analyst or dig through a dashboard, ask Ana first.</li>
-    <li><b>For your data team:</b> the companion workshop, <i>Build Your Ontology, End to End</i>, covers how the “company dictionary” behind today's answers is built and governed.</li>
+    <li><b>Use it for real this week.</b> Next time you'd file a ticket with the data team or dig through a dashboard, ask Ana first.</li>
+    <li><b>Create one playbook</b> for a question you answer repeatedly — adoption sticks when something useful arrives in your inbox Monday morning.</li>
+    <li><b>For your data team:</b> the companion workshop, <a href="https://github.com/TextQLLabs/ontology-workshop-guide" target="_blank" rel="noopener">Build Your Ontology, End to End</a>, covers how the governed definitions behind today's answers are built and maintained.</li>
     <li><b>Feedback:</b> tell your TextQL team what was confusing and what data you wished you had — both directly shape your workspace.</li>
   </ul>
   <p>Thanks for spending the time — now go ask your data something. 🚀</p>
 </section>
 
 <div class="pager" id="pager"></div>
-<footer class="pagefoot">© TextQL · Workshop: Self-Service Analytics for Business Users · Examples are illustrative — adapt them to your own data.</footer>
+<footer class="pagefoot">© TextQL · Workshop: Self-Service Analytics for Business Users · Example prompts are illustrative — adapt them to your own data.</footer>
 </div></main>
 </div>
 
+<div class="toast" id="toast">Copied to clipboard</div>
+<div id="lightbox" onclick="this.classList.remove('show')"><img src="" alt=""></div>
+
 <script>
 (function(){
-  const WS_KEY='textql-ws-ssa';
+  const WS_KEY='textql-ws-ssa-v2';
   const pages=[...document.querySelectorAll('section.page')];
-  const sidebar=document.getElementById('sidebar');
+  const navlist=document.getElementById('navlist');
   const pager=document.getElementById('pager');
 
   // Build sidebar nav grouped by data-group
@@ -524,40 +787,63 @@
   pages.forEach(p=>{
     if(p.dataset.group!==group){
       group=p.dataset.group;
-      const g=document.createElement('div');g.className='group-label';g.textContent=group;sidebar.appendChild(g);
+      const g=document.createElement('div');g.className='group-label';g.textContent=group;navlist.appendChild(g);
     }
-    const a=document.createElement('a');a.href='#/'+p.id;a.dataset.page=p.id;
-    a.innerHTML='<span class="num">'+(num++)+'</span><span>'+p.dataset.title+'</span>';
-    sidebar.appendChild(a);
+    const a=document.createElement('a');a.className='nav-item';a.href='#/'+p.id;a.dataset.page=p.id;
+    a.innerHTML='<span class="num"><span>'+(num++)+'</span></span><span>'+p.dataset.title.replace(/^Module \d+ · /,'')+'</span>'+
+      (p.dataset.time?'<span class="time">'+p.dataset.time+'</span>':'');
+    navlist.appendChild(a);
   });
 
   function show(id){
     let page=pages.find(p=>p.id===id)||pages[0];
     pages.forEach(p=>p.classList.toggle('active',p===page));
-    sidebar.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.page===page.id));
+    navlist.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.page===page.id));
     const i=pages.indexOf(page);
     pager.innerHTML=
       (i>0?'<a class="prev" href="#/'+pages[i-1].id+'"><span class="dir">← Previous</span><span class="ttl">'+pages[i-1].dataset.title+'</span></a>':'<span></span>')+
       (i<pages.length-1?'<a class="next" href="#/'+pages[i+1].id+'"><span class="dir">Next →</span><span class="ttl">'+pages[i+1].dataset.title+'</span></a>':'');
-    document.querySelector('main').scrollTo?.(0,0);window.scrollTo(0,0);
-    sidebar.classList.remove('open');
+    window.scrollTo(0,0);
+    document.getElementById('sidebar').classList.remove('open');
   }
   const hashId=()=>location.hash.replace(/^#\/?/,'');
   window.addEventListener('hashchange',()=>show(hashId()));
   show(hashId());
 
-  // Copy buttons
+  // Copy buttons + toast
   document.querySelectorAll('.prompt').forEach(box=>{
     const btn=box.querySelector('button');
     btn.addEventListener('click',()=>{
       navigator.clipboard.writeText(box.querySelector('pre').textContent.trim()).then(()=>{
-        btn.textContent='Copied ✓';setTimeout(()=>btn.textContent='Copy',1600);
+        const t=document.getElementById('toast');
+        t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400);
       });
     });
   });
 
-  // Checkpoint persistence (localStorage)
+  // Screenshot lightbox
+  const lb=document.getElementById('lightbox');
+  document.querySelectorAll('figure.shot img').forEach(img=>{
+    img.addEventListener('click',()=>{lb.querySelector('img').src=img.src;lb.classList.add('show');});
+  });
+
+  // Checkpoint persistence + progress
   let saved={};try{saved=JSON.parse(localStorage.getItem(WS_KEY)||'{}')}catch(e){}
+  const trackable=pages.filter(p=>p.querySelector('.checkpoint input'));
+  function refreshProgress(){
+    let done=0;
+    trackable.forEach(p=>{
+      const boxes=[...p.querySelectorAll('.checkpoint input')];
+      const allDone=boxes.length&&boxes.every(b=>b.checked);
+      const link=navlist.querySelector('a[data-page="'+p.id+'"]');
+      link.classList.toggle('done',allDone);
+      if(allDone){link.querySelector('.num').innerHTML='✓';done++;}
+      else{link.querySelector('.num').innerHTML='<span>'+pages.indexOf(p)+'</span>';}
+    });
+    const pct=trackable.length?Math.round(100*done/trackable.length):0;
+    document.getElementById('pfill').style.width=pct+'%';
+    document.getElementById('ppct').textContent=pct+'% complete';
+  }
   document.querySelectorAll('.checkpoint input[type=checkbox]').forEach((cb,i)=>{
     cb.checked=!!saved[i];
     cb.closest('label').classList.toggle('checked',cb.checked);
@@ -565,22 +851,10 @@
       saved[i]=cb.checked;
       cb.closest('label').classList.toggle('checked',cb.checked);
       try{localStorage.setItem(WS_KEY,JSON.stringify(saved))}catch(e){}
-      // mark nav item done if all its page's boxes are checked
-      pages.forEach(p=>{
-        const boxes=[...p.querySelectorAll('.checkpoint input')];
-        if(boxes.length){
-          const link=sidebar.querySelector('a[data-page="'+p.id+'"]');
-          link.classList.toggle('done',boxes.every(b=>b.checked));
-        }
-      });
+      refreshProgress();
     });
   });
-  // initial done-state
-  pages.forEach(p=>{
-    const boxes=[...p.querySelectorAll('.checkpoint input')];
-    if(boxes.length&&boxes.every(b=>b.checked))
-      sidebar.querySelector('a[data-page="'+p.id+'"]').classList.add('done');
-  });
+  refreshProgress();
 })();
 </script>
 </body>
