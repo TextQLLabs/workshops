@@ -26,6 +26,7 @@ Each workshop is a **self-contained `index.html`** (plus a local `assets/` folde
 | [Data Quality & Validation Deep-Dive](data-quality/) | Data & analytics engineers | ~2 hours | ✅ Ready |
 | [Embed TextQL in Your Product](embed-textql/) | Developers & product teams | ~2.5 hours | ✅ Ready |
 | [Deploy TextQL in Your VPC](vpc-deployment/) | Platform & infra teams | ~2.5 hours | ✅ Ready |
+| [The Context Stack — Personal, Role & Org Context](context-stack/) | Platform owners, admins, enablement | ~2 hours | ✅ Ready |
 
 The repo root [`index.html`](index.html) is a catalog landing page listing all workshops.
 
