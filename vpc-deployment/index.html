@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deploy TextQL in Your VPC · TextQL Workshops</title>
+<style>
+  :root{
+    --green:#58a68d; --green-dark:#2f6f5c; --green-soft:#e9f2ee;
+    --ink:#1c2b27; --muted:#5d6b67;
+    --bg:#ffffff; --bg-soft:#f4f8f6; --border:#dde7e3; --code-bg:#0f1f1b;
+    --gold:#e9c46a; --gold-soft:#fdf9ee; --gold-border:#f0e4c0; --gold-ink:#8a6d1f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.6}
+  a{color:var(--green-dark)}
+
+  /* ── Layout ─────────────────────────────── */
+  .layout{display:flex;min-height:100vh}
+  nav#sidebar{width:300px;min-width:300px;background:var(--bg-soft);border-right:1px solid var(--border);padding:24px 0 60px;position:fixed;top:0;bottom:0;overflow-y:auto;z-index:40}
+  main{margin-left:300px;flex:1;display:flex;justify-content:center;padding:44px 56px 110px}
+  .content{max-width:860px;width:100%}
+
+  /* ── Sidebar ────────────────────────────── */
+  .brand{padding:0 24px 16px;border-bottom:1px solid var(--border)}
+  .brand .logo{font-weight:800;font-size:18px;color:var(--green-dark);letter-spacing:.5px}
+  .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .progress-wrap{padding:14px 24px;border-bottom:1px solid var(--border)}
+  .progress-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+  .progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:var(--green);border-radius:4px;transition:width .4s}
+  .progress-pct{font-size:12px;color:var(--green-dark);font-weight:600;margin-top:4px}
+  nav .group-label{padding:16px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  nav a.nav-item{display:flex;align-items:center;gap:10px;padding:9px 24px;font-size:14px;color:var(--ink);text-decoration:none;border-left:3px solid transparent}
+  nav a.nav-item:hover{background:var(--green-soft)}
+  nav a.nav-item.active{border-left-color:var(--green);background:var(--green-soft);font-weight:600}
+  .nav-item .num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;min-width:22px;border-radius:50%;border:1.5px solid var(--muted);font-size:11px;font-weight:700;color:var(--muted)}
+  .nav-item.done .num{background:var(--green);border-color:var(--green);color:#fff;font-size:12px}
+  .nav-item .time{margin-left:auto;font-size:11px;color:var(--muted)}
+  .menu-btn{display:none;position:fixed;top:14px;left:14px;z-index:41;background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer}
+
+  /* ── Typography ─────────────────────────── */
+  .kicker{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);font-weight:700;margin-bottom:6px}
+  h1{font-size:30px;line-height:1.25;margin-bottom:10px;font-weight:700}
+  .page-meta{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-bottom:24px;flex-wrap:wrap}
+  .page-meta b{color:var(--ink)}
+  h2{font-size:20px;margin:34px 0 10px;padding-top:8px;font-weight:700}
+  h3{font-size:16px;margin:22px 0 8px;font-weight:700}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0 10px 24px}
+  li{margin:5px 0}
+  b,strong{font-weight:650}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:var(--bg-soft);font-weight:600}
+  code{background:#eef4f1;padding:2px 6px;border-radius:4px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  hr{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+  /* ── Hero cards (welcome) ───────────────── */
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+  .hero-card{border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:#fff}
+  .hero-card .n{font-size:12px;font-weight:700;color:var(--green);letter-spacing:1px}
+  .hero-card h3{margin:4px 0;font-size:15px}
+  .hero-card p{font-size:13px;color:var(--muted);margin:0}
+
+  /* ── Callouts ───────────────────────────── */
+  .callout{background:var(--bg-soft);border-left:4px solid var(--green);padding:12px 16px;border-radius:0 6px 6px 0;margin:14px 0;font-size:14px}
+  .callout.warn{border-left-color:var(--gold)}
+  .callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+  .callout .label{font-weight:700;display:block}
+
+  /* ── Prompt blocks ──────────────────────── */
+  .prompt{position:relative;background:var(--code-bg);color:#dff3ea;border-radius:8px;padding:20px;margin:16px 0 10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;line-height:1.55}
+  .prompt .tag{position:absolute;top:-9px;left:14px;background:var(--green);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px}
+  .prompt button{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.12);color:#dff3ea;border:none;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+  .prompt button:hover{background:rgba(255,255,255,.28)}
+  .prompt pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;padding-right:54px}
+  .yousee{background:var(--gold-soft);border:1px solid var(--gold-border);border-radius:8px;padding:12px 16px;margin:10px 0 18px;font-size:14px}
+  .yousee b{color:var(--gold-ink)}
+
+  /* ── Screenshots ────────────────────────── */
+  figure.shot{margin:16px 0 22px}
+  figure.shot img{display:block;max-width:100%;border:1px solid var(--border);border-radius:10px;box-shadow:0 2px 10px rgba(28,43,39,.08);cursor:zoom-in}
+  figure.shot figcaption{font-size:13px;color:var(--muted);margin-top:7px}
+  figure.shot.missing img,figure.shot.missing figcaption{display:none}
+  figure.shot.missing::after{content:"📷  Screenshot coming soon — " attr(data-todo);display:block;border:2px dashed var(--border);border-radius:10px;padding:22px 18px;color:var(--muted);font-size:13.5px;background:var(--bg-soft)}
+  #lightbox{display:none;position:fixed;inset:0;background:rgba(15,31,27,.92);z-index:200;cursor:zoom-out;align-items:center;justify-content:center;padding:30px}
+  #lightbox.show{display:flex}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:8px}
+
+  /* ── Steps ──────────────────────────────── */
+  ol.steps{list-style:none;margin-left:0;counter-reset:step}
+  ol.steps>li{counter-increment:step;position:relative;padding:0 0 16px 44px;border-left:2px solid var(--border);margin:0 0 0 15px}
+  ol.steps>li:last-child{border-left-color:transparent}
+  ol.steps>li::before{content:counter(step);position:absolute;left:-15px;top:-2px;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+
+  /* ── Checkpoint ─────────────────────────── */
+  .checkpoint{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:28px 0}
+  .checkpoint h4{margin:0 0 10px;color:var(--green-dark);font-size:15px}
+  .checkpoint label{display:flex;align-items:flex-start;gap:10px;padding:5px 0;font-size:14px;cursor:pointer}
+  .checkpoint input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;min-width:16px;cursor:pointer}
+  .checkpoint label.checked{color:var(--muted);text-decoration:line-through}
+
+  /* ── Expandable ─────────────────────────── */
+  details{border:1px solid var(--border);border-radius:8px;margin:12px 0;background:#fff}
+  details summary{cursor:pointer;padding:11px 14px;font-weight:600;font-size:14.5px;list-style:none}
+  details summary::before{content:"▸ ";color:var(--green)}
+  details[open] summary::before{content:"▾ "}
+  details .body{padding:2px 16px 12px}
+
+  /* ── Pager ──────────────────────────────── */
+  .pager{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--border);padding-top:22px}
+  .pager a{flex:1;max-width:330px;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-decoration:none;color:var(--ink)}
+  .pager a:hover{border-color:var(--green);background:var(--green-soft)}
+  .pager a .dir{font-size:12px;color:var(--muted);display:block}
+  .pager a .ttl{font-weight:600;color:var(--green-dark);font-size:15px}
+  .pager a.next{text-align:right;margin-left:auto}
+
+  .page{display:none}
+  .page.active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  footer.pagefoot{margin-top:46px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);padding-top:16px}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:210}
+  .toast.show{opacity:1}
+
+  @media(max-width:920px){
+    nav#sidebar{transform:translateX(-100%);transition:transform .2s;box-shadow:2px 0 14px rgba(0,0,0,.12)}
+    nav#sidebar.open{transform:none}
+    main{margin-left:0;padding:60px 22px 80px}
+    .menu-btn{display:block}
+    .hero-grid{grid-template-columns:1fr}
+  }
+  @media print{
+    nav#sidebar,.pager,.menu-btn,.toast{display:none!important}
+    main{margin-left:0}
+    .page{display:block!important;page-break-after:always}
+    figure.shot.missing{display:none}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+<div class="layout">
+<nav id="sidebar">
+  <div class="brand">
+    <div class="logo">TextQL Workshop</div>
+    <div class="sub">Deploy TextQL in Your VPC</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">Your progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+    <div class="progress-pct" id="ppct">0% complete</div>
+  </div>
+  <div id="navlist"></div>
+</nav>
+
+<main><div class="content" id="content">
+
+<section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
+  <div class="kicker">Workshop</div>
+  <h1>Deploy TextQL in Your VPC</h1>
+<p>A workshop of short, hands-on modules for <b>platform engineers, SREs, and infrastructure teams</b> deploying self-hosted TextQL into their own Kubernetes cluster: choosing the deployment path deliberately, prerequisites and network allowlists, the Helm install with a production-grade values file, inference configuration (including the Bedrock specifics that generate most field issues), validation, the upgrade and secret-rotation operating rhythm, and troubleshooting with the TextQL Doctor diagnostic workflow.</p>
+<p>Total time: <b>about 2.5 hours</b> of guided work — wrapped around an install that, with prerequisites cleared, lands the same day.</p>
+<div class="callout"><b>Scope:</b> self-hosted VPC deployment only. Managed multi-tenant and managed single-tenant (including PrivateLink) are TextQL-operated — Module 0 covers when each is the better answer, and the <b>Admin &amp; Governance</b> workshop covers everything above the infrastructure.</div>
+<h2>Who this is for</h2>
+<ul><li>Platform/infra engineers who own the Kubernetes cluster TextQL will run in</li><li>SREs who will operate, upgrade, and monitor the deployment</li><li>Security engineers reviewing what runs where and what egresses</li><li>The TextQL champion coordinating between those people and TextQL support</li></ul>
+<h2>What you'll be able to do</h2>
+<table><tr><th>After module</th><th>You can...</th></tr><tr><td>0</td><td>Justify VPC self-hosting vs the managed options — and know what you're taking on</td></tr><tr><td>1</td><td>Clear every prerequisite: cluster, database, registry access, secrets, network allowlists</td></tr><tr><td>2</td><td>Install via Helm with locked-down auth (single-tenant OIDC, enforced auth, role sync)</td></tr><tr><td>3</td><td>Configure inference for your compliance posture — direct API, Bedrock, or self-hosted models</td></tr><tr><td>4</td><td>Validate the deployment end to end before announcing it</td></tr><tr><td>5</td><td>Operate it: semver-safe upgrades, GitOps, secret rotation done right, monitoring</td></tr><tr><td>6</td><td>Troubleshoot with the field-issues catalog and the TextQL Doctor workflow</td></tr></table>
+<h2>Workshop modules</h2>
+<table><tr><th>Module</th><th>File</th><th>Time</th></tr><tr><td>0 · Choose the Path Deliberately</td><td><code>00_CHOOSE_PATH.md</code></td><td>15 min</td></tr><tr><td>1 · Prerequisites &amp; Architecture</td><td><code>01_PREREQUISITES.md</code></td><td>25 min</td></tr><tr><td>2 · Install with Helm</td><td><code>02_HELM_INSTALL.md</code></td><td>30 min</td></tr><tr><td>3 · Inference Configuration</td><td><code>03_INFERENCE.md</code></td><td>20 min</td></tr><tr><td>4 · Validate the Deployment</td><td><code>04_VALIDATE.md</code></td><td>15 min</td></tr><tr><td>5 · Operate: Upgrades, Secrets &amp; Monitoring</td><td><code>05_OPERATE.md</code></td><td>25 min</td></tr><tr><td>6 · Troubleshooting &amp; TextQL Doctor</td><td><code>06_TROUBLESHOOT.md</code></td><td>20 min</td></tr></table>
+<h2>How to use this workshop</h2>
+<ol><li>Module 0 is a decision gate — if it routes you to a managed option, you're done in 15 minutes and better off.</li><li>Module 1's checklist goes to your security and network teams <b>before</b> install day; allowlist tickets are the long pole.</li><li>Configuration follows the current documentation at <a href="https://docs.textql.com/core/admin/deployment-config">docs.textql.com</a> (deployment config, helm charts, network integration) — values keys and chart versions evolve; verify against the <a href="https://docs.textql.com/helm-charts/changelog">Changelog</a> when you install.</li><li>Swap <code>[bracketed]</code> placeholders for your cluster names, domains, and regions.</li></ol>
+<h2>Related workshops</h2>
+<ul><li><b>Admin &amp; Governance</b> — everything above the infrastructure: SSO/SCIM at the app layer, RBAC, audit, observability</li><li><b>Connect Your Data</b> — connecting warehouses once the platform runs (in-VPC connectors skip the IP allowlist)</li><li><b>POC in a Week</b> — if you're evaluating rather than deploying, run that first on managed infrastructure</li></ul>
+</section>
+
+<section class="page" id="m0" data-title="Module 0 · Choose the Path" data-group="Getting Started" data-time="15 minutes">
+  <div class="kicker">Module 0</div>
+  <h1>Module 0 · Choose the Path Deliberately</h1>
+  <div class="page-meta"><span>⏱️ <b>15 minutes</b></span></div>
+<p><b>Goal:</b> confirm VPC self-hosting is actually your answer — against the two managed options — and inventory what you're signing up to operate.</p>
+<h2>0.1 · The three deployment paths</h2>
+<table><tr><th></th><th>Managed Multi-Tenant</th><th>Managed Single-Tenant (+ PrivateLink)</th><th><b>Self-Hosted VPC</b></th></tr><tr><td>Who runs it</td><td>TextQL</td><td>TextQL (dedicated env)</td><td><b>You</b></td></tr><tr><td>Infrastructure</td><td>Shared, logically separated</td><td>Dedicated compute + database</td><td>Your Kubernetes cluster</td></tr><tr><td>Traffic to your data</td><td>Public internet (TLS), fixed egress IP to allowlist</td><td>AWS PrivateLink — never the public internet</td><td><b>Never leaves your network</b></td></tr><tr><td>Data residency</td><td>AWS us-west-2</td><td>Flexible</td><td><b>Fully yours</b></td></tr><tr><td>Features</td><td>Immediately on release</td><td>On release, stability-tailored</td><td>When <b>you</b> upgrade the chart</td></tr><tr><td>Compliance posture</td><td>SOC 2 audited, pen-tested, HIPAA/GDPR</td><td>Same, plus isolation</td><td>Inherits <b>your</b> controls</td></tr><tr><td>Operational cost</td><td>None (lowest cost)</td><td>None</td><td><b>Kubernetes + database + upgrades + monitoring, owned by your team</b></td></tr></table>
+<h2>0.2 · When VPC is the right answer</h2>
+<p>Self-hosting earns its operational cost when at least one of these is true:</p>
+<ul><li><b>Strict data residency</b> — data and compute must stay in a specific region/account/datacenter you control</li><li><b>Air-gapped or egress-prohibited environments</b> — policy forbids third-party cloud access to internal systems</li><li><b>Your controls must apply</b> — your secrets manager, your network policy, your audit pipeline, as a hard requirement rather than a preference</li></ul>
+<p>If your actual requirement is "traffic must not cross the public internet" — <b>Managed Single-Tenant with PrivateLink solves that without you operating Kubernetes.</b> Queries travel the AWS backbone; no IP allowlisting; no cluster to run. Many teams that start this conversation at "VPC" land there, happily. VPC peering also exists as an alternative for orgs already running peered networks at scale.</p>
+<h2>0.3 · What you're signing up for</h2>
+<p>The honest inventory — VPC self-hosting means your team owns:</p>
+<table><tr><th>You own</th><th>What it means in practice</th></tr><tr><td>The Kubernetes cluster</td><td>EKS is the tested and supported target; sizing, node pools, upgrades</td></tr><tr><td>The database</td><td>PostgreSQL — a managed service like RDS is the recommended pattern</td></tr><tr><td>Chart upgrades</td><td>Patches safe to auto-apply; minor/major reviewed against the changelog (Module 5)</td></tr><tr><td>Secrets</td><td>Your choice: AWS Secrets Manager, GCP Secret Manager, Azure Key Vault, or sealed secrets via GitOps</td></tr><tr><td>Monitoring &amp; incident response</td><td>Health endpoints exist; the watching is yours (Modules 4–5)</td></tr><tr><td>First-line troubleshooting</td><td>With the TextQL Doctor workflow and support behind you (Module 6)</td></tr></table>
+<h2>0.4 · The security baseline you inherit either way</h2>
+<p>All three paths share the same foundations — TLS 1.2+ in transit, AES-256-GCM at rest for connector credentials and secrets, OIDC/SSO + API key auth, per-object RBAC with org-scoped queries, and full audit logging (actor, resource, IP, auth method, timestamp). Every thread runs in an isolated, non-persistent sandbox execution environment. Self-hosting adds <i>your</i> perimeter around that baseline; it doesn't replace it.</p>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You can state which trigger (residency / air-gap / your-controls) justifies VPC for your org — or you've routed to PrivateLink and saved yourself a cluster</label>
+    <label><input type="checkbox"> The ownership inventory has a named owner for each row</label>
+    <label><input type="checkbox"> Your security team has the baseline table and the security whitepaper link (docs → Compliance → Security)</label>
+  </div>
+</section>
+
+<section class="page" id="m1" data-title="Module 1 · Prerequisites &amp; Architecture" data-group="Hands-On Modules" data-time="25 minutes">
+  <div class="kicker">Module 1</div>
+  <h1>Module 1 · Prerequisites & Architecture</h1>
+  <div class="page-meta"><span>⏱️ <b>25 minutes</b></span></div>
+<p><b>Goal:</b> clear every prerequisite before install day — cluster, database, registry access, secrets backend, and the network allowlists that are always the long pole.</p>
+<h2>1.1 · The architecture at a glance</h2>
+<p>A self-hosted TextQL deployment is:</p>
+<ul><li><b>The application</b>, deployed via Helm chart into your Kubernetes cluster — <b>EKS is the tested and supported platform</b>. Core services include the web frontend, the compute engine (Ana's brain), sandbox workers (isolated per-thread execution), and supporting services.</li><li><b>A PostgreSQL database</b> — run it on a managed service (RDS is the canonical choice) rather than in-cluster; it holds application state, while connector credentials and secrets are encrypted at rest.</li><li><b>Outbound paths</b> — to your data sources (entirely within your network), to your chosen LLM provider (Module 3), and to a short list of operational endpoints (1.4).</li></ul>
+<h2>1.2 · The prerequisite checklist</h2>
+<p>Send this to the owning teams now; each row has a different owner and lead time:</p>
+<table><tr><th>Prerequisite</th><th>Details</th><th>Typical owner</th></tr><tr><td>Kubernetes cluster</td><td>EKS (tested/supported); cluster-admin for the install; node capacity sized with TextQL for your user count</td><td>Platform</td></tr><tr><td>PostgreSQL</td><td>Managed instance (RDS pattern); reachable from the cluster; credentials ready</td><td>Platform / DBA</td></tr><tr><td><b>Registry access</b></td><td>TextQL provides a <b>PAT token</b> for the Docker registry — the chart pulls from <code>registry-1.docker.io/textqllabs</code></td><td>TextQL (request it now)</td></tr><tr><td>Secrets backend decision</td><td>AWS Secrets Manager / GCP Secret Manager / Azure Key Vault / sealed secrets via GitOps</td><td>Security</td></tr><tr><td>TLS + DNS</td><td>A hostname for the app, certificates per your standard</td><td>Network</td></tr><tr><td>IdP application</td><td>An OIDC app (Okta / Entra / Ping) for Module 2's single-tenant auth — issuer URL, client ID, client secret</td><td>IAM team</td></tr><tr><td>LLM provider decision</td><td>Module 3's choice made <i>before</i> install day — Bedrock needs IAM work with its own lead time</td><td>Security + Platform</td></tr></table>
+<h2>1.3 · Sizing conversation</h2>
+<p>Node capacity depends on concurrent users and sandbox workload (each active thread gets an isolated sandbox worker). Have the sizing conversation with your TextQL contact with these numbers in hand: expected total users, expected concurrent users, and whether dashboards (persistent workers) are in scope. Autoscaling node pools for sandbox workers is the pattern that absorbs spiky usage.</p>
+<h2>1.4 · Network allowlists — the long pole</h2>
+<p>Self-hosted does <b>not</b> mean zero egress (unless you negotiate a fully air-gapped design with TextQL). At minimum, ensure these are reachable from the VPC:</p>
+<table><tr><th>Destination</th><th>Why</th></tr><tr><td><b>Docker Hub</b> (<code>registry-1.docker.io</code>)</td><td>Pulling TextQL container images — install and every upgrade</td></tr><tr><td><b>console.textql.com</b></td><td>Usage data reporting</td></tr><tr><td><b>Your LLM provider's endpoint</b></td><td>Anthropic/OpenAI APIs, or Bedrock/Vertex endpoints in your cloud (Module 3) — unless fully self-hosted models</td></tr><tr><td>Any domains allowlisted in the TextQL proxy</td><td>Sandbox operations that reach approved external services (e.g., source control for ontology sync)</td></tr></table>
+<p>File the firewall tickets <b>now</b> — in most organizations this row, not the Helm install, sets the project timeline.</p>
+<div class="callout">Bonus of the VPC path: the <i>inbound</i> allowlisting from the SaaS world disappears. Your warehouse connectors don't need TextQL's public egress IPs allowlisted — all connector traffic stays inside your network (the <b>Connect Your Data</b> workshop's IP-allowlist module explicitly doesn't apply to you).</div>
+<h2>1.5 · Assemble the install bundle</h2>
+<p>Before Module 2, you should physically have: the registry PAT (from TextQL), the database connection string, the OIDC app's three values (issuer URL, client ID, client secret), your hostname + TLS material, and the LLM credentials or IAM role from Module 3's decision. Missing any one = a stalled install call.</p>
+    <figure class="shot" data-todo="the reference architecture diagram or prerequisites checklist view">
+    <img src="assets/vpc-m1-architecture.png" alt="The deployment architecture at a glance." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The deployment architecture at a glance.</figcaption>
+  </figure>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Every checklist row has an owner, and the registry PAT is requested from TextQL</label>
+    <label><input type="checkbox"> The database is provisioned (managed/RDS pattern) and reachable from the cluster</label>
+    <label><input type="checkbox"> Firewall tickets for the egress allowlist are filed — with Docker Hub and console.textql.com at minimum</label>
+    <label><input type="checkbox"> The install bundle is physically assembled: PAT, DB string, OIDC triplet, TLS, LLM credentials</label>
+  </div>
+</section>
+
+<section class="page" id="m2" data-title="Module 2 · Install with Helm" data-group="Hands-On Modules" data-time="30 minutes">
+  <div class="kicker">Module 2</div>
+  <h1>Module 2 · Install with Helm</h1>
+  <div class="page-meta"><span>⏱️ <b>30 minutes</b></span></div>
+<p><b>Goal:</b> the install itself — chart, values file, and the locked-down authentication configuration that should be on from day one.</p>
+<h2>2.1 · The install command</h2>
+<p>With the Module 1 bundle in hand:</p>
+<pre>helm upgrade --install &lt;my-release&gt; \
+  oci://registry-1.docker.io/textqllabs/textql-charts \
+  --version &lt;version&gt; \
+  --values values.yaml</pre>
+<p>Registry access uses the PAT token TextQL provided. Pin an explicit <code>--version</code> — check the <a href="https://docs.textql.com/helm-charts/changelog">Changelog</a> for the current release and any upgrade notes. The chart follows <b>Semantic Versioning</b>: that discipline matters more at upgrade time (Module 5) than install time, but start as you mean to continue.</p>
+<h2>2.2 · The values file — auth first</h2>
+<p>The single most consequential block in your values file is authentication. For an enterprise VPC deployment, the locked-down pattern is <b>single-tenant OIDC with enforced auth</b>:</p>
+<pre>global:
+  auth:
+    singleOIDCTenant: true
+    singleOidcIdleLogoutAfter: "45m"          # optional idle timeout
+    oidc:
+      providerType: "Okta OIDC"               # Okta OIDC | Microsoft OIDC | Ping OIDC
+      issuerUrl: "https://your-idp.example.com"
+      clientId: "your-client-id"
+      clientSecret: "your-client-secret"
+      scopes: "openid profile email"          # default
+      attributeMapping: '{"role_sync_enabled": true, "preserve_admin_role": true}'
+      emailVerification: true                  # default
+    allowedDomains: "company.com"              # optional: restrict signup domains
+    banDisposableEmails: true                  # default
+
+oathkeeper:
+  enforceAuth: true</pre>
+<p>What this buys you:</p>
+<ul><li><b><code>singleOIDCTenant: true</code></b> — one IdP for the whole deployment; users go straight to your IdP (the login page is bypassed); email/magic-link login is disabled; the provider shows read-only in Settings.</li><li><b><code>enforceAuth: true</code></b> — every request must carry a valid session or API key; unauthenticated requests redirect to the IdP. This is the recommended setting for locked-down deployments — and the chart <b>fails validation</b> if you enable it without <code>singleOIDCTenant</code>, by design.</li><li><b><code>allowedDomains</code></b> — only matching email domains can create accounts.</li></ul>
+<p>Two warnings worth respecting:</p>
+<ul><li><b>All four OIDC fields</b> (<code>providerType</code>, <code>issuerUrl</code>, <code>clientId</code>, <code>clientSecret</code>) <b>must be set together</b> — partial configuration causes authentication failures, not graceful degradation.</li><li>Keep a <b>break-glass access plan</b> before you enforce auth: know how you'd correct a bad OIDC config (the values file is your recovery path — a fresh <code>helm upgrade</code> with corrected values).</li></ul>
+<h2>2.3 · Role sync — provisioning without hand-assignment</h2>
+<p>With <code>role_sync_enabled</code> in the attribute mapping, user roles synchronize from IdP group claims <b>on every login</b>: group names match TextQL role names case-insensitively; matching roles are assigned; roles absent from the IdP groups are removed; unmatched groups are ignored.</p>
+<p>The flag that prevents the classic self-inflicted lockout: <b><code>preserve_admin_role: true</code></b> — the admin role is never removed by sync, so an IdP group change can't strip your last admin. Set it.</p>
+<p>One known edge: if the IdP can't return group memberships (a user in too many groups), sync is skipped with a warning — configure a groups filter in your IdP if you hit it.</p>
+<h2>2.4 · The rest of the values file</h2>
+<p>Work through with your TextQL contact for your specifics (and verify keys against the current chart version):</p>
+<table><tr><th>Block</th><th>What it covers</th><th>Notes</th></tr><tr><td>Database</td><td>Connection to your PostgreSQL</td><td>The RDS instance from Module 1</td></tr><tr><td>Secrets mode</td><td><code>plaintext</code> vs <code>sealedSecrets</code> / <code>externalSecrets</code></td><td>Production = encrypted modes; plaintext logs harmless "skipping encryption migration" warnings but is for dev only</td></tr><tr><td>Providers / inference</td><td>LLM routing</td><td>Module 3 — the whole module</td></tr><tr><td>Ingress / TLS</td><td>Hostname, certificates</td><td>Your standard</td></tr><tr><td>Org defaults</td><td>Tool availability, feature flags, models</td><td>Runtime-configurable in Settings too — the <b>Admin &amp; Governance</b> workshop owns this layer</td></tr></table>
+<h2>2.5 · First contact</h2>
+<p>After the install converges (migrations run as a pod on install — if it fails silently, that's a known issue class; Module 6):</p>
+<ol><li>Open <code>https://[your-hostname]</code> — you should land on your IdP, not a login page (that's <code>singleOIDCTenant</code> working).</li><li>Authenticate; confirm you arrive in the workspace.</li><li>Check role sync: your IdP groups should map to your TextQL role.</li><li><b>Verify in Settings that the OIDC provider shows read-only</b> — confirmation the single-tenant mode is active.</li></ol>
+    <figure class="shot" data-todo="a successful helm install / pods running (kubectl get pods)">
+    <img src="assets/vpc-m2-helm.png" alt="The install landing: pods up, services healthy." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The install landing: pods up, services healthy.</figcaption>
+  </figure>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The chart installed at a pinned version with your values file</label>
+    <label><input type="checkbox"> Login goes straight to your IdP; email/magic-link is gone; unauthenticated requests redirect</label>
+    <label><input type="checkbox"> Role sync assigns your role from IdP groups, and preserve_admin_role is set</label>
+    <label><input type="checkbox"> Secrets mode is an encrypted backend, not plaintext</label>
+    <label><input type="checkbox"> You know your break-glass path for a bad auth config</label>
+  </div>
+</section>
+
+<section class="page" id="m3" data-title="Module 3 · Inference Configuration" data-group="Hands-On Modules" data-time="20 minutes">
+  <div class="kicker">Module 3</div>
+  <h1>Module 3 · Inference Configuration</h1>
+  <div class="page-meta"><span>⏱️ <b>20 minutes</b></span></div>
+<p><b>Goal:</b> route Ana's language models per your compliance posture — direct provider APIs, in-your-cloud foundation models (Bedrock), or self-hosted open source — and avoid the Bedrock pitfalls that generate most field issues.</p>
+<h2>3.1 · The three inference postures</h2>
+<table><tr><th>Posture</th><th>Traffic path</th><th>When</th></tr><tr><td><b>Foundational model providers</b> (Anthropic, OpenAI APIs)</td><td>VPC → provider API over TLS</td><td>Best model performance; DPAs in place with both providers, SOC 2 reviewed — acceptable for many compliance regimes</td></tr><tr><td><b>In-your-cloud foundation models</b> (AWS Bedrock; similar patterns for other clouds)</td><td>Stays inside your cloud account</td><td>Egress to third-party APIs prohibited; model usage billed/governed through your cloud agreement</td></tr><tr><td><b>Self-hosted open source models</b></td><td>Entirely within your infrastructure</td><td>Air-gapped or maximal-control postures; expect a performance gap vs leading commercial models</td></tr></table>
+<p>The decision is usually made by your security team's egress policy, not by preference — which is why Module 1 put it on the prerequisite list.</p>
+<h2>3.2 · Direct provider configuration</h2>
+<p>The simplest posture: provider API keys in your values (via your secrets backend), <code>MODEL_PROVIDER</code> set accordingly. One field note from real deployments: if Anthropic is your primary provider, a <i>"failed to initialize provider: openai: missing openai key"</i> <b>WARN</b> at startup is non-critical — OpenAI is only a fallback/feature path; set its key only if you want those.</p>
+<h2>3.3 · Bedrock — the configuration that rewards care</h2>
+<p>Bedrock keeps inference inside your AWS account. The Helm values → environment mapping:</p>
+<pre>global:
+  providers:
+    modelProvider: "anthropic"          # MODEL_PROVIDER
+    anthropicProvider: "bedrock"        # ANTHROPIC_PROVIDER — routes Anthropic calls via Bedrock
+    bedrock:
+      globalInference: true             # BEDROCK_GLOBAL_INFERENCE
+      customRoleArn: "arn:aws:iam::..." # optional — BEDROCK_ASSUME_ROLE_ARN (STS AssumeRole)
+      customRoleExternalId: "..."       # optional, paired with the role ARN</pre>
+<p>When <code>customRoleArn</code> is absent, pods use the node/IRSA AWS identity directly — that absence is normal, not a misconfiguration.</p>
+<p><b>The three Bedrock facts that prevent most field issues:</b></p>
+<ol><li><b>Model access is opt-in per AWS account.</b> In the Bedrock console: Model access → request access for the Anthropic models you'll use. An unenabled model fails with <i>"The provided model identifier is invalid"</i> — which reads like a TextQL bug and is an AWS account setting.</li><li><b>Newer Anthropic models require inference profiles</b> (<code>us.</code>/<code>eu.</code>/<code>global.</code> prefixed IDs), not bare model IDs. <code>globalInference: true</code> selects global profiles — your account must have them provisioned in-region; if not, set it <code>false</code> to fall back to regional profiles (which must themselves be enabled).</li><li><b>Health checks exercise the default model.</b> The functional health refresher tests LLM connectivity with the default model every few minutes — if that model isn't enabled in Bedrock, you'll see recurring health failures (and degraded thread-quality judging) <b>while user chats may still work</b> on other models. Recurring "invalid model identifier" health errors = check Bedrock model access first, app config second.</li></ol>
+<p>IAM-side: the EKS node role (or the assumed role) needs valid Bedrock permissions in the right region. The error <i>"failed to refresh cached credentials"</i> in chat points at exactly this — the IAM role attached to the EKS nodes lacking or losing Bedrock access (also in Module 6's catalog).</p>
+<h2>3.4 · Verify inference before users do</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Confirm which model is answering this, then run a trivial end-to-end test: query [a small table] via SQL and chart the result with Python.</pre></div>
+  <div class="yousee"><b>You'll see:</b> model identity plus the two execution paths (SQL, sandbox Python) exercised in one shot. Then check the deployment's functional health endpoint/monitors (Module 4) for the LLM execution check specifically — green there means the <i>default</i> model works, not just the one you tested.</div>
+    <figure class="shot" data-todo="the inference configuration (model endpoint settings)">
+    <img src="assets/vpc-m3-inference.png" alt="Inference wired to your provider." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Inference wired to your provider.</figcaption>
+  </figure>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Your inference posture is chosen by egress policy and documented in the values file</label>
+    <label><input type="checkbox"> (Bedrock) Model access is granted in the AWS console for every model you'll enable — including the default model the health checks use</label>
+    <label><input type="checkbox"> (Bedrock) The inference-profile decision (globalInference true/false) matches what's provisioned in your account/region</label>
+    <label><input type="checkbox"> An end-to-end thread (SQL + Python) succeeded, and the LLM health check is green</label>
+  </div>
+</section>
+
+<section class="page" id="m4" data-title="Module 4 · Validate the Deployment" data-group="Hands-On Modules" data-time="15 minutes">
+  <div class="kicker">Module 4</div>
+  <h1>Module 4 · Validate the Deployment</h1>
+  <div class="page-meta"><span>⏱️ <b>15 minutes</b></span></div>
+<p><b>Goal:</b> prove every subsystem works before announcing the deployment — a smoke test that exercises what the Helm install's success message doesn't.</p>
+<h2>4.1 · Pod-level sanity</h2>
+<pre>kubectl get pods -n &lt;namespace&gt;
+# everything Running/Completed; watch specifically for:
+# - the DB migration pod: Completed (a silent failure here is a known issue class — Module 6)
+# - sandbox-worker pods: Running, not Error/CrashLoopBackOff
+# - compute-engine: Running, low restart count</pre>
+<p>Then skim startup logs for the <i>expected</i> warnings vs real problems — knowing the difference prevents false alarms:</p>
+<table><tr><th>Log line</th><th>Verdict</th></tr><tr><td><code>Slack bot token not provided, skipping initialization</code> (and Teams equivalent)</td><td>INFO — integration not configured; fine until you want it</td></tr><tr><td><code>missing openai key</code> (when Anthropic is primary)</td><td>WARN — fallback provider only; fine</td></tr><tr><td><code>Skipping credential encryption migration: encryption not enabled</code></td><td>Expected <b>only</b> in plaintext mode — in production this line means your secrets mode isn't what you think it is</td></tr><tr><td>Migration pod failed, no logs</td><td>Real — Module 6</td></tr><tr><td>Sandbox workers crashing on startup with a Python import error</td><td>Real — image/version mismatch class; Module 6</td></tr></table>
+<h2>4.2 · The functional smoke test</h2>
+<p>The platform exposes functional health checks (<code>/health/functional</code>) covering the critical paths — LLM execution, sandbox, ontology, cache, console, web. Check them — then <i>also</i> prove it like a user, in a fresh thread:</p>
+<ol><li><b>Auth path</b> — log in via your IdP from a clean browser session; confirm role sync assigned the right role.</li><li><b>The five-question connector smoke test</b> from the <b>Connect Your Data</b> workshop (Module 6.1) against your first in-VPC connector — visibility, read, breadth, write-must-fail, scale.</li><li><b>Sandbox execution:</b></li></ol>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Run a quick Python test: generate 1000 random numbers, compute summary statistics, and render a histogram.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a chart — proof the sandbox workers schedule, execute, and return artifacts. If this hangs, it's a worker/scheduling issue, not an LLM issue (the distinction matters for triage).</div>
+<ol><li><b>Inference</b> — already verified in Module 3.4; re-check the LLM health monitor is green <i>now</i>, post-everything.</li></ol>
+<h2>4.3 · The restricted-user check</h2>
+<p>With a second test account holding a non-admin role: log in, confirm they see only what their role allows (connectors, settings sections). Auth <i>working</i> and authorization <i>scoped</i> are different claims — verify both before announcing. (The full access-control model: <b>Admin &amp; Governance</b>, Module 2.)</p>
+<h2>4.4 · Capture the baseline</h2>
+<p>Record while everything is green: chart version, image versions, node count and types, pod resource consumption at idle, and time-to-first-token on a simple thread. This baseline is what "it got slower" gets compared against in three months — without it, every performance conversation starts from vibes.</p>
+    <figure class="shot" data-todo="the validation checks passing (first chat answering in the deployed env)">
+    <img src="assets/vpc-m4-validate.png" alt="Proof of life: a governed answer from inside your VPC." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Proof of life: a governed answer from inside your VPC.</figcaption>
+  </figure>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> All pods healthy; migration pod Completed; you can tell expected warnings from real errors</label>
+    <label><input type="checkbox"> Functional health checks green AND a real thread exercised SQL + sandbox + chart end to end</label>
+    <label><input type="checkbox"> A restricted user sees only their scope</label>
+    <label><input type="checkbox"> The performance baseline is recorded somewhere your team will find it</label>
+  </div>
+</section>
+
+<section class="page" id="m5" data-title="Module 5 · Operate" data-group="Hands-On Modules" data-time="25 minutes">
+  <div class="kicker">Module 5</div>
+  <h1>Module 5 · Operate: Upgrades, Secrets & Monitoring</h1>
+  <div class="page-meta"><span>⏱️ <b>25 minutes</b></span></div>
+<p><b>Goal:</b> the operating rhythm — semver-disciplined upgrades, GitOps automation, the secret-rotation gotcha, and monitoring that catches degradation before users do.</p>
+<h2>5.1 · Upgrades: the semver contract</h2>
+<p>The chart follows Semantic Versioning, which gives you a clean policy:</p>
+<table><tr><th>Version change</th><th>Policy</th></tr><tr><td><b>Patch</b> (1.2.x)</td><td>Non-breaking by contract — <b>safe to auto-install</b></td></tr><tr><td><b>Minor / major</b></td><td>Read the <a href="https://docs.textql.com/helm-charts/changelog">Changelog</a> first — each release documents what's new, bug fixes, and an <b>upgrade guide</b> section with any required steps</td></tr></table>
+<p>The manual path is the same command as install with a new <code>--version</code>. Two habits that keep upgrades boring:</p>
+<ul><li><b>Read the changelog even for patches</b> — it's well-maintained (release notes document fixes down to specific SCIM, MCP, and storage behaviors) and 30 seconds of reading beats reverse-engineering a behavior change.</li><li><b>Re-run Module 4's smoke test after every upgrade</b> — particularly the sandbox execution check, since worker images version alongside the chart.</li></ul>
+<h2>5.2 · GitOps and automation</h2>
+<p>Point Flux, ArgoCD, or your CI at the TextQL registry for automatic releases. The recommended policy matches the semver contract: <b>auto-install patches only</b> (<code>^1.2.x</code> style constraints); minors and majors go through your change process with the changelog's upgrade guide in hand.</p>
+<p>This pairs naturally with sealed-secrets-via-GitOps as the secrets mode — the whole deployment becomes a repo: values, secrets, version pin, all reviewed, all auditable, all revertible.</p>
+<h2>5.3 · The secret-rotation gotcha</h2>
+<p>The single most field-reported operational surprise: <b>running pods do not pick up updated secret values.</b> After rotating any secret (database password, LLM key, OIDC client secret — via <code>kubectl edit secret</code>, Helm upgrade, or your external secrets manager), the pods keep the old value until restarted:</p>
+<pre>kubectl rollout restart deployment/compute-engine
+kubectl rollout restart deployment/web
+# ...and any other deployment mounting the rotated secret</pre>
+<p>Until the restart, you get the worst failure mode: <b>subtle auth failures that are hard to trace</b> — the deployment looks healthy while requests fail with stale credentials. Bake the restart into your rotation runbook as a single atomic step: <i>rotate → restart → smoke test</i>. Never just rotate.</p>
+<h2>5.4 · Monitoring</h2>
+<p>Three layers, from platform to product:</p>
+<table><tr><th>Layer</th><th>What</th><th>How</th></tr><tr><td><b>Kubernetes</b></td><td>Pods, restarts, node pressure, PVC/storage health</td><td>Your existing cluster monitoring — TextQL is now one of your workloads</td></tr><tr><td><b>Functional health</b></td><td><code>/health/functional</code> keyword checks per subsystem: LLM execution, sandbox/code execution, ontology, cache, console, web</td><td>Point your uptime monitor (BetterStack-style keyword monitors are the reference pattern) at the endpoint; alert on subsystem failures</td></tr><tr><td><b>Product quality</b></td><td>Thread warnings, usage, errors as users experience them</td><td>The <b>Observability</b> surface in-app (admin sidebar) — the <b>Admin &amp; Governance</b> workshop's weekly triage loop</td></tr></table>
+<p>The functional layer is the one self-hosters skip and regret: it's what distinguishes "the pods are Running" from "Ana can actually execute a query" — recall Module 3's Bedrock case, where health checks fail while pods look perfectly healthy.</p>
+<h2>5.5 · The operating cadence</h2>
+<table><tr><th>Cadence</th><th>Activity</th></tr><tr><td>Continuous</td><td>Cluster monitoring + functional health alerts</td></tr><tr><td>Per release</td><td>Patches auto-apply (GitOps); changelog skim</td></tr><tr><td>Per minor/major</td><td>Change-process review → upgrade → Module 4 smoke test</td></tr><tr><td>Per rotation</td><td>Rotate → <b>restart</b> → smoke test</td></tr><tr><td>Monthly</td><td>Baseline drift check (Module 4.4's numbers); capacity review against usage growth</td></tr><tr><td>Quarterly</td><td>Chart version currency review — don't fall more than [a couple of minors] behind; catching up gets harder, not easier</td></tr></table>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Auto-install is patches-only; minors/majors route through your change process with the changelog</label>
+    <label><input type="checkbox"> The rotation runbook says rotate → restart → smoke test, as one step</label>
+    <label><input type="checkbox"> Functional health checks feed your alerting — not just pod status</label>
+    <label><input type="checkbox"> The cadence table has owners, and the quarterly currency review is calendared</label>
+  </div>
+</section>
+
+<section class="page" id="m6" data-title="Module 6 · Troubleshooting &amp; Doctor" data-group="Hands-On Modules" data-time="20 minutes">
+  <div class="kicker">Module 6</div>
+  <h1>Module 6 · Troubleshooting & TextQL Doctor</h1>
+  <div class="page-meta"><span>⏱️ <b>20 minutes</b></span></div>
+<p><b>Goal:</b> triage the known field-issue classes yourself, and when you escalate, do it with the TextQL Doctor diagnostic — the workflow that turns a support cycle into a same-day answer.</p>
+<h2>6.1 · The field-issue catalog</h2>
+<p>The recurring classes from real VPC deployments, with first moves:</p>
+<table><tr><th>Symptom</th><th>Likely cause</th><th>First move</th></tr><tr><td>Pods stuck in <code>ImagePullBackOff</code></td><td>Docker registry credentials (the PAT) expired</td><td>Request updated credentials from TextQL support; apply; restart affected pods</td></tr><tr><td>DB migration pod fails <b>with no logs</b></td><td>Known issue class on EKS</td><td>Contact support for the latest chart — newer versions include migration-pod logging</td></tr><tr><td><i>"Error 321: failed to refresh cached credentials"</i> in chat</td><td>IAM role for Bedrock on the EKS nodes — invalid, expired, or quota-exceeded</td><td>Check the node role (typically <code>tql-eks-node-role</code>): Bedrock permissions, credential validity, quota (Module 3)</td></tr><tr><td>Recurring <i>"invalid model identifier"</i> health errors</td><td>Bedrock model access / inference profiles (Module 3.3)</td><td>Bedrock console → Model access; check the <code>globalInference</code> setting against what's provisioned</td></tr><tr><td>Sandbox workers in <code>Error</code> seconds after start</td><td>Worker image issue (e.g., a missing Python dependency in a specific image version)</td><td>Check worker pod logs for the import traceback; usually resolved by a chart/image upgrade</td></tr><tr><td>Auth fails after a secret change</td><td>The Module 5.3 gotcha — pods holding stale secrets</td><td><code>kubectl rollout restart</code> the affected deployments</td></tr><tr><td>Auth fails after IdP changes</td><td>Partial OIDC config (all four fields together), or role-sync removing roles</td><td>Verify the four fields; check <code>preserve_admin_role</code>; check IdP group claims</td></tr><tr><td>Old behavior persists after upgrade</td><td>Pods didn't roll, or image tag didn't change</td><td><code>kubectl rollout status</code>; compare image tags against the chart version</td></tr></table>
+<p>Worth knowing about restarts: multiple old ReplicaSets on compute-engine are normal after iterative upgrades; a pod much younger than its peers usually means a manual restart happened — check <code>kubectl.kubernetes.io/restartedAt</code> before attributing mystery behavior to anything deeper.</p>
+<h2>6.2 · TextQL Doctor — diagnostics without giving access</h2>
+<p>Self-hosting means TextQL support can't see your cluster. <b>TextQL Doctor</b> closes that gap without opening your perimeter:</p>
+<ol><li>You run the doctor script in your deployment (TextQL support provides it / it ships with the deployment tooling).</li><li>It collects deployment diagnostics — pod states, compute-engine logs, Helm chart version and values, Kubernetes configuration — into a single <b>encrypted</b> file (<code>textql-doctor-&lt;date&gt;-&lt;hour&gt;.encrypted.txt</code>).</li><li>You send that file to TextQL support. <b>Only TextQL holds the decryption key</b> — the file is unreadable in transit and to anyone else.</li><li>TextQL analyzes it against the exact chart version you're running and known-issue history, and returns findings — typically distinguishing <i>config-on-your-side</i> (an IAM grant, a values key) from <i>fix-on-TextQL's-side</i> (a chart/image issue) in the first pass.</li></ol>
+<p>What to do <i>before</i> generating a doctor file, so the cycle is one round instead of three: note your chart version (<code>helm list</code>), capture when the symptom started and what changed around then (upgrade? secret rotation? IdP change? — the catalog above is ordered by exactly these), and include the affected pod names.</p>
+<h2>6.3 · Escalation that gets same-day answers</h2>
+<p>The escalation package, assembled:</p>
+<ol><li>Chart version + when it was installed/upgraded</li><li>The symptom, when it started, and <b>what changed around that time</b> (the most diagnostic single fact — config changes masquerade as version regressions surprisingly often)</li><li>Which catalog row (6.1) you suspect and what you already ruled out</li><li>The doctor file</li></ol>
+<div class="callout"><b>Production note for regulated environments:</b> the doctor file contains logs and configuration. The encryption protects it in transit, and TextQL's analysis practice is to redact sensitive values — but if your compliance posture requires it, review what the script collects with your security team once, up front, so generating one during an incident needs no new approval.</div>
+<h2>🎓 You're done</h2>
+<p>You chose the deployment path deliberately, cleared the prerequisites including the real long pole (network), installed with locked-down auth, configured inference for your compliance posture, validated past the green-pods illusion, set an operating rhythm with the rotation gotcha handled, and you can troubleshoot — and escalate — like a team that's done this before.</p>
+<p><b>What's next:</b> connect the warehouses (<b>Connect Your Data</b> — your in-VPC connectors skip the IP allowlist), configure the application layer (<b>Admin &amp; Governance</b> — SSO at the app level, RBAC, audit, observability), and onboard your users (<b>Self-Service Analytics</b>).</p>
+    <figure class="shot" data-todo="the doctor/diagnostic tooling output">
+    <img src="assets/vpc-m6-doctor.png" alt="The doctor: diagnosis before debugging." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The doctor: diagnosis before debugging.</figcaption>
+  </figure>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The field-issue catalog is in your team's runbook, mapped to your alerting</label>
+    <label><input type="checkbox"> You know the doctor workflow end to end — and your security team has pre-approved its use</label>
+    <label><input type="checkbox"> Your escalation template includes version, timeline, what-changed, and the suspected catalog row</label>
+    <label><input type="checkbox"> You've connected this to the operating cadence: most catalog rows are *prevented* by Module 5's habits</label>
+  </div>
+</section>
+
+<div class="pager" id="pager"></div>
+<footer class="pagefoot">© TextQL · Workshop: Deploy TextQL in Your VPC · Example prompts are illustrative — adapt them to your own data.</footer>
+</div></main>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+<div id="lightbox" onclick="this.classList.remove('show')"><img src="" alt=""></div>
+
+<script>
+(function(){
+  const WS_KEY='textql-ws-vpc-deployment';
+  const pages=[...document.querySelectorAll('section.page')];
+  const navlist=document.getElementById('navlist');
+  const pager=document.getElementById('pager');
+
+  // Build sidebar nav grouped by data-group
+  let group=null, num=0;
+  pages.forEach(p=>{
+    if(p.dataset.group!==group){
+      group=p.dataset.group;
+      const g=document.createElement('div');g.className='group-label';g.textContent=group;navlist.appendChild(g);
+    }
+    const a=document.createElement('a');a.className='nav-item';a.href='#/'+p.id;a.dataset.page=p.id;
+    a.innerHTML='<span class="num"><span>'+(num++)+'</span></span><span>'+p.dataset.title.replace(/^Module \d+ · /,'')+'</span>'+
+      (p.dataset.time?'<span class="time">'+p.dataset.time+'</span>':'');
+    navlist.appendChild(a);
+  });
+
+  function show(id){
+    let page=pages.find(p=>p.id===id)||pages[0];
+    pages.forEach(p=>p.classList.toggle('active',p===page));
+    navlist.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.page===page.id));
+    const i=pages.indexOf(page);
+    pager.innerHTML=
+      (i>0?'<a class="prev" href="#/'+pages[i-1].id+'"><span class="dir">← Previous</span><span class="ttl">'+pages[i-1].dataset.title+'</span></a>':'<span></span>')+
+      (i<pages.length-1?'<a class="next" href="#/'+pages[i+1].id+'"><span class="dir">Next →</span><span class="ttl">'+pages[i+1].dataset.title+'</span></a>':'');
+    window.scrollTo(0,0);
+    document.getElementById('sidebar').classList.remove('open');
+  }
+  const hashId=()=>location.hash.replace(/^#\/?/,'');
+  window.addEventListener('hashchange',()=>show(hashId()));
+  show(hashId());
+
+  // Copy buttons + toast
+  document.querySelectorAll('.prompt').forEach(box=>{
+    const btn=box.querySelector('button');
+    btn.addEventListener('click',()=>{
+      navigator.clipboard.writeText(box.querySelector('pre').textContent.trim()).then(()=>{
+        const t=document.getElementById('toast');
+        t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400);
+      });
+    });
+  });
+
+  // Screenshot lightbox
+  const lb=document.getElementById('lightbox');
+  document.querySelectorAll('figure.shot img').forEach(img=>{
+    img.addEventListener('click',()=>{lb.querySelector('img').src=img.src;lb.classList.add('show');});
+  });
+
+  // Checkpoint persistence + progress
+  let saved={};try{saved=JSON.parse(localStorage.getItem(WS_KEY)||'{}')}catch(e){}
+  const trackable=pages.filter(p=>p.querySelector('.checkpoint input'));
+  function refreshProgress(){
+    let done=0;
+    trackable.forEach(p=>{
+      const boxes=[...p.querySelectorAll('.checkpoint input')];
+      const allDone=boxes.length&&boxes.every(b=>b.checked);
+      const link=navlist.querySelector('a[data-page="'+p.id+'"]');
+      link.classList.toggle('done',allDone);
+      if(allDone){link.querySelector('.num').innerHTML='✓';done++;}
+      else{link.querySelector('.num').innerHTML='<span>'+pages.indexOf(p)+'</span>';}
+    });
+    const pct=trackable.length?Math.round(100*done/trackable.length):0;
+    document.getElementById('pfill').style.width=pct+'%';
+    document.getElementById('ppct').textContent=pct+'% complete';
+  }
+  document.querySelectorAll('.checkpoint input[type=checkbox]').forEach((cb,i)=>{
+    cb.checked=!!saved[i];
+    cb.closest('label').classList.toggle('checked',cb.checked);
+    cb.addEventListener('change',()=>{
+      saved[i]=cb.checked;
+      cb.closest('label').classList.toggle('checked',cb.checked);
+      try{localStorage.setItem(WS_KEY,JSON.stringify(saved))}catch(e){}
+      refreshProgress();
+    });
+  });
+  refreshProgress();
+})();
+</script>
+</body>
+</html>
