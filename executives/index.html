@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TextQL for Executives · TextQL Workshops</title>
+<style>
+  :root{
+    --green:#58a68d; --green-dark:#2f6f5c; --green-soft:#e9f2ee;
+    --ink:#1c2b27; --muted:#5d6b67;
+    --bg:#ffffff; --bg-soft:#f4f8f6; --border:#dde7e3; --code-bg:#0f1f1b;
+    --gold:#e9c46a; --gold-soft:#fdf9ee; --gold-border:#f0e4c0; --gold-ink:#8a6d1f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.6}
+  a{color:var(--green-dark)}
+
+  /* ── Layout ─────────────────────────────── */
+  .layout{display:flex;min-height:100vh}
+  nav#sidebar{width:300px;min-width:300px;background:var(--bg-soft);border-right:1px solid var(--border);padding:24px 0 60px;position:fixed;top:0;bottom:0;overflow-y:auto;z-index:40}
+  main{margin-left:300px;flex:1;display:flex;justify-content:center;padding:44px 56px 110px}
+  .content{max-width:860px;width:100%}
+
+  /* ── Sidebar ────────────────────────────── */
+  .brand{padding:0 24px 16px;border-bottom:1px solid var(--border)}
+  .brand .logo{font-weight:800;font-size:18px;color:var(--green-dark);letter-spacing:.5px}
+  .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .progress-wrap{padding:14px 24px;border-bottom:1px solid var(--border)}
+  .progress-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+  .progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:var(--green);border-radius:4px;transition:width .4s}
+  .progress-pct{font-size:12px;color:var(--green-dark);font-weight:600;margin-top:4px}
+  nav .group-label{padding:16px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  nav a.nav-item{display:flex;align-items:center;gap:10px;padding:9px 24px;font-size:14px;color:var(--ink);text-decoration:none;border-left:3px solid transparent}
+  nav a.nav-item:hover{background:var(--green-soft)}
+  nav a.nav-item.active{border-left-color:var(--green);background:var(--green-soft);font-weight:600}
+  .nav-item .num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;min-width:22px;border-radius:50%;border:1.5px solid var(--muted);font-size:11px;font-weight:700;color:var(--muted)}
+  .nav-item.done .num{background:var(--green);border-color:var(--green);color:#fff;font-size:12px}
+  .nav-item .time{margin-left:auto;font-size:11px;color:var(--muted)}
+  .menu-btn{display:none;position:fixed;top:14px;left:14px;z-index:41;background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer}
+
+  /* ── Typography ─────────────────────────── */
+  .kicker{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);font-weight:700;margin-bottom:6px}
+  h1{font-size:30px;line-height:1.25;margin-bottom:10px;font-weight:700}
+  .page-meta{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-bottom:24px;flex-wrap:wrap}
+  .page-meta b{color:var(--ink)}
+  h2{font-size:20px;margin:34px 0 10px;padding-top:8px;font-weight:700}
+  h3{font-size:16px;margin:22px 0 8px;font-weight:700}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0 10px 24px}
+  li{margin:5px 0}
+  b,strong{font-weight:650}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:var(--bg-soft);font-weight:600}
+  code{background:#eef4f1;padding:2px 6px;border-radius:4px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  hr{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+  /* ── Hero cards (welcome) ───────────────── */
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+  .hero-card{border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:#fff}
+  .hero-card .n{font-size:12px;font-weight:700;color:var(--green);letter-spacing:1px}
+  .hero-card h3{margin:4px 0;font-size:15px}
+  .hero-card p{font-size:13px;color:var(--muted);margin:0}
+
+  /* ── Callouts ───────────────────────────── */
+  .callout{background:var(--bg-soft);border-left:4px solid var(--green);padding:12px 16px;border-radius:0 6px 6px 0;margin:14px 0;font-size:14px}
+  .callout.warn{border-left-color:var(--gold)}
+  .callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+  .callout .label{font-weight:700;display:block}
+
+  /* ── Prompt blocks ──────────────────────── */
+  .prompt{position:relative;background:var(--code-bg);color:#dff3ea;border-radius:8px;padding:20px;margin:16px 0 10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;line-height:1.55}
+  .prompt .tag{position:absolute;top:-9px;left:14px;background:var(--green);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px}
+  .prompt button{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.12);color:#dff3ea;border:none;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+  .prompt button:hover{background:rgba(255,255,255,.28)}
+  .prompt pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;padding-right:54px}
+  .yousee{background:var(--gold-soft);border:1px solid var(--gold-border);border-radius:8px;padding:12px 16px;margin:10px 0 18px;font-size:14px}
+  .yousee b{color:var(--gold-ink)}
+
+  /* ── Screenshots ────────────────────────── */
+  figure.shot{margin:16px 0 22px}
+  figure.shot img{display:block;max-width:100%;border:1px solid var(--border);border-radius:10px;box-shadow:0 2px 10px rgba(28,43,39,.08);cursor:zoom-in}
+  figure.shot figcaption{font-size:13px;color:var(--muted);margin-top:7px}
+  figure.shot.missing img,figure.shot.missing figcaption{display:none}
+  figure.shot.missing::after{content:"📷  Screenshot coming soon — " attr(data-todo);display:block;border:2px dashed var(--border);border-radius:10px;padding:22px 18px;color:var(--muted);font-size:13.5px;background:var(--bg-soft)}
+  #lightbox{display:none;position:fixed;inset:0;background:rgba(15,31,27,.92);z-index:200;cursor:zoom-out;align-items:center;justify-content:center;padding:30px}
+  #lightbox.show{display:flex}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:8px}
+
+  /* ── Steps ──────────────────────────────── */
+  ol.steps{list-style:none;margin-left:0;counter-reset:step}
+  ol.steps>li{counter-increment:step;position:relative;padding:0 0 16px 44px;border-left:2px solid var(--border);margin:0 0 0 15px}
+  ol.steps>li:last-child{border-left-color:transparent}
+  ol.steps>li::before{content:counter(step);position:absolute;left:-15px;top:-2px;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+
+  /* ── Checkpoint ─────────────────────────── */
+  .checkpoint{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:28px 0}
+  .checkpoint h4{margin:0 0 10px;color:var(--green-dark);font-size:15px}
+  .checkpoint label{display:flex;align-items:flex-start;gap:10px;padding:5px 0;font-size:14px;cursor:pointer}
+  .checkpoint input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;min-width:16px;cursor:pointer}
+  .checkpoint label.checked{color:var(--muted);text-decoration:line-through}
+
+  /* ── Expandable ─────────────────────────── */
+  details{border:1px solid var(--border);border-radius:8px;margin:12px 0;background:#fff}
+  details summary{cursor:pointer;padding:11px 14px;font-weight:600;font-size:14.5px;list-style:none}
+  details summary::before{content:"▸ ";color:var(--green)}
+  details[open] summary::before{content:"▾ "}
+  details .body{padding:2px 16px 12px}
+
+  /* ── Pager ──────────────────────────────── */
+  .pager{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--border);padding-top:22px}
+  .pager a{flex:1;max-width:330px;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-decoration:none;color:var(--ink)}
+  .pager a:hover{border-color:var(--green);background:var(--green-soft)}
+  .pager a .dir{font-size:12px;color:var(--muted);display:block}
+  .pager a .ttl{font-weight:600;color:var(--green-dark);font-size:15px}
+  .pager a.next{text-align:right;margin-left:auto}
+
+  .page{display:none}
+  .page.active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  footer.pagefoot{margin-top:46px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);padding-top:16px}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:210}
+  .toast.show{opacity:1}
+
+  @media(max-width:920px){
+    nav#sidebar{transform:translateX(-100%);transition:transform .2s;box-shadow:2px 0 14px rgba(0,0,0,.12)}
+    nav#sidebar.open{transform:none}
+    main{margin-left:0;padding:60px 22px 80px}
+    .menu-btn{display:block}
+    .hero-grid{grid-template-columns:1fr}
+  }
+  @media print{
+    nav#sidebar,.pager,.menu-btn,.toast{display:none!important}
+    main{margin-left:0}
+    .page{display:block!important;page-break-after:always}
+    figure.shot.missing{display:none}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+<div class="layout">
+<nav id="sidebar">
+  <div class="brand">
+    <div class="logo">TextQL Workshop</div>
+    <div class="sub">TextQL for Executives</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">Your progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+    <div class="progress-pct" id="ppct">0% complete</div>
+  </div>
+  <div id="navlist"></div>
+</nav>
+
+<main><div class="content" id="content">
+
+<section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
+  <div class="kicker">Workshop</div>
+  <h1>TextQL for Executives</h1>
+<p>A <b>45-minute taster</b> for <b>C-suite and VPs</b>: ask your data the questions you'd ask your team, see exactly how every answer was computed, and leave with a morning briefing that arrives before you ask. Five short modules, bigger moments instead of exhaustive steps, zero setup — your admin has already connected everything.</p>
+<h2>Who this is for</h2>
+<ul><li>CEOs, CFOs, CROs, COOs and their VPs</li><li>Executives who currently wait days for answers a meeting created</li><li>Leaders who suspect their org argues about numbers more than it acts on them</li></ul>
+<h2>What you'll be able to do</h2>
+<table><tr><th>After module</th><th>You can...</th></tr><tr><td>0</td><td>Discover what you can ask</td></tr><tr><td>1</td><td>Get a number, a why, and decision support — conversationally</td></tr><tr><td>2</td><td>Verify any answer's math and whether it's the official definition</td></tr><tr><td>3</td><td>Receive a daily briefing and exception alerts without asking</td></tr><tr><td>4</td><td>Produce a board-ready view in one prompt</td></tr></table>
+<h2>Workshop modules</h2>
+<table><tr><th>Module</th><th>File</th><th>Time</th></tr><tr><td>0 · Two Minutes of Orientation</td><td><code>00_ORIENTATION.md</code></td><td>2 min</td></tr><tr><td>1 · Ask What You'd Ask Your Team</td><td><code>01_ASK.md</code></td><td>10 min</td></tr><tr><td>2 · Trust in Five Minutes</td><td><code>02_TRUST.md</code></td><td>10 min</td></tr><tr><td>3 · Your Morning Briefing</td><td><code>03_BRIEFING.md</code></td><td>10 min</td></tr><tr><td>4 · The One-Prompt Board View</td><td><code>04_BOARD_VIEW.md</code></td><td>5 min</td></tr></table>
+<h2>How to use this workshop</h2>
+<ol><li>Nothing to set up — your admin has connected the data and configured access.</li><li>Each module is a few prompts, all under 30 words. Type them; adapt the <code>[brackets]</code> to your business.</li><li>The session ends with one ask of you — it's in Module 4. Read it.</li></ol>
+</section>
+
+<section class="page" id="m0" data-title="Module 0 · Orientation" data-group="Getting Started" data-time="2 minutes">
+  <div class="kicker">Module 0</div>
+  <h1>Module 0 · Two Minutes of Orientation</h1>
+  <div class="page-meta"><span>⏱️ <b>2 minutes</b></span></div>
+<p><b>Goal:</b> know what Ana is and discover what you can ask.</p>
+<h2>0.1 · What this is</h2>
+<p>Ana is an analyst you talk to. She's connected to your company's actual systems — warehouse, CRM, finance — writes and runs the queries herself, and shows her work. You ask in plain English; the SQL happens underneath, inspectable any time.</p>
+<h2>0.2 · The discovery prompt</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What data can you see, and what are five questions I should ask it?</pre></div>
+  <div class="yousee"><b>You'll see:</b> your connected sources and a question menu calibrated to your actual business — not a demo script.</div>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The data Ana listed matches the systems your company runs on</label>
+  </div>
+</section>
+
+<section class="page" id="m1" data-title="Module 1 · Ask Your Team&#x27;s Questions" data-group="Hands-On Modules" data-time="10 minutes">
+  <div class="kicker">Module 1</div>
+  <h1>Module 1 · Ask What You'd Ask Your Team</h1>
+  <div class="page-meta"><span>⏱️ <b>10 minutes</b></span></div>
+<p><b>Goal:</b> three asks — a number, a why, and decision support — the way you'd ask a (very fast) team.</p>
+<h2>1.1 · The number</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Revenue this quarter versus plan?</pre></div>
+  <div class="yousee"><b>You'll see:</b> the number, the plan, the gap — in seconds, not in next Tuesday's deck.</div>
+<h2>1.2 · The why</h2>
+<p>The follow-up that normally costs a week of analyst time:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What's driving the miss?</pre></div>
+  <div class="yousee"><b>You'll see:</b> the gap decomposed — which segment, which product, volume or price — with the biggest contributor named. No new meeting was scheduled to produce this.</div>
+<h2>1.3 · Decision support</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>I'm deciding [whether to expand the EMEA team]. What should I look at first?</pre></div>
+  <div class="yousee"><b>You'll see:</b> the relevant evidence assembled — trends, comparisons, capacity signals — framed for the decision, not just dumped. You direct the follow-ups from here, conversationally.</div>
+<div class="callout">Here's the real exercise: think of the question you <i>didn't</i> ask in the last board meeting because the answer would have taken analytics a week. Ask it now.</div>
+    <figure class="shot" data-todo="an executive question answered with chart and takeaways">
+    <img src="assets/exec-m1-ask.png" alt="Ask what you would ask your team." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Ask what you would ask your team.</figcaption>
+  </figure>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You got a number, a why, and decision support without leaving the conversation</label>
+    <label><input type="checkbox"> You asked the question you skipped in the last board meeting</label>
+  </div>
+</section>
+
+<section class="page" id="m2" data-title="Module 2 · Trust in Five Minutes" data-group="Hands-On Modules" data-time="10 minutes">
+  <div class="kicker">Module 2</div>
+  <h1>Module 2 · Trust in Five Minutes</h1>
+  <div class="page-meta"><span>⏱️ <b>10 minutes</b></span></div>
+<p><b>Goal:</b> verify the math, confirm it's the official number, and understand why yours and your CFO's numbers match.</p>
+<h2>2.1 · Show the work</h2>
+<p>Take any answer from Module 1:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>How did you calculate that?</pre></div>
+  <div class="yousee"><b>You'll see:</b> the sources, the filters, the time window, the assumptions — in plain English. Underneath, the actual SQL is attached to the answer and inspectable by anyone you forward it to. Every number here carries its own audit trail.</div>
+<h2>2.2 · Is that the official number?</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Is that the same revenue definition Finance uses?</pre></div>
+  <div class="yousee"><b>You'll see:</b> whether the answer routed through your company's <b>governed definition</b> — the single, Finance-approved formula stored centrally — or was computed ad hoc. Governed numbers are the same for everyone who asks: you, your CFO, the board deck, the Monday report. That's the mechanism, not a promise.</div>
+<h2>2.3 · The honest no</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What was our customer NPS in 2019?</pre></div>
+  <div class="yousee"><b>You'll see:</b> if the data isn't there, Ana says so — what's missing and what it would take — rather than producing a confident invention. An analyst who says "I don't know" when she doesn't is the one you can trust when she says she does.</div>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You saw the full derivation of a number you'd quote</label>
+    <label><input type="checkbox"> You know whether your headline metric is governed — and asked who owns the definition if not</label>
+  </div>
+</section>
+
+<section class="page" id="m3" data-title="Module 3 · Your Morning Briefing" data-group="Hands-On Modules" data-time="10 minutes">
+  <div class="kicker">Module 3</div>
+  <h1>Module 3 · Your Morning Briefing</h1>
+  <div class="page-meta"><span>⏱️ <b>10 minutes</b></span></div>
+<p><b>Goal:</b> a daily digest that arrives before you ask, and a watcher that only speaks when something matters.</p>
+<h2>3.1 · The daily digest</h2>
+<p>Set this up yourself, or watch the facilitator do it — it's one prompt either way:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Every weekday at 7am, email me: revenue pace vs plan, yesterday's [bookings/signups], cash position, and anything unusual — flagged first. Five lines, then detail.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a scheduled playbook created. Tomorrow at 7am it arrives; the morning after, too. The "anything unusual, flagged first" line means the days that matter read differently from the days that don't.</div>
+<h2>3.2 · The exception watcher</h2>
+<p>The digest reports daily; the watcher speaks <i>only</i> on exceptions:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Watch [revenue pace, pipeline, cash] daily. Alert me only when something moves more than [10%] off trend or plan. One sentence plus the chart. Otherwise, silence.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a feed agent created. Most days it says nothing — that's the design. When it does speak, it's worth reading, which is the opposite of every dashboard email you currently delete.</div>
+<h2>3.3 · Follow up where you are</h2>
+<p>Briefings delivered to Slack or Teams (depending on your workspace configuration) can be interrogated right in the thread — reply "why?" to the morning number and the analysis continues there. Your inbox stops being a dead end.</p>
+    <figure class="shot" data-todo="the daily exec digest or feed agent post">
+    <img src="assets/exec-m3-briefing.png" alt="Your morning briefing, without asking." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Your morning briefing, without asking.</figcaption>
+  </figure>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The 7am digest exists and you know what arrives tomorrow</label>
+    <label><input type="checkbox"> The watcher is set with a threshold you chose — and you understand why silence is the feature</label>
+  </div>
+</section>
+
+<section class="page" id="m4" data-title="Module 4 · The Board View" data-group="Hands-On Modules" data-time="5 minutes">
+  <div class="kicker">Module 4</div>
+  <h1>Module 4 · The One-Prompt Board View</h1>
+  <div class="page-meta"><span>⏱️ <b>5 minutes</b></span></div>
+<p><b>Goal:</b> a paste-ready board view in one prompt — and the one thing this platform needs from you.</p>
+<h2>4.1 · The prompt</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Board view: headline revenue vs plan, the 12-month trend chart, and three takeaways. Paste-ready.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the number, the chart, three findings written as findings — ready for the deck or the email to the board chair. Behind it: governed definitions (Module 2), full audit trail, and the same figures everyone else in the company gets when they ask.</div>
+<h2>4.2 · The executive sponsor ask</h2>
+<p>This platform compounds through one mechanism: <b>governed definitions</b> — and deciding what gets governed is an executive call, not a technical one. So, the ask:</p>
+<p><b>Which three numbers should your organization never disagree about again?</b></p>
+<p>Revenue? Active customers? Pipeline? Churn? Name your three. Send them to your data team with one line — "make these the governed definitions" — and point them at the <b>Build Your Ontology, End to End</b> workshop. Every argument those three numbers have ever caused ends the week that work ships.</p>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The board view is in your hands, paste-ready</label>
+    <label><input type="checkbox"> Your three never-disagree numbers are named and sent to your data team</label>
+  </div>
+</section>
+
+<div class="pager" id="pager"></div>
+<footer class="pagefoot">© TextQL · Workshop: TextQL for Executives · Example prompts are illustrative — adapt them to your own data.</footer>
+</div></main>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+<div id="lightbox" onclick="this.classList.remove('show')"><img src="" alt=""></div>
+
+<script>
+(function(){
+  const WS_KEY='textql-ws-executives';
+  const pages=[...document.querySelectorAll('section.page')];
+  const navlist=document.getElementById('navlist');
+  const pager=document.getElementById('pager');
+
+  // Build sidebar nav grouped by data-group
+  let group=null, num=0;
+  pages.forEach(p=>{
+    if(p.dataset.group!==group){
+      group=p.dataset.group;
+      const g=document.createElement('div');g.className='group-label';g.textContent=group;navlist.appendChild(g);
+    }
+    const a=document.createElement('a');a.className='nav-item';a.href='#/'+p.id;a.dataset.page=p.id;
+    a.innerHTML='<span class="num"><span>'+(num++)+'</span></span><span>'+p.dataset.title.replace(/^Module \d+ · /,'')+'</span>'+
+      (p.dataset.time?'<span class="time">'+p.dataset.time+'</span>':'');
+    navlist.appendChild(a);
+  });
+
+  function show(id){
+    let page=pages.find(p=>p.id===id)||pages[0];
+    pages.forEach(p=>p.classList.toggle('active',p===page));
+    navlist.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.page===page.id));
+    const i=pages.indexOf(page);
+    pager.innerHTML=
+      (i>0?'<a class="prev" href="#/'+pages[i-1].id+'"><span class="dir">← Previous</span><span class="ttl">'+pages[i-1].dataset.title+'</span></a>':'<span></span>')+
+      (i<pages.length-1?'<a class="next" href="#/'+pages[i+1].id+'"><span class="dir">Next →</span><span class="ttl">'+pages[i+1].dataset.title+'</span></a>':'');
+    window.scrollTo(0,0);
+    document.getElementById('sidebar').classList.remove('open');
+  }
+  const hashId=()=>location.hash.replace(/^#\/?/,'');
+  window.addEventListener('hashchange',()=>show(hashId()));
+  show(hashId());
+
+  // Copy buttons + toast
+  document.querySelectorAll('.prompt').forEach(box=>{
+    const btn=box.querySelector('button');
+    btn.addEventListener('click',()=>{
+      navigator.clipboard.writeText(box.querySelector('pre').textContent.trim()).then(()=>{
+        const t=document.getElementById('toast');
+        t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400);
+      });
+    });
+  });
+
+  // Screenshot lightbox
+  const lb=document.getElementById('lightbox');
+  document.querySelectorAll('figure.shot img').forEach(img=>{
+    img.addEventListener('click',()=>{lb.querySelector('img').src=img.src;lb.classList.add('show');});
+  });
+
+  // Checkpoint persistence + progress
+  let saved={};try{saved=JSON.parse(localStorage.getItem(WS_KEY)||'{}')}catch(e){}
+  const trackable=pages.filter(p=>p.querySelector('.checkpoint input'));
+  function refreshProgress(){
+    let done=0;
+    trackable.forEach(p=>{
+      const boxes=[...p.querySelectorAll('.checkpoint input')];
+      const allDone=boxes.length&&boxes.every(b=>b.checked);
+      const link=navlist.querySelector('a[data-page="'+p.id+'"]');
+      link.classList.toggle('done',allDone);
+      if(allDone){link.querySelector('.num').innerHTML='✓';done++;}
+      else{link.querySelector('.num').innerHTML='<span>'+pages.indexOf(p)+'</span>';}
+    });
+    const pct=trackable.length?Math.round(100*done/trackable.length):0;
+    document.getElementById('pfill').style.width=pct+'%';
+    document.getElementById('ppct').textContent=pct+'% complete';
+  }
+  document.querySelectorAll('.checkpoint input[type=checkbox]').forEach((cb,i)=>{
+    cb.checked=!!saved[i];
+    cb.closest('label').classList.toggle('checked',cb.checked);
+    cb.addEventListener('change',()=>{
+      saved[i]=cb.checked;
+      cb.closest('label').classList.toggle('checked',cb.checked);
+      try{localStorage.setItem(WS_KEY,JSON.stringify(saved))}catch(e){}
+      refreshProgress();
+    });
+  });
+  refreshProgress();
+})();
+</script>
+</body>
+</html>

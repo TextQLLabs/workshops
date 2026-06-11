@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POC in a Week · TextQL Workshops</title>
+<style>
+  :root{
+    --green:#58a68d; --green-dark:#2f6f5c; --green-soft:#e9f2ee;
+    --ink:#1c2b27; --muted:#5d6b67;
+    --bg:#ffffff; --bg-soft:#f4f8f6; --border:#dde7e3; --code-bg:#0f1f1b;
+    --gold:#e9c46a; --gold-soft:#fdf9ee; --gold-border:#f0e4c0; --gold-ink:#8a6d1f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.6}
+  a{color:var(--green-dark)}
+
+  /* ── Layout ─────────────────────────────── */
+  .layout{display:flex;min-height:100vh}
+  nav#sidebar{width:300px;min-width:300px;background:var(--bg-soft);border-right:1px solid var(--border);padding:24px 0 60px;position:fixed;top:0;bottom:0;overflow-y:auto;z-index:40}
+  main{margin-left:300px;flex:1;display:flex;justify-content:center;padding:44px 56px 110px}
+  .content{max-width:860px;width:100%}
+
+  /* ── Sidebar ────────────────────────────── */
+  .brand{padding:0 24px 16px;border-bottom:1px solid var(--border)}
+  .brand .logo{font-weight:800;font-size:18px;color:var(--green-dark);letter-spacing:.5px}
+  .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .progress-wrap{padding:14px 24px;border-bottom:1px solid var(--border)}
+  .progress-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+  .progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:var(--green);border-radius:4px;transition:width .4s}
+  .progress-pct{font-size:12px;color:var(--green-dark);font-weight:600;margin-top:4px}
+  nav .group-label{padding:16px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  nav a.nav-item{display:flex;align-items:center;gap:10px;padding:9px 24px;font-size:14px;color:var(--ink);text-decoration:none;border-left:3px solid transparent}
+  nav a.nav-item:hover{background:var(--green-soft)}
+  nav a.nav-item.active{border-left-color:var(--green);background:var(--green-soft);font-weight:600}
+  .nav-item .num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;min-width:22px;border-radius:50%;border:1.5px solid var(--muted);font-size:11px;font-weight:700;color:var(--muted)}
+  .nav-item.done .num{background:var(--green);border-color:var(--green);color:#fff;font-size:12px}
+  .nav-item .time{margin-left:auto;font-size:11px;color:var(--muted)}
+  .menu-btn{display:none;position:fixed;top:14px;left:14px;z-index:41;background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer}
+
+  /* ── Typography ─────────────────────────── */
+  .kicker{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);font-weight:700;margin-bottom:6px}
+  h1{font-size:30px;line-height:1.25;margin-bottom:10px;font-weight:700}
+  .page-meta{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-bottom:24px;flex-wrap:wrap}
+  .page-meta b{color:var(--ink)}
+  h2{font-size:20px;margin:34px 0 10px;padding-top:8px;font-weight:700}
+  h3{font-size:16px;margin:22px 0 8px;font-weight:700}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0 10px 24px}
+  li{margin:5px 0}
+  b,strong{font-weight:650}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:var(--bg-soft);font-weight:600}
+  code{background:#eef4f1;padding:2px 6px;border-radius:4px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  hr{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+  /* ── Hero cards (welcome) ───────────────── */
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+  .hero-card{border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:#fff}
+  .hero-card .n{font-size:12px;font-weight:700;color:var(--green);letter-spacing:1px}
+  .hero-card h3{margin:4px 0;font-size:15px}
+  .hero-card p{font-size:13px;color:var(--muted);margin:0}
+
+  /* ── Callouts ───────────────────────────── */
+  .callout{background:var(--bg-soft);border-left:4px solid var(--green);padding:12px 16px;border-radius:0 6px 6px 0;margin:14px 0;font-size:14px}
+  .callout.warn{border-left-color:var(--gold)}
+  .callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+  .callout .label{font-weight:700;display:block}
+
+  /* ── Prompt blocks ──────────────────────── */
+  .prompt{position:relative;background:var(--code-bg);color:#dff3ea;border-radius:8px;padding:20px;margin:16px 0 10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;line-height:1.55}
+  .prompt .tag{position:absolute;top:-9px;left:14px;background:var(--green);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px}
+  .prompt button{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.12);color:#dff3ea;border:none;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+  .prompt button:hover{background:rgba(255,255,255,.28)}
+  .prompt pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;padding-right:54px}
+  .yousee{background:var(--gold-soft);border:1px solid var(--gold-border);border-radius:8px;padding:12px 16px;margin:10px 0 18px;font-size:14px}
+  .yousee b{color:var(--gold-ink)}
+
+  /* ── Screenshots ────────────────────────── */
+  figure.shot{margin:16px 0 22px}
+  figure.shot img{display:block;max-width:100%;border:1px solid var(--border);border-radius:10px;box-shadow:0 2px 10px rgba(28,43,39,.08);cursor:zoom-in}
+  figure.shot figcaption{font-size:13px;color:var(--muted);margin-top:7px}
+  figure.shot.missing img,figure.shot.missing figcaption{display:none}
+  figure.shot.missing::after{content:"📷  Screenshot coming soon — " attr(data-todo);display:block;border:2px dashed var(--border);border-radius:10px;padding:22px 18px;color:var(--muted);font-size:13.5px;background:var(--bg-soft)}
+  #lightbox{display:none;position:fixed;inset:0;background:rgba(15,31,27,.92);z-index:200;cursor:zoom-out;align-items:center;justify-content:center;padding:30px}
+  #lightbox.show{display:flex}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:8px}
+
+  /* ── Steps ──────────────────────────────── */
+  ol.steps{list-style:none;margin-left:0;counter-reset:step}
+  ol.steps>li{counter-increment:step;position:relative;padding:0 0 16px 44px;border-left:2px solid var(--border);margin:0 0 0 15px}
+  ol.steps>li:last-child{border-left-color:transparent}
+  ol.steps>li::before{content:counter(step);position:absolute;left:-15px;top:-2px;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+
+  /* ── Checkpoint ─────────────────────────── */
+  .checkpoint{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:28px 0}
+  .checkpoint h4{margin:0 0 10px;color:var(--green-dark);font-size:15px}
+  .checkpoint label{display:flex;align-items:flex-start;gap:10px;padding:5px 0;font-size:14px;cursor:pointer}
+  .checkpoint input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;min-width:16px;cursor:pointer}
+  .checkpoint label.checked{color:var(--muted);text-decoration:line-through}
+
+  /* ── Expandable ─────────────────────────── */
+  details{border:1px solid var(--border);border-radius:8px;margin:12px 0;background:#fff}
+  details summary{cursor:pointer;padding:11px 14px;font-weight:600;font-size:14.5px;list-style:none}
+  details summary::before{content:"▸ ";color:var(--green)}
+  details[open] summary::before{content:"▾ "}
+  details .body{padding:2px 16px 12px}
+
+  /* ── Pager ──────────────────────────────── */
+  .pager{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--border);padding-top:22px}
+  .pager a{flex:1;max-width:330px;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-decoration:none;color:var(--ink)}
+  .pager a:hover{border-color:var(--green);background:var(--green-soft)}
+  .pager a .dir{font-size:12px;color:var(--muted);display:block}
+  .pager a .ttl{font-weight:600;color:var(--green-dark);font-size:15px}
+  .pager a.next{text-align:right;margin-left:auto}
+
+  .page{display:none}
+  .page.active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  footer.pagefoot{margin-top:46px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);padding-top:16px}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:210}
+  .toast.show{opacity:1}
+
+  @media(max-width:920px){
+    nav#sidebar{transform:translateX(-100%);transition:transform .2s;box-shadow:2px 0 14px rgba(0,0,0,.12)}
+    nav#sidebar.open{transform:none}
+    main{margin-left:0;padding:60px 22px 80px}
+    .menu-btn{display:block}
+    .hero-grid{grid-template-columns:1fr}
+  }
+  @media print{
+    nav#sidebar,.pager,.menu-btn,.toast{display:none!important}
+    main{margin-left:0}
+    .page{display:block!important;page-break-after:always}
+    figure.shot.missing{display:none}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+<div class="layout">
+<nav id="sidebar">
+  <div class="brand">
+    <div class="logo">TextQL Workshop</div>
+    <div class="sub">POC in a Week</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">Your progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+    <div class="progress-pct" id="ppct">0% complete</div>
+  </div>
+  <div id="navlist"></div>
+</nav>
+
+<main><div class="content" id="content">
+
+<section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
+  <div class="kicker">Workshop</div>
+  <h1>POC in a Week</h1>
+<p>A 5-day guided evaluation structure for <b>a customer data team and their champion</b> running a TextQL proof of concept — with or without an FDE alongside. The modules are <b>days, not topics</b>: prerequisites the week before, connect and baseline Monday, ontology Tuesday, the question gauntlet Wednesday, automation Thursday, readout Friday.</p>
+<p>The discipline that separates a real POC from a demo: <b>success criteria written down before anything is connected</b>, a cold baseline run honestly (misses included), and a warm re-run scored against it. The cold/warm gauntlet is the whole argument.</p>
+<h2>Who this is for</h2>
+<ul><li>Customer data teams evaluating TextQL hands-on</li><li>Champions who need a defensible Friday readout, not a vibes-based one</li><li>FDEs running structured evaluations (the facilitator guide doubles as your run-of-show)</li></ul>
+<h2>What you'll be able to do</h2>
+<table><tr><th>After module</th><th>You can...</th></tr><tr><td>0</td><td>State what "won" looks like Friday, with real questions and their current time-to-answer</td></tr><tr><td>1</td><td>Run the cold baseline: every question asked with zero context, results recorded honestly</td></tr><tr><td>2</td><td>Seed the ontology with the 3 most definition-sensitive metrics governed</td></tr><tr><td>3</td><td>Score cold vs warm side by side, with a misses log feeding the ontology backlog</td></tr><tr><td>4</td><td>Show automation: a playbook, a feed agent, a dashboard, and (if relevant) a role persona</td></tr><tr><td>5</td><td>Deliver the readout: scores vs Day-0 criteria, the before/after table, a 15-minute exec demo</td></tr></table>
+<h2>Workshop modules</h2>
+<table><tr><th>Module</th><th>File</th><th>Time</th></tr><tr><td>0 · Before Day 1: Prerequisites &amp; Success Criteria</td><td><code>00_BEFORE_DAY_1.md</code></td><td>~30 min, the week before</td></tr><tr><td>1 · Day 1: Connect &amp; Validate</td><td><code>01_DAY1_CONNECT.md</code></td><td>Day 1</td></tr><tr><td>2 · Day 2: Seed the Ontology</td><td><code>02_DAY2_ONTOLOGY.md</code></td><td>Day 2</td></tr><tr><td>3 · Day 3: The Question Gauntlet</td><td><code>03_DAY3_GAUNTLET.md</code></td><td>Day 3</td></tr><tr><td>4 · Day 4: Automate &amp; Wow</td><td><code>04_DAY4_AUTOMATE.md</code></td><td>Day 4</td></tr><tr><td>5 · Day 5: The Readout</td><td><code>05_DAY5_READOUT.md</code></td><td>Day 5</td></tr></table>
+<h2>How to use this workshop</h2>
+<ol><li><b>Do Module 0 the week before.</b> A POC that starts without written success criteria is a demo with extra steps.</li><li>One module per day, in order. Each day's output is the next day's input.</li><li>Swap <code>[bracketed]</code> placeholders for your systems, metrics, and team names.</li><li>Keep everything — the baseline answers, the misses log, the scores. Friday's readout is assembled from the week's artifacts, not written fresh.</li></ol>
+</section>
+
+<section class="page" id="m0" data-title="Module 0 · Before Day 1" data-group="Getting Started" data-time="30 minutes, scheduled the week before Day 1">
+  <div class="kicker">Module 0</div>
+  <h1>Module 0 · Before Day 1: Prerequisites & Success Criteria</h1>
+  <div class="page-meta"><span>⏱️ <b>30 minutes, scheduled the week before Day 1</b></span></div>
+<p><b>Goal:</b> access secured, and — the most important artifact of the whole POC — real questions written down with their current time-to-answer, plus agreed success criteria.</p>
+<h2>0.1 · The access checklist</h2>
+<p>Chase these the week before; each missing item costs a half-day of the POC week:</p>
+<ul><li>[ ] <b>Warehouse read-only credentials</b> — a dedicated service identity, scoped to the schemas in play (the <b>Connect Your Data</b> workshop has per-warehouse specifics; share it with whoever provisions)</li><li>[ ] Network path cleared — IP allowlist or tunnel approved by security <i>before</i> Monday</li><li>[ ] <b>Sample documents</b> gathered — metric definitions, data dictionary, a few SOPs or wiki exports; messy is fine</li><li>[ ] Logins for every participant, tested</li><li>[ ] If access control is part of the evaluation: an admin login <i>and</i> a restricted test login</li></ul>
+<h2>0.2 · The question list — the artifact that matters most</h2>
+<p>With the team (not alone), write down <b>5–10 real questions</b> — ones someone actually asked in the last quarter, ideally ones that were painful to answer. For each, record the current reality:</p>
+<table><tr><th>#</th><th>Question</th><th>Who asks it</th><th>Current time-to-answer</th><th>Current path</th></tr><tr><td>1</td><td>e.g., "Which customers' usage dropped &gt;20% last quarter?"</td><td>CS lead</td><td>2 days</td><td>Ticket to analytics → SQL → spreadsheet</td></tr><tr><td>2</td><td>...</td><td></td><td></td><td></td></tr></table>
+<p>Rules for a good list: at least one question that spans two systems; at least one that hinges on a contested definition ("active customer," "qualified lead"); at least one that's genuinely hard. <b>A list of softballs proves nothing on Friday.</b></p>
+<h2>0.3 · Success criteria — what does "won" look like?</h2>
+<p>Agree these with the economic buyer or champion <i>in writing</i> before anything is connected:</p>
+<table><tr><th>Criterion</th><th>Example target</th></tr><tr><td>Questions answered correctly (warm run)</td><td>≥ [7] of [9]</td></tr><tr><td>Time-to-answer improvement</td><td>From days to ≤ [10 minutes] on at least [5] questions</td></tr><tr><td>Definition governance demonstrated</td><td>The [3] contested metrics governed and consistent</td></tr><tr><td>Automation demonstrated</td><td>[1] playbook + [1] agent running on our data</td></tr><tr><td>Who judges correctness</td><td>[Named person] checks against [named source]</td></tr></table>
+<p>Add your own rows — security review passed, a specific stakeholder convinced. The point is that Friday's verdict is <b>scored against this table</b>, not against impressions.</p>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Every access item is secured or has a named owner and date</label>
+    <label><input type="checkbox"> The question list has 5–10 real questions with current time-to-answer recorded</label>
+    <label><input type="checkbox"> The list includes a cross-system question, a contested-definition question, and a hard one</label>
+    <label><input type="checkbox"> Success criteria are written and agreed with the person who'll judge Friday</label>
+  </div>
+</section>
+
+<section class="page" id="m1" data-title="Module 1 · Day 1: Connect &amp; Validate" data-group="Hands-On Modules">
+  <div class="kicker">Module 1</div>
+  <h1>Module 1 · Day 1: Connect & Validate</h1>
+<p><b>Goal:</b> sources connected and validated, schema discovered — and the cold baseline run: every question asked with zero context, answers recorded honestly, misses included.</p>
+<h2>1.1 · Connect the warehouse and documents</h2>
+<p>Connect the warehouse with the Module 0 credentials (<b>Connectors → New Connector</b>; source-specific detail in the <b>Connect Your Data</b> workshop — including the smoke-test discipline). Upload the sample documents to the workspace.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Pull the information schema for this connector. List the schemas and tables you can see, with approximate row counts where cheap. Flag anything that looks like a core entity (customers, orders, events) and anything you'd expect to see but can't.</pre></div>
+  <div class="yousee"><b>You'll see:</b> what Ana can actually reach — which is the credential's view. Anything missing is a grants problem to fix <i>today</i>, not Wednesday.</div>
+<h2>1.2 · The cold baseline — the honest run</h2>
+<p>Now run <b>all 5–10 questions from Module 0, verbatim, with no ontology, no context documents attached to the thread, no coaching</b> — just the raw connector. For each, record:</p>
+<table><tr><th>#</th><th>Question</th><th>Cold answer</th><th>Correct? (judge: [named person])</th><th>Time</th><th>Notes on the miss</th></tr></table>
+<p>Rules of honesty:</p>
+<ul><li>Ask each question <b>once</b>, as written. No rephrasing to help, no follow-up steering. (In real usage you'd converse — but the baseline measures the cold start, so resist.)</li><li>Record wrong answers and "I don't have that data" responses verbatim. <b>Misses are the point</b> — a baseline of all-correct answers means the question list was too soft (and means Day 3 can't show improvement).</li><li>The named judge from Module 0 scores correctness against the trusted source, today, while it's fresh.</li></ul>
+  <div class="yousee"><b>You'll see:</b> typically a mixed picture — some questions answered correctly off raw schema, some wrong on contested definitions (the cold run takes <i>a</i> definition, not <i>your</i> definition), some honest declines. Every miss goes in the misses log with a one-line cause hypothesis: <i>definition gap / context gap / data gap / phrasing</i>.</div>
+<h2>1.3 · End-of-day review</h2>
+<p>Fifteen minutes with the team: walk the baseline table. Set expectations explicitly: <b>today measured the floor.</b> Tomorrow adds the org's knowledge; Wednesday measures the difference. If anyone is disappointed today, remind them that a tool that aced contested-definition questions <i>without being taught the definitions</i> would be guessing — and guessing right is worse than asking.</p>
+    <figure class="shot" data-todo="a cold baseline answer from Day 1 (no ontology)">
+    <img src="assets/poc-d1-cold.png" alt="Day 1: the honest cold baseline." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Day 1: the honest cold baseline.</figcaption>
+  </figure>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The warehouse is connected and the schema-visibility check passed (or grants are being fixed today)</label>
+    <label><input type="checkbox"> All questions ran cold, once each, no steering — answers and times recorded verbatim</label>
+    <label><input type="checkbox"> Every miss has a cause hypothesis in the misses log</label>
+    <label><input type="checkbox"> The judge scored correctness today, against the trusted source</label>
+  </div>
+</section>
+
+<section class="page" id="m2" data-title="Module 2 · Day 2: Seed the Ontology" data-group="Hands-On Modules">
+  <div class="kicker">Module 2</div>
+  <h1>Module 2 · Day 2: Seed the Ontology</h1>
+<p><b>Goal:</b> give Ana the org's knowledge — via a domain starter pack if one fits, or built from schema and documents — and govern the 3 most definition-sensitive metrics from the question list.</p>
+<h2>2.1 · Choose the seeding path</h2>
+<table><tr><th>Path</th><th>When</th><th>How</th></tr><tr><td><b>Domain starter pack</b></td><td>A pack matches your industry (the <b>Healthcare Starter Pack</b> is the canonical example)</td><td>Load the pack, then adapt its definitions to your specifics — adaptation beats blank-page</td></tr><tr><td><b>Build from schema + documents</b></td><td>No pack fits</td><td>The discovery method from <b>Build Your Ontology, End to End</b>: Ana reads the schema and the Day-0 documents, drafts the model, you correct it</td></tr></table>
+<p>Either way, the input is what you gathered in Module 0: the documents, plus the schema Ana discovered on Day 1.</p>
+<h2>2.2 · Run the seeding</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Read the connected schema and the uploaded documents. Draft the ontology for this domain: the core entities and how they join, a business glossary from the documents, and the candidate metrics worth governing — flagging any metric where the documents and the schema suggest different definitions.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a drafted model with definitional conflicts flagged. The flags are tomorrow's gold — most of Day 1's misses trace to exactly these.</div>
+<h2>2.3 · Govern the three that matter</h2>
+<p>From the question list, take the <b>3 most definition-sensitive metrics</b> — the ones where Day 1's cold run picked <i>a</i> definition instead of <i>your</i> definition:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Govern these three metrics: [metric 1] means [the org's definition — source, filters, edge cases]; [metric 2] means [...]; [metric 3] means [...]. Save them as governed definitions, and confirm by computing each for [last closed period] so we can check against [trusted source].</pre></div>
+  <div class="yousee"><b>You'll see:</b> the three definitions saved and computed — and the computed values checked against the trusted source <i>today</i>, by the judge. Governing a metric to the wrong value is worse than not governing it.</div>
+<h2>2.4 · Don't gold-plate</h2>
+<p>The temptation on Day 2 is to keep building — more entities, more notes, more polish. Stop at: entities mapped, glossary drafted, three metrics governed and verified. <b>The POC tests whether the loop works</b> (gaps found → knowledge added → answers improve), not whether a week can produce a complete ontology. Day 3's misses will tell you exactly what to add next; building speculatively today steals that signal.</p>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The seeding path was chosen deliberately (pack-adapted or built from schema + documents)</label>
+    <label><input type="checkbox"> The drafted model exists with definitional conflicts flagged</label>
+    <label><input type="checkbox"> The three contested metrics are governed and their computed values verified against the trusted source</label>
+    <label><input type="checkbox"> You stopped at three — the rest of the backlog waits for Day 3's evidence</label>
+  </div>
+</section>
+
+<section class="page" id="m3" data-title="Module 3 · Day 3: The Gauntlet" data-group="Hands-On Modules">
+  <div class="kicker">Module 3</div>
+  <h1>Module 3 · Day 3: The Question Gauntlet</h1>
+<p><b>Goal:</b> re-run every question warm, score cold vs warm side by side, and turn the remaining misses into a prioritized backlog — fixing the quick ones live.</p>
+<h2>3.1 · The warm run</h2>
+<p>Same questions, same verbatim phrasing, same one-ask discipline — but now with the ontology attached. Extend the Day 1 table:</p>
+<table><tr><th>#</th><th>Question</th><th>Cold answer</th><th>Warm answer</th><th>Cold ✓/✗</th><th>Warm ✓/✗</th><th>Cold time</th><th>Warm time</th></tr></table>
+<p>The same judge scores the warm answers against the same trusted sources. Same rules: no steering, record verbatim.</p>
+  <div class="yousee"><b>You'll see:</b> the contested-definition questions flip to correct (they now route through <i>your</i> governed definitions), the cross-system question improve (the model knows the joins), and — usually — a couple of remaining misses. Good. A perfect warm run on a hard list happens; a perfect warm run on a soft list proves nothing.</div>
+<h2>3.2 · Score it</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Here's our gauntlet table [paste it]. Summarize: cold vs warm correct counts, average time-to-answer cold vs warm vs the original current-path times from our Day-0 list, and which question types improved most. Format as the scoring section of an evaluation readout.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the POC's core evidence, computed from the week's own artifacts. This table — <i>question, old time-to-answer, cold result, warm result</i> — is the whole argument: not "the tool is impressive" but "the loop works: taught Tuesday, correct Wednesday."</div>
+<h2>3.3 · The misses log becomes the backlog</h2>
+<p>For each remaining miss, diagnose and sort:</p>
+<table><tr><th>Miss type</th><th>Diagnosis</th><th>Action</th></tr><tr><td><b>Definition gap</b></td><td>Routed through an ungoverned or wrong definition</td><td>Quick fix — govern it now, live (15 min)</td></tr><tr><td><b>Context gap</b></td><td>A join, term, or business rule Ana wasn't taught</td><td>Quick fix if documented; backlog if it needs a human decision</td></tr><tr><td><b>Data gap</b></td><td>The data genuinely isn't in the connected sources</td><td>Honest readout item — "answerable once [system] is connected"</td></tr><tr><td><b>Phrasing</b></td><td>The question is ambiguous even to a human</td><td>Note it — and show the conversational follow-up resolving it</td></tr></table>
+<p><b>Fix the quick ones live and re-run those questions.</b> Watching a miss become a hit within the hour is the most persuasive moment of the week — it demonstrates the operating loop, which is what the customer is actually buying.</p>
+<h2>3.4 · The honesty principle</h2>
+<p>Carry the remaining misses into Friday's readout, labeled. An evaluation with documented misses and a working improvement loop is <i>more</i> credible than a flawless demo — every buyer has seen flawless demos, and knows what they're worth.</p>
+    <figure class="shot" data-todo="the cold vs warm side-by-side scoring">
+    <img src="assets/poc-d3-gauntlet.png" alt="Day 3: the question gauntlet, scored." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Day 3: the question gauntlet, scored.</figcaption>
+  </figure>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Every question re-ran warm, same phrasing, same judge, same sources</label>
+    <label><input type="checkbox"> The cold/warm/current-path scoring table exists</label>
+    <label><input type="checkbox"> At least one miss was fixed live and re-run to a hit</label>
+    <label><input type="checkbox"> Remaining misses are diagnosed, sorted, and headed for the readout — not hidden</label>
+  </div>
+</section>
+
+<section class="page" id="m4" data-title="Module 4 · Day 4: Automate &amp; Wow" data-group="Hands-On Modules">
+  <div class="kicker">Module 4</div>
+  <h1>Module 4 · Day 4: Automate & Wow</h1>
+<p><b>Goal:</b> prove this is a platform, not a Q&amp;A box — one playbook replacing a hand-built report, one feed agent watching the domain, one dashboard, and a role persona if access control matters to this evaluation.</p>
+<h2>4.1 · The playbook — replace a real report</h2>
+<p>Pick a report the team genuinely builds by hand today (the Day-0 conversation usually surfaced one). Build it as a playbook:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Create a playbook "[their report name]" that runs [their actual cadence]: [the report's actual contents — metrics, comparisons, breakdowns, using the governed definitions]. Match the structure of the current report. If the period's data is incomplete, say so rather than reporting partials as final. Deliver to [their actual channel/email].</pre></div>
+  <div class="yousee"><b>You'll see:</b> their report, automated, on their definitions. Run it manually now and put the output next to the hand-built version — that side-by-side is a readout exhibit. (Prompt discipline and the 3-preview rule: <b>Automation Deep-Dive</b>.)</div>
+<h2>4.2 · The feed agent — watch their domain</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Create a feed agent "[Domain] Watch" that checks [their data] daily and posts ONLY when something material changes: [2–3 thresholds from their domain — a metric moving >X%, a new top-N entity, an anomaly]. One paragraph with the evidence. Silent otherwise.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the agent deployed. It likely won't fire before Friday — <i>say that in the readout</i> and show the configuration instead; an exception-only watcher that stayed correctly silent for two days is the feature working.</div>
+<h2>4.3 · The dashboard</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Build a dashboard for [the domain]: a KPI row using our three governed metrics with period-over-period deltas, the main trend chart, a breakdown table, and filters for [date range] and [their key dimension]. Default to [last closed period].</pre></div>
+  <div class="yousee"><b>You'll see:</b> a live dashboard on governed definitions (depending on workspace configuration, an admin may need to enable Dashboards). Verify the headline KPI against the trusted source before showing anyone — Day 5 demos only verified numbers. (Craft: <b>Dashboards &amp; Reporting</b>.)</div>
+<h2>4.4 · The role persona (if access control is in the evaluation)</h2>
+<p>With the restricted test login from Module 0:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What data sources can I access, and what do you know about [a metric/folder the restricted role shouldn't see]?</pre></div>
+  <div class="yousee"><b>You'll see:</b> the restricted view — scoped connectors, and genuine unawareness of restricted context rather than a declined request. Then ask something the role <i>should</i> see and confirm it works. Both directions, witnessed by the security stakeholder if there is one. (Full model: <b>Admin &amp; Governance</b>.)</div>
+<h2>4.5 · Stage Friday</h2>
+<p>End the day by assembling the demo path: the gauntlet table, one live warm question, the playbook side-by-side, the dashboard, the agent config, the persona flip. Dry-run it once — 15 minutes, no surprises.</p>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The playbook reproduces a report the team actually builds, side-by-side verified</label>
+    <label><input type="checkbox"> The agent is deployed with real thresholds — and its silence-by-design is understood</label>
+    <label><input type="checkbox"> The dashboard's headline KPI is verified against the trusted source</label>
+    <label><input type="checkbox"> (If in scope) The persona showed both directions: restricted-invisible and permitted-visible</label>
+    <label><input type="checkbox"> Friday's demo path is staged and dry-run</label>
+  </div>
+</section>
+
+<section class="page" id="m5" data-title="Module 5 · Day 5: The Readout" data-group="Hands-On Modules">
+  <div class="kicker">Module 5</div>
+  <h1>Module 5 · Day 5: The Readout</h1>
+<p><b>Goal:</b> score the week against the Day-0 criteria, deliver the before/after table, run a 15-minute exec demo on their data and their questions, and leave with a decision and a rollout sketch.</p>
+<h2>5.1 · Score against Day 0 — first, and in their words</h2>
+<p>Open the readout with the success-criteria table from Module 0, scored row by row:</p>
+<table><tr><th>Criterion (agreed Day 0)</th><th>Target</th><th>Result</th><th>Met?</th></tr><tr><td>Questions correct (warm)</td><td>≥ 7/9</td><td>[8/9]</td><td>✓</td></tr><tr><td>Time-to-answer</td><td>≤ 10 min on 5+</td><td>[9 of 9 under 5 min]</td><td>✓</td></tr><tr><td>...</td><td></td><td></td><td></td></tr></table>
+<p>This is why Module 0 insisted on writing them down: the verdict is a comparison against pre-agreed targets, not a negotiation about impressions.</p>
+<h2>5.2 · The before/after table</h2>
+<p>The week's centerpiece exhibit, one row per question:</p>
+<table><tr><th>Question</th><th>Old time-to-answer</th><th>New (warm)</th><th>Correct?</th><th>Definition governed?</th></tr></table>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Assemble the readout pack: the success-criteria scorecard, the before/after question table, the cold-vs-warm summary from Day 3, the remaining misses with their diagnoses and what each needs, and the automation inventory from Day 4. Executive summary up front — findings, not feature descriptions. PDF.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the readout assembled from the week's own artifacts. The misses section stays in — labeled, diagnosed, with the fix path. Honest misses next to a working improvement loop is the credibility play; a misses-free readout reads like marketing.</div>
+<h2>5.3 · The 15-minute exec demo</h2>
+<p>Their data, their questions, this script:</p>
+<table><tr><th>Minutes</th><th>Beat</th></tr><tr><td>0–2</td><td>The Day-0 question list and what answers used to cost (the before column)</td></tr><tr><td>2–6</td><td><b>Live</b>: two questions from the gauntlet, asked warm — one number, one "why" — with "how did you calculate that?" on the second</td></tr><tr><td>6–9</td><td>The playbook side-by-side: the hand-built report vs the automated one</td></tr><tr><td>9–11</td><td>The dashboard; if access control matters, the 30-second persona flip</td></tr><tr><td>11–13</td><td>The honest slide: what missed, why, and the Tuesday-taught-Wednesday-correct loop that fixes it</td></tr><tr><td>13–15</td><td>The scorecard, and the ask: production rollout</td></tr></table>
+<p>Live questions only from the warm gauntlet — verified answers, no first-time prompts in front of executives.</p>
+<h2>5.4 · What production rollout looks like</h2>
+<p>Close with the sketch, not a vague "next steps":</p>
+<ol><li><b>Data</b>: production credentials and remaining sources (<b>Connect Your Data</b>); the data-gap misses name the priorities</li><li><b>Knowledge</b>: the misses backlog becomes the ontology roadmap (<b>Build Your Ontology</b> → <b>Ontology Operations</b> for the operating loop); golden tests pin the governed metrics (<b>Data Quality &amp; Validation Deep-Dive</b>)</li><li><b>People</b>: identity, roles, and access (<b>Admin &amp; Governance</b>); then user enablement by population (<b>Self-Service Analytics</b> for business users, the vertical workshops where they fit)</li><li><b>Rhythm</b>: the Day-4 automations move to production cadence (<b>Automation Deep-Dive</b>)</li></ol>
+    <figure class="shot" data-todo="the Day 5 before/after readout table">
+    <img src="assets/poc-d5-readout.png" alt="Day 5: success criteria, scored against Day 0." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Day 5: success criteria, scored against Day 0.</figcaption>
+  </figure>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The scorecard was presented first, scored against the Day-0 criteria verbatim</label>
+    <label><input type="checkbox"> The before/after table and the labeled misses both made it into the pack</label>
+    <label><input type="checkbox"> The exec demo ran on their data, their questions, inside 15 minutes</label>
+    <label><input type="checkbox"> The room left with a decision (or a named blocker) and the four-track rollout sketch</label>
+  </div>
+</section>
+
+<div class="pager" id="pager"></div>
+<footer class="pagefoot">© TextQL · Workshop: POC in a Week · Example prompts are illustrative — adapt them to your own data.</footer>
+</div></main>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+<div id="lightbox" onclick="this.classList.remove('show')"><img src="" alt=""></div>
+
+<script>
+(function(){
+  const WS_KEY='textql-ws-poc-in-a-week';
+  const pages=[...document.querySelectorAll('section.page')];
+  const navlist=document.getElementById('navlist');
+  const pager=document.getElementById('pager');
+
+  // Build sidebar nav grouped by data-group
+  let group=null, num=0;
+  pages.forEach(p=>{
+    if(p.dataset.group!==group){
+      group=p.dataset.group;
+      const g=document.createElement('div');g.className='group-label';g.textContent=group;navlist.appendChild(g);
+    }
+    const a=document.createElement('a');a.className='nav-item';a.href='#/'+p.id;a.dataset.page=p.id;
+    a.innerHTML='<span class="num"><span>'+(num++)+'</span></span><span>'+p.dataset.title.replace(/^Module \d+ · /,'')+'</span>'+
+      (p.dataset.time?'<span class="time">'+p.dataset.time+'</span>':'');
+    navlist.appendChild(a);
+  });
+
+  function show(id){
+    let page=pages.find(p=>p.id===id)||pages[0];
+    pages.forEach(p=>p.classList.toggle('active',p===page));
+    navlist.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.page===page.id));
+    const i=pages.indexOf(page);
+    pager.innerHTML=
+      (i>0?'<a class="prev" href="#/'+pages[i-1].id+'"><span class="dir">← Previous</span><span class="ttl">'+pages[i-1].dataset.title+'</span></a>':'<span></span>')+
+      (i<pages.length-1?'<a class="next" href="#/'+pages[i+1].id+'"><span class="dir">Next →</span><span class="ttl">'+pages[i+1].dataset.title+'</span></a>':'');
+    window.scrollTo(0,0);
+    document.getElementById('sidebar').classList.remove('open');
+  }
+  const hashId=()=>location.hash.replace(/^#\/?/,'');
+  window.addEventListener('hashchange',()=>show(hashId()));
+  show(hashId());
+
+  // Copy buttons + toast
+  document.querySelectorAll('.prompt').forEach(box=>{
+    const btn=box.querySelector('button');
+    btn.addEventListener('click',()=>{
+      navigator.clipboard.writeText(box.querySelector('pre').textContent.trim()).then(()=>{
+        const t=document.getElementById('toast');
+        t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400);
+      });
+    });
+  });
+
+  // Screenshot lightbox
+  const lb=document.getElementById('lightbox');
+  document.querySelectorAll('figure.shot img').forEach(img=>{
+    img.addEventListener('click',()=>{lb.querySelector('img').src=img.src;lb.classList.add('show');});
+  });
+
+  // Checkpoint persistence + progress
+  let saved={};try{saved=JSON.parse(localStorage.getItem(WS_KEY)||'{}')}catch(e){}
+  const trackable=pages.filter(p=>p.querySelector('.checkpoint input'));
+  function refreshProgress(){
+    let done=0;
+    trackable.forEach(p=>{
+      const boxes=[...p.querySelectorAll('.checkpoint input')];
+      const allDone=boxes.length&&boxes.every(b=>b.checked);
+      const link=navlist.querySelector('a[data-page="'+p.id+'"]');
+      link.classList.toggle('done',allDone);
+      if(allDone){link.querySelector('.num').innerHTML='✓';done++;}
+      else{link.querySelector('.num').innerHTML='<span>'+pages.indexOf(p)+'</span>';}
+    });
+    const pct=trackable.length?Math.round(100*done/trackable.length):0;
+    document.getElementById('pfill').style.width=pct+'%';
+    document.getElementById('ppct').textContent=pct+'% complete';
+  }
+  document.querySelectorAll('.checkpoint input[type=checkbox]').forEach((cb,i)=>{
+    cb.checked=!!saved[i];
+    cb.closest('label').classList.toggle('checked',cb.checked);
+    cb.addEventListener('change',()=>{
+      saved[i]=cb.checked;
+      cb.closest('label').classList.toggle('checked',cb.checked);
+      try{localStorage.setItem(WS_KEY,JSON.stringify(saved))}catch(e){}
+      refreshProgress();
+    });
+  });
+  refreshProgress();
+})();
+</script>
+</body>
+</html>

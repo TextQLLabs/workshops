@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Migrate from Your BI Tool · TextQL Workshops</title>
+<style>
+  :root{
+    --green:#58a68d; --green-dark:#2f6f5c; --green-soft:#e9f2ee;
+    --ink:#1c2b27; --muted:#5d6b67;
+    --bg:#ffffff; --bg-soft:#f4f8f6; --border:#dde7e3; --code-bg:#0f1f1b;
+    --gold:#e9c46a; --gold-soft:#fdf9ee; --gold-border:#f0e4c0; --gold-ink:#8a6d1f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.6}
+  a{color:var(--green-dark)}
+
+  /* ── Layout ─────────────────────────────── */
+  .layout{display:flex;min-height:100vh}
+  nav#sidebar{width:300px;min-width:300px;background:var(--bg-soft);border-right:1px solid var(--border);padding:24px 0 60px;position:fixed;top:0;bottom:0;overflow-y:auto;z-index:40}
+  main{margin-left:300px;flex:1;display:flex;justify-content:center;padding:44px 56px 110px}
+  .content{max-width:860px;width:100%}
+
+  /* ── Sidebar ────────────────────────────── */
+  .brand{padding:0 24px 16px;border-bottom:1px solid var(--border)}
+  .brand .logo{font-weight:800;font-size:18px;color:var(--green-dark);letter-spacing:.5px}
+  .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .progress-wrap{padding:14px 24px;border-bottom:1px solid var(--border)}
+  .progress-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+  .progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:var(--green);border-radius:4px;transition:width .4s}
+  .progress-pct{font-size:12px;color:var(--green-dark);font-weight:600;margin-top:4px}
+  nav .group-label{padding:16px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  nav a.nav-item{display:flex;align-items:center;gap:10px;padding:9px 24px;font-size:14px;color:var(--ink);text-decoration:none;border-left:3px solid transparent}
+  nav a.nav-item:hover{background:var(--green-soft)}
+  nav a.nav-item.active{border-left-color:var(--green);background:var(--green-soft);font-weight:600}
+  .nav-item .num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;min-width:22px;border-radius:50%;border:1.5px solid var(--muted);font-size:11px;font-weight:700;color:var(--muted)}
+  .nav-item.done .num{background:var(--green);border-color:var(--green);color:#fff;font-size:12px}
+  .nav-item .time{margin-left:auto;font-size:11px;color:var(--muted)}
+  .menu-btn{display:none;position:fixed;top:14px;left:14px;z-index:41;background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer}
+
+  /* ── Typography ─────────────────────────── */
+  .kicker{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);font-weight:700;margin-bottom:6px}
+  h1{font-size:30px;line-height:1.25;margin-bottom:10px;font-weight:700}
+  .page-meta{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-bottom:24px;flex-wrap:wrap}
+  .page-meta b{color:var(--ink)}
+  h2{font-size:20px;margin:34px 0 10px;padding-top:8px;font-weight:700}
+  h3{font-size:16px;margin:22px 0 8px;font-weight:700}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0 10px 24px}
+  li{margin:5px 0}
+  b,strong{font-weight:650}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:var(--bg-soft);font-weight:600}
+  code{background:#eef4f1;padding:2px 6px;border-radius:4px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  hr{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+  /* ── Hero cards (welcome) ───────────────── */
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+  .hero-card{border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:#fff}
+  .hero-card .n{font-size:12px;font-weight:700;color:var(--green);letter-spacing:1px}
+  .hero-card h3{margin:4px 0;font-size:15px}
+  .hero-card p{font-size:13px;color:var(--muted);margin:0}
+
+  /* ── Callouts ───────────────────────────── */
+  .callout{background:var(--bg-soft);border-left:4px solid var(--green);padding:12px 16px;border-radius:0 6px 6px 0;margin:14px 0;font-size:14px}
+  .callout.warn{border-left-color:var(--gold)}
+  .callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+  .callout .label{font-weight:700;display:block}
+
+  /* ── Prompt blocks ──────────────────────── */
+  .prompt{position:relative;background:var(--code-bg);color:#dff3ea;border-radius:8px;padding:20px;margin:16px 0 10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;line-height:1.55}
+  .prompt .tag{position:absolute;top:-9px;left:14px;background:var(--green);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px}
+  .prompt button{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.12);color:#dff3ea;border:none;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+  .prompt button:hover{background:rgba(255,255,255,.28)}
+  .prompt pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;padding-right:54px}
+  .yousee{background:var(--gold-soft);border:1px solid var(--gold-border);border-radius:8px;padding:12px 16px;margin:10px 0 18px;font-size:14px}
+  .yousee b{color:var(--gold-ink)}
+
+  /* ── Screenshots ────────────────────────── */
+  figure.shot{margin:16px 0 22px}
+  figure.shot img{display:block;max-width:100%;border:1px solid var(--border);border-radius:10px;box-shadow:0 2px 10px rgba(28,43,39,.08);cursor:zoom-in}
+  figure.shot figcaption{font-size:13px;color:var(--muted);margin-top:7px}
+  figure.shot.missing img,figure.shot.missing figcaption{display:none}
+  figure.shot.missing::after{content:"📷  Screenshot coming soon — " attr(data-todo);display:block;border:2px dashed var(--border);border-radius:10px;padding:22px 18px;color:var(--muted);font-size:13.5px;background:var(--bg-soft)}
+  #lightbox{display:none;position:fixed;inset:0;background:rgba(15,31,27,.92);z-index:200;cursor:zoom-out;align-items:center;justify-content:center;padding:30px}
+  #lightbox.show{display:flex}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:8px}
+
+  /* ── Steps ──────────────────────────────── */
+  ol.steps{list-style:none;margin-left:0;counter-reset:step}
+  ol.steps>li{counter-increment:step;position:relative;padding:0 0 16px 44px;border-left:2px solid var(--border);margin:0 0 0 15px}
+  ol.steps>li:last-child{border-left-color:transparent}
+  ol.steps>li::before{content:counter(step);position:absolute;left:-15px;top:-2px;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+
+  /* ── Checkpoint ─────────────────────────── */
+  .checkpoint{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:28px 0}
+  .checkpoint h4{margin:0 0 10px;color:var(--green-dark);font-size:15px}
+  .checkpoint label{display:flex;align-items:flex-start;gap:10px;padding:5px 0;font-size:14px;cursor:pointer}
+  .checkpoint input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;min-width:16px;cursor:pointer}
+  .checkpoint label.checked{color:var(--muted);text-decoration:line-through}
+
+  /* ── Expandable ─────────────────────────── */
+  details{border:1px solid var(--border);border-radius:8px;margin:12px 0;background:#fff}
+  details summary{cursor:pointer;padding:11px 14px;font-weight:600;font-size:14.5px;list-style:none}
+  details summary::before{content:"▸ ";color:var(--green)}
+  details[open] summary::before{content:"▾ "}
+  details .body{padding:2px 16px 12px}
+
+  /* ── Pager ──────────────────────────────── */
+  .pager{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--border);padding-top:22px}
+  .pager a{flex:1;max-width:330px;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-decoration:none;color:var(--ink)}
+  .pager a:hover{border-color:var(--green);background:var(--green-soft)}
+  .pager a .dir{font-size:12px;color:var(--muted);display:block}
+  .pager a .ttl{font-weight:600;color:var(--green-dark);font-size:15px}
+  .pager a.next{text-align:right;margin-left:auto}
+
+  .page{display:none}
+  .page.active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  footer.pagefoot{margin-top:46px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);padding-top:16px}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:210}
+  .toast.show{opacity:1}
+
+  @media(max-width:920px){
+    nav#sidebar{transform:translateX(-100%);transition:transform .2s;box-shadow:2px 0 14px rgba(0,0,0,.12)}
+    nav#sidebar.open{transform:none}
+    main{margin-left:0;padding:60px 22px 80px}
+    .menu-btn{display:block}
+    .hero-grid{grid-template-columns:1fr}
+  }
+  @media print{
+    nav#sidebar,.pager,.menu-btn,.toast{display:none!important}
+    main{margin-left:0}
+    .page{display:block!important;page-break-after:always}
+    figure.shot.missing{display:none}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+<div class="layout">
+<nav id="sidebar">
+  <div class="brand">
+    <div class="logo">TextQL Workshop</div>
+    <div class="sub">Migrate from Your BI Tool</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">Your progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+    <div class="progress-pct" id="ppct">0% complete</div>
+  </div>
+  <div id="navlist"></div>
+</nav>
+
+<main><div class="content" id="content">
+
+<section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
+  <div class="kicker">Workshop</div>
+  <h1>Migrate from Your BI Tool</h1>
+<p>A workshop of short, hands-on modules for <b>analytics engineers and BI admins</b> moving from Tableau, Looker, or Power BI toward TextQL — whether that's a full migration or long-term coexistence. The framing throughout: <b>migrate questions, not artifacts.</b> Your BI tool was the right tool for its era; this is the playbook for what carries forward, what translates, and what gets replaced by something better than a dashboard.</p>
+<p>Total time: <b>about 2.5 hours.</b></p>
+<h2>Who this is for</h2>
+<ul><li>Analytics engineers who own LookML models, Tableau calcs, or Power BI measures</li><li>BI admins responsible for a dashboard estate (and its license bill)</li><li>Data leads planning a migration or a deliberate coexistence</li><li>Anyone who has counted their dashboards and felt tired</li></ul>
+<h2>What you'll be able to do</h2>
+<table><tr><th>After module</th><th>You can...</th></tr><tr><td>0</td><td>Inventory the estate: what exists, what's actually used, what the semantic layer contains</td></tr><tr><td>1</td><td>Translate LookML / calcs / measures into governed ontology metrics, conflicts surfaced</td></tr><tr><td>2</td><td>Rebuild the flagship dashboard conversationally, with side-by-side discipline</td></tr><tr><td>3</td><td>Prove parity with golden queries — and triage every mismatch to its cause</td></tr><tr><td>4</td><td>Say honestly what doesn't migrate, and what replaces dashboards entirely</td></tr><tr><td>5</td><td>Run coexistence: usage-based deprecation, BI tool as a data source during transition</td></tr><tr><td>6</td><td>Measure adoption weekly with a playbook</td></tr></table>
+<h2>Workshop modules</h2>
+<table><tr><th>Module</th><th>File</th><th>Time</th></tr><tr><td>0 · Inventory the Estate</td><td><code>00_INVENTORY.md</code></td><td>20 min</td></tr><tr><td>1 · Translate the Semantic Layer</td><td><code>01_TRANSLATE_SEMANTIC_LAYER.md</code></td><td>25 min</td></tr><tr><td>2 · Rebuild the Flagship Dashboard</td><td><code>02_REBUILD_FLAGSHIP.md</code></td><td>25 min</td></tr><tr><td>3 · Parity Testing</td><td><code>03_PARITY_TESTING.md</code></td><td>20 min</td></tr><tr><td>4 · What Doesn't Migrate — And What Replaces It</td><td><code>04_WHAT_DOESNT_MIGRATE.md</code></td><td>15 min</td></tr><tr><td>5 · Coexistence &amp; Cutover</td><td><code>05_COEXISTENCE_CUTOVER.md</code></td><td>20 min</td></tr><tr><td>6 · Measure Adoption</td><td><code>06_MEASURE_ADOPTION.md</code></td><td>15 min</td></tr></table>
+<h2>How to use this workshop</h2>
+<ol><li>Prerequisites: your warehouse connected to TextQL (see <b>Connect Your Data</b>), and — strongly recommended — your BI tool connected too (Tableau and Power BI connectors exist; they make coexistence real rather than aspirational).</li><li>Bring exports: dashboard/workbook lists, usage stats from your BI tool's admin views, and your semantic-layer source (LookML files, workbook calc exports, measure definitions). Modules 0–1 work on these as uploaded files.</li><li>Work <b>in order</b> — the inventory's usage data drives every later decision, and parity testing (Module 3) gates any cutover.</li><li>Swap <code>[bracketed]</code> placeholders for your own tool names, dashboard names, and metrics.</li></ol>
+</section>
+
+<section class="page" id="m0" data-title="Module 0 · Inventory the Estate" data-group="Getting Started" data-time="20 minutes">
+  <div class="kicker">Module 0</div>
+  <h1>Module 0 · Inventory the Estate</h1>
+  <div class="page-meta"><span>⏱️ <b>20 minutes</b></span></div>
+<p><b>Goal:</b> catalog what exists, measure what's actually used, and extract the semantic layer — the three datasets every migration decision depends on.</p>
+<h2>0.1 · Export the estate</h2>
+<p>From your BI tool's admin surface, export three things as files:</p>
+<table><tr><th>Export</th><th>From (examples)</th><th>Contains</th></tr><tr><td><b>Content list</b></td><td>Tableau: workbooks/views list · Looker: dashboards/looks · Power BI: workspace content</td><td>Every dashboard, owner, created/modified dates</td></tr><tr><td><b>Usage stats</b></td><td>Tableau: admin views on the repository · Looker: System Activity · Power BI: usage metrics reports</td><td>Views/opens per dashboard, per user, over time</td></tr><tr><td><b>Semantic layer</b></td><td>LookML files from the repo · Tableau workbook calc exports · Power BI measures (e.g., extracted via DAX Studio or INFO functions)</td><td>Every defined metric, dimension, calc</td></tr></table>
+<p>Exact export paths vary by tool and version — your BI admin knows them. The files are the input; attach them to a thread.</p>
+<h2>0.2 · The zombie analysis</h2>
+<p>Upload the content list and usage stats, then:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>From these files: how many dashboards exist in total, and how many had zero views in the last 90 days? Of the rest, what share of total views does the top 10% of dashboards get? List the top 20 by usage, and separately the zombie list — no views in 90+ days — with owners.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the number most BI estates don't want to know: typically a large majority of dashboards are unopened, with usage concentrated in a small head. <b>This is the political unlock of the whole migration</b> — you are not migrating 400 dashboards; you're migrating the 25 that get used, and the zombie list retires with no migration at all.</div>
+<h2>0.3 · Map the head</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>For the top 20 dashboards by usage: group them by the underlying question each answers (e.g., "revenue pacing," "pipeline health," "ops backlog"). Where multiple dashboards answer the same question differently, flag them as a consolidation group.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the estate reframed as a <i>question list</i> — usually far shorter than the dashboard list, with consolidation groups where three teams built three versions of the same view. Questions, not artifacts, are what you'll migrate.</div>
+<h2>0.4 · Extract the semantic inventory</h2>
+<p>Upload the semantic-layer export:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>From these definitions [LookML models / workbook calculations / measure definitions]: list every metric with its formula in plain English, the dimensions it's computed over, and any filters baked in. Group near-duplicates — metrics with the same name but different formulas, or different names with the same formula.</pre></div>
+  <div class="yousee"><b>You'll see:</b> your semantic layer as a readable catalog — including the near-duplicate groups that will become Module 1's reconciliation work. Finding "active_customers defined three ways" <i>here</i>, in inventory, is far cheaper than finding it in parity testing.</div>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The zombie share is quantified and the retire-without-migrating list exists, with owners</label>
+    <label><input type="checkbox"> The top-20 head is mapped to its underlying questions, consolidation groups flagged</label>
+    <label><input type="checkbox"> The semantic catalog exists with near-duplicates grouped</label>
+    <label><input type="checkbox"> You can state the migration scope as a question count, not a dashboard count</label>
+  </div>
+</section>
+
+<section class="page" id="m1" data-title="Module 1 · Translate the Semantic Layer" data-group="Hands-On Modules" data-time="25 minutes">
+  <div class="kicker">Module 1</div>
+  <h1>Module 1 · Translate the Semantic Layer</h1>
+  <div class="page-meta"><span>⏱️ <b>25 minutes</b></span></div>
+<p><b>Goal:</b> turn LookML / calcs / measures into governed ontology metrics — with every definition decision recorded, and conflicts treated as reconciliation work, not bugs.</p>
+<h2>1.1 · Why the semantic layer migrates first</h2>
+<p>Dashboards are views; the semantic layer is <i>meaning</i>. Migrating meaning first ensures every rebuilt dashboard (Module 2) and every conversational answer computes from the same governed definitions — instead of re-encoding each dashboard's private math. In TextQL, that meaning lives in the <b>Ontology</b>: your org's semantic layer of metric definitions, entity relationships, and business logic.</p>
+<h2>1.2 · Propose the governed metrics</h2>
+<p>With Module 0's semantic catalog in the thread:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>From this catalog, propose governed ontology metrics for the [15] metrics that power the top-20 dashboards. For each: the plain-English definition, the source tables and join logic in our warehouse, the dimensions it should support, and the original [LookML/calc/measure] it translates. Where the original embeds tool-specific behavior (a default date filter, a tool-side aggregation quirk), call it out explicitly rather than silently translating it.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a proposed metric set with translation notes. The tool-specific-behavior callouts matter most — a Looker default filter or a Tableau context-filter interaction that silently shaped a number for years needs a <i>decision</i> (keep the behavior? drop it?), not a silent port.</div>
+<h2>1.3 · Reconcile the conflicts</h2>
+<p>Now the near-duplicate groups from Module 0.4:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>For each conflicting definition group: show the formulas side by side, compute both versions against [last full quarter] so we see the actual numeric gap, and recommend which should become the governed definition. Record the decision rationale and keep the alternative as a clearly-named variant (e.g., active_customers_including_trials) rather than deleting it.</pre></div>
+  <div class="yousee"><b>You'll see:</b> conflicts quantified (the gap is often material — that's <i>why</i> teams argued) and resolved into one governed definition plus named variants. <b>Frame this as the migration's dividend, not its cost:</b> these conflicts existed all along, baked into different dashboards; the migration is simply the first time anyone reconciled them.</div>
+<h2>1.4 · Commit through review</h2>
+<p>Propose the metric set as ontology patches for review — definitions this load-bearing go through the approval flow, with the metric's business owner (not just the engineer) signing off on each contested decision. The deeper build mechanics — <code>.tql</code> surfaces, folder structure, git sync — live in <b>Build Your Ontology, End to End</b> and <b>Ontology Operations</b>; this module's job is getting the <i>decisions</i> made and recorded.</p>
+<table><tr><th>Symptom</th><th>Fix</th></tr><tr><td>Two tools define a metric differently</td><td>Not a bug — reconciliation work; quantify the gap, decide, record (1.3)</td></tr><tr><td>Translated metric returns different numbers than the old tool</td><td>Check for tool-side defaults the translation dropped (1.2's callouts); full triage in Module 3</td></tr><tr><td>Metric owner unclear</td><td>The dashboard owner from Module 0's inventory is your starting point</td></tr></table>
+    <figure class="shot" data-todo="Ana proposing ontology metrics from LookML/BI definitions">
+    <img src="assets/bi-m1-translate.png" alt="The semantic layer, translated with decisions recorded." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The semantic layer, translated with decisions recorded.</figcaption>
+  </figure>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The top metrics are proposed as governed definitions with source logic and translation notes</label>
+    <label><input type="checkbox"> Every tool-specific behavior got an explicit keep/drop decision</label>
+    <label><input type="checkbox"> Each conflict group has a quantified gap, a governed winner, a named variant, and a recorded rationale</label>
+    <label><input type="checkbox"> Patches are in review with business owners on the contested ones</label>
+  </div>
+</section>
+
+<section class="page" id="m2" data-title="Module 2 · Rebuild the Flagship" data-group="Hands-On Modules" data-time="25 minutes">
+  <div class="kicker">Module 2</div>
+  <h1>Module 2 · Rebuild the Flagship Dashboard</h1>
+  <div class="page-meta"><span>⏱️ <b>25 minutes</b></span></div>
+<p><b>Goal:</b> recreate your most-used dashboard through conversation, on the governed metrics — with side-by-side discipline against the original.</p>
+<h2>2.1 · Pick the flagship</h2>
+<p>From Module 0's usage ranking, take the #1 dashboard — the one whose users will notice everything. Rebuilding the hardest audience's view first is deliberate: if parity convinces <i>them</i>, the rest of the migration is downhill.</p>
+<h2>2.2 · Rebuild from the artifact</h2>
+<p>Attach a screenshot (or PDF export) of the original:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Rebuild this dashboard connected to our warehouse: match the layout, panels, and chart types; compute every metric through the governed ontology definitions we created (not ad-hoc SQL); add the same filters. List any panel you couldn't map to our data or definitions rather than improvising it.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a working rebuild with an honest unmappable list (that list feeds Module 4). The governed-definitions requirement is the point — the rebuilt dashboard inherits the reconciled semantic layer, so it can never drift from the official numbers the way the original's private calcs could. (Dashboard craft — publishing, refresh schedules, versioning — lives in the <b>Dashboards &amp; Reporting</b> workshop.)</div>
+<h2>2.3 · Side-by-side discipline</h2>
+<p>Open the original and the rebuild together, same date ranges, same filter selections:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>For each panel in the rebuild, I'm comparing against the original with identical filters: [date range, segment]. Recompute each panel's headline figure and show it with its definition, so I can tick them off one by one.</pre></div>
+  <div class="yousee"><b>You'll see:</b> panel-by-panel figures for systematic comparison. Don't eyeball charts — compare <i>numbers</i>, panel by panel, and log every discrepancy with its filter state. The discrepancy log is Module 3's input, and the discipline here is what makes the parity claim credible later.</div>
+<h2>2.4 · Resist improving it (yet)</h2>
+<p>The rebuild will tempt you to fix the original's sins — the cluttered fourth row, the filter nobody uses. <b>Don't, yet.</b> Parity first, improvements after sign-off: a rebuild that's <i>different</i> can't be <i>verified</i>. Park improvements in a list; ship them as v2 the week after cutover, when they read as momentum instead of discrepancy.</p>
+    <figure class="shot" data-todo="the rebuilt flagship dashboard">
+    <img src="assets/bi-m2-dashboard.png" alt="The flagship dashboard, rebuilt through conversation." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The flagship dashboard, rebuilt through conversation.</figcaption>
+  </figure>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The flagship is rebuilt on governed definitions, with an honest unmappable list</label>
+    <label><input type="checkbox"> Every panel compared numerically against the original at identical filter states</label>
+    <label><input type="checkbox"> All discrepancies logged with filter context for Module 3</label>
+    <label><input type="checkbox"> The improvements list is parked, not shipped</label>
+  </div>
+</section>
+
+<section class="page" id="m3" data-title="Module 3 · Parity Testing" data-group="Hands-On Modules" data-time="20 minutes">
+  <div class="kicker">Module 3</div>
+  <h1>Module 3 · Parity Testing</h1>
+  <div class="page-meta"><span>⏱️ <b>20 minutes</b></span></div>
+<p><b>Goal:</b> prove the numbers match with golden queries pinned to the old tool's trusted values — and triage every mismatch to data, definition, or time-window. <b>Parity proof is the trust moment of the whole migration; be rigorous here and everything downstream gets easier.</b></p>
+<h2>3.1 · Pin the golden values</h2>
+<p>From the old tool, capture the numbers people actually trust — the flagship's headline figures for <b>closed periods</b> (a closed quarter's value never moves; "this month" never stops moving):</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Create a golden parity table: for each of these [12] metric/period pairs from the old tool [paste them: metric, filters, period, value], compute the same figure through our governed definitions and record old value, new value, and the difference. Closed periods only.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the parity table — your migration's evidence exhibit. Store it in the ontology (a <code>migration/parity/</code> note) so the proof is versioned alongside the definitions it validates.</div>
+<h2>3.2 · Triage the mismatches</h2>
+<p>Every mismatch has exactly one of three causes. Work them in this order:</p>
+<table><tr><th>Cause</th><th>Tell</th><th>Resolution</th></tr><tr><td><b>Time-window</b></td><td>Gap concentrated at period edges; off-by-one-day patterns</td><td>Timezone, week-start convention, or inclusive/exclusive boundary — align the convention, document it</td></tr><tr><td><b>Definition</b></td><td>Stable percentage gap; matches one of Module 1's conflict variants</td><td>The old tool used a different formula — check the translation notes; often the gap <i>is</i> a Module 1 decision, now quantified</td></tr><tr><td><b>Data</b></td><td>Gap varies erratically; affects some periods only</td><td>Different source freshness, a filter on excluded rows (test accounts, deleted records), or an extract that was stale in the <i>old</i> tool</td></tr></table>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>For each mismatch in the parity table: decompose the difference — does it close if we align time-window conventions? Does it match one of our recorded definition variants? If neither, compare the row populations between the two computations and show me what's in one but not the other.</pre></div>
+  <div class="yousee"><b>You'll see:</b> every gap attributed to its cause. The population comparison (what rows are in one total but not the other) is the workhorse move — gaps stop being mysterious when you can see the actual rows.</div>
+<h2>3.3 · When the old number is the wrong one</h2>
+<p>Some mismatches will resolve uncomfortably: the old tool's trusted number was computed on a stale extract, a silently-broken filter, or a definition nobody would defend today. This happens in most migrations. The protocol:</p>
+<ol><li>Document it precisely — the old value, the corrected value, the cause.</li><li>Take it to the metric's business owner <i>before</i> cutover — the number's consumers deserve to hear "the new number is different because the old one was wrong" from their owner, not discover it.</li><li>Record the decision in the ontology note — future audits will ask.</li></ol>
+<p>A migration that silently reproduces a wrong number for compatibility has failed at the one thing it was for.</p>
+<h2>3.4 · Keep the suite running</h2>
+<p>The parity table is also your post-cutover drift alarm: schedule it as a recurring check (the golden-suite playbook pattern — built out fully in the <b>Data Quality &amp; Validation Deep-Dive</b>, with the ongoing operating discipline in <b>Ontology Operations</b>). Parity isn't a one-time gate; it's a standing guarantee.</p>
+    <figure class="shot" data-todo="a parity test comparing old-BI numbers to governed answers">
+    <img src="assets/bi-m3-parity.png" alt="Parity proven, mismatches triaged." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Parity proven, mismatches triaged.</figcaption>
+  </figure>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The golden parity table exists, closed periods only, stored in the ontology</label>
+    <label><input type="checkbox"> Every mismatch is attributed: time-window, definition, or data — none left "unexplained"</label>
+    <label><input type="checkbox"> Any wrong-old-number cases are documented and routed to business owners before cutover</label>
+    <label><input type="checkbox"> The parity suite is scheduled to keep running after cutover</label>
+  </div>
+</section>
+
+<section class="page" id="m4" data-title="Module 4 · What Doesn&#x27;t Migrate" data-group="Hands-On Modules" data-time="15 minutes">
+  <div class="kicker">Module 4</div>
+  <h1>Module 4 · What Doesn't Migrate — And What Replaces It</h1>
+  <div class="page-meta"><span>⏱️ <b>15 minutes</b></span></div>
+<p><b>Goal:</b> the honest conversation — what your BI tool does that won't carry over, and what makes most of it not matter.</p>
+<h2>4.1 · The honest table</h2>
+<table><tr><th>Doesn't migrate (or migrates poorly)</th><th>Why</th><th>What you do instead</th></tr><tr><td>Pixel-perfect formatted reports (regulatory layouts, print-spec financials)</td><td>Conversational rebuilds target function, not pixel fidelity</td><td>Keep these in the old tool (Module 5's coexistence) or in a dedicated reporting tool</td></tr><tr><td>Certain specialized viz types (custom extensions, exotic chart libraries)</td><td>Chart vocabulary is broad but not identical</td><td>The unmappable list from Module 2.2 names yours; most have functional equivalents, a few genuinely don't</td></tr><tr><td>Tool-specific interactivity (Tableau actions/parameters wired into dashboards, complex drill hierarchies)</td><td>Different interaction model</td><td>Much of this becomes <i>asking the follow-up question</i> — see 4.2</td></tr><tr><td>Years of saved custom views and user bookmarks</td><td>Per-user artifacts in the old tool's namespace</td><td>The questions behind the views migrate; the bookmarks don't need to</td></tr><tr><td>The semantic layer's tool-specific behaviors (default filters, context quirks)</td><td>Deliberately decided in Module 1, not ported</td><td>Already handled — by decision, not by accident</td></tr></table>
+<p>Show this table to stakeholders <i>before</i> they discover the items themselves. Honesty here is what makes the parity proof believable.</p>
+<h2>4.2 · What replaces dashboards entirely</h2>
+<p>The deeper reframe: a dashboard is a <b>pre-answered question</b> — built because asking used to be expensive. When asking costs nothing, several dashboard genres stop earning their maintenance:</p>
+<table><tr><th>Dashboard genre</th><th>Replaced by</th></tr><tr><td>The "in case someone asks" dashboard</td><td>Asking — a thread answers it on demand, current, with drill-down</td></tr><tr><td>The drill-down hierarchy nobody finishes building</td><td>"Why?" as a follow-up question — decomposition on demand (see <b>Self-Service Analytics</b>)</td></tr><tr><td>The wall-of-KPIs monitoring dashboard</td><td>A feed agent that watches the metrics and <i>speaks only when something changes</i> (see <b>Automation Deep-Dive</b>)</td></tr><tr><td>The weekly screenshot-into-slides ritual</td><td>A scheduled playbook delivering the narrative report itself</td></tr></table>
+<p>This is why the migration unit is questions, not artifacts: a 400-dashboard estate typically resolves to ~25 rebuilt dashboards (the genuinely-monitoring head), a handful of playbooks and agents, and a large pile of questions that are now just... asked.</p>
+<h2>4.3 · Classify your own head</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Take our top-20 dashboard list with its question mapping. Classify each: (a) rebuild as a live dashboard — genuinely monitored regularly; (b) replace with a scheduled playbook — it's really a recurring report; (c) replace with a feed agent — it's really a watch-for-changes; (d) retire to on-demand asking — it was an in-case-someone-asks. Recommend with one line of reasoning each.</pre></div>
+  <div class="yousee"><b>You'll see:</b> your migration plan compressed — usually far fewer rebuilds than the dashboard count implied, which is also your effort estimate and your license-bill story.</div>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The honest table is shared with stakeholders before they find the gaps themselves</label>
+    <label><input type="checkbox"> Your unmappable list from Module 2 is classified: equivalent exists / keep in old tool / genuinely gone</label>
+    <label><input type="checkbox"> The top-20 are classified into rebuild / playbook / agent / on-demand</label>
+    <label><input type="checkbox"> You can explain "migrate questions, not artifacts" with your own numbers</label>
+  </div>
+</section>
+
+<section class="page" id="m5" data-title="Module 5 · Coexistence &amp; Cutover" data-group="Hands-On Modules" data-time="20 minutes">
+  <div class="kicker">Module 5</div>
+  <h1>Module 5 · Coexistence & Cutover</h1>
+  <div class="page-meta"><span>⏱️ <b>20 minutes</b></span></div>
+<p><b>Goal:</b> run both tools side by side deliberately, retire dashboards on usage evidence, and keep the BI tool connected as a data source during the transition.</p>
+<h2>5.1 · Coexistence is a phase, not a failure</h2>
+<p>The realistic migration shape: a months-long overlap where the old tool keeps serving what it serves well (the pixel-perfect holdouts from Module 4, the long tail not yet classified) while TextQL takes the head. Make the phase deliberate — with an owner, entry criteria (parity proven, Module 3), and exit criteria (usage shifted, Module 6) — rather than an indefinite drift.</p>
+<h2>5.2 · Connect the old tool as a data source</h2>
+<p>During coexistence, connect Tableau or Power BI to TextQL as a connector (setup in <b>Connect Your Data</b>, Module 4 — including the collection/workspace sync step people miss). This does two jobs:</p>
+<ul><li><b>Continuity</b> — Ana can reference and answer questions about the old dashboards while they remain canonical ("what does the Q3 revenue dashboard say?"), so users get one front door even mid-transition.</li><li><b>Migration intelligence</b> — the old tool's views become queryable context for rebuilds you haven't done yet.</li></ul>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Using the [Tableau/Power BI] connector: what dashboards and views can you see? For [a not-yet-migrated dashboard], summarize what it shows and what question it answers.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the old estate visible from inside the new front door — coexistence as a feature rather than a compromise.</div>
+<h2>5.3 · Usage-based deprecation</h2>
+<p>Retire on evidence, not on opinion:</p>
+<ol><li><b>The zombie list</b> (Module 0.2) retires immediately — zero views in 90 days needs no migration and no debate. Announce with a grace period; archive, don't delete.</li><li><b>The migrated head</b>: after each rebuild ships, watch the original's usage. When it drops below [threshold] for [4+ weeks], retire it with a redirect note pointing at the replacement.</li><li><b>The long tail</b>: each dashboard gets classified (Module 4.3's four buckets) when its usage justifies attention — or retired when 90 days of silence accumulates.</li></ol>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>From the latest usage export: which migrated-and-rebuilt dashboards still show old-tool usage above [20 views/week]? Those are my stuck users — list the dashboards and their heaviest remaining users so I can find out what the rebuild is missing.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the stuck-user list — your best source of truth about what the rebuilds lack. Talk to them before forcing the cutover; they know something the parity table doesn't.</div>
+<h2>5.4 · The cutover decision</h2>
+<p>Per dashboard, cut over when: parity proven (Module 3) <b>and</b> old-tool usage collapsed (5.3) <b>and</b> the owner signs off. Per <i>estate</i>, the license-renewal date is usually the forcing function — work back from it: the head rebuilt and verified two months before renewal, coexistence holdouts (pixel-perfect reports) explicitly budgeted, everything else retired.</p>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Coexistence has an owner, entry criteria, and exit criteria — it's a phase, not a drift</label>
+    <label><input type="checkbox"> The old BI tool is connected as a data source and answering questions about unmigrated dashboards</label>
+    <label><input type="checkbox"> The zombie list is archived with a grace period; deprecation is usage-triggered, not opinion-triggered</label>
+    <label><input type="checkbox"> The stuck-user list exists and someone is talking to them</label>
+  </div>
+</section>
+
+<section class="page" id="m6" data-title="Module 6 · Measure Adoption" data-group="Hands-On Modules" data-time="15 minutes">
+  <div class="kicker">Module 6</div>
+  <h1>Module 6 · Measure Adoption</h1>
+  <div class="page-meta"><span>⏱️ <b>15 minutes</b></span></div>
+<p><b>Goal:</b> a weekly playbook that reports the migration's actual progress — questions asked, threads shared, and the usage shift from old tool to new.</p>
+<h2>6.1 · Define the adoption signals</h2>
+<p>A migration succeeds when behavior moves. The measurable signals:</p>
+<table><tr><th>Signal</th><th>Source</th><th>What it shows</th></tr><tr><td>Questions asked per week (threads created)</td><td>TextQL usage data</td><td>The new front door is being used</td></tr><tr><td>Distinct weekly users, and repeat users</td><td>TextQL usage data</td><td>Breadth, and stickiness beyond novelty</td></tr><tr><td>Threads/dashboards shared</td><td>TextQL usage data</td><td>Answers circulating — the collaboration signal</td></tr><tr><td>Old-tool views per week (total and per migrated dashboard)</td><td>BI tool usage exports</td><td>The other side of the shift</td></tr><tr><td>Rebuilt-dashboard views and refreshes</td><td>TextQL</td><td>The migrated head being consumed</td></tr></table>
+<p>Depending on your workspace configuration, your admin can pull TextQL-side usage through the usage/observability surfaces (the <b>Admin &amp; Governance</b> workshop covers these); the old-tool side comes from the same admin exports as Module 0.</p>
+<h2>6.2 · The adoption playbook</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Create a playbook "Migration Adoption Weekly" that runs Mondays at 8am: (1) TextQL-side — threads created, distinct and repeat users, shares, rebuilt-dashboard views, each vs the prior week; (2) old-tool side from the latest usage export — total views and views on migrated dashboards, trending; (3) the crossover chart — old-tool views vs TextQL activity on one timeline; (4) flags — any migrated dashboard whose old-tool usage ISN'T declining, and any week where new-tool activity drops. Deliver to [#migration-channel].</pre></div>
+  <div class="yousee"><b>You'll see:</b> the migration's scoreboard, weekly, where the team works. The crossover chart is the artifact for leadership; the not-declining flag is the working signal — it feeds Module 5's stuck-user conversation.</div>
+<h2>6.3 · Read it honestly</h2>
+<p>Two failure smells to watch for in the weekly numbers:</p>
+<ul><li><b>New-tool activity plateaus after week 3</b> — novelty wore off without habit forming; the fix is usually enablement (run the <b>Self-Service Analytics</b> workshop for the user population), not features.</li><li><b>Old-tool usage won't die on a migrated dashboard</b> — the rebuild is missing something its users need; the stuck-user list knows what. Either fix the rebuild or reclassify the dashboard as a coexistence holdout, deliberately.</li></ul>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The adoption playbook runs weekly with both sides of the shift plus the crossover chart</label>
+    <label><input type="checkbox"> The not-declining flag feeds an actual conversation with stuck users</label>
+    <label><input type="checkbox"> A plateau has a planned response (enablement) distinct from the stuck-dashboard response (fix or reclassify)</label>
+    <label><input type="checkbox"> Leadership sees the crossover chart without asking for it</label>
+  </div>
+</section>
+
+<div class="pager" id="pager"></div>
+<footer class="pagefoot">© TextQL · Workshop: Migrate from Your BI Tool · Example prompts are illustrative — adapt them to your own data.</footer>
+</div></main>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+<div id="lightbox" onclick="this.classList.remove('show')"><img src="" alt=""></div>
+
+<script>
+(function(){
+  const WS_KEY='textql-ws-bi-migration';
+  const pages=[...document.querySelectorAll('section.page')];
+  const navlist=document.getElementById('navlist');
+  const pager=document.getElementById('pager');
+
+  // Build sidebar nav grouped by data-group
+  let group=null, num=0;
+  pages.forEach(p=>{
+    if(p.dataset.group!==group){
+      group=p.dataset.group;
+      const g=document.createElement('div');g.className='group-label';g.textContent=group;navlist.appendChild(g);
+    }
+    const a=document.createElement('a');a.className='nav-item';a.href='#/'+p.id;a.dataset.page=p.id;
+    a.innerHTML='<span class="num"><span>'+(num++)+'</span></span><span>'+p.dataset.title.replace(/^Module \d+ · /,'')+'</span>'+
+      (p.dataset.time?'<span class="time">'+p.dataset.time+'</span>':'');
+    navlist.appendChild(a);
+  });
+
+  function show(id){
+    let page=pages.find(p=>p.id===id)||pages[0];
+    pages.forEach(p=>p.classList.toggle('active',p===page));
+    navlist.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.page===page.id));
+    const i=pages.indexOf(page);
+    pager.innerHTML=
+      (i>0?'<a class="prev" href="#/'+pages[i-1].id+'"><span class="dir">← Previous</span><span class="ttl">'+pages[i-1].dataset.title+'</span></a>':'<span></span>')+
+      (i<pages.length-1?'<a class="next" href="#/'+pages[i+1].id+'"><span class="dir">Next →</span><span class="ttl">'+pages[i+1].dataset.title+'</span></a>':'');
+    window.scrollTo(0,0);
+    document.getElementById('sidebar').classList.remove('open');
+  }
+  const hashId=()=>location.hash.replace(/^#\/?/,'');
+  window.addEventListener('hashchange',()=>show(hashId()));
+  show(hashId());
+
+  // Copy buttons + toast
+  document.querySelectorAll('.prompt').forEach(box=>{
+    const btn=box.querySelector('button');
+    btn.addEventListener('click',()=>{
+      navigator.clipboard.writeText(box.querySelector('pre').textContent.trim()).then(()=>{
+        const t=document.getElementById('toast');
+        t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400);
+      });
+    });
+  });
+
+  // Screenshot lightbox
+  const lb=document.getElementById('lightbox');
+  document.querySelectorAll('figure.shot img').forEach(img=>{
+    img.addEventListener('click',()=>{lb.querySelector('img').src=img.src;lb.classList.add('show');});
+  });
+
+  // Checkpoint persistence + progress
+  let saved={};try{saved=JSON.parse(localStorage.getItem(WS_KEY)||'{}')}catch(e){}
+  const trackable=pages.filter(p=>p.querySelector('.checkpoint input'));
+  function refreshProgress(){
+    let done=0;
+    trackable.forEach(p=>{
+      const boxes=[...p.querySelectorAll('.checkpoint input')];
+      const allDone=boxes.length&&boxes.every(b=>b.checked);
+      const link=navlist.querySelector('a[data-page="'+p.id+'"]');
+      link.classList.toggle('done',allDone);
+      if(allDone){link.querySelector('.num').innerHTML='✓';done++;}
+      else{link.querySelector('.num').innerHTML='<span>'+pages.indexOf(p)+'</span>';}
+    });
+    const pct=trackable.length?Math.round(100*done/trackable.length):0;
+    document.getElementById('pfill').style.width=pct+'%';
+    document.getElementById('ppct').textContent=pct+'% complete';
+  }
+  document.querySelectorAll('.checkpoint input[type=checkbox]').forEach((cb,i)=>{
+    cb.checked=!!saved[i];
+    cb.closest('label').classList.toggle('checked',cb.checked);
+    cb.addEventListener('change',()=>{
+      saved[i]=cb.checked;
+      cb.closest('label').classList.toggle('checked',cb.checked);
+      try{localStorage.setItem(WS_KEY,JSON.stringify(saved))}catch(e){}
+      refreshProgress();
+    });
+  });
+  refreshProgress();
+})();
+</script>
+</body>
+</html>
