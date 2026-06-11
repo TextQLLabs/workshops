@@ -162,7 +162,7 @@
   <h1>TextQL Developer Workshop — API, MCP & Integrations</h1>
 
 <p>A hands-on workshop for <b>developers and technical integrators</b>: drive Ana programmatically through the REST API, stream responses into your apps, automate playbooks and dashboards from code, expose Ana inside Claude/Cursor/ChatGPT via MCP, and extend Ana outward with MCP tools.</p>
-<p>AWS-workshop style: copy-paste <code>curl</code>/Python, checkpoints. <b>~2 hours</b>.</p>
+<p>Hands-on format: copy-paste <code>curl</code>/Python, checkpoints. <b>~2 hours</b>.</p>
 <h2>What you'll be able to do</h2>
 <div class="hero-grid">
 <div class="hero-card"><div class="n">MODULE 1</div><h3>The Chat API</h3><p>Sync, SSE streaming, retrieval — the agentic loop as an endpoint.</p></div>
@@ -207,6 +207,10 @@
   -d '{"question": "What are the top 10 customers by revenue?", "connector_ids": [ID]}'</pre>
   <div class="yousee"><b>You'll see:</b> A synchronous, warehouse-backed answer — and a real thread in the UI, fully auditable.</div>
 
+    <figure class="shot" data-todo="API key creation (Settings → Configuration → API Keys)">
+    <img src="assets/dev-m0-apikey.png" alt="Creating an API key." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Creating an API key.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You have a vaulted API key and know where key creation is permission-gated</label>
     <label><input type="checkbox"> You listed connectors and understand the key-sees-what-you-see rule</label>
@@ -248,6 +252,10 @@ for line in resp.iter_lines():
 <div class="callout warn">Bad: "how are sales?"<br>Good: "Total closed revenue for the last complete month, compared to the prior month, as a single number plus one sentence of context."</div>
 <p>The second returns something your UI can render predictably.</p>
 
+    <figure class="shot" data-todo="a terminal with a Chat API request and streamed response">
+    <img src="assets/dev-m1-chat.png" alt="The Chat API: your first programmatic conversation with Ana." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The Chat API: your first programmatic conversation with Ana.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You made a sync call, a streaming call, and retrieved a chat with its assets</label>
     <label><input type="checkbox"> Your stream handler distinguishes tool events from answer text</label>
@@ -324,6 +332,10 @@ get("/v2/sandbox/status"); post("/v2/sandbox/stop")</pre>
 <h2>3.4 · Hygiene</h2>
 <p>Sandboxes hold state and memory. <b>Stop what you start</b> — created per job, destroyed after, in a <code>finally</code>. The status endpoint's memory readout is your leak detector.</p>
 
+    <figure class="shot" data-todo="sandbox API results (warehouse data into a DataFrame)">
+    <img src="assets/dev-m3-sandbox.png" alt="Warehouse data landing in your code via the Sandbox API." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Warehouse data landing in your code via the Sandbox API.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You started a sandbox, loaded a query as a DataFrame, executed code, and stopped it</label>
     <label><input type="checkbox"> You can articulate chat-vs-sandbox for your use case</label>
@@ -354,6 +366,10 @@ get("/v2/sandbox/status"); post("/v2/sandbox/stop")</pre>
 <h2>4.4 · Governance notes</h2>
 <p>MCP access authenticates as <i>you</i> — your role, connector scope, ontology folders. Every MCP question is a real thread, visible in Observability like any other.</p>
 
+    <figure class="shot" data-todo="Ana answering inside Claude/Cursor via MCP">
+    <img src="assets/dev-m4-mcp.png" alt="Ana as an MCP server inside your IDE or Claude." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Ana as an MCP server inside your IDE or Claude.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Ana is connected to at least one MCP client you actually use</label>
     <label><input type="checkbox"> You asked a data question from inside that client and got a thread link back</label>
@@ -385,6 +401,10 @@ get("/v2/sandbox/status"); post("/v2/sandbox/stop")</pre>
 <tr><td>Ana to <i>act on / read</i> an operational system mid-analysis</td><td><b>MCP tool</b></td></tr>
 <tr><td>Your app to ask Ana questions</td><td>MCP server (Module 4) or REST API (Modules 0–2)</td></tr></table>
 
+    <figure class="shot" data-todo="MCP tools configuration (external tools Ana can call)">
+    <img src="assets/dev-m5-tools.png" alt="Extending Ana outward with MCP tools." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Extending Ana outward with MCP tools.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You (or your admin) added one MCP server and Ana used its tool on request</label>
     <label><input type="checkbox"> You can apply the url-vs-command test to any MCP config</label>

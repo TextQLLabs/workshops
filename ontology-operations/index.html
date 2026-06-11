@@ -162,7 +162,7 @@
   <h1>TextQL Ontology Operations</h1>
 
 <p>The follow-on to <a href="https://github.com/TextQLLabs/ontology-workshop-guide" target="_blank"><b>Build Your Ontology, End to End</b></a>: you've built a governed semantic layer — this workshop is about <b>running it in production</b>. Git sync and contribution workflows, folder-level access control, accuracy testing with golden datasets, the thread-driven improvement loop, and scaling one ontology across many teams.</p>
-<p>AWS-workshop style: short modules, copy-paste prompts, checkpoints. <b>~2 hours</b>.</p>
+<p>Hands-on format: short modules, copy-paste prompts, checkpoints. <b>~2 hours</b>.</p>
 <div class="callout warn"><b>Prerequisite: an ontology that exists.</b> Starting from zero? Run the build workshop first — this one assumes objects, metrics, and .tql surfaces are in place.</div>
 <h2>What you'll be able to do</h2>
 <div class="hero-grid">
@@ -229,6 +229,10 @@
 <ul><li><b>Render before approving.</b> For any .tql change: the diff shows what changed; the rendered SQL shows what it <i>means</i>.</li>
 <li><b>Reviews have an SLA.</b> A patch sitting two weeks teaches proposers to stop proposing. Track queue age (the health check surfaces it).</li></ul>
 
+    <figure class="shot" data-todo="the ontology git sync / repo connection settings">
+    <img src="assets/oo-m1-git.png" alt="The ontology repo, synced over git." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The ontology repo, synced over git.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You know which path each contributor type uses, and stopped wrong-path traffic</label>
     <label><input type="checkbox"> Git sync connected (or deliberately not), with one review gate, not two</label>
@@ -266,6 +270,10 @@
 <h2>2.4 · Compose with the other layers</h2>
 <p>Folder access controls <b>what context Ana loads</b>. It composes with: org RBAC (who can use ontology at all), connector scoping (what data the role queries), and fail-closed RLS inside .tql files (which <i>rows</i> return). Restricted folder + fail-closed .tql = defense in depth.</p>
 
+    <figure class="shot" data-todo="folder-level access control configuration">
+    <img src="assets/oo-m2-access.png" alt="Folder-level access control on the ontology." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Folder-level access control on the ontology.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Your folder tree's shape matches your access policy</label>
     <label><input type="checkbox"> Restricted folders verified as a restricted user — both directions</label>
@@ -297,6 +305,10 @@
 <ul><li><b>Pre-approval:</b> a patch touching a tested metric gets its golden rows run against the patched definition first. Deliberate changes update the pin <b>in the same patch</b>.</li>
 <li><b>The flexibility dial:</b> pin board numbers and financials; leave exploratory metrics flexible. Pin deliberately, not exhaustively.</li></ul>
 
+    <figure class="shot" data-todo="golden dataset / accuracy test results">
+    <img src="assets/oo-m3-golden.png" alt="Accuracy checked against golden datasets — not asserted." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Accuracy checked against golden datasets — not asserted.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> A golden set exists — real usage, closed periods, stored in the ontology</label>
     <label><input type="checkbox"> You ran the suite manually and triaged failures to their cause</label>
@@ -330,6 +342,10 @@
 <h2>4.5 · Measure the loop</h2>
 <p>Monthly: <b>warn rate trend</b> (is missing-context shrinking?), <b>patch throughput</b> (proposed vs reviewed, median queue age), <b>correction recurrence</b> (is the 4.2 list shrinking?). Patches flowing but warnings flat = patching the wrong gaps.</p>
 
+    <figure class="shot" data-todo="a proposed ontology patch (diff) under review">
+    <img src="assets/oo-m4-patch.png" alt="The improvement loop: a focused, reviewable change." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The improvement loop: a focused, reviewable change.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You merged the Warning Breakdown and corrections list into one ranked backlog</label>
     <label><input type="checkbox"> You shipped at least one minimal targeted patch from it</label>
@@ -362,6 +378,10 @@
 <li>Hand their editors the improvement loop for their folder</li></ol>
 <p>Teams two through N onboard in days: shared/ exists, and the operating system (reviews, tests, loop) already runs.</p>
 
+    <figure class="shot" data-todo="the ontology graph or structure spanning multiple teams">
+    <img src="assets/oo-m5-scale.png" alt="One governed ontology serving many teams." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>One governed ontology serving many teams.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> shared/ vs team folders reflects the boundary rule</label>
     <label><input type="checkbox"> You ran the promotion scan and reconciled diverged duplicates</label>

@@ -1,6 +1,6 @@
 # TextQL Workshops
 
-Hands-on, self-paced workshop guides for the TextQL platform — AWS Workshop Studio–style sites a customer can walk through alone, or that an FDE/AE can use to lead a guided session.
+Hands-on workshop guides for the TextQL platform — self-paced sites a customer can walk through alone, or that an FDE/AE can use to lead a guided session.
 
 Each workshop is a **self-contained `index.html`** (plus a local `assets/` folder for screenshots) — no build step, no dependencies. Open it from a double-click, host it anywhere, or serve the whole repo via GitHub Pages.
 

@@ -161,7 +161,7 @@
   <div class="kicker">Workshop</div>
   <h1>Dashboards & Reporting</h1>
   <p>A hands-on workshop for <b>anyone who turns analysis into something others consume</b>: charts that communicate, polished reports, and live interactive dashboards — built entirely through conversation, then published, shared, refreshed, and maintained like real products.</p>
-  <p>It is structured like an AWS workshop: short modules with a clear goal, copy-paste prompts, what you'll see, and a checkpoint before moving on. Total time: <b>about 2 hours</b>.</p>
+  <p>It's structured as short, hands-on modules, each with a clear goal, copy-paste prompts, what you'll see, and a checkpoint before moving on. Total time: <b>about 2 hours</b>.</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre><b>Interactive version:</b> open [`index.html`](index.html) in your browser for the guided, clickable version — with progress tracking and one-click prompt copying.</pre></div>
 </section>
@@ -201,6 +201,10 @@
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>From [your dataset], give me one number worth tracking weekly, one comparison worth showing side by side, and one breakdown worth filtering. For each, say which output format you'd recommend — chart, report, or dashboard — and why.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana propose a metric, a comparison, and a dimension — with format recommendations. Keep these three; they become your chart (Module 1), report section (Module 2), and dashboard panels (Module 3).</div>
+    <figure class="shot" data-todo="the Dashboards area in the sidebar showing existing dashboards/reports">
+    <img src="assets/dr-m0-outputs.png" alt="The output surfaces: charts in threads, reports, and live dashboards." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The output surfaces: charts in threads, reports, and live dashboards.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You can say when a report beats a dashboard, and vice versa, in one sentence each</label>
     <label><input type="checkbox"> Dashboards are enabled for your org (or you've asked your admin)</label>
@@ -243,6 +247,10 @@
   <p>Before any chart ships, ask Ana to self-audit:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Review this chart for honesty: does the y-axis start at zero (and if not, is that justified)? Are scales comparable across panels? Is anything excluded that a reader would assume is included? Would a skeptic call this misleading?</pre></div>
+    <figure class="shot" data-todo="a restyled chart (top-N + Other, sorted, target line/annotations)">
+    <img src="assets/dr-m1-chart-restyle.png" alt="A chart fully directed through prompts — type, scope, sorting, annotations." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>A chart fully directed through prompts — type, scope, sorting, annotations.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You restyled a chart's type, scope, sorting, and annotations through prompts alone</label>
     <label><input type="checkbox"> You built one comparison chart ordered by size of change</label>
@@ -288,6 +296,10 @@
     <tr><td>Same narrative analysis, fresh data, delivered on schedule</td><td><b>Playbook</b> → Automation workshop</td></tr>
     <tr><td>Live view recipients explore themselves</td><td><b>Dashboard</b> → next module</td></tr>
   </table>
+    <figure class="shot" data-todo="a generated report with executive summary and charts">
+    <img src="assets/dr-m2-report.png" alt="From thread to polished report: summary, charts, takeaways." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>From thread to polished report: summary, charts, takeaways.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You produced a report with the five-part skeleton, summary written as findings</label>
     <label><input type="checkbox"> You exported at least one PDF or deck version</label>
@@ -342,6 +354,10 @@ Default the date range to the last 90 days.</pre></div>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Before I publish: recompute the headline KPI directly with a fresh query, independent of the dashboard's data source, and confirm they match. Then list every filter and confirm each actually changes the data shown.</pre></div>
   <div class="yousee"><b>You'll see:</b> an independent verification pass — the dashboard equivalent of the smoke test from the Connect Your Data workshop.</div>
+    <figure class="shot" data-todo="the dashboard built in this module with filters visible">
+    <img src="assets/dr-m3-dashboard.png" alt="The finished dashboard — interactive, filterable, refreshing from source." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The finished dashboard — interactive, filterable, refreshing from source.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You built a dashboard with a KPI row, main chart, sortable table, and working filters</label>
     <label><input type="checkbox"> You iterated at least three refinements conversationally</label>
@@ -392,6 +408,10 @@ Default the date range to the last 90 days.</pre></div>
   </ul>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>List the dashboards I own, when each was last refreshed and last meaningfully viewed if available, and flag candidates for archiving.</pre></div>
+    <figure class="shot" data-todo="the publish/share view of a dashboard">
+    <img src="assets/dr-m4-share.png" alt="Published and shared — viewers filter, you keep edit rights." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Published and shared — viewers filter, you keep edit rights.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Your dashboard is published and visible in the right tab (personal vs team — deliberately chosen)</label>
     <label><input type="checkbox"> A refresh schedule is set that matches the underlying data cadence, and the cadence is stated on the dashboard</label>

@@ -162,7 +162,7 @@
   <h1>TextQL Admin & Governance Workshop</h1>
 
 <p>A hands-on workshop for <b>workspace administrators</b>: identity and SSO, roles and permissions, connector governance, capability and model controls, monitoring, and the day-to-day operations of running TextQL safely at scale.</p>
-<p>It runs like an AWS workshop: short modules with exact click-paths, copy-paste prompts, what you'll see, and a checkpoint before moving on. Total time: <b>about 2.5 hours</b>.</p>
+<p>It runs as short, hands-on modules with exact click-paths, copy-paste prompts, what you'll see, and a checkpoint before moving on. Total time: <b>about 2.5 hours</b>.</p>
 <h2>What you'll be able to do</h2>
 <div class="hero-grid">
 <div class="hero-card"><div class="n">MODULE 1</div><h3>Identity: SSO &amp; SCIM</h3><p>Login through your IdP; joiners and leavers handled automatically.</p></div>
@@ -220,6 +220,10 @@
 </ol>
 <p>A request must pass <i>every</i> layer. When you debug "user X can't do Y," walk the layers in this order.</p>
 
+    <figure class="shot" data-todo="the admin settings surface / overview">
+    <img src="assets/ag-m0-console.png" alt="The admin surface at a glance." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The admin surface at a glance.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You can see all admin sections in Settings, plus Observability in the sidebar</label>
     <label><input type="checkbox"> You know which module covers each section</label>
@@ -275,6 +279,10 @@
 <tr><td>Multiple email domains need access</td><td>Whitelist each domain in your OIDC security configuration</td></tr>
 <tr><td>Locked yourself out</td><td>Use the still-open admin session (kept per 1.2) to correct the config</td></tr></table>
 
+    <figure class="shot" data-todo="SSO / SCIM identity settings">
+    <img src="assets/ag-m1-sso.png" alt="Identity wired up: SSO and SCIM." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Identity wired up: SSO and SCIM.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> OIDC login works for a test account, and your admin session never lapsed</label>
     <label><input type="checkbox"> The Created OIDC provider event is in the audit log</label>
@@ -334,6 +342,10 @@
 <tr><td>Role changes seem not to apply</td><td>They apply immediately — the user needs a fresh thread (selections are fixed per thread)</td></tr>
 <tr><td>Two roles aren't enough granularity</td><td>Custom roles + SCIM group mapping; member baseline = most-restrictive common denominator</td></tr></table>
 
+    <figure class="shot" data-todo="the roles & permissions configuration">
+    <img src="assets/ag-m2-roles.png" alt="Roles and permissions, mapped to how your org works." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Roles and permissions, mapped to how your org works.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You can recite the 4-permission pattern and both design implications</label>
     <label><input type="checkbox"> You read the member defaults and made a deliberate decision about Connector write</label>
@@ -383,6 +395,10 @@
 <tr><td>"Tables in chat don't match the warehouse"</td><td>The connector credential sees a different schema — compare service-account grants vs the user's own warehouse role</td></tr>
 <tr><td>Test passes but queries time out</td><td>Network path (firewall/allowlist) and warehouse queue — see docs Network Configuration</td></tr></table>
 
+    <figure class="shot" data-todo="the connector governance / access page">
+    <img src="assets/ag-m3-connectors.png" alt="Connector governance: who can query what." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Connector governance: who can query what.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Full connector inventory with mode and visibility; every read-write connector justified</label>
     <label><input type="checkbox"> You can articulate shared vs per-member credentials for your top two connectors</label>
@@ -473,6 +489,10 @@
 <pre>Create a playbook called "Admin Weekly Review" that runs every Monday at 8am: (1) ACU consumption last week vs the week before, top 10 users; (2) audit log summary — new members, role/permission changes, failed logins; (3) observability summary — run volume, warn rate vs prior week, top 3 warning types. Flag anything anomalous at the top. Email it to me.</pre></div>
   <div class="yousee"><b>You'll see:</b> The playbook under Playbooks in the sidebar. Confirm schedule + delivery, then let Monday come to you. Optionally add a feed agent for continuous anomaly watching.</div>
 
+    <figure class="shot" data-todo="the monitoring / observability dashboard">
+    <img src="assets/ag-m5-audit.png" alt="Monitoring and audit: what ran, by whom, with what quality." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Monitoring and audit: what ran, by whom, with what quality.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You ran all three audit drills and can produce one user's full access history on demand</label>
     <label><input type="checkbox"> You know the weekly observability triage loop and the four root-cause owners</label>

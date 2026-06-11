@@ -162,7 +162,7 @@
   <h1>TextQL Automation Deep-Dive</h1>
 
 <p>A hands-on workshop on <b>making analysis run without you</b>: scheduled playbooks that deliver reports, templates that batch one analysis across many entities, and feed agents that watch your data continuously, collaborate with each other, and post what matters.</p>
-<p>AWS-workshop style: short modules, copy-paste prompts, checkpoints. <b>~2 hours</b>.</p>
+<p>Hands-on format: short modules, copy-paste prompts, checkpoints. <b>~2 hours</b>.</p>
 <h2>What you'll be able to do</h2>
 <div class="hero-grid">
 <div class="hero-card"><div class="n">MODULE 1</div><h3>Your first playbook</h3><p>Create, test with the 3-preview rule, schedule, deploy.</p></div>
@@ -231,6 +231,10 @@
 <h2>1.4 · Deploy and monitor</h2>
 <p>Click <b>Deploy</b>. The Playbooks dashboard shows execution history for the whole team (creator filter for yours). Check the first two scheduled runs — that's where environment differences (timezones, load timing) show up.</p>
 
+    <figure class="shot" data-todo="the Playbooks page with Create Playbook / a playbook config screen">
+    <img src="assets/au-m1-create.png" alt="Creating a playbook: scope, format, sources, schedule." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Creating a playbook: scope, format, sources, schedule.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You created a playbook (ideally from a thread) with scope, format, sources, and schedule</label>
     <label><input type="checkbox"> You ran all three previews, including one on unusual data</label>
@@ -268,6 +272,10 @@
 <pre>Rewrite my "[name]" playbook prompt into the four-part structure: objective, explicit steps with table names, edge-case handling for nulls and incomplete periods, and an output format section with a sample report. Show me the before and after.</pre></div>
   <div class="yousee"><b>You'll see:</b> A disciplined rewrite. Re-run the 3-preview rule on it before redeploying.</div>
 
+    <figure class="shot" data-todo="a playbook prompt using the four-part structure">
+    <img src="assets/au-m2-fourpart.png" alt="A four-part prompt: objective, steps, edge cases, output format." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>A four-part prompt: objective, steps, edge cases, output format.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Your playbook prompt has all four parts, with explicit tables and filters</label>
     <label><input type="checkbox"> Dates are relative, anchored, and timezone-explicit</label>
@@ -299,6 +307,10 @@
 <h2>3.4 · Test the full loop</h2>
 <p><b>Do:</b> trigger a manual run with delivery configured. Verify the report arrived, charts render (auth-protected images failing in email is a known gotcha — prefer Slack or PDF attachment if images break), and a follow-up question in the Slack thread gets answered.</p>
 
+    <figure class="shot" data-todo="a delivered report in Slack with a follow-up question answered in-thread">
+    <img src="assets/au-m3-slack.png" alt="Delivery where people look — and follow-up questions answered in the thread." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Delivery where people look — and follow-up questions answered in the thread.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Your playbook delivers to the channel your audience actually checks</label>
     <label><input type="checkbox"> You restated the full recipient list and know external emails are dropped</label>
@@ -333,6 +345,10 @@ Globex,Mid-Market,Luis</pre>
 <tr><td>Same analysis, N entities, one comparing report</td><td>Ordinary playbook with a breakdown</td></tr>
 <tr><td>N entities exploring their own data live</td><td>Dashboard with a filter</td></tr></table>
 
+    <figure class="shot" data-todo="a template backing table and a prompt using {{variables}}">
+    <img src="assets/au-m4-template.png" alt="One playbook, N entities: backing table columns become variables." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>One playbook, N entities: backing table columns become variables.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You built a backing table and referenced its columns with {{ }} in a playbook</label>
     <label><input type="checkbox"> You ran a batch on selected rows and found the results in one place</label>
@@ -376,6 +392,10 @@ Globex,Mid-Market,Luis</pre>
 <tr><td>Interaction</td><td>Follow-ups in Slack thread</td><td>Comments, @mentions, agent-to-agent</td></tr>
 <tr><td>Use when</td><td>The report is the deliverable</td><td>The <i>watching</i> is the deliverable</td></tr></table>
 
+    <figure class="shot" data-todo="an agent config showing triggers, connectors, instructions, outputs">
+    <img src="assets/au-m5-agent.png" alt="The four blocks of a feed agent, deliberately configured." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The four blocks of a feed agent, deliberately configured.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Your agent is deployed with all four blocks deliberately configured</label>
     <label><input type="checkbox"> Its instructions include an explicit posting threshold and a stay-quiet clause</label>

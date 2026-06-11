@@ -162,7 +162,7 @@
   <h1>TextQL Connect Your Data Workshop</h1>
 
 <p>A hands-on workshop for <b>data engineers, platform admins, and technical leads</b>: get every kind of data source connected to TextQL correctly the first time — warehouses, private-network databases, BI tools, files, Google Drive, and external APIs — with credentials done right and a validation habit that catches problems before your users do.</p>
-<p>AWS-workshop style: short modules, exact setup steps, copy-paste commands, checkpoints. <b>~2.5 hours</b> end to end — but most teams run only the modules for sources they actually use.</p>
+<p>Hands-on format: short modules, exact setup steps, copy-paste commands, checkpoints. <b>~2.5 hours</b> end to end — but most teams run only the modules for sources they actually use.</p>
 <h2>What you'll be able to do</h2>
 <div class="hero-grid">
 <div class="hero-card"><div class="n">MODULE 1</div><h3>Network &amp; credentials</h3><p>Clear the firewall path; know every credential pattern.</p></div>
@@ -261,6 +261,10 @@ Service identity          : ____________
 Credential (in vault)     : ____________</pre>
 <p>Most providers show a connection string — <code>postgresql://user:pass@host:5432/db</code> — every field reads straight out of it.</p>
 
+    <figure class="shot" data-todo="a connector credential form (showing secret handling)">
+    <img src="assets/cyd-m1-credentials.png" alt="Credentials done right — scoped, least-privilege, stored as secrets." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Credentials done right — scoped, least-privilege, stored as secrets.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Both TextQL IPs whitelisted (or VPC rules confirmed instead)</label>
     <label><input type="checkbox"> You can tell a network failure from a credential failure by symptom</label>
@@ -319,6 +323,10 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA analytics
 <tr><td>Test passes, queries fail</td><td>Stopped warehouse (Databricks), role lacks SELECT, org limits</td></tr>
 <tr><td>New tables missing</td><td>Resync the connector; Postgres: missing default-privileges grant</td></tr></table>
 
+    <figure class="shot" data-todo="a warehouse connector setup form (e.g. Snowflake/BigQuery/Redshift)">
+    <img src="assets/cyd-m2-warehouse.png" alt="A warehouse connector configured." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>A warehouse connector configured.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Warehouse connector created with a dedicated service identity and least-privilege grants</label>
     <label><input type="checkbox"> Connection test passed — and you know what the test actually verifies</label>
@@ -360,6 +368,10 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA analytics
 <tr><td>"Connection test failed" (tunnel OK)</td><td>Bastion → DB</td><td>Private host/port correct; bastion has network access; DB SG allows bastion</td></tr>
 <tr><td>"Host key verification failed"</td><td>Identity check</td><td>Host public key doesn't match — re-fetch from the bastion</td></tr></table>
 
+    <figure class="shot" data-todo="the private-network connection options">
+    <img src="assets/cyd-m3-private.png" alt="Reaching databases behind private networks." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Reaching databases behind private networks.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Bastion has a dedicated TextQL OS user and inbound SSH from both TextQL IPs</label>
     <label><input type="checkbox"> Connector uses the database's private address in the main fields</label>
@@ -395,6 +407,10 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA analytics
 <tr><td>Worked, then stopped after months</td><td><b>Client secret expired</b> (max 24 mo) — rotate in Azure, update connector</td></tr>
 <tr><td>Specific dataset queries fail</td><td>Dataset-level permissions, or Premium-only feature on a Pro license</td></tr></table>
 
+    <figure class="shot" data-todo="a BI tool connector page">
+    <img src="assets/cyd-m4-bi.png" alt="BI tools connected alongside the warehouse." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>BI tools connected alongside the warehouse.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Tableau: connector created from a PAT and a collection built exposing chosen views</label>
     <label><input type="checkbox"> Power BI: app registration recorded, secret expiry calendared, workspace access granted, workspaces synced</label>
@@ -491,6 +507,10 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA analytics
 <li>Role-scoped access + weekly review playbook — <b>Admin &amp; Governance workshop</b></li>
 <li>Start the semantic layer — the <a href="https://github.com/TextQLLabs/ontology-workshop-guide" target="_blank">ontology workshop</a></li></ul>
 
+    <figure class="shot" data-todo="a validation thread (Ana confirming schema, rowcounts, freshness)">
+    <img src="assets/cyd-m6-validate.png" alt="The validation habit: prove the connection before users find the gaps." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The validation habit: prove the connection before users find the gaps.</figcaption>
+  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Every connector created in this workshop passed the five-question smoke test</label>
     <label><input type="checkbox"> Resync is wired into your schema-change/release process</label>
