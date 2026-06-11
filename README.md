@@ -16,7 +16,8 @@ Each workshop is a **self-contained `index.html`** (plus a local `assets/` folde
 | [Ontology Operations](ontology-operations/) | Data teams running an ontology in production | ~2 hours | ✅ Ready |
 | [Admin & Governance](admin-governance/) | Workspace administrators | ~2.5 hours | ✅ Ready |
 | [Developer Workshop — API & MCP](developer/) | Developers and technical integrators | ~2 hours | ✅ Ready |
-| Build Your Ontology, End to End | Data teams | Half day | 🔜 Planned — see [ontology-workshop-guide](https://github.com/TextQLLabs/ontology-workshop-guide) |
+| [Build Your Ontology, End to End](build-your-ontology/) | Data teams | Half day | ✅ Ready |
+| [Implement the Healthcare Starter Pack](healthcare-starter/) | HCLS data teams | ~2.5 hours | ✅ Ready |
 
 The repo root [`index.html`](index.html) is a catalog landing page listing all workshops.
 
