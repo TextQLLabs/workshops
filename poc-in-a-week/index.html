@@ -160,12 +160,12 @@
 <section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
   <div class="kicker">Workshop</div>
   <h1>POC in a Week</h1>
-<p>A 5-day guided evaluation structure for <b>a customer data team and their champion</b> running a TextQL proof of concept — with or without an FDE alongside. The modules are <b>days, not topics</b>: prerequisites the week before, connect and baseline Monday, ontology Tuesday, the question gauntlet Wednesday, automation Thursday, readout Friday.</p>
-<p>The discipline that separates a real POC from a demo: <b>success criteria written down before anything is connected</b>, a cold baseline run honestly (misses included), and a warm re-run scored against it. The cold/warm gauntlet is the whole argument.</p>
+<p>A 5-day guided evaluation structure for <b>a customer data team and their champion</b> running a TextQL proof of concept — with or without an FDE alongside. The modules are <b>days, not topics</b>: prerequisites the week before, connect and baseline Monday, ontology Tuesday, the question loop finishes Wednesday, automation Thursday, readout Friday.</p>
+<p>The discipline that separates a real POC from a demo: <b>success criteria written down before anything is connected</b>, every question taken through the improvement loop — asked cold honestly, taught, verified — with both halves logged. The before/after scorecard is the whole argument.</p>
 <h2>Who this is for</h2>
 <ul><li>Customer data teams evaluating TextQL hands-on</li><li>Champions who need a defensible Friday readout, not a vibes-based one</li><li>FDEs running structured evaluations (the facilitator guide doubles as your run-of-show)</li></ul>
 <h2>What you'll be able to do</h2>
-<table><tr><th>After module</th><th>You can...</th></tr><tr><td>0</td><td>State what "won" looks like Friday, with real questions and their current time-to-answer</td></tr><tr><td>1</td><td>Run the cold baseline: every question asked with zero context, results recorded honestly</td></tr><tr><td>2</td><td>Seed the ontology with the 3 most definition-sensitive metrics governed</td></tr><tr><td>3</td><td>Score cold vs warm side by side, with a misses log feeding the ontology backlog</td></tr><tr><td>4</td><td>Show automation: a playbook, a feed agent, a dashboard, and (if relevant) a role persona</td></tr><tr><td>5</td><td>Deliver the readout: scores vs Day-0 criteria, the before/after table, a 15-minute exec demo</td></tr></table>
+<table><tr><th>After module</th><th>You can...</th></tr><tr><td>0</td><td>State what "won" looks like Friday, with real questions and their current time-to-answer</td></tr><tr><td>1</td><td>Start the improvement loop: each question asked cold, scored, taught, and verified — both halves logged</td></tr><tr><td>2</td><td>Seed the ontology with the 3 most definition-sensitive metrics governed</td></tr><tr><td>3</td><td>Score cold vs warm side by side, with a misses log feeding the ontology backlog</td></tr><tr><td>4</td><td>Show automation: a playbook, a feed agent, a dashboard, and (if relevant) a role persona</td></tr><tr><td>5</td><td>Deliver the readout: scores vs Day-0 criteria, the before/after table, a 15-minute exec demo</td></tr></table>
 <h2>Workshop modules</h2>
 <table><tr><th>Module</th><th>Time</th></tr><tr><td>0 · Before Day 1: Prerequisites &amp; Success Criteria</td><td><code>00_BEFORE_DAY_1.md</code></td><td>~30 min, the week before</td></tr><tr><td>1 · Day 1: Connect &amp; Validate</td><td><code>01_DAY1_CONNECT.md</code></td><td>Day 1</td></tr><tr><td>2 · Day 2: Seed the Ontology</td><td><code>02_DAY2_ONTOLOGY.md</code></td><td>Day 2</td></tr><tr><td>3 · Day 3: The Question Gauntlet</td><td><code>03_DAY3_GAUNTLET.md</code></td><td>Day 3</td></tr><tr><td>4 · Day 4: Automate &amp; Wow</td><td><code>04_DAY4_AUTOMATE.md</code></td><td>Day 4</td></tr><tr><td>5 · Day 5: The Readout</td><td><code>05_DAY5_READOUT.md</code></td><td>Day 5</td></tr></table>
 <h2>How to use this workshop</h2>
@@ -209,18 +209,36 @@
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Pull the information schema for this connector. List the schemas and tables you can see, with approximate row counts where cheap. Flag anything that looks like a core entity (customers, orders, events) and anything you'd expect to see but can't.</pre></div>
   <div class="yousee"><b>You'll see:</b> what Ana can actually reach — which is the credential's view. Anything missing is a grants problem to fix <i>today</i>, not Wednesday.</div>
-<h2>1.2 · The cold baseline — the honest run</h2>
-<p>Now run <b>all 5–10 questions from Module 0, verbatim, with no ontology, no context documents attached to the thread, no coaching</b> — just the raw connector. For each, record:</p>
-<table><tr><th>#</th><th>Question</th><th>Cold answer</th><th>Correct? (judge: [named person])</th><th>Time</th><th>Notes on the miss</th></tr></table>
-<p>Rules of honesty:</p>
-<ul><li>Ask each question <b>once</b>, as written. No rephrasing to help, no follow-up steering. (In real usage you'd converse — but the baseline measures the cold start, so resist.)</li><li>Record wrong answers and "I don't have that data" responses verbatim. <b>Misses are the point</b> — a baseline of all-correct answers means the question list was too soft (and means Day 3 can't show improvement).</li><li>The named judge from Module 0 scores correctness against the trusted source, today, while it's fresh.</li></ul>
-<p>For each question, paste it into a fresh message exactly as written:</p>
-  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>[Question #1 from your Day-0 list, pasted verbatim — no rephrasing, no added context]</pre></div>
-  <div class="yousee"><b>You'll see:</b> typically a mixed picture — some questions answered correctly off raw schema, some wrong on contested definitions (the cold run takes <i>a</i> definition, not <i>your</i> definition), some honest declines. Every miss goes in the misses log with a one-line cause hypothesis: <i>definition gap / context gap / data gap / phrasing</i>.</div>
-<h2>1.3 · End-of-day review</h2>
-<p>Fifteen minutes with the team: walk the baseline table. Set expectations explicitly: <b>today measured the floor.</b> Tomorrow adds the org's knowledge; Wednesday measures the difference. If anyone is disappointed today, remind them that a tool that aced contested-definition questions <i>without being taught the definitions</i> would be guessing — and guessing right is worse than asking.</p>
-    <figure class="shot" data-todo="a cold baseline answer from Day 1 (no ontology)">
+<h2>1.2 · The improvement loop — question by question</h2>
+  <p>Now work the Day-0 question list — but <b>not</b> as a test you sit through and grade at the end. Each question gets its own complete cycle: <b>ask cold → score → teach → verify → next</b>. You still capture the honest floor (the cold answer, verbatim, timed) — you just don't <i>live</i> there. Every question ends as a win, usually within 10–15 minutes.</p>
+
+  <h3>The loop, per question</h3>
+  <ol class="steps">
+    <li><b>Ask cold.</b> Fresh thread, question pasted verbatim, no steering. Record the answer and time — this is the floor, and it takes two minutes.</li>
+    <li><b>Score it now.</b> The named judge from Module 0 calls it against the trusted source — correct, partial, or miss — while it's fresh.</li>
+    <li><b>Ask Ana what was missing.</b> Not you guessing — her diagnosing:</li>
+    <li><b>Teach it.</b> Add the missing piece — a definition, a document, a table mapping — right now, in the thread or as a context proposal.</li>
+    <li><b>Verify.</b> Re-ask the same question. Judge scores the warm answer. Record both halves of the before/after — your Day-5 evidence just wrote itself.</li>
+    <li><b>Move on.</b> Next question. Each cycle compounds: context added for question 2 often fixes question 5 before you reach it.</li>
+  </ol>
+
+  <div class="prompt"><span class="tag">PROMPT — STEP 1 (ASK COLD)</span><button>Copy</button>
+<pre>[Question #1 from your Day-0 list, pasted verbatim — no rephrasing, no follow-up steering]</pre></div>
+  <div class="prompt"><span class="tag">PROMPT — STEP 3 (DIAGNOSE)</span><button>Copy</button>
+<pre>That answer was [wrong / incomplete / used the wrong definition — the correct answer is X per our trusted report]. Don't fix it yet: first tell me exactly what context you were missing — a definition, a document, a join, a table mapping — and where it should live so every future question gets it.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT — STEP 5 (VERIFY)</span><button>Copy</button>
+<pre>[The same question again, verbatim.] Cite the definition or context you used this time.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the miss become a diagnosis, the diagnosis become context, and the same question come back correct — in one sitting, in front of the people who asked it. Log each cycle in the running table: <i>question · cold answer · cold ✓/✗ · what we taught · warm answer · warm ✓/✗ · time</i>.</div>
+
+  <div class="callout"><span class="label">Why loop instead of batch</span>
+    <p>The old pattern — run all ten cold, grade them, fix them two days later — measures the same floor but makes Day 1 feel like a failure parade, and the audience is people, not robots. The loop produces identical before/after evidence (every cycle logs both halves) with the opposite emotional arc: <b>value out of the gate, ten times in a row</b>. Misses are still the point — a question list with no misses was too soft — but a miss now lives for fifteen minutes, not two days.</p>
+  </div>
+  <div class="callout warn"><span class="label">Keep the cold ask honest</span>
+    <p>The loop only works if step 1 stays clean: verbatim question, fresh thread, no coaching before the first answer. Resist the urge to warm it up — the floor is what makes the ceiling impressive.</p>
+  </div>
+  <p>Get through <b>3–4 full cycles today</b>; carry the rest into Days 2–3. Deeper or recurring gaps (the same definition missing across questions) go to the Day-2 ontology work rather than one-off patches.</p>
+
+<figure class="shot" data-todo="a cold baseline answer from Day 1 (no ontology)">
     <img src="assets/poc-d1-cold.png" alt="Day 1: the honest cold baseline." onerror="this.parentElement.classList.add('missing')">
     <figcaption>Day 1: the honest cold baseline.</figcaption>
   </figure>
@@ -259,30 +277,35 @@
   </div>
 </section>
 
-<section class="page" id="m3" data-title="Module 3 · Day 3: The Gauntlet" data-group="Hands-On Modules">
+<section class="page" id="m3" data-title="Module 3 · Day 3: Finish the Loop, Prove It Stuck" data-group="Hands-On Modules">
   <div class="kicker">Module 3</div>
-  <h1>Module 3 · Day 3: The Question Gauntlet</h1>
+  <h1>Day 3: Finish the Loop — and Prove It Stuck</h1>
 <p><b>Goal:</b> re-run every question warm, score cold vs warm side by side, and turn the remaining misses into a prioritized backlog — fixing the quick ones live.</p>
-<h2>3.1 · The warm run</h2>
-<p>Same questions, same verbatim phrasing, same one-ask discipline — but now with the ontology attached. Extend the Day 1 table:</p>
-<table><tr><th>#</th><th>Question</th><th>Cold answer</th><th>Warm answer</th><th>Cold ✓/✗</th><th>Warm ✓/✗</th><th>Cold time</th><th>Warm time</th></tr></table>
-<p>The same judge scores the warm answers against the same trusted sources. Same rules: no steering, record verbatim.</p>
+<h2>3.1 · Finish the loop</h2>
+  <p>Work the remaining Day-0 questions through the same cycle from Day 1: ask cold, score, diagnose, teach, verify. By now the ontology from Day 2 is attached, so expect more questions to come back correct on the first ask — log those as cold-correct wins; they're evidence the context <i>compounds</i>.</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>[Question #1 from your Day-0 list, pasted verbatim — identical phrasing to the cold run]</pre></div>
-  <div class="yousee"><b>You'll see:</b> the contested-definition questions flip to correct (they now route through <i>your</i> governed definitions), the cross-system question improve (the model knows the joins), and — usually — a couple of remaining misses. Good. A perfect warm run on a hard list happens; a perfect warm run on a soft list proves nothing.</div>
-<h2>3.2 · Score it</h2>
+<pre>[Next question from your Day-0 list, pasted verbatim — same one-ask discipline]</pre></div>
+
+  <h2>3.2 · Prove it stuck — the consistency check</h2>
+  <p>This is the step that earns the word "governed." Take 2–3 questions you fixed on Day 1 and re-ask them — <b>fresh threads, no coaching, different phrasings</b>:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Here's our gauntlet table [paste it]. Summarize: cold vs warm correct counts, average time-to-answer cold vs warm vs the original current-path times from our Day-0 list, and which question types improved most. Format as the scoring section of an evaluation readout.</pre></div>
-  <div class="yousee"><b>You'll see:</b> the POC's core evidence, computed from the week's own artifacts. This table — <i>question, old time-to-answer, cold result, warm result</i> — is the whole argument: not "the tool is impressive" but "the loop works: taught Tuesday, correct Wednesday."</div>
-<h2>3.3 · The misses log becomes the backlog</h2>
+<pre>[A question you fixed on Day 1 — rephrased two different ways, each in its own fresh thread]</pre></div>
+  <div class="yousee"><b>You'll see:</b> the same governed answer every time, citing the same definition — proof the Day-1 fix was a durable piece of context, not thread luck. If a re-ask drifts, that's a real finding: the fix lived in a thread instead of the ontology — promote it now.</div>
+
+  <h2>3.2b · Assemble the scorecard</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Here's our improvement-loop log [paste the running table: question, cold answer, cold result, what we taught, warm answer, warm result, times]. Summarize: cold vs warm correct counts, average time-to-answer vs the original current-path times from our Day-0 list, which question types needed teaching vs worked cold, and the consistency-check results. Format as the scoring section of an evaluation readout.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the POC's core evidence, computed from the week's own artifacts — every before/after captured live as it happened. The argument isn't "the tool is impressive"; it's "<b>the loop works: taught in minutes, correct on re-ask, consistent across phrasings.</b>"</div>
+
+  <h2>3.3 · The misses log becomes the backlog</h2>
 <p>For each remaining miss, diagnose and sort:</p>
 <table><tr><th>Miss type</th><th>Diagnosis</th><th>Action</th></tr><tr><td><b>Definition gap</b></td><td>Routed through an ungoverned or wrong definition</td><td>Quick fix — govern it now, live (15 min)</td></tr><tr><td><b>Context gap</b></td><td>A join, term, or business rule Ana wasn't taught</td><td>Quick fix if documented; backlog if it needs a human decision</td></tr><tr><td><b>Data gap</b></td><td>The data genuinely isn't in the connected sources</td><td>Honest readout item — "answerable once [system] is connected"</td></tr><tr><td><b>Phrasing</b></td><td>The question is ambiguous even to a human</td><td>Note it — and show the conversational follow-up resolving it</td></tr></table>
 <p><b>Fix the quick ones live and re-run those questions.</b> Watching a miss become a hit within the hour is the most persuasive moment of the week — it demonstrates the operating loop, which is what the customer is actually buying.</p>
 <h2>3.4 · The honesty principle</h2>
 <p>Carry the remaining misses into Friday's readout, labeled. An evaluation with documented misses and a working improvement loop is <i>more</i> credible than a flawless demo — every buyer has seen flawless demos, and knows what they're worth.</p>
     <figure class="shot" data-todo="the cold vs warm side-by-side scoring">
-    <img src="assets/poc-d3-gauntlet.png" alt="Day 3: the question gauntlet, scored." onerror="this.parentElement.classList.add('missing')">
-    <figcaption>Day 3: the question gauntlet, scored.</figcaption>
+    <img src="assets/poc-d3-improvement loop.png" alt="Day 3: the loop finished and consistency-proven." onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Day 3: the loop finished and consistency-proven.</figcaption>
   </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Every question re-ran warm, same phrasing, same judge, same sources</label>
@@ -315,7 +338,7 @@
 <pre>What data sources can I access, and what do you know about [a metric/folder the restricted role shouldn't see]?</pre></div>
   <div class="yousee"><b>You'll see:</b> the restricted view — scoped connectors, and genuine unawareness of restricted context rather than a declined request. Then ask something the role <i>should</i> see and confirm it works. Both directions, witnessed by the security stakeholder if there is one. (Full model: <a href="../admin-governance/index.html"><b>Admin &amp; Governance</b></a>.)</div>
 <h2>4.5 · Stage Friday</h2>
-<p>End the day by assembling the demo path: the gauntlet table, one live warm question, the playbook side-by-side, the dashboard, the agent config, the persona flip. Dry-run it once — 15 minutes, no surprises.</p>
+<p>End the day by assembling the demo path: the improvement-loop scorecard, one live warm question, the playbook side-by-side, the dashboard, the agent config, the persona flip. Dry-run it once — 15 minutes, no surprises.</p>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> The playbook reproduces a report the team actually builds, side-by-side verified</label>
     <label><input type="checkbox"> The agent is deployed with real thresholds — and its silence-by-design is understood</label>
@@ -341,8 +364,8 @@
   <div class="yousee"><b>You'll see:</b> the readout assembled from the week's own artifacts. The misses section stays in — labeled, diagnosed, with the fix path. Honest misses next to a working improvement loop is the credibility play; a misses-free readout reads like marketing.</div>
 <h2>5.3 · The 15-minute exec demo</h2>
 <p>Their data, their questions, this script:</p>
-<table><tr><th>Minutes</th><th>Beat</th></tr><tr><td>0–2</td><td>The Day-0 question list and what answers used to cost (the before column)</td></tr><tr><td>2–6</td><td><b>Live</b>: two questions from the gauntlet, asked warm — one number, one "why" — with "how did you calculate that?" on the second</td></tr><tr><td>6–9</td><td>The playbook side-by-side: the hand-built report vs the automated one</td></tr><tr><td>9–11</td><td>The dashboard; if access control matters, the 30-second persona flip</td></tr><tr><td>11–13</td><td>The honest slide: what missed, why, and the Tuesday-taught-Wednesday-correct loop that fixes it</td></tr><tr><td>13–15</td><td>The scorecard, and the ask: production rollout</td></tr></table>
-<p>Live questions only from the warm gauntlet — verified answers, no first-time prompts in front of executives.</p>
+<table><tr><th>Minutes</th><th>Beat</th></tr><tr><td>0–2</td><td>The Day-0 question list and what answers used to cost (the before column)</td></tr><tr><td>2–6</td><td><b>Live</b>: two questions from the loop log, asked live — one number, one "why" — with "how did you calculate that?" on the second</td></tr><tr><td>6–9</td><td>The playbook side-by-side: the hand-built report vs the automated one</td></tr><tr><td>9–11</td><td>The dashboard; if access control matters, the 30-second persona flip</td></tr><tr><td>11–13</td><td>The honest slide: what missed, why, and the Tuesday-taught-Wednesday-correct loop that fixes it</td></tr><tr><td>13–15</td><td>The scorecard, and the ask: production rollout</td></tr></table>
+<p>Live questions only from the warm loop — verified answers, no first-time prompts in front of executives.</p>
 <h2>5.4 · What production rollout looks like</h2>
 <p>Close with the sketch, not a vague "next steps":</p>
 <ol><li><b>Data</b>: production credentials and remaining sources (<a href="../connect-your-data/index.html"><b>Connect Your Data</b></a>); the data-gap misses name the priorities</li><li><b>Knowledge</b>: the misses backlog becomes the ontology roadmap (<b>Build Your Ontology</b> → <a href="../ontology-operations/index.html"><b>Ontology Operations</b></a> for the operating loop); golden tests pin the governed metrics (<a href="../data-quality/index.html"><b>Data Quality &amp; Validation Deep-Dive</b></a>)</li><li><b>People</b>: identity, roles, and access (<a href="../admin-governance/index.html"><b>Admin &amp; Governance</b></a>); then user enablement by population (<a href="../self-service-analytics/index.html"><b>Self-Service Analytics</b></a> for business users, the vertical workshops where they fit)</li><li><b>Rhythm</b>: the Day-4 automations move to production cadence (<a href="../automation/index.html"><b>Automation Deep-Dive</b></a>)</li></ol>
