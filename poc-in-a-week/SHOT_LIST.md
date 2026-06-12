@@ -5,8 +5,8 @@ Drop PNGs into `assets/` with these exact filenames and they appear automaticall
 
 | # | File | Module | What to capture |
 |---|---|---|---|
-| 1 | `assets/poc-d1-cold.png` | M1 | a cold baseline answer from Day 1 (no ontology) |
-| 2 | `assets/poc-d3-gauntlet.png` | M3 | the cold vs warm side-by-side scoring |
+| 1 | `assets/poc-d1-cold.png` | M1 | one full Day-1 loop cycle: cold answer and verified fix side by side |
+| 2 | `assets/poc-d3-gauntlet.png` | M3 | the assembled loop scorecard incl. consistency-check results |
 | 3 | `assets/poc-d5-readout.png` | M5 | the Day 5 before/after readout table |
 
 Adding more: copy a `<figure class="shot">` block in `index.html` and set `data-todo`.
