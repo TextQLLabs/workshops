@@ -517,9 +517,9 @@
 <h2>6.2 · Access requests</h2>
 <ul><li>Make sure <b>owners</b> handle their own queues (Notifications → Sharing) — you are the escalation path, not the bottleneck.</li>
 <li><b>Orphaned items</b> (owner left): you hold <code>read_private</code>/<code>write_private</code> — reassign deliberately, and log it.</li>
-<li>Periodically check for stuck queues:
+<li>Periodically check for stuck queues — use the prompt below.</li></ul>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>List private items with access requests pending for more than a week, with each item's owner — those are stuck queues I should nudge.</pre></div></li></ul>
+<pre>List private items with access requests pending for more than a week, with each item's owner — those are stuck queues I should nudge.</pre></div>
 <h2>6.3 · Onboarding &amp; offboarding, end to end</h2>
 <p><b>Onboarding (mostly automatic):</b> IdP group → SCIM provisions → group mapping sets role → role scopes connectors, models, defaults. Manual steps: verify the role, send the <a href="../self-service-analytics/">self-service workshop</a>.</p>
 <p><b>Offboarding (verify, don't assume):</b></p>

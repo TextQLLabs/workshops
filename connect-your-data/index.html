@@ -504,12 +504,12 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA analytics
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>For each connector in this org, when was it last successfully used in a thread? Flag any unused for 60+ days as decommission candidates.</pre></div>
 <h2>6.5 · Decommission without breakage</h2>
-<ol><li>Ask:
-  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Which dashboards, playbooks, and recent threads depend on the [name] connector? I'm planning to decommission it.</pre></div></li>
+<ol><li>Ask Ana what depends on it — prompt below.</li>
 <li>Migrate or archive dependents; announce.</li>
 <li>Delete in a maintenance window; <b>revoke the credential at the source too</b> (warehouse user / PAT / app registration).</li>
 <li>Confirm in the audit log.</li></ol>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Which dashboards, playbooks, and recent threads depend on the [name] connector? I'm planning to decommission it.</pre></div>
 <h2>You're done</h2>
 <p>Your data layer is connected with dedicated service identities, least-privilege scopes, a cleared network path, validated behavior, and operating habits for rotation, drift, and decommission.</p>
 <ul><li>Run your users through the <a href="../self-service-analytics/"><b>Self-Service Analytics workshop</b></a></li>
