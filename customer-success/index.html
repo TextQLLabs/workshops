@@ -162,7 +162,7 @@
   <h1>TextQL for Customer Success</h1>
 <p>A workshop of short, hands-on modules for <b>CSMs, CS leaders, and CS ops</b>: one-prompt account health snapshots, QBR prep that writes itself, churn signals with root cause, renewal and expansion views, and a book of business that reports on itself weekly. Non-technical — if you can write an email, you can do everything here.</p>
 <p>Total time: <b>about 90 minutes.</b></p>
-<p>This is the companion to <b>TextQL for Sales &amp; GTM</b> — pipeline, deal hygiene, and forecast content live there; this workshop owns everything post-sale.</p>
+<p>This is the companion to <a href="../sales-gtm/index.html"><b>TextQL for Sales &amp; GTM</b></a> — pipeline, deal hygiene, and forecast content live there; this workshop owns everything post-sale.</p>
 <h2>Who this is for</h2>
 <ul><li>CSMs who spend hours assembling QBRs and account reviews by hand</li><li>CS leaders who find out about at-risk accounts too late</li><li>CS ops building health scoring and renewal processes</li><li>Anyone with a book of business and not enough hours to watch it</li></ul>
 <h2>What you'll be able to do</h2>
@@ -170,7 +170,11 @@
 <h2>Workshop modules</h2>
 <table><tr><th>Module</th><th>Time</th></tr><tr><td><a href="#/m0">0 · Map Your Customer Data</a></td><td>10 min</td></tr><tr><td><a href="#/m1">1 · The Account Health Snapshot</a></td><td>15 min</td></tr><tr><td><a href="#/m2">2 · QBR Prep That Writes Itself</a></td><td>15 min</td></tr><tr><td><a href="#/m3">3 · Churn Signals &amp; Root Cause</a></td><td>15 min</td></tr><tr><td><a href="#/m4">4 · Renewal &amp; Expansion</a></td><td>15 min</td></tr><tr><td><a href="#/m5">5 · Automate the Book of Business</a></td><td>20 min</td></tr></table>
 <h2>How to use this workshop</h2>
-<ol><li>You need customer data connected — at minimum the CRM; ideally also product usage, support tickets, and billing. (Missing sources? Send your data team the <b>Connect Your Data</b> workshop.)</li><li>Work <b>in order</b> — the snapshot from Module 1 is the unit everything else assembles.</li><li>Every step has a <b>Prompt</b> block — copy into Ana, swap the <code>[bracketed]</code> parts for your account names and field names from Module 0.</li><li>Use your <b>real book</b>. Synthetic accounts teach nothing about your renewals.</li></ol>
+<ol><li>You need customer data connected — at minimum the CRM; ideally also product usage, support tickets, and billing. (Missing sources? Send your data team the <a href="../connect-your-data/index.html"><b>Connect Your Data</b></a> workshop.)</li><li>Work <b>in order</b> — the snapshot from Module 1 is the unit everything else assembles.</li><li>Every step has a <b>Prompt</b> block — copy into Ana, swap the <code>[bracketed]</code> parts for your account names and field names from Module 0.</li><li>Use your <b>real book</b>. Synthetic accounts teach nothing about your renewals.</li></ol>
+
+  <details><summary>For facilitators — running this as a guided session</summary><div class="body">
+    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
+  </div></details>
 </section>
 
 <section class="page" id="m0" data-title="Module 0 · Map Your Customer Data" data-group="Getting Started" data-time="10 minutes">
@@ -249,7 +253,7 @@
 <h2>2.4 · Format for the meeting</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Produce that as a [PDF / slide deck], branded simply, with the account name and quarter on the title page.</pre></div>
-  <div class="yousee"><b>You'll see:</b> the artifact, meeting-ready. (Report formats and theming are covered in depth in the <b>Dashboards &amp; Reporting</b> workshop.) Now compare against your 2.1 number — the before/after is the story you tell your team.</div>
+  <div class="yousee"><b>You'll see:</b> the artifact, meeting-ready. (Report formats and theming are covered in depth in the <a href="../dashboards-reporting/index.html"><b>Dashboards &amp; Reporting</b></a> workshop.) Now compare against your 2.1 number — the before/after is the story you tell your team.</div>
     <figure class="shot" data-todo="a QBR-ready summary output">
     <img src="assets/cs-m2-qbr.png" alt="QBR prep that writes itself." onerror="this.parentElement.classList.add('missing')">
     <figcaption>QBR prep that writes itself.</figcaption>
@@ -311,7 +315,7 @@
 <p>Fit says they <i>could</i> buy; readiness says <i>now</i>:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>For the top 5 whitespace accounts: check readiness signals — usage trending up, healthy support picture, recent engagement, no invoice friction. Which are ready for an expansion conversation this quarter, and which need health work first?</pre></div>
-  <div class="yousee"><b>You'll see:</b> the whitespace list split into "propose now" and "stabilize first" — the difference between expansion motion and tone-deaf upsell. Hand the "propose now" list to your account executive counterpart (the pipeline side of that motion lives in <b>TextQL for Sales &amp; GTM</b>).</div>
+  <div class="yousee"><b>You'll see:</b> the whitespace list split into "propose now" and "stabilize first" — the difference between expansion motion and tone-deaf upsell. Hand the "propose now" list to your account executive counterpart (the pipeline side of that motion lives in <a href="../sales-gtm/index.html"><b>TextQL for Sales &amp; GTM</b></a>).</div>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> The renewal runway shows dated, dollar-totaled risk in three colors</label>
     <label><input type="checkbox"> Both whitespace cuts ran — product gaps and looks-like-but-spends-less</label>
@@ -325,7 +329,7 @@
   <h1>Module 5 · Automate the Book of Business</h1>
   <div class="page-meta"><span>⏱️ <b>20 minutes</b></span></div>
 <p><b>Goal:</b> the weekly per-account book report (one report per account, from a backing table) and a watcher that posts only when an account's trajectory changes.</p>
-<div class="callout">The mechanics — templates with backing tables, the 3-preview rule, agent editorial bars — live in the <b>Automation Deep-Dive</b> workshop. This module applies them to a book of business.</div>
+<div class="callout">The mechanics — templates with backing tables, the 3-preview rule, agent editorial bars — live in the <a href="../automation/index.html"><b>Automation Deep-Dive</b></a> workshop. This module applies them to a book of business.</div>
 <h2>5.1 · The per-account weekly report (template pattern)</h2>
 <p>One playbook, run once per account, via a backing table — the batch pattern from Automation Deep-Dive:</p>
 <p><b>Step 1 — the backing table.</b> A CSV where each row is an account in your book:</p>
@@ -360,7 +364,7 @@ Globex,you@company.com,2026-11-15,Mid-Market</pre>
 </section>
 
 <div class="pager" id="pager"></div>
-<footer class="pagefoot">© TextQL · Workshop: TextQL for Customer Success · Example prompts are illustrative — adapt them to your own data. · <a href="https://docs.google.com/spreadsheets/d/1p0fB8IHkeYvCZIwPkaR90zjktkAIWG5PH1PJK2ng1Mc" target="_blank" rel="noopener">Give feedback</a></footer>
+<footer class="pagefoot">© TextQL · Workshop: TextQL for Customer Success · Example prompts are illustrative — adapt them to your own data. · <a href="mailto:jacob@textql.com?subject=TextQL%20Workshops%20feedback">Give feedback</a></footer>
 </div></main>
 </div>
 

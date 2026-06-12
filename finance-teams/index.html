@@ -167,9 +167,13 @@
 <h2>What you'll be able to do</h2>
 <table><tr><th>After module</th><th>You can...</th></tr><tr><td>0</td><td>Confirm what financial data Ana can see and teach her your fiscal calendar</td></tr><tr><td>1</td><td>Run variance and flux analysis with drill-down to the driver, narrative included</td></tr><tr><td>2</td><td>Ask revenue questions with bookings/billings/revenue distinctions handled correctly</td></tr><tr><td>3</td><td>Analyze vendor spend, run-rate creep, and budget-vs-actual by owner</td></tr><tr><td>4</td><td>Produce a polished board pack and a live filtered dashboard</td></tr><tr><td>5</td><td>Automate the monthly flux, daily cash position, and budget-break watching</td></tr><tr><td>6</td><td>Govern revenue definitions, the fiscal calendar, and hierarchies for the whole org</td></tr></table>
 <h2>Workshop modules</h2>
-<table><tr><th>Module</th><th>File</th><th>Time</th></tr><tr><td>0 · Map Your Finance Data</td><td><code>00_MAP_FINANCE_DATA.md</code></td><td>10 min</td></tr><tr><td>1 · Close &amp; Flux Analysis</td><td><code>01_CLOSE_AND_FLUX.md</code></td><td>20 min</td></tr><tr><td>2 · Revenue Questions</td><td><code>02_REVENUE.md</code></td><td>20 min</td></tr><tr><td>3 · Spend &amp; Vendor Analysis</td><td><code>03_SPEND_VENDORS.md</code></td><td>15 min</td></tr><tr><td>4 · The Board Pack</td><td><code>04_BOARD_PACK.md</code></td><td>20 min</td></tr><tr><td>5 · Automate the Monthly Rhythm</td><td><code>05_AUTOMATE_RHYTHM.md</code></td><td>20 min</td></tr><tr><td>6 · Govern the Definitions</td><td><code>06_GOVERN_DEFINITIONS.md</code></td><td>15 min</td></tr><tr><td>Prompt library</td><td><code>PROMPT_LIBRARY.md</code></td><td>reference</td></tr></table>
+<table><tr><th>Module</th><th>Time</th></tr><tr><td>0 · Map Your Finance Data</td><td><code>00_MAP_FINANCE_DATA.md</code></td><td>10 min</td></tr><tr><td>1 · Close &amp; Flux Analysis</td><td><code>01_CLOSE_AND_FLUX.md</code></td><td>20 min</td></tr><tr><td>2 · Revenue Questions</td><td><code>02_REVENUE.md</code></td><td>20 min</td></tr><tr><td>3 · Spend &amp; Vendor Analysis</td><td><code>03_SPEND_VENDORS.md</code></td><td>15 min</td></tr><tr><td>4 · The Board Pack</td><td><code>04_BOARD_PACK.md</code></td><td>20 min</td></tr><tr><td>5 · Automate the Monthly Rhythm</td><td><code>05_AUTOMATE_RHYTHM.md</code></td><td>20 min</td></tr><tr><td>6 · Govern the Definitions</td><td><code>06_GOVERN_DEFINITIONS.md</code></td><td>15 min</td></tr><tr><td>Prompt library</td><td><code>PROMPT_LIBRARY.md</code></td><td>reference</td></tr></table>
 <h2>How to use this workshop</h2>
-<ol><li>You need your finance sources connected — GL/ERP, billing, and (for bookings) the CRM. If they aren't, send your data team the <b>Connect Your Data</b> workshop first.</li><li>Work through the modules <b>in order</b>: trust is established in Modules 0–1 and everything else builds on it.</li><li>Every step has a <b>Prompt</b> block — copy it into Ana and swap the <code>[bracketed]</code> placeholders for your own account names, entities, and periods.</li><li>Don't skip the <b>Checkpoints</b> — especially the Module 0 reconciliation; nothing downstream matters if the headline number doesn't tie.</li></ol>
+<ol><li>You need your finance sources connected — GL/ERP, billing, and (for bookings) the CRM. If they aren't, send your data team the <a href="../connect-your-data/index.html"><b>Connect Your Data</b></a> workshop first.</li><li>Work through the modules <b>in order</b>: trust is established in Modules 0–1 and everything else builds on it.</li><li>Every step has a <b>Prompt</b> block — copy it into Ana and swap the <code>[bracketed]</code> placeholders for your own account names, entities, and periods.</li><li>Don't skip the <b>Checkpoints</b> — especially the Module 0 reconciliation; nothing downstream matters if the headline number doesn't tie.</li></ol>
+
+  <details><summary>For facilitators — running this as a guided session</summary><div class="body">
+    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
+  </div></details>
 </section>
 
 <section class="page" id="m0" data-title="Module 0 · Map Your Finance Data" data-group="Getting Started" data-time="10 minutes">
@@ -180,7 +184,7 @@
 <h2>0.1 · What's connected?</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>What financial data sources can you see in this thread? Identify which holds the general ledger, which holds billing/invoices, and which holds bookings or pipeline. For each, tell me the date range covered and how fresh the latest data is.</pre></div>
-  <div class="yousee"><b>You'll see:</b> an inventory of your GL/ERP, billing, and CRM sources with freshness. If a system you expected is missing, it wasn't attached before this thread's first message — start a new thread with it selected from the <b>"+"</b> menu, or ask your admin to connect it (the <b>Connect Your Data</b> workshop covers setup).</div>
+  <div class="yousee"><b>You'll see:</b> an inventory of your GL/ERP, billing, and CRM sources with freshness. If a system you expected is missing, it wasn't attached before this thread's first message — start a new thread with it selected from the <b>"+"</b> menu, or ask your admin to connect it (the <a href="../connect-your-data/index.html"><b>Connect Your Data</b></a> workshop covers setup).</div>
 <h2>0.2 · Teach the fiscal calendar</h2>
 <p>Finance time is not calendar time, and this is the single highest-leverage thing to establish first.</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
@@ -324,7 +328,7 @@
 <h2>4.2 · Format it</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Produce that as a PDF, under [10] pages, charts embedded, with [our fiscal period] in the title and a date stamp.</pre></div>
-  <div class="yousee"><b>You'll see:</b> a downloadable PDF. Want slides instead? Ask for a deck version — one finding per slide. Reports are snapshots: date-stamp, distribute, regenerate next period (the <b>Dashboards &amp; Reporting</b> workshop covers report craft in depth).</div>
+  <div class="yousee"><b>You'll see:</b> a downloadable PDF. Want slides instead? Ask for a deck version — one finding per slide. Reports are snapshots: date-stamp, distribute, regenerate next period (the <a href="../dashboards-reporting/index.html"><b>Dashboards &amp; Reporting</b></a> workshop covers report craft in depth).</div>
 <h2>4.3 · The live companion dashboard</h2>
 <p>Board members and executives ask follow-ups. Give them a place to self-serve:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
@@ -351,7 +355,7 @@
   <h1>Module 5 · Automate the Monthly Rhythm</h1>
   <div class="page-meta"><span>⏱️ <b>20 minutes</b></span></div>
 <p><b>Goal:</b> the monthly flux, the daily cash position, and a watcher for budget breaks and unusual journals — all running without you.</p>
-<div class="callout">The mechanics (the 3-preview rule, prompt structure, delivery options) live in the <b>Automation Deep-Dive</b> workshop. This module applies them to the finance calendar.</div>
+<div class="callout">The mechanics (the 3-preview rule, prompt structure, delivery options) live in the <a href="../automation/index.html"><b>Automation Deep-Dive</b></a> workshop. This module applies them to the finance calendar.</div>
 <h2>5.1 · The monthly flux playbook</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Create a playbook "Monthly Flux" that runs on the [5th business day] of each month: the variance table (actuals vs budget vs prior year, breaches flagged), the drill-down on the top two breaches with the timing-vs-run-rate verdict, and the flux narrative with methodology footnote. Use our fiscal calendar. If the period isn't fully closed, say so prominently rather than reporting partial numbers as final. Email it to [me and the controller].</pre></div>
@@ -398,9 +402,10 @@
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Save to the ontology: our department hierarchy [or: read it from the attached file] — which departments roll into which cost centers and functions; and our entity structure — which entities consolidate, what's eliminated. Propose as a patch.</pre></div>
   <div class="yousee"><b>You'll see:</b> the rollups codified, so "engineering opex" means the same set of departments in every analysis.</div>
+<div class="callout"><span class="label">Go deeper</span><p>Role personas — Finance sees methodology footnotes by default while executives get summary-first, from one governed model — are the <a href="../context-stack/index.html"><b>Context Stack</b></a> workshop.</p></div>
 <h2>6.5 · Finance as reviewer</h2>
-<p>Definitions will keep evolving, and other teams will propose changes that touch financial terms. Ask your admin to set the finance lead as a reviewer for finance-related ontology folders (folder-level access and review routing are covered in the <b>Ontology Operations</b> workshop — worth sending to whoever owns your ontology). The operating posture: Finance doesn't just <i>use</i> the governed definitions; Finance <i>owns</i> them.</p>
-<p>For the deeper build — <code>.tql</code> metric surfaces, golden-query tests that pin "revenue last quarter" to the audited number — hand your data team <b>Build Your Ontology, End to End</b> and the <b>Data Quality &amp; Validation Deep-Dive</b>.</p>
+<p>Definitions will keep evolving, and other teams will propose changes that touch financial terms. Ask your admin to set the finance lead as a reviewer for finance-related ontology folders (folder-level access and review routing are covered in the <a href="../ontology-operations/index.html"><b>Ontology Operations</b></a> workshop — worth sending to whoever owns your ontology). The operating posture: Finance doesn't just <i>use</i> the governed definitions; Finance <i>owns</i> them.</p>
+<p>For the deeper build — <code>.tql</code> metric surfaces, golden-query tests that pin "revenue last quarter" to the audited number — hand your data team <a href="../build-your-ontology/index.html"><b>Build Your Ontology, End to End</b></a> and the <a href="../data-quality/index.html"><b>Data Quality &amp; Validation Deep-Dive</b></a>.</p>
     <figure class="shot" data-todo="a proposed ontology patch for a finance definition">
     <img src="assets/fin-m6-patch.png" alt="Finance as the source of truth — one governed definition." onerror="this.parentElement.classList.add('missing')">
     <figcaption>Finance as the source of truth — one governed definition.</figcaption>
@@ -472,7 +477,7 @@
 </section>
 
 <div class="pager" id="pager"></div>
-<footer class="pagefoot">© TextQL · Workshop: TextQL for Finance Teams · Example prompts are illustrative — adapt them to your own data. · <a href="https://docs.google.com/spreadsheets/d/1p0fB8IHkeYvCZIwPkaR90zjktkAIWG5PH1PJK2ng1Mc" target="_blank" rel="noopener">Give feedback</a></footer>
+<footer class="pagefoot">© TextQL · Workshop: TextQL for Finance Teams · Example prompts are illustrative — adapt them to your own data. · <a href="mailto:jacob@textql.com?subject=TextQL%20Workshops%20feedback">Give feedback</a></footer>
 </div></main>
 </div>
 

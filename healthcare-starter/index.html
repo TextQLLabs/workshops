@@ -182,6 +182,10 @@
   <div class="callout"><span class="label">No customer data — ever</span>
     <p>The starter is built entirely from public standards (CMS / AHRQ / US Census). Connecting it never uses your data to improve the template; it runs <b>read-only</b>, and your adaptations live in <b>your own repo</b>, never back in the template.</p>
   </div>
+
+  <details><summary>For facilitators — running this as a guided session</summary><div class="body">
+    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
+  </div></details>
 </section>
 
 <!-- ════════════════ MODULE 0 ════════════════ -->
@@ -397,10 +401,14 @@
 <pre>Inventory every direct identifier in the connected schema and classify each per governance-phi.md section 0: join-key-only, never-output, or aggregate-only. Flag anything ambiguous for compliance review.</pre></div>
   <div class="yousee"><b>You'll see:</b> a per-column classification your compliance team signs off on — the rules are templates tuned to <i>your</i> regime, and they can be tightened freely but never loosened without a reviewed, attributable decision.</div>
 
+  <div class="callout warn"><span class="label">Facilitators: pre-flight these tests</span>
+    <p>Run 5.2 and 5.3 yourself <b>before</b> any session with compliance in the room. These guardrails are <b>instruction-layer enforcement</b> — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with <code>governance-phi.md</code> and <code>config/org_context.md</code>) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the <i>check</i> is part of the story — "here's the file, here's the behavior, here's how we audit it."</p>
+  </div>
+
   <h2>5.2 · Test the small-cell rule</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Break down [a rare condition] prevalence by county. Apply our suppression rules and tell me what you suppressed and why.</pre></div>
-  <div class="yousee"><b>You'll see:</b> cells under <code>min_cell_size</code> suppressed with an explanation — including complementary cells that would let someone back out a suppressed value. The starter default is <b>11</b> (the CMS standard), configured in <code>config/org_context.md</code>; common alternatives are 10 (some state agencies) or 30 (some internal policies).</div>
+  <div class="yousee"><b>You'll see:</b> cells under <code>min_cell_size</code> suppressed with an explanation — including complementary cells that would let someone back out a suppressed value. The starter default is <b>11</b> (the CMS standard), configured in <code>config/org_context.md</code>; common alternatives are 10 (some state agencies) or 30 (some internal policies). <i>If suppression doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.</i></div>
 
   <h2>5.3 · Test sensitive-diagnosis gating</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
@@ -473,7 +481,7 @@
 </section>
 
 <div class="pager" id="pager"></div>
-<footer class="pagefoot">© TextQL · Workshop: Healthcare Starter Pack · Example prompts are illustrative — adapt them to your own data. · <a href="https://docs.google.com/spreadsheets/d/1p0fB8IHkeYvCZIwPkaR90zjktkAIWG5PH1PJK2ng1Mc" target="_blank" rel="noopener">Give feedback</a></footer>
+<footer class="pagefoot">© TextQL · Workshop: Healthcare Starter Pack · Example prompts are illustrative — adapt them to your own data. · <a href="mailto:jacob@textql.com?subject=TextQL%20Workshops%20feedback">Give feedback</a></footer>
 </div></main>
 </div>
 

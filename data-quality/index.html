@@ -171,6 +171,10 @@
 <table><tr><th>Module</th><th>Time</th></tr><tr><td>0 · The Trust Stack</td><td>10 min</td></tr><tr><td>1 · Golden Datasets</td><td>20 min</td></tr><tr><td>2 · Validation Sets &amp; Eval Cases</td><td>20 min</td></tr><tr><td>3 · Drift Detection on a Schedule</td><td>20 min</td></tr><tr><td>4 · Reconciliation Workflows</td><td>20 min</td></tr><tr><td>5 · The Data-Quality Feed Agent</td><td>15 min</td></tr><tr><td>6 · The Quality Runbook</td><td>15 min</td></tr></table>
 <h2>How to use this workshop</h2>
 <ol><li>Prerequisites: a connected warehouse and an existing ontology with governed metrics (the build workshops above if not).</li><li>Work <b>in order</b> — golden datasets (Module 1) are the foundation every later module schedules, extends, or operationalizes.</li><li>Swap <code>[bracketed]</code> placeholders for your metrics, tables, and trusted sources.</li></ol>
+
+  <details><summary>For facilitators — running this as a guided session</summary><div class="body">
+    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
+  </div></details>
 </section>
 
 <section class="page" id="m0" data-title="Module 0 · The Trust Stack" data-group="Getting Started" data-time="10 minutes">
@@ -269,7 +273,7 @@
 <h2>3.3 · The triage prompt</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>The golden suite failed on [metric] for [period]: expected [X], got [Y]. Triage: (1) check the ontology history — was the definition changed since the last passing run, by whom, in which patch? (2) If the definition is unchanged, compare the underlying rows now vs what would produce the pinned value — what changed in the data: row counts, new/removed rows, value changes? (3) State which drift this is and who owns it.</pre></div>
-  <div class="yousee"><b>You'll see:</b> the failure attributed — definition drift routes to the ontology review process (the git-history check is exactly <b>Ontology Operations</b> Module 1's discipline), data drift routes to the pipeline team with the changed-rows evidence attached.</div>
+  <div class="yousee"><b>You'll see:</b> the failure attributed — definition drift routes to the ontology review process (the git-history check is exactly <a href="../ontology-operations/index.html"><b>Ontology Operations</b></a> Module 1's discipline), data drift routes to the pipeline team with the changed-rows evidence attached.</div>
 <h2>3.4 · Close the loop on every red</h2>
 <p>A failed run isn't <i>handled</i> until one of three things happens, recorded in the ontology note: the data is corrected (and the suite re-passes), the definition change is ratified (and the pin updates in that patch), or the anchor itself is re-validated (rare — the audited number was restated). A suite that fires and gets silenced without one of these three is worse than no suite: it's a broken alarm everyone has learned to ignore.</p>
     <figure class="shot" data-todo="a drift alert from the scheduled validation playbook">
@@ -324,7 +328,7 @@
 <h2>5.2 · Deploy the agent</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Create a feed agent "Data Quality Watch" over [the core tables]: check freshness against expected load windows, row counts against trailing same-weekday baselines, null rates on [key columns] against baseline, and day-over-day discontinuities in [key aggregates]. Post ONLY on genuine issues: a table outside its load window by more than [grace period], counts off by more than [threshold], a null spike, or a discontinuity. One post per incident: the table, the symptom, the evidence, and the most likely upstream cause. Expected-empty tables [list] don't alert. A late load within [2 hours] is "late," not "failed." All-clear days: silence.</pre></div>
-  <div class="yousee"><b>You'll see:</b> the watcher deployed with the editorial bar built in. The late-vs-failed distinction and the expected-empty list are what keep it credible — an agent that cries wolf on every slow load gets muted by Thursday. (Agent mechanics and editorial bars: <b>Automation Deep-Dive</b>.)</div>
+  <div class="yousee"><b>You'll see:</b> the watcher deployed with the editorial bar built in. The late-vs-failed distinction and the expected-empty list are what keep it credible — an agent that cries wolf on every slow load gets muted by Thursday. (Agent mechanics and editorial bars: <a href="../automation/index.html"><b>Automation Deep-Dive</b></a>.)</div>
 <h2>5.3 · The wow: trigger on ETL completion — required</h2>
 <p>A scheduled check at 6am races the pipeline; some days data lands at 6:15. The better pattern — <b>webhook-trigger the agent from the pipeline itself</b>, so validation runs the moment data lands:</p>
 <p>Add a webhook trigger to the agent, then make the final task of your ETL DAG call it:</p>
@@ -405,7 +409,7 @@ Last reviewed: [date] by [name]
 </section>
 
 <div class="pager" id="pager"></div>
-<footer class="pagefoot">© TextQL · Workshop: Data Quality & Validation Deep-Dive · Example prompts are illustrative — adapt them to your own data. · <a href="https://docs.google.com/spreadsheets/d/1p0fB8IHkeYvCZIwPkaR90zjktkAIWG5PH1PJK2ng1Mc" target="_blank" rel="noopener">Give feedback</a></footer>
+<footer class="pagefoot">© TextQL · Workshop: Data Quality & Validation Deep-Dive · Example prompts are illustrative — adapt them to your own data. · <a href="mailto:jacob@textql.com?subject=TextQL%20Workshops%20feedback">Give feedback</a></footer>
 </div></main>
 </div>
 

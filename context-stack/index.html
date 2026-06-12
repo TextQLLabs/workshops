@@ -162,7 +162,7 @@
   <h1>The Context Stack — Personal, Role & Org Context</h1>
 <p>A workshop of short, hands-on modules for <b>platform owners, workspace admins, and enablement champions</b> who configure how Ana behaves for different people. Three layers of context — organization, role, personal — composed at question time; you'll build all three, prove they work with a same-question side-by-side, and learn to operate them like the governed configuration they are. Semi-technical: you'll edit markdown files and review changes, but never write SQL or <code>.tql</code>.</p>
 <p>Total time: <b>about 2 hours.</b></p>
-<p>This is the deep-dive companion to the <b>Role-Based Access</b> chapter of <b>Build Your Ontology, End to End</b> — the persona model lives there; this workshop is how you author, prove, provision, and operate it.</p>
+<p>This is the deep-dive companion to the <b>Role-Based Access</b> chapter of <a href="../build-your-ontology/index.html"><b>Build Your Ontology, End to End</b></a> — the persona model lives there; this workshop is how you author, prove, provision, and operate it.</p>
 <h2>Who this is for</h2>
 <ul><li>Platform owners who decide what Ana knows org-wide</li><li>Workspace admins who provision different behavior for different teams</li><li>Enablement champions onboarding populations with different needs (executives vs analysts vs operations)</li><li>Anyone in a regulated environment who needs access behavior to be auditable, not anecdotal</li></ul>
 <h2>What you'll be able to do</h2>
@@ -171,6 +171,10 @@
 <table><tr><th>Module</th><th>Time</th></tr><tr><td>0 · The Context Stack</td><td>10 min</td></tr><tr><td>1 · Build Your Personal Context</td><td>20 min</td></tr><tr><td>2 · Curate the Org Context</td><td>15 min</td></tr><tr><td>3 · Author Role Profiles</td><td>25 min</td></tr><tr><td>4 · The Same-Question Test</td><td>20 min</td></tr><tr><td>5 · Provisioning &amp; Identity</td><td>15 min</td></tr><tr><td>6 · Operate the Context Stack</td><td>15 min</td></tr><tr><td>Persona library</td><td>reference</td></tr></table>
 <h2>How to use this workshop</h2>
 <ol><li>Prerequisites: an org with an ontology/context library in place (the <a href="../build-your-ontology/"><b>Build Your Ontology</b></a> workshop if not), admin access for Modules 3–5, and a test user account for Module 4's side-by-side.</li><li>Work <b>in order</b> — each layer builds on the previous, and Module 4's proof needs Module 3's personas.</li><li>Swap <code>[bracketed]</code> placeholders for your own teams, metrics, and domains. The restricted-persona examples use a care-management flavor; the pattern is industry-agnostic.</li><li>Context mechanics follow the current documentation at <a href="https://docs.textql.com">docs.textql.com</a> (Context Library and Ontology sections) — verify click-paths there as the surface evolves.</li></ol>
+
+  <details><summary>For facilitators — running this as a guided session</summary><div class="body">
+    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
+  </div></details>
 </section>
 
 <section class="page" id="m0" data-title="Module 0 · The Context Stack" data-group="Getting Started" data-time="10 minutes">
@@ -261,7 +265,7 @@
 <pre>Add this document to the org context library: [attach or name it]. Summarize what knowledge it contributes, propose where it should live in the library structure, and open the addition for review.</pre></div>
   <div class="yousee"><b>You'll see:</b> the document staged with a placement proposal. The context library is browsable by your colleagues <i>and</i> readable by Ana — one artifact serving both audiences.</div>
 <h2>2.5 · The review loop, from the reviewer's side</h2>
-<p>If you hold review rights, open the pending patches (the Reviews surface in the Ontology/context area) and apply the three-question bar from the <b>Admin &amp; Governance</b> workshop: Correct? Conflicting with an existing definition? Scoped right (org-wide truth vs one team's shorthand)? Approve, or decline <b>with a reason</b> — declines without reasons teach proposers to stop proposing.</p>
+<p>If you hold review rights, open the pending patches (the Reviews surface in the Ontology/context area) and apply the three-question bar from the <a href="../admin-governance/index.html"><b>Admin &amp; Governance</b></a> workshop: Correct? Conflicting with an existing definition? Scoped right (org-wide truth vs one team's shorthand)? Approve, or decline <b>with a reason</b> — declines without reasons teach proposers to stop proposing.</p>
 <div class="callout">Reviewer notifications (patch submitted/approved/denied) are configurable under Settings → Notifications → Ontology — set them up now if you're a reviewer, or this loop silently stalls.</div>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> A definition patch, a glossary patch, and a document addition are proposed (not directly applied)</label>
@@ -418,7 +422,7 @@ would produce materially different answers.
 <p><b>Goal:</b> how personas reach people — admin-assigned, identity-mapped, fail-closed — and where behavioral context sits in the larger access-control picture.</p>
 <h2>5.1 · Users don't choose their persona</h2>
 <p>The rule that makes personas meaningful: <b>behavioral context is provisioned at the org/session level by an admin — end users don't select their own.</b> The same way a database role is granted, not chosen. A persona a user could swap off is a suggestion, not a control.</p>
-<p>Mechanically, personas ride on <b>roles</b>: role-scoped context loads for users holding that role (and folder-level access in the ontology can restrict who can even <i>see</i> persona files — covered in <b>Ontology Operations</b>, Module 2). Assignment happens where role assignment happens — Settings → Members for manual, or identity-mapped (next section). The persona file's <i>content</i> is authored by the ontology/context owners; <i>who gets it</i> is administered by workspace admins. Two responsibilities, deliberately separated.</p>
+<p>Mechanically, personas ride on <b>roles</b>: role-scoped context loads for users holding that role (and folder-level access in the ontology can restrict who can even <i>see</i> persona files — covered in <a href="../ontology-operations/index.html"><b>Ontology Operations</b></a>, Module 2). Assignment happens where role assignment happens — Settings → Members for manual, or identity-mapped (next section). The persona file's <i>content</i> is authored by the ontology/context owners; <i>who gets it</i> is administered by workspace admins. Two responsibilities, deliberately separated.</p>
 <h2>5.2 · Map personas to identity groups</h2>
 <p>Hand-assigning roles works at ten users and fails at a hundred. The scaled pattern ties personas to your <b>identity provider</b>:</p>
 <ol><li><b>SSO with role sync</b> — IdP group claims map to roles at login (group names matched to role names; the Admin &amp; Governance workshop's SSO module, and for self-hosted, the <code>role_sync_enabled</code> attribute mapping).</li><li><b>SCIM group push</b> — your IdP provisions users <i>and</i> their group memberships; groups map to roles; roles carry behavioral context.</li></ol>
@@ -426,7 +430,7 @@ would produce materially different answers.
 <h2>5.3 · The semantic layer of RBAC</h2>
 <p>Where behavioral context sits in the stack — the framing worth memorizing:</p>
 <table><tr><th>Layer</th><th>Controls</th><th>Example</th></tr><tr><td><b>Database permissions / RLS / connector scope</b></td><td>Which <b>rows exist</b> for this identity</td><td>The warehouse returns only this region's members</td></tr><tr><td><b>Behavioral context (this workshop)</b></td><td>Which <b>questions get asked</b> and <b>how answers are framed</b></td><td>The persona offers only allowed surfaces, never shows SQL, declines off-scope with a redirect</td></tr><tr><td><b>Platform RBAC</b></td><td>Which <b>features and resources</b> are usable</td><td>Who can create connectors, edit dashboards, review patches</td></tr></table>
-<p>They complement, never substitute: behavioral context without data-layer enforcement is politeness; data enforcement without behavioral context is a wall with no signage — technically secure and practically hostile. Defense in depth is all three (data scoping: <b>Connect Your Data</b>; platform RBAC: <b>Admin &amp; Governance</b>).</p>
+<p>They complement, never substitute: behavioral context without data-layer enforcement is politeness; data enforcement without behavioral context is a wall with no signage — technically secure and practically hostile. Defense in depth is all three (data scoping: <a href="../connect-your-data/index.html"><b>Connect Your Data</b></a>; platform RBAC: <a href="../admin-governance/index.html"><b>Admin &amp; Governance</b></a>).</p>
 <h2>5.4 · Fail closed</h2>
 <p>The default posture for restricted personas, in both design and provisioning:</p>
 <ul><li><b>In the file:</b> the allowlist names what's permitted; everything else is denied — never the reverse. A new surface added to the ontology is <i>invisible</i> to restricted personas until explicitly added to their list.</li><li><b>In provisioning:</b> a user with no mapped group gets the most restrictive default (or no access), not the org-wide default. Unknown identity → minimum surface.</li><li><b>In review:</b> widening an allowlist is a reviewed change (Module 4.3); narrowing one can ship fast. Asymmetry is the point.</li></ul>
@@ -448,7 +452,7 @@ would produce materially different answers.
   <div class="page-meta"><span>⏱️ <b>15 minutes</b></span></div>
 <p><b>Goal:</b> the operating habits — versioning and review of persona files, when to add vs extend a persona, audit, the quarterly review, and the failure modes to watch for.</p>
 <h2>6.1 · Persona files are governed artifacts</h2>
-<p>Everything the <b>Ontology Operations</b> workshop establishes for ontology files applies to <code>behaviors/</code> verbatim: version control (in-app history or git sync), changes via reviewed patches, attributable diffs, revertibility. Operational specifics for personas:</p>
+<p>Everything the <a href="../ontology-operations/index.html"><b>Ontology Operations</b></a> workshop establishes for ontology files applies to <code>behaviors/</code> verbatim: version control (in-app history or git sync), changes via reviewed patches, attributable diffs, revertibility. Operational specifics for personas:</p>
 <ul><li><b>Reviewers:</b> persona changes touching <i>scope</i> (section 1, section 4) should be reviewed by the domain's data owner, not just the context owner — widening an allowlist is an access decision wearing a markdown costume.</li><li><b>The regression suite:</b> Module 4.4's three probes (broad question / off-scope request / newly-allowed request) re-run after <b>every</b> persona patch. Five minutes; catches the typo that silently deleted a hard limit.</li><li><b>Render the behavior, not just the diff:</b> for material changes, run the same-question test before approving — the diff shows what changed; the probe shows what it <i>means</i>.</li></ul>
 <h2>6.2 · New persona, or extend an existing one?</h2>
 <p>The boundary rule: <b>one persona per team, use case, or compliance boundary.</b></p>
@@ -638,7 +642,7 @@ do not negotiate scope in-thread.
 </section>
 
 <div class="pager" id="pager"></div>
-<footer class="pagefoot">© TextQL · Workshop: The Context Stack — Personal, Role & Org Context · Example prompts are illustrative — adapt them to your own data. · <a href="https://docs.google.com/spreadsheets/d/1p0fB8IHkeYvCZIwPkaR90zjktkAIWG5PH1PJK2ng1Mc" target="_blank" rel="noopener">Give feedback</a></footer>
+<footer class="pagefoot">© TextQL · Workshop: The Context Stack — Personal, Role & Org Context · Example prompts are illustrative — adapt them to your own data. · <a href="mailto:jacob@textql.com?subject=TextQL%20Workshops%20feedback">Give feedback</a></footer>
 </div></main>
 </div>
 

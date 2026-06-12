@@ -167,9 +167,13 @@
 <h2>What you'll be able to do</h2>
 <table><tr><th>After module</th><th>You can...</th></tr><tr><td>0</td><td>State what "won" looks like Friday, with real questions and their current time-to-answer</td></tr><tr><td>1</td><td>Run the cold baseline: every question asked with zero context, results recorded honestly</td></tr><tr><td>2</td><td>Seed the ontology with the 3 most definition-sensitive metrics governed</td></tr><tr><td>3</td><td>Score cold vs warm side by side, with a misses log feeding the ontology backlog</td></tr><tr><td>4</td><td>Show automation: a playbook, a feed agent, a dashboard, and (if relevant) a role persona</td></tr><tr><td>5</td><td>Deliver the readout: scores vs Day-0 criteria, the before/after table, a 15-minute exec demo</td></tr></table>
 <h2>Workshop modules</h2>
-<table><tr><th>Module</th><th>File</th><th>Time</th></tr><tr><td>0 · Before Day 1: Prerequisites &amp; Success Criteria</td><td><code>00_BEFORE_DAY_1.md</code></td><td>~30 min, the week before</td></tr><tr><td>1 · Day 1: Connect &amp; Validate</td><td><code>01_DAY1_CONNECT.md</code></td><td>Day 1</td></tr><tr><td>2 · Day 2: Seed the Ontology</td><td><code>02_DAY2_ONTOLOGY.md</code></td><td>Day 2</td></tr><tr><td>3 · Day 3: The Question Gauntlet</td><td><code>03_DAY3_GAUNTLET.md</code></td><td>Day 3</td></tr><tr><td>4 · Day 4: Automate &amp; Wow</td><td><code>04_DAY4_AUTOMATE.md</code></td><td>Day 4</td></tr><tr><td>5 · Day 5: The Readout</td><td><code>05_DAY5_READOUT.md</code></td><td>Day 5</td></tr></table>
+<table><tr><th>Module</th><th>Time</th></tr><tr><td>0 · Before Day 1: Prerequisites &amp; Success Criteria</td><td><code>00_BEFORE_DAY_1.md</code></td><td>~30 min, the week before</td></tr><tr><td>1 · Day 1: Connect &amp; Validate</td><td><code>01_DAY1_CONNECT.md</code></td><td>Day 1</td></tr><tr><td>2 · Day 2: Seed the Ontology</td><td><code>02_DAY2_ONTOLOGY.md</code></td><td>Day 2</td></tr><tr><td>3 · Day 3: The Question Gauntlet</td><td><code>03_DAY3_GAUNTLET.md</code></td><td>Day 3</td></tr><tr><td>4 · Day 4: Automate &amp; Wow</td><td><code>04_DAY4_AUTOMATE.md</code></td><td>Day 4</td></tr><tr><td>5 · Day 5: The Readout</td><td><code>05_DAY5_READOUT.md</code></td><td>Day 5</td></tr></table>
 <h2>How to use this workshop</h2>
 <ol><li><b>Do Module 0 the week before.</b> A POC that starts without written success criteria is a demo with extra steps.</li><li>One module per day, in order. Each day's output is the next day's input.</li><li>Swap <code>[bracketed]</code> placeholders for your systems, metrics, and team names.</li><li>Keep everything — the baseline answers, the misses log, the scores. Friday's readout is assembled from the week's artifacts, not written fresh.</li></ol>
+
+  <details><summary>For facilitators — running this as a guided session</summary><div class="body">
+    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
+  </div></details>
 </section>
 
 <section class="page" id="m0" data-title="Module 0 · Before Day 1" data-group="Getting Started" data-time="30 minutes, scheduled the week before Day 1">
@@ -179,7 +183,7 @@
 <p><b>Goal:</b> access secured, and — the most important artifact of the whole POC — real questions written down with their current time-to-answer, plus agreed success criteria.</p>
 <h2>0.1 · The access checklist</h2>
 <p>Chase these the week before; each missing item costs a half-day of the POC week:</p>
-<ul><li>[ ] <b>Warehouse read-only credentials</b> — a dedicated service identity, scoped to the schemas in play (the <b>Connect Your Data</b> workshop has per-warehouse specifics; share it with whoever provisions)</li><li>[ ] Network path cleared — IP allowlist or tunnel approved by security <i>before</i> Monday</li><li>[ ] <b>Sample documents</b> gathered — metric definitions, data dictionary, a few SOPs or wiki exports; messy is fine</li><li>[ ] Logins for every participant, tested</li><li>[ ] If access control is part of the evaluation: an admin login <i>and</i> a restricted test login</li></ul>
+<ul><li>[ ] <b>Warehouse read-only credentials</b> — a dedicated service identity, scoped to the schemas in play (the <a href="../connect-your-data/index.html"><b>Connect Your Data</b></a> workshop has per-warehouse specifics; share it with whoever provisions)</li><li>[ ] Network path cleared — IP allowlist or tunnel approved by security <i>before</i> Monday</li><li>[ ] <b>Sample documents</b> gathered — metric definitions, data dictionary, a few SOPs or wiki exports; messy is fine</li><li>[ ] Logins for every participant, tested</li><li>[ ] If access control is part of the evaluation: an admin login <i>and</i> a restricted test login</li></ul>
 <h2>0.2 · The question list — the artifact that matters most</h2>
 <p>With the team (not alone), write down <b>5–10 real questions</b> — ones someone actually asked in the last quarter, ideally ones that were painful to answer. For each, record the current reality:</p>
 <table><tr><th>#</th><th>Question</th><th>Who asks it</th><th>Current time-to-answer</th><th>Current path</th></tr><tr><td>1</td><td>e.g., "Which customers' usage dropped &gt;20% last quarter?"</td><td>CS lead</td><td>2 days</td><td>Ticket to analytics → SQL → spreadsheet</td></tr><tr><td>2</td><td>...</td><td></td><td></td><td></td></tr></table>
@@ -201,7 +205,7 @@
   <h1>Module 1 · Day 1: Connect & Validate</h1>
 <p><b>Goal:</b> sources connected and validated, schema discovered — and the cold baseline run: every question asked with zero context, answers recorded honestly, misses included.</p>
 <h2>1.1 · Connect the warehouse and documents</h2>
-<p>Connect the warehouse with the Module 0 credentials (<b>Connectors → New Connector</b>; source-specific detail in the <b>Connect Your Data</b> workshop — including the smoke-test discipline). Upload the sample documents to the workspace.</p>
+<p>Connect the warehouse with the Module 0 credentials (<b>Connectors → New Connector</b>; source-specific detail in the <a href="../connect-your-data/index.html"><b>Connect Your Data</b></a> workshop — including the smoke-test discipline). Upload the sample documents to the workspace.</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Pull the information schema for this connector. List the schemas and tables you can see, with approximate row counts where cheap. Flag anything that looks like a core entity (customers, orders, events) and anything you'd expect to see but can't.</pre></div>
   <div class="yousee"><b>You'll see:</b> what Ana can actually reach — which is the credential's view. Anything missing is a grants problem to fix <i>today</i>, not Wednesday.</div>
@@ -233,7 +237,7 @@
   <h1>Module 2 · Day 2: Seed the Ontology</h1>
 <p><b>Goal:</b> give Ana the org's knowledge — via a domain starter pack if one fits, or built from schema and documents — and govern the 3 most definition-sensitive metrics from the question list.</p>
 <h2>2.1 · Choose the seeding path</h2>
-<table><tr><th>Path</th><th>When</th><th>How</th></tr><tr><td><b>Domain starter pack</b></td><td>A pack matches your industry (the <b>Healthcare Starter Pack</b> is the canonical example)</td><td>Load the pack, then adapt its definitions to your specifics — adaptation beats blank-page</td></tr><tr><td><b>Build from schema + documents</b></td><td>No pack fits</td><td>The discovery method from <b>Build Your Ontology, End to End</b>: Ana reads the schema and the Day-0 documents, drafts the model, you correct it</td></tr></table>
+<table><tr><th>Path</th><th>When</th><th>How</th></tr><tr><td><b>Domain starter pack</b></td><td>A pack matches your industry (the <a href="../healthcare-starter/index.html"><b>Healthcare Starter Pack</b></a> is the canonical example)</td><td>Load the pack, then adapt its definitions to your specifics — adaptation beats blank-page</td></tr><tr><td><b>Build from schema + documents</b></td><td>No pack fits</td><td>The discovery method from <a href="../build-your-ontology/index.html"><b>Build Your Ontology, End to End</b></a>: Ana reads the schema and the Day-0 documents, drafts the model, you correct it</td></tr></table>
 <p>Either way, the input is what you gathered in Module 0: the documents, plus the schema Ana discovered on Day 1.</p>
 <h2>2.2 · Run the seeding</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
@@ -247,6 +251,7 @@
 <h2>2.4 · Don't gold-plate</h2>
 <p>The temptation on Day 2 is to keep building — more entities, more notes, more polish. Stop at: entities mapped, glossary drafted, three metrics governed and verified. <b>The POC tests whether the loop works</b> (gaps found → knowledge added → answers improve), not whether a week can produce a complete ontology. Day 3's misses will tell you exactly what to add next; building speculatively today steals that signal.</p>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The governed definitions created today are ACTIVE (approved/merged), not pending review — Day 3's warm run depends on it</label>
     <label><input type="checkbox"> The seeding path was chosen deliberately (pack-adapted or built from schema + documents)</label>
     <label><input type="checkbox"> The drafted model exists with definitional conflicts flagged</label>
     <label><input type="checkbox"> The three contested metrics are governed and their computed values verified against the trusted source</label>
@@ -295,7 +300,7 @@
 <p>Pick a report the team genuinely builds by hand today (the Day-0 conversation usually surfaced one). Build it as a playbook:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Create a playbook "[their report name]" that runs [their actual cadence]: [the report's actual contents — metrics, comparisons, breakdowns, using the governed definitions]. Match the structure of the current report. If the period's data is incomplete, say so rather than reporting partials as final. Deliver to [their actual channel/email].</pre></div>
-  <div class="yousee"><b>You'll see:</b> their report, automated, on their definitions. Run it manually now and put the output next to the hand-built version — that side-by-side is a readout exhibit. (Prompt discipline and the 3-preview rule: <b>Automation Deep-Dive</b>.)</div>
+  <div class="yousee"><b>You'll see:</b> their report, automated, on their definitions. Run it manually now and put the output next to the hand-built version — that side-by-side is a readout exhibit. (Prompt discipline and the 3-preview rule: <a href="../automation/index.html"><b>Automation Deep-Dive</b></a>.)</div>
 <h2>4.2 · The feed agent — watch their domain</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Create a feed agent "[Domain] Watch" that checks [their data] daily and posts ONLY when something material changes: [2–3 thresholds from their domain — a metric moving >X%, a new top-N entity, an anomaly]. One paragraph with the evidence. Silent otherwise.</pre></div>
@@ -303,12 +308,12 @@
 <h2>4.3 · The dashboard</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Build a dashboard for [the domain]: a KPI row using our three governed metrics with period-over-period deltas, the main trend chart, a breakdown table, and filters for [date range] and [their key dimension]. Default to [last closed period].</pre></div>
-  <div class="yousee"><b>You'll see:</b> a live dashboard on governed definitions (depending on workspace configuration, an admin may need to enable Dashboards). Verify the headline KPI against the trusted source before showing anyone — Day 5 demos only verified numbers. (Craft: <b>Dashboards &amp; Reporting</b>.)</div>
+  <div class="yousee"><b>You'll see:</b> a live dashboard on governed definitions (depending on workspace configuration, an admin may need to enable Dashboards). Verify the headline KPI against the trusted source before showing anyone — Day 5 demos only verified numbers. (Craft: <a href="../dashboards-reporting/index.html"><b>Dashboards &amp; Reporting</b></a>.)</div>
 <h2>4.4 · The role persona (if access control is in the evaluation)</h2>
 <p>With the restricted test login from Module 0:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>What data sources can I access, and what do you know about [a metric/folder the restricted role shouldn't see]?</pre></div>
-  <div class="yousee"><b>You'll see:</b> the restricted view — scoped connectors, and genuine unawareness of restricted context rather than a declined request. Then ask something the role <i>should</i> see and confirm it works. Both directions, witnessed by the security stakeholder if there is one. (Full model: <b>Admin &amp; Governance</b>.)</div>
+  <div class="yousee"><b>You'll see:</b> the restricted view — scoped connectors, and genuine unawareness of restricted context rather than a declined request. Then ask something the role <i>should</i> see and confirm it works. Both directions, witnessed by the security stakeholder if there is one. (Full model: <a href="../admin-governance/index.html"><b>Admin &amp; Governance</b></a>.)</div>
 <h2>4.5 · Stage Friday</h2>
 <p>End the day by assembling the demo path: the gauntlet table, one live warm question, the playbook side-by-side, the dashboard, the agent config, the persona flip. Dry-run it once — 15 minutes, no surprises.</p>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
@@ -340,7 +345,7 @@
 <p>Live questions only from the warm gauntlet — verified answers, no first-time prompts in front of executives.</p>
 <h2>5.4 · What production rollout looks like</h2>
 <p>Close with the sketch, not a vague "next steps":</p>
-<ol><li><b>Data</b>: production credentials and remaining sources (<b>Connect Your Data</b>); the data-gap misses name the priorities</li><li><b>Knowledge</b>: the misses backlog becomes the ontology roadmap (<b>Build Your Ontology</b> → <b>Ontology Operations</b> for the operating loop); golden tests pin the governed metrics (<b>Data Quality &amp; Validation Deep-Dive</b>)</li><li><b>People</b>: identity, roles, and access (<b>Admin &amp; Governance</b>); then user enablement by population (<b>Self-Service Analytics</b> for business users, the vertical workshops where they fit)</li><li><b>Rhythm</b>: the Day-4 automations move to production cadence (<b>Automation Deep-Dive</b>)</li></ol>
+<ol><li><b>Data</b>: production credentials and remaining sources (<a href="../connect-your-data/index.html"><b>Connect Your Data</b></a>); the data-gap misses name the priorities</li><li><b>Knowledge</b>: the misses backlog becomes the ontology roadmap (<b>Build Your Ontology</b> → <a href="../ontology-operations/index.html"><b>Ontology Operations</b></a> for the operating loop); golden tests pin the governed metrics (<a href="../data-quality/index.html"><b>Data Quality &amp; Validation Deep-Dive</b></a>)</li><li><b>People</b>: identity, roles, and access (<a href="../admin-governance/index.html"><b>Admin &amp; Governance</b></a>); then user enablement by population (<a href="../self-service-analytics/index.html"><b>Self-Service Analytics</b></a> for business users, the vertical workshops where they fit)</li><li><b>Rhythm</b>: the Day-4 automations move to production cadence (<a href="../automation/index.html"><b>Automation Deep-Dive</b></a>)</li></ol>
     <figure class="shot" data-todo="the Day 5 before/after readout table">
     <img src="assets/poc-d5-readout.png" alt="Day 5: success criteria, scored against Day 0." onerror="this.parentElement.classList.add('missing')">
     <figcaption>Day 5: success criteria, scored against Day 0.</figcaption>
@@ -354,7 +359,7 @@
 </section>
 
 <div class="pager" id="pager"></div>
-<footer class="pagefoot">© TextQL · Workshop: POC in a Week · Example prompts are illustrative — adapt them to your own data. · <a href="https://docs.google.com/spreadsheets/d/1p0fB8IHkeYvCZIwPkaR90zjktkAIWG5PH1PJK2ng1Mc" target="_blank" rel="noopener">Give feedback</a></footer>
+<footer class="pagefoot">© TextQL · Workshop: POC in a Week · Example prompts are illustrative — adapt them to your own data. · <a href="mailto:jacob@textql.com?subject=TextQL%20Workshops%20feedback">Give feedback</a></footer>
 </div></main>
 </div>
 

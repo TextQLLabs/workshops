@@ -178,6 +178,10 @@
 <li>A connected data source</li></ul>
 <div class="callout warn">API shapes follow the current reference at <a href="https://docs.textql.com/api-reference/v2/introduction" target="_blank">docs.textql.com</a>. Python SDK: <code>TextQLLabs/textql-python</code>. VPC deployments substitute their own host.</div>
 
+
+  <details><summary>For facilitators — running this as a guided session</summary><div class="body">
+    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
+  </div></details>
 </section>
 
 <section class="page" id="m0" data-title="Module 0 · Keys &amp; First Call" data-group="Getting Started" data-time="15 min">
@@ -437,6 +441,7 @@ get("/v2/sandbox/status"); post("/v2/sandbox/stop")</pre>
 <li><b>Specification-grade prompts</b> (1.4) — most "flaky AI" is under-specified questions.</li></ul>
 <h2>6.5 · Keep the audit trail connected</h2>
 <p>Every API chat is a real thread. Log the thread ID with your application events — when a user questions a number from three weeks ago, that ID is an immediate, full answer with SQL.</p>
+<div class="callout"><span class="label">Next step for product teams</span><p>Putting Ana inside your own application — scoped auth, embedded chat and dashboards, multi-tenant patterns — is the <a href="../embed-textql/index.html"><b>Embed TextQL</b></a> workshop.</p></div>
 <h2>You're done</h2>
 <p>Sync and streaming chat, resources as code, the sandbox, Ana in your IDE, MCP extensions, and production discipline.</p>
 
@@ -450,7 +455,7 @@ get("/v2/sandbox/status"); post("/v2/sandbox/stop")</pre>
 </section>
 
 <div class="pager" id="pager"></div>
-<footer class="pagefoot">© TextQL · Workshop: Developer Workshop — API & MCP · Example prompts are illustrative — adapt them to your own data. · <a href="https://docs.google.com/spreadsheets/d/1p0fB8IHkeYvCZIwPkaR90zjktkAIWG5PH1PJK2ng1Mc" target="_blank" rel="noopener">Give feedback</a></footer>
+<footer class="pagefoot">© TextQL · Workshop: Developer Workshop — API & MCP · Example prompts are illustrative — adapt them to your own data. · <a href="mailto:jacob@textql.com?subject=TextQL%20Workshops%20feedback">Give feedback</a></footer>
 </div></main>
 </div>
 

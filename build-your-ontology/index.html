@@ -185,6 +185,10 @@
   <div class="callout"><span class="label">Example data</span>
     <p>The example prompts target the workshop's demo datasets (see the <a href="#/reference">Datasets &amp; Document Sources</a> reference) and the example scenario in the companion repo, <a href="https://github.com/TextQLLabs/ontology-workshop-guide" target="_blank" rel="noopener">TextQLLabs/ontology-workshop-guide</a> (access is granted by the TextQL team — ask your TextQL contact if you can't open it). Swap in your own data sources and documents to run it for real.</p>
   </div>
+
+  <details><summary>For facilitators — running this as a guided session</summary><div class="body">
+    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
+  </div></details>
 </section>
 
 <!-- ════════════════ MODULE 0 ════════════════ -->
@@ -437,6 +441,7 @@
   <h1>Role-Based Access — One Ontology, Many Teams</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: serve multiple teams from one governed model — each with its own data scope and response style</span><span>🧭 Applies after either track — not Track B-only</span></div>
 
+  <p><i>This module is the taster — the full deep-dive (personal vs. role vs. org context, persona authoring, provisioning via SSO/SCIM, a six-persona template library) is the <a href="../context-stack/index.html"><b>Context Stack</b></a> workshop.</i></p>
   <p>The ontology is just files. The <b>behavioral context</b> — what Ana knows, how she responds, what she's allowed to touch — is also just files, in a <code>behaviors/</code> folder. Swap the context, swap the persona. The governed <code>.tql</code> underneath doesn't change.</p>
   <pre>behaviors/
   program_manager/
@@ -523,7 +528,7 @@
 </section>
 
 <div class="pager" id="pager"></div>
-<footer class="pagefoot">© TextQL · Workshop: Build Your Ontology, End to End · Example prompts are illustrative — adapt them to your own data. · <a href="https://docs.google.com/spreadsheets/d/1p0fB8IHkeYvCZIwPkaR90zjktkAIWG5PH1PJK2ng1Mc" target="_blank" rel="noopener">Give feedback</a></footer>
+<footer class="pagefoot">© TextQL · Workshop: Build Your Ontology, End to End · Example prompts are illustrative — adapt them to your own data. · <a href="mailto:jacob@textql.com?subject=TextQL%20Workshops%20feedback">Give feedback</a></footer>
 </div></main>
 </div>
 

@@ -161,7 +161,7 @@
 <section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
   <div class="kicker">Workshop</div>
   <h1>Self-Service Analytics</h1>
-  <div class="page-meta"><span>⏱️ About <b>2 hours</b> (or pick individual modules)</span><span>🎯 <b>No SQL</b>, no data background needed</span><span>💻 Just a web browser</span></div>
+  <div class="page-meta"><span>⏱️ <b>3–4 hours</b> end to end — or pick individual modules</span><span>🎯 <b>No SQL</b>, no data background needed</span><span>💻 A browser + a workspace login (see Before You Start)</span></div>
 
   <p>A hands-on workshop that teaches business users — <b>no SQL, no data engineering background</b> — how to answer their own questions, build their own charts and dashboards, and automate their own reporting with TextQL's analytics agent, <b>Ana</b>.</p>
   <p>It runs as short, hands-on modules, each with a goal, copy-paste prompts, what you'll see, and a checkpoint before moving on.</p>
@@ -191,6 +191,10 @@
   <div class="callout"><span class="label">A note on the examples</span>
     <p>The example prompts use a generic sales/usage framing so they work in most environments. The <b>method</b> is what matters — it generalizes to any domain. Building the governed semantic layer itself is covered in the companion <a href="https://github.com/TextQLLabs/ontology-workshop-guide" target="_blank" rel="noopener">ontology workshop</a>.</p>
   </div>
+
+  <details><summary>For facilitators — running this as a guided session</summary><div class="body">
+    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
+  </div></details>
 </section>
 
 <!-- ════════════════ MEET ANA ════════════════ -->
@@ -231,6 +235,10 @@
   <div class="kicker">Module 0</div>
   <h1>Setup &amp; Orientation</h1>
   <div class="page-meta"><span>⏱️ <b>10 min</b></span><span>🎯 Goal: signed in, connected to a data source, and oriented — so every later module is pure analysis</span></div>
+
+  <div class="callout warn"><span class="label">Before you start — the 2-minute gate</span>
+    <p>Confirm these five things now, so you don't stall at minute ten: (1) your login works; (2) you can see <b>New Thread</b>; (3) at least one <b>connector</b> appears under the "+" menu; (4) a test question ("how many rows in our main table?") returns an answer; (5) if any of these fail — stop and ask your workspace admin or TextQL contact <i>before</i> investing time. Everything past this point assumes a working, connected workspace.</p>
+  </div>
 
   <h2>0.1 · Sign in and start a thread</h2>
   <ol class="steps">
@@ -343,7 +351,7 @@
   <p>Trust also means knowing the limits.</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>What was our customer satisfaction score in 2015?</pre></div>
-  <div class="yousee"><b>You'll see:</b> if the data doesn't go back that far (or isn't tracked), Ana says so plainly — what's missing and what <i>would</i> be needed — rather than inventing a number. No data, no answer.</div>
+  <div class="yousee"><b>You'll see:</b> Ana typically says plainly what's missing and what <i>would</i> be needed, rather than inventing a number. If she does return an answer, that's your cue for the most important skill in this workshop: ask <i>"what data did you use for that?"</i> — verifying is Module 2's whole job.</div>
 
   <h2>1.5 · The question patterns that work best</h2>
   <table>
@@ -372,7 +380,7 @@
   <h1>Trusting the Answer</h1>
   <div class="page-meta"><span>⏱️ <b>15 min</b></span><span>🎯 Goal: verify how an answer was produced — defend the number in a meeting, challenge it when something looks off</span></div>
 
-  <p>This is the question every business user should ask — and the reason TextQL is built the way it is. <b>Every answer is auditable.</b></p>
+  <p>This is the question every business user should ask — and the reason TextQL is built the way it is. <b>Every answer is auditable.</b> (How your data team proves accuracy org-wide — golden datasets, drift alarms — is the <a href="../data-quality/index.html"><b>Data Quality &amp; Validation</b></a> workshop; your job here is the personal verification habit.)</p>
 
   <h2>2.1 · Open the work</h2>
   <p>Take any answer from Module 1 and expand the collapsed tool cells above it. You'll see the exact SQL that ran, the rows that came back, and any analysis code. You don't need to read SQL — but it's there, and your data team can review it in seconds.</p>
@@ -417,10 +425,10 @@
 </section>
 
 <!-- ════════════════ MODULE 3 ════════════════ -->
-<section class="page" id="m3" data-title="Module 3 · Visualize & Go Deeper" data-group="Hands-On Modules" data-time="20 min">
+<section class="page" id="m3" data-title="Module 3 · Visualize & Go Deeper" data-group="Hands-On Modules" data-time="30 min">
   <div class="kicker">Module 3</div>
   <h1>Visualize &amp; Go Deeper</h1>
-  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: turn answers into charts, and go beyond "what happened" into segmentation, trends, and "why"</span></div>
+  <div class="page-meta"><span>⏱️ <b>30 min</b> — long prompts run 2–4 min; fire one, read ahead while it works</span><span>🎯 Goal: turn answers into charts, and go beyond "what happened" into segmentation, trends, and "why"</span></div>
 
   <h2>3.1 · Your first chart</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
@@ -461,6 +469,10 @@
 <pre>Based on the trend, project [metric] for the next quarter. Show the range of uncertainty, and list the assumptions baked into the projection.</pre></div>
   <div class="yousee"><b>You'll see:</b> a forward projection with confidence bands and explicit assumptions — clearly labeled as a projection.</div>
 
+  <div class="callout"><span class="label">Go deeper</span>
+    <p>Charts, reports, and live dashboards as real products — publishing, filters, refresh, maintenance — get a full workshop: <a href="../dashboards-reporting/index.html"><b>Dashboards &amp; Reporting</b></a>.</p>
+  </div>
+
   <h2>Troubleshooting</h2>
   <table>
     <tr><th>Symptom</th><th>Fix</th></tr>
@@ -478,10 +490,10 @@
 </section>
 
 <!-- ════════════════ MODULE 4 ════════════════ -->
-<section class="page" id="m4" data-title="Module 4 · From Answers to Assets" data-group="Hands-On Modules" data-time="20 min">
+<section class="page" id="m4" data-title="Module 4 · From Answers to Assets" data-group="Hands-On Modules" data-time="30 min">
   <div class="kicker">Module 4</div>
   <h1>From Answers to Assets</h1>
-  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: turn a one-off analysis into something durable — a shareable report, a live dashboard, or an exportable file</span></div>
+  <div class="page-meta"><span>⏱️ <b>30 min</b> — dashboard builds take a few minutes; keep reading while they run</span><span>🎯 Goal: turn a one-off analysis into something durable — a shareable report, a live dashboard, or an exportable file</span></div>
 
   <h2>4.1 · Share the thread itself</h2>
   <p>Every thread has a shareable link — your analysis, charts, and the audit trail, in one place. Open a Module 3 thread, use the share option, and send it to a teammate.</p>
@@ -542,6 +554,9 @@
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Create a playbook called "[Team] Weekly Snapshot" that runs every Monday at 9am: [metric 1] and [metric 2] for last week vs the week before, the segment breakdown, and anything unusual flagged at the top. Email it to me.</pre></div>
   <div class="yousee"><b>You'll see:</b> the playbook created and visible under Playbooks in the sidebar. Confirm the schedule and delivery before relying on it.</div>
+  <div class="callout warn"><span class="label">Delivery prerequisites</span>
+    <p>Slack/Teams delivery requires the <b>org-wide integration</b> (admin, set up once) — no channel option means that's the missing piece. Email recipients must be <b>org members</b>; external addresses are silently dropped.</p>
+  </div>
   <figure class="shot" data-todo="a created playbook in the Playbooks list with its schedule">
     <img src="assets/m5-playbook.png" alt="A scheduled playbook" onerror="this.parentElement.classList.add('missing')">
     <figcaption>The Monday report that writes itself.</figcaption>
@@ -557,6 +572,10 @@
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Create a feed agent that keeps an eye on [your domain — e.g., "our sales pipeline" / "product usage" / "support tickets"]. Every morning, look for meaningful changes, anomalies, or trends worth knowing about, and post only when there's something genuinely interesting. Build on what you found in previous runs.</pre></div>
   <div class="yousee"><b>You'll see:</b> the agent created. Its posts appear in the Feed, where teammates can comment — and the agent responds.</div>
+
+  <div class="callout"><span class="label">Go deeper</span>
+    <p>Reliable prompts that survive autopilot, batch templates, delivery options, and operating your automations: the <a href="../automation/index.html"><b>Automation Deep-Dive</b></a> workshop.</p>
+  </div>
 
   <h2>5.4 · Playbook or feed agent?</h2>
   <table>
@@ -599,7 +618,7 @@
   <p>Remember the metric mismatch from Module 2? Make the right definition permanent.</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Our official definition of [metric] is: [definition — e.g., "active user = logged in AND took at least one action, excluding internal accounts"]. Save this to the ontology so it's used consistently from now on.</pre></div>
-  <div class="yousee"><b>You'll see:</b> a change proposal (patch) created for your org's context library — like a pull request for business logic. Once an admin approves, everyone's answers use your definition.</div>
+  <div class="yousee"><b>You'll see:</b> a change proposal (patch) created for your org's context library — like a pull request for business logic. Once an admin approves, everyone's answers use your definition. <i>In most sessions no approver is present — that's normal. After approval lands (ask your admin), re-ask your Module 2 reconciliation question and watch it route through your definition.</i></div>
   <div class="callout"><span class="label">Governed by design</span>
     <p>You propose, an owner approves, every change is versioned and revertible. That's why teaching the platform is safe.</p>
   </div>
@@ -616,7 +635,7 @@
   <h2>6.3 · Set your personal preferences</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Remember my preferences: I want concise answers with the headline number first; I work in [timezone]; when I say "my accounts" I mean accounts where I'm the owner; default time windows to the current quarter.</pre></div>
-  <div class="yousee"><b>You'll see:</b> your personal context file created/updated. Future threads pick it up automatically.</div>
+  <div class="yousee"><b>You'll see:</b> your personal context file created/updated. Future threads pick it up automatically. (Personal vs. role vs. org context — and full role personas — get their own workshop: <a href="../context-stack/index.html"><b>The Context Stack</b></a>.)</div>
 
   <h2>6.4 · Capture a recurring workflow</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
@@ -735,7 +754,7 @@
 
   <details><summary>Ana says she doesn't have the data I asked about.</summary><div class="body"><p>The data source may not be connected yet, or it wasn't attached to this thread (Module 0.2), or you may not have access. Note exactly what you asked and send it to your data team — requests like this drive what gets connected next.</p></div></details>
 
-  <details><summary>Will it make numbers up?</summary><div class="body"><p>No — missing data is reported as missing. You proved this yourself in Module 1.4. And every number that <i>is</i> answered comes with the full audit trail (Module 2).</p></div></details>
+  <details><summary>Will it make numbers up?</summary><div class="body"><p>Every number is <b>auditable</b> — that's the protection. Ana is designed to report missing data as missing (you tested this in Module 1.4), and when something looks off, you have the verification moves from Module 2: "How did you calculate that?", check the definition, challenge the result. Trust the audit trail, not blind faith — that's true of any analyst, human or AI.</p></div></details>
 
   <details><summary>My question is taking a while.</summary><div class="body"><p>Bigger questions (long time ranges, many breakdowns) take longer — Ana narrates what she's doing in the meantime. For a faster first pass, narrow the time window and broaden later.</p></div></details>
 
@@ -775,7 +794,7 @@
   <h2>Where to go from here</h2>
   <ul>
     <li><b>Use it for real this week.</b> Next time you'd file a ticket with the data team or dig through a dashboard, ask Ana first.</li>
-    <li><b>Create one playbook</b> for a question you answer repeatedly — adoption sticks when something useful arrives in your inbox Monday morning.</li>
+    <li><b>Create one playbook</b> for a question you answer repeatedly — adoption sticks when something useful arrives in your inbox Monday morning. Then go deeper: <a href="../dashboards-reporting/index.html"><b>Dashboards &amp; Reporting</b></a> and the <a href="../automation/index.html"><b>Automation Deep-Dive</b></a> pick up exactly where Modules 4–5 left off.</li>
     <li><b>For your data team:</b> the companion workshop, <a href="https://github.com/TextQLLabs/ontology-workshop-guide" target="_blank" rel="noopener">Build Your Ontology, End to End</a>, covers how the governed definitions behind today's answers are built and maintained.</li>
     <li><b>Feedback:</b> tell your TextQL team what was confusing and what data you wished you had — both directly shape your workspace.</li>
   </ul>
@@ -783,7 +802,7 @@
 </section>
 
 <div class="pager" id="pager"></div>
-<footer class="pagefoot">© TextQL · Workshop: Self-Service Analytics · Example prompts are illustrative — adapt them to your own data. · <a href="https://docs.google.com/spreadsheets/d/1p0fB8IHkeYvCZIwPkaR90zjktkAIWG5PH1PJK2ng1Mc" target="_blank" rel="noopener">Give feedback</a></footer>
+<footer class="pagefoot">© TextQL · Workshop: Self-Service Analytics · Example prompts are illustrative — adapt them to your own data. · <a href="mailto:jacob@textql.com?subject=TextQL%20Workshops%20feedback">Give feedback</a></footer>
 </div></main>
 </div>
 
