@@ -1,4 +1,4 @@
-# Screenshot shot list
+# Screenshot shot list — ✅ COMPLETE 2/2 (2026-06-13)
 
 Drop PNGs into `assets/` with these exact filenames and they appear automatically
 (placeholders show "coming soon" until the file exists). ~1280-1440px, light mode, demo data only.
