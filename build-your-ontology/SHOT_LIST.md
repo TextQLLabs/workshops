@@ -1,4 +1,4 @@
-# Screenshot shot list
+# Screenshot shot list — ✅ COMPLETE 1/1 (2026-06-13)
 
 Drop PNGs into `assets/` with these exact filenames and they appear in the guide automatically.
 Capture at ~1280-1440px, light mode, demo data only (Tuva/CMS demo sets — no customer data).
