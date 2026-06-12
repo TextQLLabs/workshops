@@ -204,7 +204,7 @@
   </table>
 
   <div class="callout"><span class="label">Standards alignment</span>
-    <p><code>STANDARDS.md</code> maps the model to the industry data models it aligns with (Tuva, OMOP, FHIR, X12). The starter is authored <b>Redshift-first</b> against a Tuva-shaped clinical+claims model (join key <code>person_id</code>), with BigQuery equivalents noted inline in each <code>.tql</code>.</p>
+    <p><code>STANDARDS.md</code> maps the model to the industry data models it aligns with (Tuva, OMOP, FHIR, X12). The starter is authored <b>Redshift-first</b> against a Tuva-shaped clinical+claims model (join key <code>person_id</code>), with BigQuery equivalents noted inline in each <code>.tql</code> — other warehouses (Databricks, Snowflake) adapt via the Module 2 validation pass, where Ana proposes dialect equivalents alongside schema fixes. For a deep technical tour of everything inside, read <code>DEEP_DIVE.md</code>.</p>
   </div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
@@ -275,6 +275,12 @@
     <p>Every customer's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those <i>before</i> you trust a number is the difference between a defensible metric and a debugging session in front of stakeholders.</p>
   </div>
 
+  <h2>2.3 · Know the reference-schema realities</h2>
+  <p>Even the starter's own demo schema teaches the lesson: there is <b>no <code>patient</code> table</b> (person demographics live on <code>eligibility</code>), and diagnosis/procedure codes live in <code>normalized_code</code>. The ontology already knows this — an un-governed agent typically mis-joins here. Expect the same kind of quirks in your warehouse, and let the dry run find them.</p>
+  <div class="callout"><span class="label">Different warehouse dialect?</span>
+    <p>The starter is authored Redshift-first with BigQuery equivalents inline. On <b>Databricks, Snowflake, or another engine</b>, extend the dry-run ask: <i>"…also flag any Redshift-specific SQL in the .tql surfaces and propose [dialect] equivalents."</i> Dialect adaptation rides the same PR loop as schema fixes.</p>
+  </div>
+
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Ana produced a concrete mismatch list (or confirmed a clean match)</label>
     <label><input type="checkbox"> The fixes landed as a PR you can review — not silent edits</label>
@@ -329,7 +335,10 @@
   <h2>4.4 · Utilization and risk</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Show inpatient utilization per 1,000 members for the last year, and then the comorbidity/RAF profile of our highest-cost decile. Cite the governed surfaces you used.</pre></div>
-  <div class="yousee"><b>You'll see:</b> utilization normalized the standard way, and risk wired to the official CMS HCC model — the numbers Finance, Quality, and Actuarial can all sign off on.</div>
+  <div class="yousee"><b>You'll see:</b> utilization normalized the standard way, and risk wired to the official CMS HCC model — including the HCC hierarchy (trumping) and a by-HCC breakdown of what drives the score.</div>
+  <div class="callout warn"><span class="label">Know what RAF means here</span>
+    <p>The governed surface computes the <b>diagnosis-driven HCC portion</b> of RAF. The full CMS RAF adds demographic (age/sex) and interaction terms — which require demographic fields your eligibility data may not carry. Ana will say so rather than fabricate; the decision record in <code>ontology/notes/</code> documents the scope.</p>
+  </div>
 
   <div class="callout"><span class="label">Why everyone gets the same number</span>
     <p>Metrics like PMPM and readmission can be computed several ways. The ontology pins one governed definition — with the decision recorded in <code>ontology/notes/</code> — so Finance and Quality stop disagreeing.</p>
@@ -371,12 +380,19 @@
   <h1>Validate the Numbers &amp; Make It Yours</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: pin known-correct values, then adapt the starter's definitions to your organization — in your repo</span></div>
 
-  <h2>6.1 · Run the golden queries</h2>
+  <h2>6.1 · Run the A/B test — vanilla vs. ontology</h2>
+  <p>The starter ships a measured proof: <code>validation/ab-test-vanilla-vs-ontology.md</code> — seven questions asked in two threads against the <b>same connector</b>, one with the ontology repo connected and one without, scored on <b>correct / consistent / traceable</b>. The governed answers are pre-filled from validated golden values.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Run the A/B test from validation/ab-test-vanilla-vs-ontology.md: I'll ask the seven questions in this thread (ontology connected). Answer each, cite the governed surface, and show the SQL — I'm scoring you on correct, consistent, and traceable.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the coded, multi-definition, and risk questions land exactly on the governed values, while the control question ("how many members total?") shows it's not magic — it's governance where governance matters. The headline: <i>correct on the hard ones, consistent across phrasings, traceable every time.</i></div>
+
+  <h2>6.2 · Run the golden queries</h2>
+  <p>The starter's golden values are already <b>pinned and verified</b> against the demo dataset (see <code>validation/golden-queries.md</code> and the end-to-end script in <code>validation/run-golden-queries.md</code>). Against <b>your</b> warehouse, re-pin them to numbers you trust:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Run the golden queries from validation/ against my warehouse. For each, compare to a reference number I trust and flag any drift. Where we differ, explain whether it's data, definition, or time-window.</pre></div>
   <div class="yousee"><b>You'll see:</b> accuracy checked, not asserted — and a triage of any mismatch into data vs. definition vs. window.</div>
 
-  <h2>6.2 · Customize a definition</h2>
+  <h2>6.3 · Customize a definition</h2>
   <p>Your organization inevitably defines something differently — a readmission exclusion, a line-of-business filter, a different risk-model year.</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Our official definition of [metric] differs from the starter: [your definition]. Update the governed surface in our repo, record the decision and the rejected default in a notes file, and open a PR. Add a golden-query test pinning a known value.</pre></div>
