@@ -160,8 +160,8 @@
 <section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
   <div class="kicker">Workshop</div>
   <h1>POC in a Week</h1>
-<p>A 5-day guided evaluation structure for <b>a customer data team and their champion</b> running a TextQL proof of concept — with or without an FDE alongside. The modules are <b>days, not topics</b>: prerequisites the week before, connect and baseline Monday, ontology Tuesday, the question loop finishes Wednesday, automation Thursday, readout Friday.</p>
-<p>The discipline that separates a real POC from a demo: <b>success criteria written down before anything is connected</b>, every question taken through the improvement loop — asked cold honestly, taught, verified — with both halves logged. The before/after scorecard is the whole argument.</p>
+<p>A 5-day guided evaluation structure for <b>a customer data team and their champion</b> running a TextQL proof of concept — with or without an FDE alongside. The modules are <b>phases mapped onto a five-day week</b> — a default pacing, not a rule: prerequisites the week before, connect and baseline Monday, ontology Tuesday, the question loop finishes Wednesday, automation Thursday, readout Friday.</p>
+<p>The habit that makes Friday's readout land: <b>success criteria written down before anything is connected</b>, every question taken through the improvement loop — asked cold honestly, taught, verified — with both halves logged. The before/after scorecard is the whole argument.</p>
 <h2>Who this is for</h2>
 <ul><li>Customer data teams evaluating TextQL hands-on</li><li>Champions who need a defensible Friday readout, not a vibes-based one</li><li>FDEs running structured evaluations (the facilitator guide doubles as your run-of-show)</li></ul>
 <h2>What you'll be able to do</h2>
@@ -169,7 +169,7 @@
 <h2>Workshop modules</h2>
 <table><tr><th>Module</th><th>Time</th></tr><tr><td>0 · Before Day 1: Prerequisites &amp; Success Criteria</td><td><code>00_BEFORE_DAY_1.md</code></td><td>~30 min, the week before</td></tr><tr><td>1 · Day 1: Connect &amp; Validate</td><td><code>01_DAY1_CONNECT.md</code></td><td>Day 1</td></tr><tr><td>2 · Day 2: Seed the Ontology</td><td><code>02_DAY2_ONTOLOGY.md</code></td><td>Day 2</td></tr><tr><td>3 · Day 3: The Question Gauntlet</td><td><code>03_DAY3_GAUNTLET.md</code></td><td>Day 3</td></tr><tr><td>4 · Day 4: Automate &amp; Wow</td><td><code>04_DAY4_AUTOMATE.md</code></td><td>Day 4</td></tr><tr><td>5 · Day 5: The Readout</td><td><code>05_DAY5_READOUT.md</code></td><td>Day 5</td></tr></table>
 <h2>How to use this workshop</h2>
-<ol><li><b>Do Module 0 the week before.</b> A POC that starts without written success criteria is a demo with extra steps.</li><li>One module per day, in order. Each day's output is the next day's input.</li><li>Swap <code>[bracketed]</code> placeholders for your systems, metrics, and team names.</li><li>Keep everything — the baseline answers, the misses log, the scores. Friday's readout is assembled from the week's artifacts, not written fresh.</li></ol>
+<ol><li><b>Do Module 0 the week before.</b> A POC that starts without written success criteria is a demo with extra steps.</li><li>Work the modules <b>in order</b>, but treat the day labels as default pacing, not law: two modules in a day is common, a three-day POC compresses fine (0+1 · 2+3 · 4+5), and more days just means more loop cycles.</li><li>Swap <code>[bracketed]</code> placeholders for your systems, metrics, and team names.</li><li>Keep everything — the baseline answers, the misses log, the scores. Friday's readout is assembled from the week's artifacts, not written fresh.</li></ol>
 
   <details><summary>For facilitators — running this as a guided session</summary><div class="body">
     <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
@@ -214,7 +214,7 @@
 
   <h3>The loop, per question</h3>
   <ol class="steps">
-    <li><b>Ask cold.</b> Fresh thread, question pasted verbatim, no steering. Record the answer and time — this is the floor, and it takes two minutes.</li>
+    <li><b>Ask cold.</b> Fresh thread, question pasted verbatim, no steering. Record the answer, the time, <b>and the steps Ana took</b> — did she explore the schema and traverse tables first, or answer directly? Exploration on a cold ask is normal; watching it shrink once context exists is part of the before/after.</li>
     <li><b>Score it now.</b> The named judge from Module 0 calls it against the trusted source — correct, partial, or miss — while it's fresh.</li>
     <li><b>Ask Ana what was missing.</b> Not you guessing — her diagnosing:</li>
     <li><b>Teach it.</b> Add the missing piece — a definition, a document, a table mapping — right now, in the thread or as a context proposal.</li>
@@ -228,7 +228,7 @@
 <pre>That answer was [wrong / incomplete / used the wrong definition — the correct answer is X per our trusted report]. Don't fix it yet: first tell me exactly what context you were missing — a definition, a document, a join, a table mapping — and where it should live so every future question gets it.</pre></div>
   <div class="prompt"><span class="tag">PROMPT — STEP 5 (VERIFY)</span><button>Copy</button>
 <pre>[The same question again, verbatim.] Cite the definition or context you used this time.</pre></div>
-  <div class="yousee"><b>You'll see:</b> the miss become a diagnosis, the diagnosis become context, and the same question come back correct — in one sitting, in front of the people who asked it. Log each cycle in the running table: <i>question · cold answer · cold ✓/✗ · what we taught · warm answer · warm ✓/✗ · time</i>.</div>
+  <div class="yousee"><b>You'll see:</b> the miss become a diagnosis, the diagnosis become context, and the same question come back correct — in one sitting, in front of the people who asked it. Log each cycle in the running table: <i>question · cold answer · cold ✓/✗ · time &amp; steps taken · what we taught · warm answer · warm ✓/✗ · warm time</i>.</div>
 
   <div class="callout"><span class="label">Why loop instead of batch</span>
     <p>The old pattern — run all ten cold, grade them, fix them two days later — measures the same floor but makes Day 1 feel like a failure parade, and the audience is people, not robots. The loop produces identical before/after evidence (every cycle logs both halves) with the opposite emotional arc: <b>value out of the gate, ten times in a row</b>. Misses are still the point — a question list with no misses was too soft — but a miss now lives for fifteen minutes, not two days.</p>
@@ -237,11 +237,6 @@
     <p>The loop only works if step 1 stays clean: verbatim question, fresh thread, no coaching before the first answer. Resist the urge to warm it up — the floor is what makes the ceiling impressive.</p>
   </div>
   <p>Get through <b>3–4 full cycles today</b>; carry the rest into Days 2–3. Deeper or recurring gaps (the same definition missing across questions) go to the Day-2 ontology work rather than one-off patches.</p>
-
-<figure class="shot" data-todo="one full Day-1 loop cycle: the cold answer and the verified fix, side by side">
-    <img src="assets/poc-d1-cold.png" alt="Day 1: one loop cycle — cold answer, taught, verified." onerror="this.parentElement.classList.add('missing')">
-    <figcaption>Day 1, one loop cycle: the honest cold answer — and the same question verified correct minutes later.</figcaption>
-  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> The warehouse is connected and the schema-visibility check passed (or grants are being fixed today)</label>
     <label><input type="checkbox"> 3–4 questions went through the full loop today: asked cold (once, no steering), scored, taught, verified</label>
@@ -266,8 +261,8 @@
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Govern these three metrics: [metric 1] means [the org's definition — source, filters, edge cases]; [metric 2] means [...]; [metric 3] means [...]. Save them as governed definitions, and confirm by computing each for [last closed period] so we can check against [trusted source].</pre></div>
   <div class="yousee"><b>You'll see:</b> the three definitions saved and computed — and the computed values checked against the trusted source <i>today</i>, by the judge. Governing a metric to the wrong value is worse than not governing it.</div>
-<h2>2.4 · Don't gold-plate</h2>
-<p>The temptation on Day 2 is to keep building — more entities, more notes, more polish. Stop at: entities mapped, glossary drafted, three metrics governed and verified. <b>The POC tests whether the loop works</b> (gaps found → knowledge added → answers improve), not whether a week can produce a complete ontology. Day 3's misses will tell you exactly what to add next; building speculatively today steals that signal.</p>
+<h2>2.4 · Keep going — it's iterative</h2>
+  <p>Three governed metrics is the floor, not the ceiling — you have the day, and ontology building is an <b>iterative loop, not a phase that ends</b>. Keep working down the question list: govern the next definition, add the note that explains the next entity, fold in another document. Two guardrails keep the iteration honest: tie each addition to a <b>real question from the list</b> (speculative polish steals the signal tomorrow's misses would give you), and verify each governed metric as you add it rather than batch-checking later.</p>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> The governed definitions created today are ACTIVE (approved/merged), not pending review — Day 3's warm run depends on it</label>
     <label><input type="checkbox"> The seeding path was chosen deliberately (pack-adapted or built from schema + documents)</label>
@@ -303,10 +298,6 @@
 <p><b>Fix the quick ones live and re-run those questions.</b> Watching a miss become a hit within the hour is the most persuasive moment of the week — it demonstrates the operating loop, which is what the customer is actually buying.</p>
 <h2>3.4 · The honesty principle</h2>
 <p>Carry the remaining misses into Friday's readout, labeled. An evaluation with documented misses and a working improvement loop is <i>more</i> credible than a flawless demo — every buyer has seen flawless demos, and knows what they're worth.</p>
-    <figure class="shot" data-todo="the assembled loop scorecard: cold vs taught vs consistency-check results">
-    <img src="assets/poc-d3-improvement loop.png" alt="Day 3: the loop finished and consistency-proven." onerror="this.parentElement.classList.add('missing')">
-    <figcaption>Day 3: the loop finished and consistency-proven.</figcaption>
-  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Every Day-0 question has completed the loop — asked, scored, taught where needed, verified</label>
     <label><input type="checkbox"> The consistency check passed: Day-1 fixes re-asked fresh, rephrased — same governed answer</label>
@@ -370,10 +361,6 @@
 <h2>5.4 · What production rollout looks like</h2>
 <p>Close with the sketch, not a vague "next steps":</p>
 <ol><li><b>Data</b>: production credentials and remaining sources (<a href="../connect-your-data/index.html"><b>Connect Your Data</b></a>); the data-gap misses name the priorities</li><li><b>Knowledge</b>: the misses backlog becomes the ontology roadmap (<b>Build Your Ontology</b> → <a href="../ontology-operations/index.html"><b>Ontology Operations</b></a> for the operating loop); golden tests pin the governed metrics (<a href="../data-quality/index.html"><b>Data Quality &amp; Validation Deep-Dive</b></a>)</li><li><b>People</b>: identity, roles, and access (<a href="../admin-governance/index.html"><b>Admin &amp; Governance</b></a>); then user enablement by population (<a href="../self-service-analytics/index.html"><b>Self-Service Analytics</b></a> for business users, the vertical workshops where they fit)</li><li><b>Rhythm</b>: the Day-4 automations move to production cadence (<a href="../automation/index.html"><b>Automation Deep-Dive</b></a>)</li></ol>
-    <figure class="shot" data-todo="the Day 5 before/after readout table">
-    <img src="assets/poc-d5-readout.png" alt="Day 5: success criteria, scored against Day 0." onerror="this.parentElement.classList.add('missing')">
-    <figcaption>Day 5: success criteria, scored against Day 0.</figcaption>
-  </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> The scorecard was presented first, scored against the Day-0 criteria verbatim</label>
     <label><input type="checkbox"> The before/after table and the labeled misses both made it into the pack</label>

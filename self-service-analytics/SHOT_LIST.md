@@ -1,9 +1,9 @@
 # Screenshot shot list — 9 of 10 captured (2026-06-12)
 
-✅ Captured: all except `m6-patch.png` — **held back from the public site**: the capture showed a
-real prospect path (`paypal_cto_intelligence/...`, "RealView" client reporting) plus internal
-emails. Recapture in a neutral demo tenant (synthetic org path, no employee emails), or have
-Claude redact the existing one.
+✅ All in-guide slots captured. The `m6-patch.png` slot was REMOVED from the guide (2026-06-13) —
+the capture showed a prospect path + internal emails and the module reads fine without it.
+Optional later: a 2-minute recapture of any pending patch in a neutral demo tenant restores the
+strongest governance visual — re-add the <figure> from git history if so.
 
 Drop PNGs into `assets/` with these exact filenames and they appear in the guide automatically
 (no HTML edits needed — placeholders show "Screenshot coming soon" until the file exists).

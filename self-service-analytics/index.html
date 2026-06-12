@@ -264,6 +264,21 @@
   <div class="callout warn"><span class="label">Heads up</span>
     <p>Connectors and tools are chosen <b>before the first message</b> of a thread. To change them later, start a new thread.</p>
   </div>
+  <details><summary>The demo dataset — guaranteed answers for every question in this guide</summary><div class="body">
+    <p>Running this as a demo, a guided session, or solo without your own data? Use the <b>TextQL demo connectors</b> — public datasets (SEC Company Filings, BLS Employment &amp; Wages, FRED Economic Indicators, NOAA Weather &amp; Climate) available in demo workspaces — and every pattern in this guide resolves cleanly. Swap the bracketed examples like this:</p>
+    <table>
+      <tr><th>Guide prompt</th><th>Demo-dataset version</th></tr>
+      <tr><td>Baseline control (0.5)</td><td>"How many companies are in the SEC filings data?"</td></tr>
+      <tr><td>First question (1.1)</td><td>"How many SEC filings were submitted last month? How does that compare to the month before?"</td></tr>
+      <tr><td>Break it down (2.1)</td><td>"Break that down by filing type — show the top 5."</td></tr>
+      <tr><td>The "why" (2.4)</td><td>"Which filing types drove the change? Dig one level deeper."</td></tr>
+      <tr><td>Chart (3.1)</td><td>"Show me quarterly revenue for the 5 most profitable companies as a chart."</td></tr>
+      <tr><td>Trust (4.1)</td><td>"How did you define 'most profitable'? Walk me through it."</td></tr>
+      <tr><td>Cross-source (3.6)</td><td>"Is there a relationship between unemployment (BLS) and SEC filing volume over the last two years?"</td></tr>
+      <tr><td>Playbook (5.1)</td><td>"Create a playbook: every Monday 9am, summarize last week's SEC filings by type and flag anything unusual. Email it to me."</td></tr>
+    </table>
+    <p>Facilitators: pre-run these once in the demo workspace the day before — the screenshots in this guide were captured against exactly this dataset, so what attendees see matches the pictures.</p>
+  </div></details>
   <div class="callout"><span class="label">No data connected yet?</span>
     <p>You need at least one connected data source for this workshop. If your workspace shows no connectors: <b>ask your workspace admin or TextQL contact</b> — they can connect a source or provision a <b>demo workspace with sample data</b> in minutes. (If you ARE the admin, the <a href="../connect-your-data/index.html">Connect Your Data</a> workshop covers every source type step by step.)</p>
   </div>
@@ -622,10 +637,6 @@
   <div class="callout"><span class="label">Governed by design</span>
     <p>You propose, an owner approves, every change is versioned and revertible. That's why teaching the platform is safe.</p>
   </div>
-  <figure class="shot" data-todo="a proposed ontology patch / change proposal awaiting approval">
-    <img src="assets/m6-patch.png" alt="A proposed definition patch" onerror="this.parentElement.classList.add('missing')">
-    <figcaption>A definition change proposed for review — a pull request for business logic.</figcaption>
-  </figure>
 
   <h2>6.2 · Teach it your vocabulary</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
