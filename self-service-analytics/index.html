@@ -256,6 +256,9 @@
   <div class="callout warn"><span class="label">Heads up</span>
     <p>Connectors and tools are chosen <b>before the first message</b> of a thread. To change them later, start a new thread.</p>
   </div>
+  <div class="callout"><span class="label">No data connected yet?</span>
+    <p>You need at least one connected data source for this workshop. If your workspace shows no connectors: <b>ask your workspace admin or TextQL contact</b> — they can connect a source or provision a <b>demo workspace with sample data</b> in minutes. (If you ARE the admin, the <a href="../connect-your-data/index.html">Connect Your Data</a> workshop covers every source type step by step.)</p>
+  </div>
 
   <h2>0.3 · Orientation — what's where</h2>
   <table>
@@ -281,6 +284,17 @@
     <figcaption>Ana's tour of your data — keep her suggested questions handy for Module 1.</figcaption>
   </figure>
 
+  <h2>0.5 · Baseline check — three test questions</h2>
+  <p>Before learning anything, benchmark your workspace. Ask these three and <b>write down the answers and how long each took</b> — you'll compare against them at the end of the workshop:</p>
+  <div class="prompt"><span class="tag">PROMPT 1 — THE CONTROL</span><button>Copy</button>
+<pre>How many [customers / members / orders] do we have in total?</pre></div>
+  <div class="yousee"><b>You'll see:</b> a simple count — both you and Ana should find this easy. If this fails, something's wrong with the connection: see Troubleshooting below.</div>
+  <div class="prompt"><span class="tag">PROMPT 2 — THE COMPARISON</span><button>Copy</button>
+<pre>What was [your main metric] last month, and how does it compare to the month before?</pre></div>
+  <div class="prompt"><span class="tag">PROMPT 3 — THE HARD ONE</span><button>Copy</button>
+<pre>[A question your team genuinely disagrees about or that takes an analyst a day — e.g. "What's our true customer churn rate this quarter?"] Tell me which definition you used.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the hard one is your <b>baseline</b>. Note the number AND the definition Ana assumed. By the wrap-up — after you've learned to refine, verify, and govern definitions — re-ask it and compare. That before/after is the whole point of the workshop.</div>
+
   <h2>Troubleshooting</h2>
   <table>
     <tr><th>Symptom</th><th>Fix</th></tr>
@@ -293,6 +307,7 @@
     <label><input type="checkbox"> You have a thread open with at least one connector attached</label>
     <label><input type="checkbox"> Ana answered the hello prompt with a real description of your data</label>
     <label><input type="checkbox"> You can see Threads, Dashboards, and Playbooks in the sidebar</label>
+    <label><input type="checkbox"> You ran the three baseline questions and noted the answers (especially the hard one's definition)</label>
   </div>
 </section>
 

@@ -164,7 +164,7 @@
   <div class="page-meta"><span>⏱️ About <b>2.5 hours</b></span><span>🎯 HCLS data teams — payers, providers, life sciences</span><span>📦 Starts from a pre-built ontology, not a blank page</span></div>
 
   <p>A hands-on workshop that takes you from <i>"I have this ontology repo and nothing else"</i> to <i>"I'm asking Ana governed questions about my own claims and clinical data"</i> — mostly without leaving the Ana chat window.</p>
-  <p>The <b>Healthcare &amp; Life Sciences Starter Pack</b> is a pre-built, governed ontology over healthcare data — members, claims, encounters, diagnoses, procedures, drugs, cost, utilization, quality, and risk. It's <b>just files</b> (Markdown + <code>.tql</code>) in a git repo. You'll connect it to Ana and your warehouse, validate it against your schema, and make it yours.</p>
+  <p>The <b>Healthcare &amp; Life Sciences Starter Pack</b> is a pre-built, governed ontology over healthcare data — members, claims, encounters, diagnoses, procedures, drugs, cost, utilization, quality, and risk. It's <b>just files</b> (Markdown + <code>.tql</code>) in a git repo: <a href="https://github.com/TextQLLabs/ontology-healthcare-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-healthcare-starter</code></a> — <b>your TextQL team grants access and sets up your own fork</b> (your adaptations live in your fork; the template stays pristine). You'll connect it to Ana and your warehouse, validate it against your schema, and make it yours.</p>
 
   <h2>What you'll do</h2>
   <div class="hero-grid">
@@ -221,7 +221,7 @@
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat</span></div>
 
   <h2>1.1 · Connect the ontology repo to Ana</h2>
-  <p>This is the key step. In TextQL, add a <b>Git connector</b> and point it at your fork of the starter repo. Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every coding rule — as a reference she reads on demand.</p>
+  <p>This is the key step. In TextQL, add a <b>Git connector</b> and point it at <b>your fork</b> of the starter repo (<a href="https://github.com/TextQLLabs/ontology-healthcare-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-healthcare-starter</code></a> — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every coding rule — as a reference she reads on demand.</p>
   <div class="callout"><span class="label">No second source of truth</span>
     <p>You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.</p>
   </div>
@@ -257,19 +257,21 @@
   <h1>Validate the Model Against Your Schema</h1>
   <div class="page-meta"><span>⏱️ <b>25 min</b></span><span>🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — without writing SQL</span></div>
 
-  <h2>2.1 · The dry run</h2>
+  <h2>2.1 · The dry run — required</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Look at the ontology repo, then inspect my warehouse. Pull the information schema for my claims tables and tell me where the ontology's expected table and column names don't match what I actually have. Propose the exact changes to ontology/schema.tql.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names. (A ready-made version of this check lives in <code>validation/dry-run-prompt.md</code>.)</div>
 
-  <h2>2.2 · Run the validator — required, not optional</h2>
-  <p>The dry run is discovery; <code>validation/validate_tql.py</code> is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles.</p>
-  <pre>python3 validation/validate_tql.py              # static: every ${ref} resolves — no warehouse needed
-python3 validation/validate_tql.py --check-sql  # paste the output into Ana: rows = missing columns
-python3 validation/validate_tql.py --dsn "&lt;dsn&gt;" --explain   # live column check + compile test</pre>
-  <div class="yousee"><b>You'll see:</b> the typo'd-backing, wrong-alias, and missing-column bug classes caught here — instead of surfacing as wrong numbers in front of stakeholders. Fix and re-run until clean: column renames go in the affected <code>.tql</code>; table renames go in <code>schema.tql</code> only.</div>
+  <h2>2.2 · Run the validator — required</h2>
+  <p>The dry run is discovery; <code>validation/validate_tql.py</code> is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles. <b>Ana runs it for you</b> — no terminal needed:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Run validation/validate_tql.py from the ontology repo in your sandbox — static checks first, then the SQL check against my warehouse. Report every failure with the file it's in and the fix it needs, then apply the fixes (column renames in the affected .tql, table renames in schema.tql only) and re-run until clean.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the typo'd-backing, wrong-alias, and missing-column bug classes caught here — instead of surfacing as wrong numbers in front of stakeholders.</div>
+  <div class="callout"><span class="label">Prefer the terminal?</span>
+    <p>The same gate runs locally: <code>python3 validation/validate_tql.py</code> (static — no warehouse needed) · <code>--check-sql</code> (paste the output into Ana: rows = missing columns) · <code>--dsn "&lt;dsn&gt;" --explain</code> (live column check + compile test).</p>
+  </div>
 
-  <h2>2.3 · Apply the fixes as a PR</h2>
+  <h2>2.3 · Apply the fixes as a PR — required</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Make those changes and open a pull request.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana edit the files and open a reviewable PR in <b>your</b> repo. Every physical table name lives in one place (<code>ontology/schema.tql</code>) — re-point it and the metric logic stays put. If you have a real member/patient table, point <code>person_grain</code> at it: one line.</div>
@@ -282,10 +284,17 @@ python3 validation/validate_tql.py --dsn "&lt;dsn&gt;" --explain   # live column
     <p>Every customer's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those <i>before</i> you trust a number is the difference between a defensible metric and a debugging session in front of stakeholders.</p>
   </div>
 
-  <h2>2.4 · Decide your claim grain &amp; verify your joins</h2>
-  <p>Two decisions shape everything downstream. <b>Claim grain:</b> is your model wide (one row per line, header flattened on) or normalized header/line/event? Read <code>ontology/notes/claim-grain.md</code> and decide which table anchors claims <i>before</i> editing anything. <b>Joins:</b> for each join you'll rely on, verify the key exists on both sides, the overlap rate, and the grain (1:1 vs 1:N) per <code>ontology/notes/join-key-verification.md</code> — record verdicts in <code>databases/&lt;yourschema&gt;/README.md</code> (copy the <code>databases/tuva/</code> folder as your template).</p>
-  <p>Even the starter's own demo schema teaches the lesson: there is <b>no <code>patient</code> table</b> (person demographics live on <code>eligibility</code>), and diagnosis/procedure codes live in <code>normalized_code</code>. The ontology already knows this — an un-governed agent typically mis-joins here. Expect the same kind of quirks in your warehouse.</p>
-  <p>Last, fix the <b>dataset-specific literals</b> the validator can't know (all flagged inline in the <code>.tql</code>): <code>encounter_type</code> values, <code>normalized_code_type</code> spelling, and the cost basis default (<code>charge</code> vs <code>allowed</code> vs <code>paid</code>) — each comes straight from a dry-run question.</p>
+  <h2>2.4 · Decide your claim grain &amp; verify your joins — required</h2>
+  <p>Two decisions shape everything downstream, and both are prompts:</p>
+  <div class="prompt"><span class="tag">PROMPT — CLAIM GRAIN</span><button>Copy</button>
+<pre>Read ontology/notes/claim-grain.md, then inspect my claims tables. Is our model wide (one row per line, header flattened on) or normalized header/line/event? Recommend which table anchors claims, where the cost columns live, and how the member key is reached — and record the decision in databases/[ourschema]/README.md (copy databases/tuva/ as the template).</pre></div>
+  <div class="yousee"><b>You'll see:</b> the grain decision made and written down <i>before</i> anything gets edited — it shapes every other step.</div>
+  <div class="prompt"><span class="tag">PROMPT — JOIN VERIFICATION</span><button>Copy</button>
+<pre>Per ontology/notes/join-key-verification.md, verify every join the ontology relies on against my warehouse: does the key exist on both sides, what's the overlap rate, and is the grain 1:1 or 1:N? Record each verdict in databases/[ourschema]/README.md and flag any join we shouldn't trust.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a join-by-join verdict list. Even the starter's own demo schema teaches the lesson — there's <b>no <code>patient</code> table</b> (demographics live on <code>eligibility</code>) and codes live in <code>normalized_code</code>. Expect quirks like these in yours.</div>
+  <div class="prompt"><span class="tag">PROMPT — DATASET LITERALS</span><button>Copy</button>
+<pre>Find the dataset-specific literals flagged inline in the .tql files — encounter_type values, normalized_code_type spelling, and the cost basis default (charge vs allowed vs paid) — check each against what's actually in my warehouse, and propose the corrections in the same PR.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the enumerations the validator can't know, corrected from your real data instead of assumed.</div>
   <div class="callout"><span class="label">The full checklist</span>
     <p>This module covers the core; <code>MIGRATION.md</code> is the complete 8-step re-point (discover → grain → schema.tql → joins → validator → literals → governance → glossary → goldens). Half a day with warehouse access; most of it is verification, not editing.</p>
   </div>
@@ -313,8 +322,13 @@ python3 validation/validate_tql.py --dsn "&lt;dsn&gt;" --explain   # live column
 <pre>Using the ontology's terminology layer, show me which CCSR category my top 10 most frequent diagnosis codes fall into. Explain how you joined the crosswalk without writing to the warehouse.</pre></div>
   <div class="yousee"><b>You'll see:</b> raw ICD-10 codes resolved to meaningful clinical categories, with the join-in-sandbox pattern explained.</div>
 
-  <h2>3.2 · (Optional) Refresh or extend the reference data</h2>
-  <p>When standards versions update, <code>reference/terminology/load_terminology.py</code> re-downloads CCSR / CMS-HCC / GEMs and regenerates the CSVs. For certified <b>VSAC value sets</b>, <code>fetch_vsac.py</code> hydrates them with your own UMLS key — the repo commits the <b>OIDs</b>, not the licensed codes (see <code>LICENSING.md</code>).</p>
+  <h2>3.2 · Refresh or extend the reference data — optional</h2>
+  <p><b>You don't need this on day one</b> — the current crosswalks are already committed. Come back when a standards version updates (CCSR/CMS-HCC release annually) or when you need certified VSAC value sets. And you don't run the scripts yourself — Ana does:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>The terminology standards have a new release. Run reference/terminology/load_terminology.py in your sandbox to re-download CCSR / CMS-HCC / GEMs and regenerate the CSVs, then open a PR with the refreshed files and a summary of what changed between versions.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT — VSAC (NEEDS YOUR UMLS KEY)</span><button>Copy</button>
+<pre>Using fetch_vsac.py with our UMLS API key [key], hydrate the VSAC value sets registered in value-sets.json. Confirm we're committing only the OIDs, not the licensed codes, per LICENSING.md.</pre></div>
+  <div class="yousee"><b>You'll see:</b> refreshed reference tables arriving as a reviewable PR — same governance motion as everything else.</div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> A grouper question worked against your data with no warehouse writes</label>
