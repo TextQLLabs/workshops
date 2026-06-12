@@ -199,12 +199,12 @@
     <tr><td><b>2 — Metrics</b></td><td><code>ontology/queries/</code></td><td>Governed surfaces: PMPM, readmission, prevalence, comorbidity/RAF, utilization/1000, Rx adherence, HEDIS template.</td></tr>
     <tr><td><b>3 — Terminology</b></td><td><code>ontology/dimensions/</code>, <code>filters/</code>, <code>reference/terminology/</code></td><td><b>The heart.</b> ICD-10 hierarchy + groupers (CCSR, CMS-HCC, CCW) as dimensions, filters &amp; committed crosswalks.</td></tr>
     <tr><td><b>4 — Governance &amp; PHI</b></td><td><code>ontology/notes/governance-phi.md</code>, <code>config/org_context.md</code></td><td>HIPAA minimum-necessary, &lt;11 suppression, 42 CFR Part 2.</td></tr>
-    <tr><td><b>5 — Decision records</b></td><td><code>ontology/notes/</code></td><td>Why each metric is defined the way it is; canonical grouper per question.</td></tr>
-    <tr><td><b>6 — Validation</b></td><td><code>validation/</code></td><td>Golden queries with pinned, verified values; the dry-run + seed-test playbooks.</td></tr>
+    <tr><td><b>5 — Decision records</b></td><td><code>ontology/notes/</code></td><td>Why each metric is defined the way it is; canonical grouper per question; the glossary, claim-grain, and join-verification guides.</td></tr>
+    <tr><td><b>6 — Validation</b></td><td><code>validation/</code></td><td><code>validate_tql.py</code> (every surface checked against your live schema + compiled), golden queries with pinned values, the dry-run + A/B playbooks.</td></tr>
   </table>
 
   <div class="callout"><span class="label">Standards alignment</span>
-    <p><code>STANDARDS.md</code> maps the model to the industry data models it aligns with (Tuva, OMOP, FHIR, X12). The starter is authored <b>Redshift-first</b> against a Tuva-shaped clinical+claims model (join key <code>person_id</code>), with BigQuery equivalents noted inline in each <code>.tql</code> — other warehouses (Databricks, Snowflake) adapt via the Module 2 validation pass, where Ana proposes dialect equivalents alongside schema fixes. For a deep technical tour of everything inside, read <code>DEEP_DIVE.md</code>.</p>
+    <p><code>STANDARDS.md</code> maps the model to the industry data models it aligns with (Tuva, OMOP, FHIR, X12). The semantic layer (metrics, routing, terminology) is <b>fully separated from the physical mapping</b>: every physical table name lives in <b>one file</b>, <code>ontology/schema.tql</code> — re-point it and the metric logic stays put. The starter is authored Redshift-first with BigQuery equivalents inline; <code>MIGRATION.md</code> is the 8-step re-point checklist and works the same for commercial, Medicare, or Medicaid warehouses on Redshift, BigQuery, Snowflake, or <b>Databricks</b> (budget: about a half-day with warehouse access). For a deep technical tour, read <code>DEEP_DIVE.md</code>.</p>
   </div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
@@ -262,10 +262,17 @@
 <pre>Look at the ontology repo, then inspect my warehouse. Pull the information schema for my claims tables and tell me where the ontology's expected table and column names don't match what I actually have. Propose the exact changes to ontology/schema.tql.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names. (A ready-made version of this check lives in <code>validation/dry-run-prompt.md</code>.)</div>
 
-  <h2>2.2 · Apply the fixes as a PR</h2>
+  <h2>2.2 · Run the validator — required, not optional</h2>
+  <p>The dry run is discovery; <code>validation/validate_tql.py</code> is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles.</p>
+  <pre>python3 validation/validate_tql.py              # static: every ${ref} resolves — no warehouse needed
+python3 validation/validate_tql.py --check-sql  # paste the output into Ana: rows = missing columns
+python3 validation/validate_tql.py --dsn "&lt;dsn&gt;" --explain   # live column check + compile test</pre>
+  <div class="yousee"><b>You'll see:</b> the typo'd-backing, wrong-alias, and missing-column bug classes caught here — instead of surfacing as wrong numbers in front of stakeholders. Fix and re-run until clean: column renames go in the affected <code>.tql</code>; table renames go in <code>schema.tql</code> only.</div>
+
+  <h2>2.3 · Apply the fixes as a PR</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Make those changes and open a pull request.</pre></div>
-  <div class="yousee"><b>You'll see:</b> Ana edit the files and open a reviewable PR in <b>your</b> repo. Table backings live in one place (<code>ontology/schema.tql</code>) — repoint them and the metric logic stays put.</div>
+  <div class="yousee"><b>You'll see:</b> Ana edit the files and open a reviewable PR in <b>your</b> repo. Every physical table name lives in one place (<code>ontology/schema.tql</code>) — re-point it and the metric logic stays put. If you have a real member/patient table, point <code>person_grain</code> at it: one line.</div>
   <figure class="shot" data-todo="the schema-validation PR Ana opened, showing the schema.tql diff">
     <img src="assets/hc-m2-pr.png" alt="Schema validation PR" onerror="this.parentElement.classList.add('missing')">
     <figcaption>Validation lands as a reviewable PR — not silent edits.</figcaption>
@@ -275,8 +282,13 @@
     <p>Every customer's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those <i>before</i> you trust a number is the difference between a defensible metric and a debugging session in front of stakeholders.</p>
   </div>
 
-  <h2>2.3 · Know the reference-schema realities</h2>
-  <p>Even the starter's own demo schema teaches the lesson: there is <b>no <code>patient</code> table</b> (person demographics live on <code>eligibility</code>), and diagnosis/procedure codes live in <code>normalized_code</code>. The ontology already knows this — an un-governed agent typically mis-joins here. Expect the same kind of quirks in your warehouse, and let the dry run find them.</p>
+  <h2>2.4 · Decide your claim grain &amp; verify your joins</h2>
+  <p>Two decisions shape everything downstream. <b>Claim grain:</b> is your model wide (one row per line, header flattened on) or normalized header/line/event? Read <code>ontology/notes/claim-grain.md</code> and decide which table anchors claims <i>before</i> editing anything. <b>Joins:</b> for each join you'll rely on, verify the key exists on both sides, the overlap rate, and the grain (1:1 vs 1:N) per <code>ontology/notes/join-key-verification.md</code> — record verdicts in <code>databases/&lt;yourschema&gt;/README.md</code> (copy the <code>databases/tuva/</code> folder as your template).</p>
+  <p>Even the starter's own demo schema teaches the lesson: there is <b>no <code>patient</code> table</b> (person demographics live on <code>eligibility</code>), and diagnosis/procedure codes live in <code>normalized_code</code>. The ontology already knows this — an un-governed agent typically mis-joins here. Expect the same kind of quirks in your warehouse.</p>
+  <p>Last, fix the <b>dataset-specific literals</b> the validator can't know (all flagged inline in the <code>.tql</code>): <code>encounter_type</code> values, <code>normalized_code_type</code> spelling, and the cost basis default (<code>charge</code> vs <code>allowed</code> vs <code>paid</code>) — each comes straight from a dry-run question.</p>
+  <div class="callout"><span class="label">The full checklist</span>
+    <p>This module covers the core; <code>MIGRATION.md</code> is the complete 8-step re-point (discover → grain → schema.tql → joins → validator → literals → governance → glossary → goldens). Half a day with warehouse access; most of it is verification, not editing.</p>
+  </div>
   <div class="callout"><span class="label">Different warehouse dialect?</span>
     <p>The starter is authored Redshift-first with BigQuery equivalents inline. On <b>Databricks, Snowflake, or another engine</b>, extend the dry-run ask: <i>"…also flag any Redshift-specific SQL in the .tql surfaces and propose [dialect] equivalents."</i> Dialect adaptation rides the same PR loop as schema fixes.</p>
   </div>
@@ -358,12 +370,25 @@
 
   <p>Layer 4 makes compliance the default, not an add-on: HIPAA <b>minimum-necessary</b> framing, the CMS <b>small-cell (&lt;11) suppression</b> rule, and <b>sensitive-diagnosis gating</b> (42 CFR Part 2). The behavior lives in <code>ontology/notes/governance-phi.md</code> and <code>config/org_context.md</code> — files you can read, review, and adapt.</p>
 
-  <h2>5.1 · Test the small-cell rule</h2>
+  <h2>5.1 · Inventory your identifiers — day one</h2>
+  <p><code>governance-phi.md</code> §0 classifies every direct identifier in the connected schema into exactly one role — and the key distinction is that <b>using an identifier as a join key is not the same as outputting it</b>:</p>
+  <table>
+    <tr><th>Identifier</th><th>Role</th></tr>
+    <tr><td>Member/subscriber/beneficiary IDs (<code>member_id</code>, <code>mbi</code>, <code>mrn</code>)</td><td><b>Join key only</b> — never in an output column, chart, label, or log</td></tr>
+    <tr><td>Names, SSN, full DOB, phone, email, address</td><td><b>Never output</b> (DOB may be used internally for age math; only age/age-band leaves)</td></tr>
+    <tr><td>ZIP code</td><td><b>Aggregate only</b> — first 3 digits max, and only where the area &gt; 20,000 people</td></tr>
+    <tr><td>Surrogate keys (<code>person_id</code>)</td><td>Join key; output only in explicitly authorized member-level views — a stable pseudonym is still an identifier</td></tr>
+  </table>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Inventory every direct identifier in the connected schema and classify each per governance-phi.md section 0: join-key-only, never-output, or aggregate-only. Flag anything ambiguous for compliance review.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a per-column classification your compliance team signs off on — the rules are templates tuned to <i>your</i> regime, and they can be tightened freely but never loosened without a reviewed, attributable decision.</div>
+
+  <h2>5.2 · Test the small-cell rule</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Break down [a rare condition] prevalence by county. Apply our suppression rules and tell me what you suppressed and why.</pre></div>
-  <div class="yousee"><b>You'll see:</b> cells under 11 suppressed with an explanation — the CMS rule applied automatically, not remembered by the analyst.</div>
+  <div class="yousee"><b>You'll see:</b> cells under <code>min_cell_size</code> suppressed with an explanation — including complementary cells that would let someone back out a suppressed value. The starter default is <b>11</b> (the CMS standard), configured in <code>config/org_context.md</code>; common alternatives are 10 (some state agencies) or 30 (some internal policies).</div>
 
-  <h2>5.2 · Test sensitive-diagnosis gating</h2>
+  <h2>5.3 · Test sensitive-diagnosis gating</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Show me member-level detail for [a 42 CFR Part 2-protected category].</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana decline or constrain the request per the gating rules — and point to the policy file that governs it.</div>
@@ -397,6 +422,12 @@
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Our official definition of [metric] differs from the starter: [your definition]. Update the governed surface in our repo, record the decision and the rejected default in a notes file, and open a PR. Add a golden-query test pinning a known value.</pre></div>
   <div class="yousee"><b>You'll see:</b> the change land as a reviewable PR <b>in your repo</b> — the template stays pristine upstream; your adaptations are yours.</div>
+
+  <h2>6.4 · Localize the vocabulary</h2>
+  <p><code>ontology/notes/glossary.md</code> holds the canonical claims terms — member, member-month, claim, encounter, charge vs allowed vs paid, denial — each with a <b>line-of-business variance column</b> flagging where commercial, Medicare, and Medicaid deployments diverge (retroactive Medicaid eligibility, MA encounter completeness, HHS-HCC/CDPS instead of CMS-HCC…).</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Walk the glossary's LOB-variance column for our line of business ([commercial / Medicare / Medicaid]). For each term that differs at our org, propose the override in glossary.md — keep the term → definition → source pattern — and open it as one PR.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the vocabulary localized in one reviewable pass — so "member month" and "allowed amount" mean <i>your</i> org's thing, everywhere, from now on.</div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Golden queries ran; any drift was triaged (data / definition / window)</label>
