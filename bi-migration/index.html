@@ -222,6 +222,9 @@
   <div class="yousee"><b>You'll see:</b> conflicts quantified (the gap is often material — that's <i>why</i> teams argued) and resolved into one governed definition plus named variants. <b>Frame this as the migration's dividend, not its cost:</b> these conflicts existed all along, baked into different dashboards; the migration is simply the first time anyone reconciled them.</div>
 <h2>1.4 · Commit through review</h2>
 <p>Propose the metric set as ontology patches for review — definitions this load-bearing go through the approval flow, with the metric's business owner (not just the engineer) signing off on each contested decision. The deeper build mechanics — <code>.tql</code> surfaces, folder structure, git sync — live in <b>Build Your Ontology, End to End</b> and <b>Ontology Operations</b>; this module's job is getting the <i>decisions</i> made and recorded.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Propose the governed metric set from this thread as ontology patches for review — one patch per metric, each with the definition, source logic, translation notes, and the recorded rationale for any contested decision. Route the contested ones to [the metric's business owner] for review.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the patches created and queued for approval — the decisions recorded where the review flow (and future audits) can find them.</div>
 <table><tr><th>Symptom</th><th>Fix</th></tr><tr><td>Two tools define a metric differently</td><td>Not a bug — reconciliation work; quantify the gap, decide, record (1.3)</td></tr><tr><td>Translated metric returns different numbers than the old tool</td><td>Check for tool-side defaults the translation dropped (1.2's callouts); full triage in Module 3</td></tr><tr><td>Metric owner unclear</td><td>The dashboard owner from Module 0's inventory is your starting point</td></tr></table>
     <figure class="shot" data-todo="Ana proposing ontology metrics from LookML/BI definitions">
     <img src="assets/bi-m1-translate.png" alt="The semantic layer, translated with decisions recorded." onerror="this.parentElement.classList.add('missing')">
@@ -288,6 +291,9 @@
 <p>A migration that silently reproduces a wrong number for compatibility has failed at the one thing it was for.</p>
 <h2>3.4 · Keep the suite running</h2>
 <p>The parity table is also your post-cutover drift alarm: schedule it as a recurring check (the golden-suite playbook pattern — built out fully in the <b>Data Quality &amp; Validation Deep-Dive</b>, with the ongoing operating discipline in <b>Ontology Operations</b>). Parity isn't a one-time gate; it's a standing guarantee.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Create a playbook "Parity Suite" that re-runs the golden parity table [weekly] and posts the results to [#migration-channel], flagging any metric whose old-vs-new difference exceeds [0.5%]. Closed periods only, same as the original table.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the parity suite scheduled — drift now announces itself instead of waiting to be discovered.</div>
     <figure class="shot" data-todo="a parity test comparing old-BI numbers to governed answers">
     <img src="assets/bi-m3-parity.png" alt="Parity proven, mismatches triaged." onerror="this.parentElement.classList.add('missing')">
     <figcaption>Parity proven, mismatches triaged.</figcaption>

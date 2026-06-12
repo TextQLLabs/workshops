@@ -316,7 +316,8 @@ for asset in chat.assets:
 <p>During streaming (Module 2), preview URLs arrive as events — render placeholders live, then hydrate from the completed chat for the persistent view.</p>
 <h2>3.2 · Numbers as product data, not prose</h2>
 <p>For product features that need <i>the number</i> (a KPI card, a badge) rather than a conversation, shape the request so the answer is machine-consumable — the specification-grade prompting from the <b>Developer Workshop</b>, Module 1.4, applied to embeds:</p>
-<div class="callout">Total [metric] for the last complete month vs the prior month. Answer as JSON: {"value": n, "prior": n, "change_pct": n} and nothing else.</div>
+<div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Total [metric] for the last complete month vs the prior month. Answer as JSON: {"value": n, "prior": n, "change_pct": n} and nothing else.</pre></div>
 <p>Parse defensively (it's a model, not an RPC — validate the shape, fall back to displaying prose if parsing fails), and cache aggressively: a KPI card asked identically by every visitor is the canonical caching case (Module 6).</p>
 <h2>3.3 · Reports and the standalone HTML option</h2>
 <p>For report-shaped outputs, two embedding-friendly forms:</p>

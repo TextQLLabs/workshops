@@ -168,7 +168,7 @@
 <h2>What you'll be able to do</h2>
 <table><tr><th>After module</th><th>You can...</th></tr><tr><td>0</td><td>Map your customer data (CRM, usage, support, billing) into one vocabulary</td></tr><tr><td>1</td><td>Pull a full account health snapshot in one prompt, and rank your book by risk</td></tr><tr><td>2</td><td>Generate deck-ready QBR prep in minutes instead of hours</td></tr><tr><td>3</td><td>Spot churn signals early and decompose why health changed</td></tr><tr><td>4</td><td>See upcoming renewals with risk flags and rank expansion whitespace</td></tr><tr><td>5</td><td>Automate a weekly per-account book report and a trajectory-change watcher</td></tr></table>
 <h2>Workshop modules</h2>
-<table><tr><th>Module</th><th>File</th><th>Time</th></tr><tr><td>0 · Map Your Customer Data</td><td><code>00_MAP_CUSTOMER_DATA.md</code></td><td>10 min</td></tr><tr><td>1 · The Account Health Snapshot</td><td><code>01_HEALTH_SNAPSHOT.md</code></td><td>15 min</td></tr><tr><td>2 · QBR Prep That Writes Itself</td><td><code>02_QBR_PREP.md</code></td><td>15 min</td></tr><tr><td>3 · Churn Signals &amp; Root Cause</td><td><code>03_CHURN_SIGNALS.md</code></td><td>15 min</td></tr><tr><td>4 · Renewal &amp; Expansion</td><td><code>04_RENEWAL_EXPANSION.md</code></td><td>15 min</td></tr><tr><td>5 · Automate the Book of Business</td><td><code>05_AUTOMATE_BOOK.md</code></td><td>20 min</td></tr></table>
+<table><tr><th>Module</th><th>Time</th></tr><tr><td><a href="#/m0">0 · Map Your Customer Data</a></td><td>10 min</td></tr><tr><td><a href="#/m1">1 · The Account Health Snapshot</a></td><td>15 min</td></tr><tr><td><a href="#/m2">2 · QBR Prep That Writes Itself</a></td><td>15 min</td></tr><tr><td><a href="#/m3">3 · Churn Signals &amp; Root Cause</a></td><td>15 min</td></tr><tr><td><a href="#/m4">4 · Renewal &amp; Expansion</a></td><td>15 min</td></tr><tr><td><a href="#/m5">5 · Automate the Book of Business</a></td><td>20 min</td></tr></table>
 <h2>How to use this workshop</h2>
 <ol><li>You need customer data connected — at minimum the CRM; ideally also product usage, support tickets, and billing. (Missing sources? Send your data team the <b>Connect Your Data</b> workshop.)</li><li>Work <b>in order</b> — the snapshot from Module 1 is the unit everything else assembles.</li><li>Every step has a <b>Prompt</b> block — copy into Ana, swap the <code>[bracketed]</code> parts for your account names and field names from Module 0.</li><li>Use your <b>real book</b>. Synthetic accounts teach nothing about your renewals.</li></ol>
 </section>
@@ -332,6 +332,8 @@
 <pre>Account,CSM,RenewalDate,Tier
 Acme Corp,you@company.com,2026-09-30,Enterprise
 Globex,you@company.com,2026-11-15,Mid-Market</pre>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Build my backing table: every account I own, with columns Account, CSM, RenewalDate, and Tier, as a CSV I can download and use as the template's backing table.</pre></div>
 <p><b>Step 2 — the templated playbook:</b></p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Create a playbook "Weekly Account Brief" using this backing table, running Mondays at 7am, one report per row: for {{Account}}, the four-pillar health snapshot (usage trend, support load, signals, commercials), what changed since last week, and the one recommended action for {{CSM}}. If {{Account}} shows no activity at all this week, say so in one line — don't pad it. Note renewal proximity using {{RenewalDate}}.</pre></div>

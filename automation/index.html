@@ -335,6 +335,9 @@ Globex,Mid-Market,Luis</pre>
 <p><b>2 — reference variables</b> in the playbook prompt:</p>
 <div class="callout">"Generate a health report for {{Account}} ({{Segment}}). Pull their last 90 days of usage, flag churn-risk signals, and address the summary to {{CSM}}."</div>
 <p><b>3 — select rows and run</b> (all, or a subset). <b>4 — review centrally:</b> every batch run is versioned; all reports in one place, bulk-exportable.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Turn my "[name]" playbook into a template backed by the attached CSV: treat each column header as a {{variable}} and reference {{Account}}, {{Segment}}, and {{CSM}} in the prompt. Run it for the [Acme Corp] row only as a test batch and show me where the batch results are collected.</pre></div>
+  <div class="yousee"><b>You'll see:</b> one report for the test row, versioned with the batch — confirm the variables resolved before running all rows.</div>
 <h2>4.3 · The discipline transfers — times N</h2>
 <p>Everything from Module 2 applies more: the prompt runs N times unattended. Add the template-specific edge case:</p>
 <div class="callout">"If {{Account}} returns no rows for the period, produce a one-line report saying so — do not invent activity, and do not fail the batch."</div>
@@ -431,7 +434,7 @@ Globex,Mid-Market,Luis</pre>
 <h2>6.4 · The compounding setup</h2>
 <p>Governed metrics (ontology) feed playbooks and agents (this workshop), whose findings link to dashboards (Dashboards workshop) for exploration, with admins watching quality org-wide (Admin workshop). Each automation should slot into that loop — not exist as an island.</p>
 <h2>You're done</h2>
-<p>You can automate recurring reports with playbooks that survive autopilot, batch across entities with templates, deploy agents with editorial judgment, and operate the estate responsibly. See <b>PROMPT_LIBRARY.md</b> for six battle-tested playbook skeletons.</p>
+<p>You can automate recurring reports with playbooks that survive autopilot, batch across entities with templates, deploy agents with editorial judgment, and operate the estate responsibly. See the <a href="#/reference">Playbook Prompt Library</a> (the final section of this workshop) for six battle-tested playbook skeletons.</p>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You scanned the Playbooks dashboard and your agents' recent activity</label>

@@ -183,7 +183,7 @@
   </ol>
 
   <div class="callout"><span class="label">Example data</span>
-    <p>The example prompts target the workshop's demo datasets (see the <a href="#/reference">Datasets &amp; Document Sources</a> reference) and the example scenario in the companion repo. Swap in your own data sources and documents to run it for real.</p>
+    <p>The example prompts target the workshop's demo datasets (see the <a href="#/reference">Datasets &amp; Document Sources</a> reference) and the example scenario in the companion repo, <a href="https://github.com/TextQLLabs/ontology-workshop-guide" target="_blank" rel="noopener">TextQLLabs/ontology-workshop-guide</a> (access is granted by the TextQL team — ask your TextQL contact if you can't open it). Swap in your own data sources and documents to run it for real.</p>
   </div>
 </section>
 
@@ -349,6 +349,9 @@
 
   <h2>Close the loop</h2>
   <p>Now re-ask your <b>Module 1 baseline question</b> in a fresh session with the ontology attached. Compare: governed definition, consistent answer, exact audited SQL.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>[Your Module 1 baseline question, exactly as you asked it cold.] Note which definition you used and show the SQL.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the warm answer route through your governed definition — consistent, with the exact audited SQL — instead of an improvised one.</div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You saw the diff before it was applied, and the change went to review</label>
@@ -366,7 +369,7 @@
   <p>This is how most organizations actually start: not from a clean database, but from a stack of mixed documents — SOPs, a metrics document, data dictionaries, process-flow diagrams, call transcripts, golden datasets, access policies.</p>
 
   <h2>6.1 · Gather the pile</h2>
-  <p><b>Do:</b> look at the input set (the companion repo's <code>example-scenario/</code> is a complete illustrative set — a member-services contact center, in every input type). For your own documents, see the <a href="#/reference">Datasets &amp; Document Sources</a> reference for upload, Drive, SharePoint, object storage, and git options.</p>
+  <p><b>Do:</b> look at the input set (the <a href="https://github.com/TextQLLabs/ontology-workshop-guide" target="_blank" rel="noopener">companion repo</a>'s <code>example-scenario/</code> is a complete illustrative set — a member-services contact center, in every input type). For your own documents, see the <a href="#/reference">Datasets &amp; Document Sources</a> reference for upload, Drive, SharePoint, object storage, and git options.</p>
 
   <h2>6.2 · Build the ontology from it</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
@@ -419,6 +422,8 @@
   <div class="yousee"><b>You'll see:</b> the ontology become a reusable, self-maintaining layer other tools can build on.</div>
 
   <p>Then close the loop: re-ask your <b>Module 1 baseline</b> with the ontology attached.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>[Your Module 1 baseline question, exactly as you asked it cold.] Note which definition you used and show the SQL.</pre></div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Document N+1 produced a targeted edit, not a rebuild — and unrelated files were untouched</label>
@@ -430,7 +435,7 @@
 <section class="page" id="m9" data-title="Module 9 · Role-Based Access" data-group="Track B · From Documents" data-time="20 min">
   <div class="kicker">Module 9</div>
   <h1>Role-Based Access — One Ontology, Many Teams</h1>
-  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: serve multiple teams from one governed model — each with its own data scope and response style</span></div>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: serve multiple teams from one governed model — each with its own data scope and response style</span><span>🧭 Applies after either track — not Track B-only</span></div>
 
   <p>The ontology is just files. The <b>behavioral context</b> — what Ana knows, how she responds, what she's allowed to touch — is also just files, in a <code>behaviors/</code> folder. Swap the context, swap the persona. The governed <code>.tql</code> underneath doesn't change.</p>
   <pre>behaviors/

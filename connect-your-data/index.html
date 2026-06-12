@@ -281,10 +281,14 @@ Credential (in vault)     : ____________</pre>
 <p><b>Goal:</b> connect each major warehouse with production-grade auth. Every section: prepare the service identity → fill the form → test. <b>Do the sections you use (~10 min each).</b> All start: <b>Connectors → New Connector → pick the source.</b></p>
 <h2>2.1 · Snowflake</h2>
 <p><b>Auth: key-pair only for new connectors</b> (Snowflake deprecates single-factor passwords for service users by Oct 2026; TextQL connects as a service user).</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Generate a 2048-bit RSA key pair for Snowflake key-pair auth in your sandbox: an unencrypted PKCS#8 private key and its public key. Give me the private key to store in my secrets manager, and the public key with the header/footer lines stripped, ready for ALTER USER.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Both keys. Vault the private key immediately — it goes into the connector form, never into a shared doc.</div>
+  <div class="callout"><span class="label">Prefer the terminal?</span><p>Generate the pair locally instead:</p>
 <pre># Private key
 openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
 # Public key
-openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub</pre>
+openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub</pre></div>
 <pre>ALTER USER textql_svc SET RSA_PUBLIC_KEY='&lt;public key, no header/footer lines&gt;';</pre>
 <table><tr><th>Field</th><th>Example</th></tr>
 <tr><td>Account Identifier</td><td><code>xy12345.us-east-1</code></td></tr>
@@ -386,7 +390,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA analytics
   <div class="page-meta"><span>⏱️ <b>25 min</b></span></div>
 
 <p><b>Goal:</b> connect the BI layer so Ana reads your existing dashboards — and never skip the post-creation <b>sync/collection step</b>, the top BI-connector support theme.</p>
-<div class="callout">Both BI integrations also have an org-level Capabilities toggle (Admin workshop, Module 4). Connector type missing? Look there first.</div>
+<div class="callout">Both BI integrations also have an org-level Capabilities toggle (<a href="../admin-governance/">Admin &amp; Governance workshop</a>, Module 4). Connector type missing? Look there first.</div>
 <h2>4.2 · Tableau</h2>
 <p><b>Prepare:</b> generate a <b>Personal Access Token</b>; note PAT name (ID) and value. Decompose your URL — from <code>https://10ax.online.tableau.com/#/site/textqldev/home</code>: <b>Server</b> = <code>https://10ax.online.tableau.com</code>, <b>Site</b> = <code>textqldev</code> (after <code>site/</code>).</p>
 <p><b>Form:</b> Connector Name · Server URL · Site · PAT ID · PAT Value → Create.</p>
@@ -401,7 +405,10 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA analytics
 <p><b>Step 1 — App registration:</b> portal.azure.com → Azure AD → App registrations → New registration (this directory only; no redirect URI) → record <b>Application (client) ID</b> and <b>Tenant ID</b> → Certificates &amp; secrets → <b>New client secret</b> → record the value immediately (shown once) <b>and calendar its expiry</b>.</p>
 <p><b>Step 2 — Power BI side:</b> tenant setting allowing service principals to use Power BI APIs (once, by the Power BI admin, usually via a security group); add the app as Member/Viewer on each workspace Ana should read.</p>
 <p><b>Step 3 — TextQL form:</b> Client ID · Client Secret · Tenant ID → Create.</p>
-<p><b>Step 4 — Sync:</b> select workspaces/datasets to expose, then verify in a chat.</p>
+<p><b>Step 4 — Sync:</b> select workspaces/datasets to expose, then verify in a chat:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What Power BI workspaces and datasets can you see through this connector? Summarize what each one covers.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Exactly the workspaces the service principal was added to — and only those.</div>
 <table><tr><th>Symptom</th><th>Cause</th></tr>
 <tr><td>Auth succeeds, no workspaces visible</td><td>Service principal not added to workspaces, or tenant API setting off</td></tr>
 <tr><td>Worked, then stopped after months</td><td><b>Client secret expired</b> (max 24 mo) — rotate in Azure, update connector</td></tr>
@@ -497,14 +504,16 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA analytics
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>For each connector in this org, when was it last successfully used in a thread? Flag any unused for 60+ days as decommission candidates.</pre></div>
 <h2>6.5 · Decommission without breakage</h2>
-<ol><li>Ask: which dashboards, playbooks, and recent threads depend on it?</li>
+<ol><li>Ask:
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Which dashboards, playbooks, and recent threads depend on the [name] connector? I'm planning to decommission it.</pre></div></li>
 <li>Migrate or archive dependents; announce.</li>
 <li>Delete in a maintenance window; <b>revoke the credential at the source too</b> (warehouse user / PAT / app registration).</li>
 <li>Confirm in the audit log.</li></ol>
 <h2>You're done</h2>
 <p>Your data layer is connected with dedicated service identities, least-privilege scopes, a cleared network path, validated behavior, and operating habits for rotation, drift, and decommission.</p>
-<ul><li>Run your users through the <b>Self-Service Analytics workshop</b></li>
-<li>Role-scoped access + weekly review playbook — <b>Admin &amp; Governance workshop</b></li>
+<ul><li>Run your users through the <a href="../self-service-analytics/"><b>Self-Service Analytics workshop</b></a></li>
+<li>Role-scoped access + weekly review playbook — <a href="../admin-governance/"><b>Admin &amp; Governance workshop</b></a></li>
 <li>Start the semantic layer — the <a href="https://github.com/TextQLLabs/ontology-workshop-guide" target="_blank">ontology workshop</a></li></ul>
 
     <figure class="shot" data-todo="a validation thread (Ana confirming schema, rowcounts, freshness)">

@@ -517,9 +517,11 @@
 <h2>6.2 · Access requests</h2>
 <ul><li>Make sure <b>owners</b> handle their own queues (Notifications → Sharing) — you are the escalation path, not the bottleneck.</li>
 <li><b>Orphaned items</b> (owner left): you hold <code>read_private</code>/<code>write_private</code> — reassign deliberately, and log it.</li>
-<li>Periodically: ask Ana for private items with pending requests older than a week — that's a stuck queue.</li></ul>
+<li>Periodically check for stuck queues:
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>List private items with access requests pending for more than a week, with each item's owner — those are stuck queues I should nudge.</pre></div></li></ul>
 <h2>6.3 · Onboarding &amp; offboarding, end to end</h2>
-<p><b>Onboarding (mostly automatic):</b> IdP group → SCIM provisions → group mapping sets role → role scopes connectors, models, defaults. Manual steps: verify the role, send the self-service workshop.</p>
+<p><b>Onboarding (mostly automatic):</b> IdP group → SCIM provisions → group mapping sets role → role scopes connectors, models, defaults. Manual steps: verify the role, send the <a href="../self-service-analytics/">self-service workshop</a>.</p>
 <p><b>Offboarding (verify, don't assume):</b></p>
 <ol><li>IdP unassignment → SCIM deactivates (verify in Members).</li>
 <li>Audit log: confirm the deactivation event.</li>
@@ -529,10 +531,10 @@
 <pre>[Departed user email] has left. List everything they own: dashboards, playbooks (note which are actively scheduled), connectors, datasets, and any pending ontology patches. Propose a reassignment plan.</pre></div>
   <div class="yousee"><b>You'll see:</b> A complete asset inventory with a reassignment plan — run this for every departure, real or simulated.</div>
 <h2>6.4 · Write the runbook</h2>
-<p>Governance in one admin's head is a bus-factor of one. The repo includes <b>ADMIN_RUNBOOK.md</b>: decision log, credential inventory and rotation schedule, patch review owners, on/offboarding checklists, escalation paths, and the weekly/monthly cadence. <b>Fill it in now</b> while Modules 1–5 are fresh.</p>
+<p>Governance in one admin's head is a bus-factor of one. Use the <b>Admin Runbook</b> template on this workshop's <a href="#/reference">Reference page</a>: decision log, credential inventory and rotation schedule, patch review owners, on/offboarding checklists, escalation paths, and the weekly/monthly cadence. <b>Fill it in now</b> while Modules 1–5 are fresh.</p>
 <h2>You're done</h2>
 <p>You now run identity through your IdP, authorization through least-privilege roles, data scope through governed connectors, behavior through capability and model controls — and you watch all of it through audit, observability, and spend monitoring, with the routine automated and the rest written down.</p>
-<ul><li>Roll the <b>Self-Service Analytics workshop</b> out to members — governance pays off when usage grows</li>
+<ul><li>Roll the <a href="../self-service-analytics/"><b>Self-Service Analytics workshop</b></a> out to members — governance pays off when usage grows</li>
 <li>Hand the data team the <a href="https://github.com/TextQLLabs/ontology-workshop-guide" target="_blank">ontology workshop</a> — Module 5's Warning Breakdown is their prioritized backlog</li>
 <li>Revisit role design after 30 days of observability data</li></ul>
 

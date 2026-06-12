@@ -210,6 +210,9 @@
 <table><tr><th>#</th><th>Question</th><th>Cold answer</th><th>Correct? (judge: [named person])</th><th>Time</th><th>Notes on the miss</th></tr></table>
 <p>Rules of honesty:</p>
 <ul><li>Ask each question <b>once</b>, as written. No rephrasing to help, no follow-up steering. (In real usage you'd converse — but the baseline measures the cold start, so resist.)</li><li>Record wrong answers and "I don't have that data" responses verbatim. <b>Misses are the point</b> — a baseline of all-correct answers means the question list was too soft (and means Day 3 can't show improvement).</li><li>The named judge from Module 0 scores correctness against the trusted source, today, while it's fresh.</li></ul>
+<p>For each question, paste it into a fresh message exactly as written:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>[Question #1 from your Day-0 list, pasted verbatim — no rephrasing, no added context]</pre></div>
   <div class="yousee"><b>You'll see:</b> typically a mixed picture — some questions answered correctly off raw schema, some wrong on contested definitions (the cold run takes <i>a</i> definition, not <i>your</i> definition), some honest declines. Every miss goes in the misses log with a one-line cause hypothesis: <i>definition gap / context gap / data gap / phrasing</i>.</div>
 <h2>1.3 · End-of-day review</h2>
 <p>Fifteen minutes with the team: walk the baseline table. Set expectations explicitly: <b>today measured the floor.</b> Tomorrow adds the org's knowledge; Wednesday measures the difference. If anyone is disappointed today, remind them that a tool that aced contested-definition questions <i>without being taught the definitions</i> would be guessing — and guessing right is worse than asking.</p>
@@ -259,6 +262,8 @@
 <p>Same questions, same verbatim phrasing, same one-ask discipline — but now with the ontology attached. Extend the Day 1 table:</p>
 <table><tr><th>#</th><th>Question</th><th>Cold answer</th><th>Warm answer</th><th>Cold ✓/✗</th><th>Warm ✓/✗</th><th>Cold time</th><th>Warm time</th></tr></table>
 <p>The same judge scores the warm answers against the same trusted sources. Same rules: no steering, record verbatim.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>[Question #1 from your Day-0 list, pasted verbatim — identical phrasing to the cold run]</pre></div>
   <div class="yousee"><b>You'll see:</b> the contested-definition questions flip to correct (they now route through <i>your</i> governed definitions), the cross-system question improve (the model knows the joins), and — usually — a couple of remaining misses. Good. A perfect warm run on a hard list happens; a perfect warm run on a soft list proves nothing.</div>
 <h2>3.2 · Score it</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
