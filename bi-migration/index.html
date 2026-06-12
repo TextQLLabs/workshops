@@ -378,7 +378,7 @@
 </section>
 
 <div class="pager" id="pager"></div>
-<footer class="pagefoot">© TextQL · Workshop: Migrate from Your BI Tool · Example prompts are illustrative — adapt them to your own data.</footer>
+<footer class="pagefoot">© TextQL · Workshop: Migrate from Your BI Tool · Example prompts are illustrative — adapt them to your own data. · <a href="https://docs.google.com/spreadsheets/d/1p0fB8IHkeYvCZIwPkaR90zjktkAIWG5PH1PJK2ng1Mc" target="_blank" rel="noopener">Give feedback</a></footer>
 </div></main>
 </div>
 
@@ -465,6 +465,38 @@
     });
   });
   refreshProgress();
+})();
+</script>
+
+<script>
+/* TextQL workshops analytics — PostHog via first-party proxy */
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once identify alias set_config reset opt_in_capturing opt_out_capturing".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init('phc_cmTpctVWkmjZZDI0vGNMD5wHY3ywg9FdQCA48kdfEp2',{api_host:'https://hermes.textql.com',persistence:'localStorage'});
+(function(){
+  var segs=location.pathname.split('/').filter(function(x){return x&&x!=='index.html'});
+  var ws=segs.length>1?segs[segs.length-1]:'catalog';
+  if(ws==='workshops')ws='catalog';
+  function page(){return location.hash.replace(/^#\/?/,'')||'welcome'}
+  function cap(ev,props){props=props||{};props.workshop=ws;props.page=page();props.site='workshops';try{posthog.capture(ev,props)}catch(e){}}
+  cap('workshop_page_view');
+  window.addEventListener('hashchange',function(){cap('workshop_page_view')});
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('.prompt button');
+    if(b){cap('workshop_prompt_copied');return}
+    var c=e.target.closest&&e.target.closest('a.card');
+    if(c&&c.getAttribute('href')&&c.getAttribute('href')!=='#'){cap('workshop_card_clicked',{target_workshop:c.getAttribute('href').split('/')[0]})}
+  });
+  document.addEventListener('change',function(e){
+    if(!(e.target.matches&&e.target.matches('.checkpoint input')))return;
+    var cp=e.target.closest('.checkpoint');
+    var boxes=cp.querySelectorAll('input[type=checkbox]');
+    var all=true;for(var i=0;i<boxes.length;i++)if(!boxes[i].checked)all=false;
+    if(all)cap('workshop_checkpoint_completed');
+    var pages=document.querySelectorAll('section.page');
+    var withCp=0,done=0;
+    pages.forEach(function(p){var bx=p.querySelectorAll('.checkpoint input');if(bx.length){withCp++;var ok=true;bx.forEach(function(b){if(!b.checked)ok=false});if(ok)done++}});
+    if(withCp&&done===withCp)cap('workshop_completed');
+  });
 })();
 </script>
 </body>

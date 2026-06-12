@@ -44,7 +44,7 @@ The repo root [`index.html`](index.html) is a catalog landing page listing all w
 4. Add a card to the catalog in the root `index.html` and a row to the table above.
 5. Keep it **account-agnostic**: no customer names, no real data, synthetic examples only. Run the sanitizer before publishing if content derives from a real engagement.
 
-The full authoring pattern (writing rules, components, structure) lives in the internal `building-workshops` skill.
+Questions or contributions: contact the TextQL team.
 
 ## Conventions
 
