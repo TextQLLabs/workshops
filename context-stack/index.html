@@ -166,14 +166,14 @@
 <h2>Who this is for</h2>
 <ul><li>Platform owners who decide what Ana knows org-wide</li><li>Workspace admins who provision different behavior for different teams</li><li>Enablement champions onboarding populations with different needs (executives vs analysts vs operations)</li><li>Anyone in a regulated environment who needs access behavior to be auditable, not anecdotal</li></ul>
 <h2>What you'll be able to do</h2>
-<table><tr><th>After module</th><th>You can...</th></tr><tr><td>0</td><td>Place any "I want Ana to..." request in the right context layer</td></tr><tr><td>1</td><td>Build your own personal context and verify it persists across threads</td></tr><tr><td>2</td><td>Propose org-level definitions, glossary entries, and documents through review</td></tr><tr><td>3</td><td>Author complete role persona files from the four-section anatomy</td></tr><tr><td>4</td><td>Prove persona behavior with the same-question test, and change it through governance</td></tr><tr><td>5</td><td>Provision personas through identity (SSO/SCIM groups), fail-closed</td></tr><tr><td>6</td><td>Operate the stack: versioning, persona reviews, and the failure modes to watch</td></tr></table>
+<table><tr><th>After module</th><th>You can...</th></tr><tr><td>0</td><td>Place any "I want Ana to..." request in the right context layer</td></tr><tr><td>1</td><td>Stand up the substrate: seed <code>ANA.md</code> and verify Ana loads the per-user and per-persona conventions</td></tr><tr><td>2</td><td>Build your own personal context and verify it persists across threads</td></tr><tr><td>3</td><td>Propose org-level definitions, glossary entries, and documents through review</td></tr><tr><td>4</td><td>Author complete role persona files from the four-section anatomy</td></tr><tr><td>5</td><td>Prove persona behavior with the same-question test, and change it through governance</td></tr><tr><td>6</td><td>Provision personas through identity (SSO/SCIM groups), fail-closed</td></tr><tr><td>7</td><td>Operate the stack: versioning, persona reviews, and the failure modes to watch</td></tr></table>
 <h2>Workshop modules</h2>
-<table><tr><th>Module</th><th>Time</th></tr><tr><td>0 · The Context Stack</td><td>10 min</td></tr><tr><td>1 · Build Your Personal Context</td><td>20 min</td></tr><tr><td>2 · Curate the Org Context</td><td>15 min</td></tr><tr><td>3 · Author Role Profiles</td><td>25 min</td></tr><tr><td>4 · The Same-Question Test</td><td>20 min</td></tr><tr><td>5 · Provisioning &amp; Identity</td><td>15 min</td></tr><tr><td>6 · Operate the Context Stack</td><td>15 min</td></tr><tr><td>Persona library</td><td>reference</td></tr></table>
+<table><tr><th>Module</th><th>Time</th></tr><tr><td>0 · The Context Stack</td><td>10 min</td></tr><tr><td>1 · Prepare the Environment</td><td>10 min</td></tr><tr><td>2 · Build Your Personal Context</td><td>20 min</td></tr><tr><td>3 · Curate the Org Context</td><td>15 min</td></tr><tr><td>4 · Author Role Profiles</td><td>25 min</td></tr><tr><td>5 · The Same-Question Test</td><td>20 min</td></tr><tr><td>6 · Provisioning &amp; Identity</td><td>15 min</td></tr><tr><td>7 · Operate the Context Stack</td><td>15 min</td></tr><tr><td>Persona library</td><td>reference</td></tr></table>
 <h2>How to use this workshop</h2>
-<ol><li>Prerequisites: an org with an ontology/context library in place (the <a href="../build-your-ontology/"><b>Build Your Ontology</b></a> workshop if not), admin access for Modules 3–5, and a test user account for Module 4's side-by-side.</li><li>Work <b>in order</b> — each layer builds on the previous, and Module 4's proof needs Module 3's personas.</li><li>Swap <code>[bracketed]</code> placeholders for your own teams, metrics, and domains. The restricted-persona examples use a care-management flavor; the pattern is industry-agnostic.</li><li>Context mechanics follow the current documentation at <a href="https://docs.textql.com">docs.textql.com</a> (Context Library and Ontology sections) — verify click-paths there as the surface evolves.</li></ol>
+<ol><li>Prerequisites: an org with an ontology/context library in place (the <a href="../build-your-ontology/"><b>Build Your Ontology</b></a> workshop if not) <b>plus the context routing file (<code>ANA.md</code>) seeded per Module 1</b>; admin access for Modules 4–6; and a test user account for Module 5's side-by-side.</li><li>Work <b>in order</b> — each layer builds on the previous, and Module 5's proof needs Module 4's personas.</li><li>Swap <code>[bracketed]</code> placeholders for your own teams, metrics, and domains. The restricted-persona examples use a care-management flavor; the pattern is industry-agnostic.</li><li>Context mechanics follow the current documentation at <a href="https://docs.textql.com">docs.textql.com</a> (Context Library and Ontology sections) — verify click-paths there as the surface evolves.</li></ol>
 
   <details><summary>For facilitators — running this as a guided session</summary><div class="body">
-    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
+    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; run Module 1's two verification probes ("what conventions are loaded?" and the write-test) to confirm <code>ANA.md</code> is seeded and loading before anyone starts; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
   </div></details>
 </section>
 
@@ -193,7 +193,7 @@
 <h2>0.3 · The routing table</h2>
 <p>For any "I want Ana to..." request, the layer is determined by <b>who should be affected</b>:</p>
 <table><tr><th>"I want Ana to..."</th><th>Layer</th><th>Why</th></tr><tr><td>...give me shorter answers</td><td>Personal</td><td>Your taste, nobody else's</td></tr><tr><td>...know that when I say "my book" I mean accounts where I'm the CSM</td><td>Personal</td><td>Your shorthand</td></tr><tr><td>...run my Monday prep when I ask</td><td>Personal</td><td>Your workflow</td></tr><tr><td>...use our fiscal calendar for everyone</td><td>Org</td><td>Company-wide truth</td></tr><tr><td>...define "active member" the official way</td><td>Org</td><td>Two people asking must get the same answer</td></tr><tr><td>...never show SQL to the operations team</td><td>Role</td><td>A team's response style</td></tr><tr><td>...keep [clinical/care] data away from the program-management persona</td><td>Role</td><td>A persona's data scope</td></tr><tr><td>...decline off-scope requests politely and redirect</td><td>Role</td><td>A persona's hard limits</td></tr><tr><td>...know that the staging tables in [warehouse] are unreliable</td><td>Org (or connector-scoped)</td><td>Everyone querying that source needs it</td></tr></table>
-<p><b>The misrouting that matters most:</b> a team definition saved into personal context. It <i>works</i> — for that one person — and now the truth is forked: their answers silently disagree with everyone else's. Module 1 ends with the hygiene rule for exactly this.</p>
+<p><b>The misrouting that matters most:</b> a team definition saved into personal context. It <i>works</i> — for that one person — and now the truth is forked: their answers silently disagree with everyone else's. Module 2 ends with the hygiene rule for exactly this.</p>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You can name the three layers and what kind of knowledge belongs in each</label>
     <label><input type="checkbox"> You can state the governance distinction in one sentence: personal is immediate, org/role is reviewed</label>
@@ -201,25 +201,101 @@
   </div>
 </section>
 
-<section class="page" id="m1" data-title="Module 1 · Personal Context" data-group="Hands-On Modules" data-time="20 minutes">
+<section class="page" id="m1" data-title="Module 1 · Prepare the Environment" data-group="Hands-On Modules" data-time="10 minutes">
   <div class="kicker">Module 1</div>
-  <h1>Module 1 · Build Your Personal Context</h1>
+  <h1>Module 1 · Prepare the Environment</h1>
+  <div class="page-meta"><span>⏱️ <b>10 minutes</b></span><span>Admin pre-flight — do this once per workspace</span></div>
+<p><b>Goal:</b> stand up the substrate the rest of the stack depends on — a root routing file (the <code>ANA.md</code> convention) plus the folder layout — and verify Ana actually loads it. This is a one-time admin step; skip it and Module 2 dead-ends.</p>
+<h2>1.1 · Why this comes first</h2>
+<p>The three-layer stack only works if a root-level routing file — by convention <code>ANA.md</code> — <b>exists in the context library and is loaded into every chat.</b> That file is what teaches Ana the conventions the other modules assume:</p>
+<ul><li>the <b>personal-context</b> convention <code>users/&lt;email-local-part&gt;/context.md</code>, and the rule that Ana reads <i>only the active user's</i> file at the start of each thread;</li><li>the <b>role-context</b> convention <code>behaviors/&lt;persona&gt;/org_context.md</code>;</li><li>where <b>org-wide</b> definitions, glossary, and routing tables live.</li></ul>
+  <div class="callout warn"><span class="label">The most common setup failure</span>
+    <p>Without <code>ANA.md</code>, Ana has no concept of "personal context." Asked to "remember my preferences," she falls back to writing an undifferentiated note into the shared library — visible to everyone, keyed to no one. If that happens, the substrate isn't loaded. You're doing this module so it never does.</p>
+  </div>
+<h2>1.2 · The folder skeleton</h2>
+<p>In your context library, create this layout (it's just folders and files — versioned and reviewable like any repo):</p>
+<pre>ANA.md                          ← root routing brain: defines all three layer conventions
+users/                          ← personal context, one folder per user (users/&lt;email-local-part&gt;/context.md)
+behaviors/                      ← role personas, one folder per persona (behaviors/&lt;persona&gt;/org_context.md)
+&lt;org doc folders&gt;/              ← org-wide definitions, glossary, policies — each with a README</pre>
+<p>You only need <code>ANA.md</code> to start; <code>users/</code> and <code>behaviors/</code> fill in as Modules 2–4 run, and the org doc folders as Module 3 adds definitions.</p>
+<h2>1.3 · Seed a starter ANA.md</h2>
+<p>Paste this minimal-but-complete starter into a new <code>ANA.md</code> at the root of the library, then swap the <code>[bracketed]</code> values for your own. It declares the two read/load rules, the governance distinction, and a stub routing table — enough for the whole workshop to work.</p>
+  <div class="prompt"><span class="tag">ANA.md · PASTE INTO THE FILE EDITOR</span><button>Copy</button>
+<pre># ANA.md — Context Routing for [Your Organization]
+
+## The three context layers
+- ORG — everyone: this file + top-level doc folders (business rules, glossary, fiscal calendar, metric definitions).
+- ROLE — a team/persona: behaviors/&lt;persona&gt;/org_context.md (allowed surfaces, clarification, response style, hard limits).
+- PERSONAL — one individual: users/&lt;email-local-part&gt;/context.md (preferences, vocabulary, saved workflows).
+The layers compose: a user gets the ORG definition, through their ROLE's behavior, in their PERSONALLY preferred detail.
+
+## Governance distinction (the most important rule)
+- PERSONAL changes are immediate — the user's call, no review. It affects only them.
+- ORG and ROLE changes are proposed as patches, then reviewed and merged — like a pull request for business logic.
+
+## Personal context — load at the start of every conversation
+Before answering, read the current user's personal context:
+1. Read the user's email; derive the directory as email.split('@')[0] (e.g. jane.doe@acme.com -> users/jane.doe/).
+2. Read users/&lt;local-part&gt;/context.md. If it exists, apply the preferences silently. If not, offer to create one after the first task.
+Read ONLY the active user's own file. Writing personal context is immediate — on "remember this," write to users/&lt;their-local-part&gt;/context.md and confirm the exact path. Never put business definitions here (those are ORG, via review).
+
+## Role personas (load when a persona is active)
+Each persona is behaviors/&lt;persona&gt;/org_context.md with four sections: 1. Allowed data surfaces · 2. Clarification behavior · 3. Response style · 4. Hard limits. Personas are provisioned by admins; persona files change only through reviewed patches.
+
+## Org routing — where the answer lives (stub — add a row per definition)
+| Trigger / question | Go to |
+|---|---|
+| "What does [active member / revenue / churn] mean?" | [definitions/&lt;term&gt;.md] |
+| "What's our fiscal calendar?" | [definitions/fiscal_calendar.md] |
+| Glossary / acronym lookup | [glossary.md] |
+| "Which table is source of truth for [domain]?" | [data_quality.md] |</pre></div>
+  <div class="callout"><span class="label">Want the fully-commented version?</span>
+    <p>A longer starter with inline guidance, the role-persona routing table, and the access-control framing is in the workshop repo: <a href="https://github.com/TextQLLabs/workshops/blob/main/context-stack/ANA.starter.md" target="_blank" rel="noopener"><code>context-stack/ANA.starter.md</code></a>. Same content, more comments.</p>
+  </div>
+<h2>1.4 · Connectors &amp; tools — what's required vs. optional</h2>
+<table><tr><th>Capability</th><th>Needed for</th><th>Required?</th></tr><tr><td>A <b>context library, mounted and writable</b></td><td>Every module — it's where <code>ANA.md</code>, <code>users/</code>, and <code>behaviors/</code> live</td><td><b>Required</b></td></tr><tr><td>A warehouse / CRM / Gmail / Slack connector</td><td>Only if a demo <i>auto-builds</i> a personal profile from real activity instead of typed input</td><td>Optional</td></tr></table>
+  <div class="callout"><span class="label">You can do this whole workshop with zero connectors</span>
+    <p><b>Typed</b> preferences, personas, and definitions need only the writable library. Connectors matter only for the optional flourish of having Ana enrich a personal profile from real data (e.g., "look at my recent threads and propose my default time window"). If you have no connectors, skip those asides — every checkpoint still passes.</p>
+  </div>
+<h2>1.5 · Verify the substrate is loaded</h2>
+<p>Two probes. Run them in a fresh thread after seeding <code>ANA.md</code> — don't move on until both pass.</p>
+  <div class="prompt"><span class="tag">PROMPT — PROBE 1</span><button>Copy</button>
+<pre>What context conventions are loaded in this workspace?</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana describe the three layers and name the <code>users/</code> and <code>behaviors/</code> paths. If she can't, <code>ANA.md</code> isn't being loaded into the chat — recheck step 1.3.</div>
+  <div class="prompt"><span class="tag">PROMPT — PROBE 2 (THE WRITE TEST)</span><button>Copy</button>
+<pre>Save a test preference to my personal context and tell me the exact file path you wrote it to.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana name <code>users/&lt;your-email-local-part&gt;/context.md</code> — your own per-user file. <b>If she names a generic or shared path, or says she can only write to the shared library, the substrate isn't loaded</b> — go back to step 1.3 and confirm <code>ANA.md</code> is at the library root and attached to the thread.</div>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> <code>ANA.md</code> exists at the context-library root with your <code>[org]</code> values filled in</label>
+    <label><input type="checkbox"> The <code>users/</code> and <code>behaviors/</code> folders exist (even if empty)</label>
+    <label><input type="checkbox"> Probe 1: Ana described the three layers and the per-user / per-persona paths</label>
+    <label><input type="checkbox"> Probe 2: Ana wrote a test preference to <code>users/&lt;your-email&gt;/context.md</code> — not a generic shared file</label>
+  </div>
+</section>
+
+<section class="page" id="m2" data-title="Module 2 · Personal Context" data-group="Hands-On Modules" data-time="20 minutes">
+  <div class="kicker">Module 2</div>
+  <h1>Module 2 · Build Your Personal Context</h1>
   <div class="page-meta"><span>⏱️ <b>20 minutes</b></span></div>
 <p><b>Goal:</b> build your own personal context — preferences, vocabulary, a saved workflow — verify it persists across threads, and learn what must never go in it.</p>
-<h2>1.1 · Preferences</h2>
+  <div class="callout warn"><span class="label">If a save lands in the wrong place</span>
+    <p>If Ana says she can only save to the shared library, or writes to a generic path instead of <code>users/&lt;your-email&gt;/context.md</code>, the routing file from <b>Module 1</b> isn't loaded. Stop and fix the substrate before continuing — every later module depends on it.</p>
+  </div>
+<h2>2.1 · Preferences</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Remember my preferences: I want concise answers with the headline number first; I work in [timezone]; default time windows to [the current quarter] unless I say otherwise; when I say "my accounts" I mean [accounts where I'm the owner].</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana confirm what she's saved to your personal context. This is the immediate layer — no review, no patch, effective now. Note what you just did <i>not</i> change: nothing about how Ana behaves for anyone else.</div>
-<h2>1.2 · Personal vocabulary</h2>
+<h2>2.2 · Personal vocabulary</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Personal vocabulary: "the weekly" means [my Monday metrics review]; "the big three" means [my three largest accounts: names]; "EOQ crunch" means the last two weeks of a fiscal quarter.</pre></div>
   <div class="yousee"><b>You'll see:</b> your shorthand saved. From now on, "how did the big three do during EOQ crunch?" just works — for you.</div>
-<h2>1.3 · A saved personal workflow</h2>
+<h2>2.3 · A saved personal workflow</h2>
 <p>The highest-leverage personal item — a multi-step ritual reduced to one phrase:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Save this as my "Monday prep" workflow: (1) pull [metric] for last week vs the prior week, (2) list [my accounts/deals] with no activity in 14+ days, (3) check [the team dashboard] for anything red, (4) format it all as a short brief I can read in two minutes. When I say "run my Monday prep," do all of it.</pre></div>
   <div class="yousee"><b>You'll see:</b> the workflow recorded. Next Monday: two words instead of twenty minutes.</div>
-<h2>1.4 · The persistence test</h2>
+<h2>2.4 · The persistence test</h2>
 <p>Saved context is only real if it survives the thread. Verify: <b>start a NEW thread</b> (context selections load fresh per thread), then ask:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>What do you know about my preferences and vocabulary?</pre></div>
@@ -227,10 +303,10 @@
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Run my Monday prep.</pre></div>
   <div class="yousee"><b>You'll see:</b> the personal layer carrying across threads. If something didn't persist, it was answered conversationally but never saved — re-ask with an explicit "remember/save this."</div>
-<h2>1.5 · The hygiene rule — what NEVER goes in personal context</h2>
+<h2>2.5 · The hygiene rule — what NEVER goes in personal context</h2>
 <p>Personal context is for things that are true <i>about you</i>. The moment an item is true about the <b>business</b>, it belongs upstairs:</p>
 <table><tr><th>Item</th><th>Belongs in</th></tr><tr><td>"I like tables over prose"</td><td>Personal ✓</td></tr><tr><td>"Active member means [definition]"</td><td><b>Org</b> — a definition in personal context forks the truth: your answers silently diverge from your teammates' on the same question</td></tr><tr><td>"Our team never shows SQL to stakeholders"</td><td><b>Role</b> — that's a persona behavior, not a preference</td></tr><tr><td>"The [X] table is deprecated; use [Y]"</td><td><b>Org</b> (or connector-scoped) — everyone querying it needs to know</td></tr></table>
-<p>The test: <i>if a colleague asked the same question, should they get the same treatment?</i> Yes → org or role layer, via the reviewed path (Modules 2–3). The forked-truth failure mode is Module 6's first table entry for a reason — it's the most common context-stack disease, and it starts here, innocently.</p>
+<p>The test: <i>if a colleague asked the same question, should they get the same treatment?</i> Yes → org or role layer, via the reviewed path (Modules 3–4). The forked-truth failure mode is Module 7's first table entry for a reason — it's the most common context-stack disease, and it starts here, innocently.</p>
     <figure class="shot" data-todo="setting personal preferences and verifying they carry into a new thread">
     <img src="assets/ctx-m1-personal.png" alt="Personal context: set once, applies everywhere." onerror="this.parentElement.classList.add('missing')">
     <figcaption>Personal context: set once, applies everywhere.</figcaption>
@@ -243,28 +319,28 @@
   </div>
 </section>
 
-<section class="page" id="m2" data-title="Module 2 · Org Context" data-group="Hands-On Modules" data-time="15 minutes">
-  <div class="kicker">Module 2</div>
-  <h1>Module 2 · Curate the Org Context</h1>
+<section class="page" id="m3" data-title="Module 3 · Org Context" data-group="Hands-On Modules" data-time="15 minutes">
+  <div class="kicker">Module 3</div>
+  <h1>Module 3 · Curate the Org Context</h1>
   <div class="page-meta"><span>⏱️ <b>15 minutes</b></span></div>
 <p><b>Goal:</b> the shared dictionary — propose a definition, a glossary entry, and a context-library document through the review loop, and see why org context is how two people asking the same question get the same answer.</p>
-<h2>2.1 · What lives at the org layer</h2>
+<h2>3.1 · What lives at the org layer</h2>
 <p>Org context applies to <b>every user, every thread</b>: business rules ("revenue is recognized at shipment, not order"), the fiscal calendar, the glossary, data-quality knowledge ("[table] is the source of truth, not [other table]"), and the context library's shared documents (policies, metric docs, onboarding guides). It's the layer that makes answers <i>consistent</i> — the same question from two people routes through the same dictionary.</p>
-<h2>2.2 · Propose a definition patch</h2>
+<h2>3.2 · Propose a definition patch</h2>
 <p>Pick a term your org actually argues about:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Propose an org context patch: our official definition of [active member] is [logged in AND completed at least one action in the trailing 30 days, excluding internal and test accounts]. Save it to the org context so every user gets this definition — and open it for review.</pre></div>
   <div class="yousee"><b>You'll see:</b> a <b>patch created, not an immediate change</b> — the governance distinction from Module 0 in action. The patch shows the proposed diff; a reviewer (an admin or designated owner) approves or declines it. Until approval, nothing changes for anyone.</div>
-<h2>2.3 · Propose a glossary addition</h2>
+<h2>3.3 · Propose a glossary addition</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Propose a glossary patch with three entries: "[PMPM]" means per-member-per-month; "[panel]" means the set of members assigned to a care team; "[the morning report]" refers to the daily operations playbook output. Open for review.</pre></div>
   <div class="yousee"><b>You'll see:</b> vocabulary becoming shared infrastructure. After approval, anyone can say "PMPM by panel" and be understood — including new hires on day one.</div>
-<h2>2.4 · Contribute a document to the context library</h2>
+<h2>3.4 · Contribute a document to the context library</h2>
 <p>Definitions are atoms; documents are molecules. Upload or point at a real document — a metrics policy, an SOP, a data dictionary:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Add this document to the org context library: [attach or name it]. Summarize what knowledge it contributes, propose where it should live in the library structure, and open the addition for review.</pre></div>
   <div class="yousee"><b>You'll see:</b> the document staged with a placement proposal. The context library is browsable by your colleagues <i>and</i> readable by Ana — one artifact serving both audiences.</div>
-<h2>2.5 · The review loop, from the reviewer's side</h2>
+<h2>3.5 · The review loop, from the reviewer's side</h2>
 <p>If you hold review rights, open the pending patches (the Reviews surface in the Ontology/context area) and apply the three-question bar from the <a href="../admin-governance/index.html"><b>Admin &amp; Governance</b></a> workshop: Correct? Conflicting with an existing definition? Scoped right (org-wide truth vs one team's shorthand)? Approve, or decline <b>with a reason</b> — declines without reasons teach proposers to stop proposing.</p>
 <div class="callout">Reviewer notifications (patch submitted/approved/denied) are configurable under Settings → Notifications → Ontology — set them up now if you're a reviewer, or this loop silently stalls.</div>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
@@ -275,12 +351,12 @@
   </div>
 </section>
 
-<section class="page" id="m3" data-title="Module 3 · Author Role Profiles" data-group="Hands-On Modules" data-time="25 minutes">
-  <div class="kicker">Module 3</div>
-  <h1>Module 3 · Author Role Profiles</h1>
+<section class="page" id="m4" data-title="Module 4 · Author Role Profiles" data-group="Hands-On Modules" data-time="25 minutes">
+  <div class="kicker">Module 4</div>
+  <h1>Module 4 · Author Role Profiles</h1>
   <div class="page-meta"><span>⏱️ <b>25 minutes</b></span></div>
 <p><b>Goal:</b> the heart of the workshop — author two complete persona files live, and internalize the four-section anatomy that makes every future persona a fill-in exercise.</p>
-<h2>3.1 · The model: behavior is files</h2>
+<h2>4.1 · The model: behavior is files</h2>
 <p>From the <b>Role-Based Access</b> chapter of <i>Build Your Ontology, End to End</i>: the ontology is files, and the <b>behavioral context</b> is also files — a <code>behaviors/</code> folder where each persona is a directory with an <code>org_context.md</code>:</p>
 <pre>behaviors/
   program_manager/
@@ -290,7 +366,7 @@
 <p>Swap the context, swap the persona — the governed surfaces and definitions underneath don't change. Every persona file has the same <b>four-section anatomy</b>:</p>
 <table><tr><th>Section</th><th>Answers</th></tr><tr><td><b>1 · Allowed data surfaces</b></td><td>Which query surfaces and tables may this role use?</td></tr><tr><td><b>2 · Clarification behavior</b></td><td>When the question is ambiguous, what does Ana do?</td></tr><tr><td><b>3 · Response style</b></td><td>SQL visibility, tone, level of detail</td></tr><tr><td><b>4 · Hard limits</b></td><td>What must Ana decline — and <i>how</i>?</td></tr></table>
 <p>Four sections, every persona, no exceptions. The discipline is what makes personas reviewable: a reviewer reads four headed sections and knows the whole behavioral contract.</p>
-<h2>3.2 · Persona one: the restricted business persona</h2>
+<h2>4.2 · Persona one: the restricted business persona</h2>
 <p>A [program manager in care management / clinical operations] — domain-scoped, non-technical, in a setting where seeing the wrong data is a compliance event, not an inconvenience:</p>
 <pre># Behavioral Context — [Program Manager, Care Management]
 
@@ -327,7 +403,7 @@ Never offer options from surfaces this role cannot access.
 - No record-level member detail in any output — panel level and above only.
 - No data exports beyond what renders in the thread.</pre>
 <p>Read section 4 twice: the decline includes a <b>redirect</b> (where to go instead) and the persona <b>doesn't reveal what else exists</b> — a scoped persona that lists everything it's hiding isn't scoped.</p>
-<h2>3.3 · Persona two: the analyst</h2>
+<h2>4.3 · Persona two: the analyst</h2>
 <p>Same organization, same ontology — opposite contract:</p>
 <pre># Behavioral Context — [Analyst]
 
@@ -355,13 +431,13 @@ would produce materially different answers.
 - Respect row-level security and connector scoping at all times —
   behavioral breadth is not a data-access bypass.
 - Production write operations: never, regardless of request.</pre>
-<h2>3.4 · Author them for real</h2>
+<h2>4.4 · Author them for real</h2>
 <p>Create the two folders and files in your context/ontology repo (in-app editor or git, per your setup — Methods in the <b>Build Your Ontology</b> workshop), adapting the brackets to your domains. Then submit both as <b>patches for review</b> — persona files are role-layer context; they take the governed path, always.</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Create behaviors/[program_manager]/org_context.md and behaviors/[analyst]/org_context.md with the two persona files above, brackets adapted to our domains, and open both as patches for review — do not apply them directly.</pre></div>
   <div class="yousee"><b>You'll see:</b> Two pending patches in Reviews — the personas exist only after approval, like any role-layer change.</div>
 <p>Two authoring rules from the field:</p>
-<ul><li><b>Write limits as behavior, not policy.</b> "Decline and redirect to [channel]" is executable; "users should not access restricted data" is a poster.</li><li><b>The persona file is the <i>contract</i>, not the enforcement</b> — data-level enforcement (RLS, connector scope) lives below it (Module 5.3). Author the file assuming both layers exist.</li></ul>
+<ul><li><b>Write limits as behavior, not policy.</b> "Decline and redirect to [channel]" is executable; "users should not access restricted data" is a poster.</li><li><b>The persona file is the <i>contract</i>, not the enforcement</b> — data-level enforcement (RLS, connector scope) lives below it (Module 6.3). Author the file assuming both layers exist.</li></ul>
     <figure class="shot" data-todo="a behaviors/<role>/org_context.md persona file open">
     <img src="assets/ctx-m3-persona.png" alt="A persona is a readable, reviewable file." onerror="this.parentElement.classList.add('missing')">
     <figcaption>A persona is a readable, reviewable file.</figcaption>
@@ -374,31 +450,31 @@ would produce materially different answers.
   </div>
 </section>
 
-<section class="page" id="m4" data-title="Module 4 · The Same-Question Test" data-group="Hands-On Modules" data-time="20 minutes">
-  <div class="kicker">Module 4</div>
-  <h1>Module 4 · The Same-Question Test</h1>
+<section class="page" id="m5" data-title="Module 5 · The Same-Question Test" data-group="Hands-On Modules" data-time="20 minutes">
+  <div class="kicker">Module 5</div>
+  <h1>Module 5 · The Same-Question Test</h1>
   <div class="page-meta"><span>⏱️ <b>20 minutes</b></span></div>
 <p><b>Goal:</b> the proof moments — the same broad question under two personas, the off-scope decline traced to a readable file, and a behavior change made through governance.</p>
-<div class="callout">Setup: your two Module 3 personas approved and provisioned to two test identities (or two sessions an admin can switch — Module 5 covers assignment mechanics). Have both sessions open side by side.</div>
-<h2>4.1 · The side-by-side</h2>
+<div class="callout">Setup: your two Module 4 personas approved and provisioned to two test identities (or two sessions an admin can switch — Module 6 covers assignment mechanics). Have both sessions open side by side.</div>
+<h2>5.1 · The side-by-side</h2>
 <p>Ask the <b>identical broad question</b> in both sessions:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>How are our [members/patients] doing on [hospital utilization] and cost?</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana recognizes the breadth and <i>clarifies with a menu of allowed options only</i> ("through care gaps, utilization, or outreach — which would help most?"). After you pick: plain language, summary first, <b>no SQL anywhere</b>, sources described in business terms.</div>
   <div class="yousee"><b>You'll see:</b> Ana <i>proceeds with stated assumptions</i> ("assuming utilization means admissions + ED visits over the trailing 12 months..."), answers in full technical detail, <b>shows the SQL</b> with a clause-by-clause explanation, and flags anything computed beyond the governed surfaces.</div>
 <p>Same organization, same ontology, same question — two correct experiences. Capture both screens; this side-by-side is the single best artifact for explaining the context stack to anyone who wasn't in the room.</p>
-<h2>4.2 · The off-scope decline — and the file behind it</h2>
+<h2>5.2 · The off-scope decline — and the file behind it</h2>
 <p>In the <b>restricted</b> session, ask for something real but outside the allowlist:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Show me the [unit-cost breakdown by provider contract / financial detail] for last quarter.</pre></div>
   <div class="yousee"><b>You'll see:</b> a warm decline with a redirect — "that falls outside this workspace; contact [the analytics team]. Within this workspace I can help with..." — and <i>no</i> hint of what other surfaces exist.</div>
 <p>Now the trust moment. Open <code>behaviors/[program_manager]/org_context.md</code> and read section 4 aloud next to the decline you just received. <b>The behavior you witnessed is a sentence in a version-controlled file</b> — not a vibe, not a model mood. It's reviewable, diffable, auditable: when compliance asks "what stops a program manager from seeing financials?", the answer is a file, its review history, and the enforcement layers beneath it.</p>
-<h2>4.3 · Change behavior through governance</h2>
+<h2>5.3 · Change behavior through governance</h2>
 <p>The program-management team now legitimately needs [readmission detail]. Wrong move: someone edits the file directly and behavior drifts. Right move:</p>
-<ol><li><b>Propose the patch:</b> add <code>[readmissions_detail]</code> to the persona's allowed-surfaces list — one line — with a description citing who requested it and why.</li><li><b>Review and approve</b> (the metric's or domain's owner signs off, per your Module 2 review bar).</li><li><b>Re-ask</b> in the restricted session — the previously declined question about readmission detail now answers, in the persona's plain-language style.</li></ol>
+<ol><li><b>Propose the patch:</b> add <code>[readmissions_detail]</code> to the persona's allowed-surfaces list — one line — with a description citing who requested it and why.</li><li><b>Review and approve</b> (the metric's or domain's owner signs off, per your Module 3 review bar).</li><li><b>Re-ask</b> in the restricted session — the previously declined question about readmission detail now answers, in the persona's plain-language style.</li></ol>
   <div class="yousee"><b>You'll see:</b> behavior change with a paper trail — <i>who</i> requested it, <i>who</i> approved it, <i>when</i>, and exactly <i>what</i> changed. Compare that against the alternative ("an admin toggled something in a console six months ago, nobody remembers why") and you have the whole argument for context-as-files.</div>
-<h2>4.4 · Write the test down</h2>
-<p>The same-question test isn't just a demo — it's your regression suite for personas. Record the three probes (the broad question, the off-scope request, the newly-allowed request) and their expected behaviors; re-run them whenever a persona file changes. Module 6 makes this a quarterly habit.</p>
+<h2>5.4 · Write the test down</h2>
+<p>The same-question test isn't just a demo — it's your regression suite for personas. Record the three probes (the broad question, the off-scope request, the newly-allowed request) and their expected behaviors; re-run them whenever a persona file changes. Module 7 makes this a quarterly habit.</p>
     <figure class="shot" data-todo="the same question answered under two personas, side by side">
     <img src="assets/ctx-m4-sidebyside.png" alt="Same question, two personas — scope and voice differ, the governed truth does not." onerror="this.parentElement.classList.add('missing')">
     <figcaption>Same question, two personas — scope and voice differ, the governed truth does not.</figcaption>
@@ -415,58 +491,58 @@ would produce materially different answers.
   </div>
 </section>
 
-<section class="page" id="m5" data-title="Module 5 · Provisioning &amp; Identity" data-group="Hands-On Modules" data-time="15 minutes">
-  <div class="kicker">Module 5</div>
-  <h1>Module 5 · Provisioning & Identity</h1>
+<section class="page" id="m6" data-title="Module 6 · Provisioning &amp; Identity" data-group="Hands-On Modules" data-time="15 minutes">
+  <div class="kicker">Module 6</div>
+  <h1>Module 6 · Provisioning & Identity</h1>
   <div class="page-meta"><span>⏱️ <b>15 minutes</b></span></div>
 <p><b>Goal:</b> how personas reach people — admin-assigned, identity-mapped, fail-closed — and where behavioral context sits in the larger access-control picture.</p>
-<h2>5.1 · Users don't choose their persona</h2>
+<h2>6.1 · Users don't choose their persona</h2>
 <p>The rule that makes personas meaningful: <b>behavioral context is provisioned at the org/session level by an admin — end users don't select their own.</b> The same way a database role is granted, not chosen. A persona a user could swap off is a suggestion, not a control.</p>
 <p>Mechanically, personas ride on <b>roles</b>: role-scoped context loads for users holding that role (and folder-level access in the ontology can restrict who can even <i>see</i> persona files — covered in <a href="../ontology-operations/index.html"><b>Ontology Operations</b></a>, Module 2). Assignment happens where role assignment happens — Settings → Members for manual, or identity-mapped (next section). The persona file's <i>content</i> is authored by the ontology/context owners; <i>who gets it</i> is administered by workspace admins. Two responsibilities, deliberately separated.</p>
-<h2>5.2 · Map personas to identity groups</h2>
+<h2>6.2 · Map personas to identity groups</h2>
 <p>Hand-assigning roles works at ten users and fails at a hundred. The scaled pattern ties personas to your <b>identity provider</b>:</p>
 <ol><li><b>SSO with role sync</b> — IdP group claims map to roles at login (group names matched to role names; the Admin &amp; Governance workshop's SSO module, and for self-hosted, the <code>role_sync_enabled</code> attribute mapping).</li><li><b>SCIM group push</b> — your IdP provisions users <i>and</i> their group memberships; groups map to roles; roles carry behavioral context.</li></ol>
 <p>End state: a new hire joins the <code>[care-management]</code> IdP group → SCIM/SSO assigns the matching role → their first thread already speaks in the program-manager persona — scoped surfaces, plain language, hard limits — with <b>no admin touch</b>. Offboarding reverses identically: leave the group, lose the persona.</p>
-<h2>5.3 · The semantic layer of RBAC</h2>
+<h2>6.3 · The semantic layer of RBAC</h2>
 <p>Where behavioral context sits in the stack — the framing worth memorizing:</p>
 <table><tr><th>Layer</th><th>Controls</th><th>Example</th></tr><tr><td><b>Database permissions / RLS / connector scope</b></td><td>Which <b>rows exist</b> for this identity</td><td>The warehouse returns only this region's members</td></tr><tr><td><b>Behavioral context (this workshop)</b></td><td>Which <b>questions get asked</b> and <b>how answers are framed</b></td><td>The persona offers only allowed surfaces, never shows SQL, declines off-scope with a redirect</td></tr><tr><td><b>Platform RBAC</b></td><td>Which <b>features and resources</b> are usable</td><td>Who can create connectors, edit dashboards, review patches</td></tr></table>
 <p>They complement, never substitute: behavioral context without data-layer enforcement is politeness; data enforcement without behavioral context is a wall with no signage — technically secure and practically hostile. Defense in depth is all three (data scoping: <a href="../connect-your-data/index.html"><b>Connect Your Data</b></a>; platform RBAC: <a href="../admin-governance/index.html"><b>Admin &amp; Governance</b></a>).</p>
-<h2>5.4 · Fail closed</h2>
+<h2>6.4 · Fail closed</h2>
 <p>The default posture for restricted personas, in both design and provisioning:</p>
-<ul><li><b>In the file:</b> the allowlist names what's permitted; everything else is denied — never the reverse. A new surface added to the ontology is <i>invisible</i> to restricted personas until explicitly added to their list.</li><li><b>In provisioning:</b> a user with no mapped group gets the most restrictive default (or no access), not the org-wide default. Unknown identity → minimum surface.</li><li><b>In review:</b> widening an allowlist is a reviewed change (Module 4.3); narrowing one can ship fast. Asymmetry is the point.</li></ul>
+<ul><li><b>In the file:</b> the allowlist names what's permitted; everything else is denied — never the reverse. A new surface added to the ontology is <i>invisible</i> to restricted personas until explicitly added to their list.</li><li><b>In provisioning:</b> a user with no mapped group gets the most restrictive default (or no access), not the org-wide default. Unknown identity → minimum surface.</li><li><b>In review:</b> widening an allowlist is a reviewed change (Module 5.3); narrowing one can ship fast. Asymmetry is the point.</li></ul>
     <figure class="shot" data-todo="persona/group assignment in admin settings (SSO/SCIM mapping)">
     <img src="assets/ctx-m5-provisioning.png" alt="Personas assigned by admins, mapped to identity groups." onerror="this.parentElement.classList.add('missing')">
     <figcaption>Personas assigned by admins, mapped to identity groups.</figcaption>
   </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Personas in your org are admin-provisioned — you verified a test user cannot swap their own</label>
-    <label><input type="checkbox"> The IdP-group → role → persona chain is mapped (or planned) for at least your two Module 3 personas</label>
+    <label><input type="checkbox"> The IdP-group → role → persona chain is mapped (or planned) for at least your two Module 4 personas</label>
     <label><input type="checkbox"> You can draw the three-layer RBAC table from memory and say what each layer catches that the others miss</label>
     <label><input type="checkbox"> Restricted personas fail closed: allowlist-based files, restrictive provisioning default, asymmetric review</label>
   </div>
 </section>
 
-<section class="page" id="m6" data-title="Module 6 · Operate the Stack" data-group="Hands-On Modules" data-time="15 minutes">
-  <div class="kicker">Module 6</div>
-  <h1>Module 6 · Operate the Context Stack</h1>
+<section class="page" id="m7" data-title="Module 7 · Operate the Stack" data-group="Hands-On Modules" data-time="15 minutes">
+  <div class="kicker">Module 7</div>
+  <h1>Module 7 · Operate the Context Stack</h1>
   <div class="page-meta"><span>⏱️ <b>15 minutes</b></span></div>
 <p><b>Goal:</b> the operating habits — versioning and review of persona files, when to add vs extend a persona, audit, the quarterly review, and the failure modes to watch for.</p>
-<h2>6.1 · Persona files are governed artifacts</h2>
+<h2>7.1 · Persona files are governed artifacts</h2>
 <p>Everything the <a href="../ontology-operations/index.html"><b>Ontology Operations</b></a> workshop establishes for ontology files applies to <code>behaviors/</code> verbatim: version control (in-app history or git sync), changes via reviewed patches, attributable diffs, revertibility. Operational specifics for personas:</p>
-<ul><li><b>Reviewers:</b> persona changes touching <i>scope</i> (section 1, section 4) should be reviewed by the domain's data owner, not just the context owner — widening an allowlist is an access decision wearing a markdown costume.</li><li><b>The regression suite:</b> Module 4.4's three probes (broad question / off-scope request / newly-allowed request) re-run after <b>every</b> persona patch. Five minutes; catches the typo that silently deleted a hard limit.</li><li><b>Render the behavior, not just the diff:</b> for material changes, run the same-question test before approving — the diff shows what changed; the probe shows what it <i>means</i>.</li></ul>
-<h2>6.2 · New persona, or extend an existing one?</h2>
+<ul><li><b>Reviewers:</b> persona changes touching <i>scope</i> (section 1, section 4) should be reviewed by the domain's data owner, not just the context owner — widening an allowlist is an access decision wearing a markdown costume.</li><li><b>The regression suite:</b> Module 5.4's three probes (broad question / off-scope request / newly-allowed request) re-run after <b>every</b> persona patch. Five minutes; catches the typo that silently deleted a hard limit.</li><li><b>Render the behavior, not just the diff:</b> for material changes, run the same-question test before approving — the diff shows what changed; the probe shows what it <i>means</i>.</li></ul>
+<h2>7.2 · New persona, or extend an existing one?</h2>
 <p>The boundary rule: <b>one persona per team, use case, or compliance boundary.</b></p>
-<table><tr><th>Situation</th><th>Call</th></tr><tr><td>A second team needs the same scope but different tone</td><td>Extend — tone tweaks within one file beat a near-duplicate</td></tr><tr><td>A team needs one more surface</td><td>Extend — a reviewed allowlist line (Module 4.3)</td></tr><tr><td>A different <i>compliance boundary</i> (data they may see that others may not, or vice versa)</td><td><b>New persona</b> — never stretch one file across two compliance regimes</td></tr><tr><td>A genuinely different job ("executives want briefings, not analysis")</td><td>New persona — different contract, different file</td></tr><tr><td>Someone wants a personal variant of a team persona</td><td><b>Neither</b> — that's personal-context territory (Module 1), or it's a sign the team persona needs a review</td></tr></table>
+<table><tr><th>Situation</th><th>Call</th></tr><tr><td>A second team needs the same scope but different tone</td><td>Extend — tone tweaks within one file beat a near-duplicate</td></tr><tr><td>A team needs one more surface</td><td>Extend — a reviewed allowlist line (Module 5.3)</td></tr><tr><td>A different <i>compliance boundary</i> (data they may see that others may not, or vice versa)</td><td><b>New persona</b> — never stretch one file across two compliance regimes</td></tr><tr><td>A genuinely different job ("executives want briefings, not analysis")</td><td>New persona — different contract, different file</td></tr><tr><td>Someone wants a personal variant of a team persona</td><td><b>Neither</b> — that's personal-context territory (Module 2), or it's a sign the team persona needs a review</td></tr></table>
 <p>The smell to watch: a persona file accumulating <code>except for [person]...</code> clauses. Personas describe roles; exceptions describe people; people-shaped exceptions belong in the personal layer or in a provisioning change.</p>
-<h2>6.3 · Audit: who changed what</h2>
+<h2>7.3 · Audit: who changed what</h2>
 <p>The questions an auditor (or an incident) will ask, and where the answers live:</p>
 <table><tr><th>Question</th><th>Where</th></tr><tr><td>Who changed this persona, when, and what exactly changed?</td><td>The file's version history / patch record</td></tr><tr><td>Who approved widening the allowlist?</td><td>The patch's review trail</td></tr><tr><td>Who <i>holds</i> this persona right now?</td><td>Role membership (Settings → Members, or your IdP group)</td></tr><tr><td>Who assigned them?</td><td>The audit log (role-assignment events) — Admin &amp; Governance, Module 5</td></tr><tr><td>What did the persona look like on [date]?</td><td>Version history at that date — this is why direct unreviewed edits are banned</td></tr></table>
 <p>If any row has no answer in your setup, that's the gap to close this week.</p>
-<h2>6.4 · The quarterly persona review</h2>
+<h2>7.4 · The quarterly persona review</h2>
 <p>Thirty minutes per quarter, per persona, with the domain owner:</p>
 <ol><li><b>Membership check</b> — does everyone holding this persona still belong? (Stale role assignments accumulate silently.)</li><li><b>Allowlist check</b> — every surface still needed? Anything granted "temporarily" a year ago?</li><li><b>Probe run</b> — the three-probe regression suite, live.</li><li><b>Friction check</b> — what did this persona's users ask for and get declined this quarter? Recurring legitimate declines are extension candidates (via review); recurring <i>illegitimate</i> ones mean the redirect text needs work.</li><li><b>Sprawl check</b> — could this persona merge with a near-twin? (See the failure table.)</li></ol>
-<h2>6.5 · The failure modes table</h2>
-<table><tr><th>Failure mode</th><th>Smell</th><th>Fix</th></tr><tr><td><b>Truth forked into personal context</b></td><td>Two people get different numbers for the same governed question</td><td>Module 1.5's hygiene rule; hunt with a periodic "what definitions live in personal contexts?" review; move offenders to org via patch</td></tr><tr><td><b>Persona sprawl</b></td><td>Eleven personas, six near-identical; nobody knows which to assign</td><td>The boundary rule (6.2); merge in a reviewed consolidation; aim for one per genuine team/compliance boundary</td></tr><tr><td><b>Allowlist rot</b></td><td>Surfaces granted for a project that ended; nobody removed them</td><td>The quarterly allowlist check; asymmetric review (narrowing ships fast)</td></tr><tr><td><b>Exception accretion</b></td><td><code>except for...</code> clauses naming individuals</td><td>Route to personal context or provisioning; personas describe roles</td></tr><tr><td><b>Decline without redirect</b></td><td>Restricted users hit walls and file tickets instead of finding the path</td><td>Section 4 discipline: every decline names where to go instead</td></tr><tr><td><b>Drift via direct edits</b></td><td>Behavior changed; no patch explains why</td><td>Direct-edit ban on <code>behaviors/</code>; version history makes offenders visible</td></tr></table>
+<h2>7.5 · The failure modes table</h2>
+<table><tr><th>Failure mode</th><th>Smell</th><th>Fix</th></tr><tr><td><b>Truth forked into personal context</b></td><td>Two people get different numbers for the same governed question</td><td>Module 2.5's hygiene rule; hunt with a periodic "what definitions live in personal contexts?" review; move offenders to org via patch</td></tr><tr><td><b>Persona sprawl</b></td><td>Eleven personas, six near-identical; nobody knows which to assign</td><td>The boundary rule (6.2); merge in a reviewed consolidation; aim for one per genuine team/compliance boundary</td></tr><tr><td><b>Allowlist rot</b></td><td>Surfaces granted for a project that ended; nobody removed them</td><td>The quarterly allowlist check; asymmetric review (narrowing ships fast)</td></tr><tr><td><b>Exception accretion</b></td><td><code>except for...</code> clauses naming individuals</td><td>Route to personal context or provisioning; personas describe roles</td></tr><tr><td><b>Decline without redirect</b></td><td>Restricted users hit walls and file tickets instead of finding the path</td><td>Section 4 discipline: every decline names where to go instead</td></tr><tr><td><b>Drift via direct edits</b></td><td>Behavior changed; no patch explains why</td><td>Direct-edit ban on <code>behaviors/</code>; version history makes offenders visible</td></tr></table>
 <h2>🎓 You're done</h2>
 <p>You can route any behavior request to its layer, build personal context that persists, curate org truth through review, author personas from the four-section anatomy, prove them with the same-question test, provision them through identity fail-closed, and operate the whole stack with the governance it deserves.</p>
 <p><b>The one-sentence takeaway:</b> <i>personal is immediate, org and role are governed</i> — and behavioral context is the semantic layer of RBAC: auditable files, not configuration drift.</p>
@@ -636,8 +712,8 @@ do not negotiate scope in-thread.
 - If a request appears to probe scope boundaries repeatedly, state the scope once
   more and suggest the partnership channel.</pre></div>
 
-  <div class="callout"><span class="label">Authoring reminders (from Module 3)</span>
-    <p>Four sections, always · limits written as behavior ("decline and redirect to [X]"), not policy · restricted personas never enumerate what they're hiding · the file is the contract — data-layer enforcement (RLS, connector scope) backs it from below · every persona ships through review, with the three-probe test (Module 4.4) run before approval.</p>
+  <div class="callout"><span class="label">Authoring reminders (from Module 4)</span>
+    <p>Four sections, always · limits written as behavior ("decline and redirect to [X]"), not policy · restricted personas never enumerate what they're hiding · the file is the contract — data-layer enforcement (RLS, connector scope) backs it from below · every persona ships through review, with the three-probe test (Module 5.4) run before approval.</p>
   </div>
 </section>
 
