@@ -457,7 +457,7 @@ would produce materially different answers.
   <div class="kicker">Module 5</div>
   <h1>Module 5 · The Same-Question Test</h1>
   <div class="page-meta"><span>⏱️ <b>20 minutes</b></span></div>
-<p><b>Goal:</b> the proof moments — the same question under two personas (different <i>scope</i>, then same scope / different <i>lens</i>), the off-scope decline traced to a readable file, and a behavior change made through governance.</p>
+<p><b>Goal:</b> the proof moments — the same broad question under two personas, the off-scope decline traced to a readable file, and a behavior change made through governance.</p>
 <div class="callout">Setup: your two Module 4 personas approved and provisioned to two test identities (or two sessions an admin can switch — Module 6 covers assignment mechanics). Have both sessions open side by side.</div>
 <h2>5.1 · The side-by-side</h2>
 <p>Ask the <b>identical broad question</b> in both sessions:</p>
@@ -466,29 +466,17 @@ would produce materially different answers.
   <div class="yousee"><b>You'll see:</b> Ana recognizes the breadth and <i>clarifies with a menu of allowed options only</i> ("through care gaps, utilization, or outreach — which would help most?"). After you pick: plain language, summary first, <b>no SQL anywhere</b>, sources described in business terms.</div>
   <div class="yousee"><b>You'll see:</b> Ana <i>proceeds with stated assumptions</i> ("assuming utilization means admissions + ED visits over the trailing 12 months..."), answers in full technical detail, <b>shows the SQL</b> with a clause-by-clause explanation, and flags anything computed beyond the governed surfaces.</div>
 <p>Same organization, same ontology, same question — two correct experiences. Capture both screens; this side-by-side is the single best artifact for explaining the context stack to anyone who wasn't in the room.</p>
-<h2>5.2 · Same access, different lens — two personas on one role</h2>
-<p>5.1 contrasted <i>scope</i> (restricted vs broad). This holds scope constant and changes <i>behavior</i>: two personas on the <b>same platform role, with identical data access</b>, that still answer the same question differently. It's the clearest proof that context does something RBAC cannot — same permissions, different experience.</p>
-<p>Example: two power-user personas — an <b>actuarial lens</b> and a <b>care-management lens</b> — both mapped to the same role, both seeing exactly the same governed surfaces. (These are <code>behaviors/</code> personas in the ontology, <b>not</b> separate RBAC roles.) Ask each the identical question:</p>
-  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>How is our cost of care trending this year, and what should we focus on?</pre></div>
-  <div class="yousee"><b>You'll see — actuarial lens:</b> framed financially — PMPM trend, the dollar drivers of the change (inpatient vs pharmacy vs unit cost), risk and reserve implications. Numbers-forward, methodology noted.</div>
-  <div class="yousee"><b>You'll see — care-management lens:</b> framed operationally — which member cohorts and conditions drive the trend, where the care gaps and intervention targets are, who to reach. Action-forward, member-centric.</div>
-<p>Identical RBAC, identical governed numbers underneath — but each persona leads with what its team acts on. The <i>access</i> didn't change; the <i>behavioral context</i> did. That's the layer RBAC can't give you — and it's exactly the "persona-based context" most teams are really asking for.</p>
-  <figure class="shot" data-todo="two personas on the SAME role (actuarial vs care-management lens) answering one question with differently-framed answers, side by side">
-    <img src="assets/ctx-m5-twolens.png" alt="Same role, same access — two behavioral lenses frame one governed answer differently." onerror="this.parentElement.classList.add('missing')">
-    <figcaption>Same role, same access — actuarial vs care-management lens frame one governed answer differently.</figcaption>
-  </figure>
-<h2>5.3 · The off-scope decline — and the file behind it</h2>
+<h2>5.2 · The off-scope decline — and the file behind it</h2>
 <p>In the <b>restricted</b> session, ask for something real but outside the allowlist:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Show me the [unit-cost breakdown by provider contract / financial detail] for last quarter.</pre></div>
   <div class="yousee"><b>You'll see:</b> a warm decline with a redirect — "that falls outside this workspace; contact [the analytics team]. Within this workspace I can help with..." — and <i>no</i> hint of what other surfaces exist.</div>
 <p>Now the trust moment. Open <code>behaviors/[program_manager]/org_context.md</code> and read section 4 aloud next to the decline you just received. <b>The behavior you witnessed is a sentence in a version-controlled file</b> — not a vibe, not a model mood. It's reviewable, diffable, auditable: when compliance asks "what stops a program manager from seeing financials?", the answer is a file, its review history, and the enforcement layers beneath it.</p>
-<h2>5.4 · Change behavior through governance</h2>
+<h2>5.3 · Change behavior through governance</h2>
 <p>The program-management team now legitimately needs [readmission detail]. Wrong move: someone edits the file directly and behavior drifts. Right move:</p>
 <ol><li><b>Propose the patch:</b> add <code>[readmissions_detail]</code> to the persona's allowed-surfaces list — one line — with a description citing who requested it and why.</li><li><b>Review and approve</b> (the metric's or domain's owner signs off, per your Module 3 review bar).</li><li><b>Re-ask</b> in the restricted session — the previously declined question about readmission detail now answers, in the persona's plain-language style.</li></ol>
   <div class="yousee"><b>You'll see:</b> behavior change with a paper trail — <i>who</i> requested it, <i>who</i> approved it, <i>when</i>, and exactly <i>what</i> changed. Compare that against the alternative ("an admin toggled something in a console six months ago, nobody remembers why") and you have the whole argument for context-as-files.</div>
-<h2>5.5 · Write the test down</h2>
+<h2>5.4 · Write the test down</h2>
 <p>The same-question test isn't just a demo — it's your regression suite for personas. Record the three probes (the broad question, the off-scope request, the newly-allowed request) and their expected behaviors; re-run them whenever a persona file changes. Module 7 makes this a quarterly habit.</p>
     <figure class="shot" data-todo="the same question answered under two personas, side by side">
     <img src="assets/ctx-m4-sidebyside.png" alt="Same question, two personas — scope and voice differ, the governed truth does not." onerror="this.parentElement.classList.add('missing')">
@@ -500,7 +488,6 @@ would produce materially different answers.
   </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> The same broad question produced clarify-vs-proceed, no-SQL-vs-SQL, summary-vs-assumptions — captured side by side</label>
-    <label><input type="checkbox"> Two same-role personas (e.g. actuarial vs care-management lens) framed one question differently — identical access, different behavior</label>
     <label><input type="checkbox"> The off-scope decline matched section 4 of the persona file, word for behavior</label>
     <label><input type="checkbox"> The allowlist change went through propose → review → approve, and the re-ask confirmed it</label>
     <label><input type="checkbox"> The three-probe test is written down as the persona's regression suite</label>
