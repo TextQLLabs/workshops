@@ -1,0 +1,4 @@
+# internal staging — do not publish (names customers / internal reviewers)
+docs-mdx/
+DOCS-PRODUCTION-PLAN.md
+docs-workshops-tab-preview.html
