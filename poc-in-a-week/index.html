@@ -174,6 +174,13 @@
   <details><summary>For facilitators — running this as a guided session</summary><div class="body">
     <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
   </div></details>
+
+  <div id="run-with-ana" style="margin-top:30px;border:1px solid var(--green);border-left:4px solid var(--green);background:var(--green-soft);border-radius:10px;padding:18px 20px">
+    <h3 style="margin:0 0 8px;color:var(--green-dark)">🤖 Run this POC with Ana</h3>
+    <p style="margin:0 0 10px">This one runs across the week and has setup steps you do in the console — so Ana <b>paces it, gates on each prerequisite, and resumes where you left off</b>. Paste this at the <b>start of each session</b>:</p>
+    <pre style="white-space:pre-wrap;background:var(--code-bg,#0f1f1b);color:#e8f3ee;padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.5;overflow:auto">Hey Ana — facilitate my "POC in a Week" with me. It runs across several sessions with setup steps I do in the console, so: first re-inspect what's connected, what's in the ontology, and what playbooks/feeds exist, and tell me which Day I'm on. Then guide me through the next step only — if it needs a console action (connect a warehouse, add a role), hand it to me and wait until I say "done," then re-check before moving on. Save my progress so a new thread can resume. Start by telling me what you see and which Day we're on.</pre>
+    <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">Ana gates on the setup steps and resumes across days. (Air-gapped / VPC tenants: download <a href="https://github.com/TextQLLabs/workshops/blob/main/poc-in-a-week/ana-runner.md" target="_blank" rel="noopener">ana-runner.md</a> and follow the day-by-day flow.)</p>
+  </div>
 </section>
 
 <section class="page" id="m0" data-title="Module 0 · Before Day 1" data-group="Getting Started" data-time="30 minutes, scheduled the week before Day 1">
