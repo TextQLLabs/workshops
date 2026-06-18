@@ -1,26 +1,35 @@
-# Admin Governance — Ana-Led Runner
+# Admin & Governance — Ana-Led Runner (v2: gated)
 
-> Pairs with `../ana-workshop-facilitator.md` (the generic HOW). This is the **module list** (the WHAT) for the Admin Governance workshop.
-> Delivery: **inline** (paste it) or just give Ana the workshop URL — she fetches it. Facilitation: **in-thread, interactive — the learner runs each prompt, Ana coaches.**
-> ⚙️ Setup/operational workshop — some steps are console/config, not data queries; Ana guides rather than runs them.
+> A **gated** runner (v2). This workshop has steps you do in the **console/CLI**, so Ana inspects your
+> workspace state, **gates on each prerequisite**, hands you the setup action and **waits**, then re-checks
+> — and resumes if you step away. Pairs with `../ana-workshop-facilitator.md`. Delivery: inline / URL.
 
-## Step-0 prompt (paste this, or use the workshop URL)
+## Step-0 prompt (paste this)
 
 ```
-Hey Ana — facilitate the "Admin Governance" workshop with me in this thread, on the data connected here.
-Pull the steps from https://textqllabs.github.io/workshops/admin-governance/ (or use the module list below).
-Run it interactively: look at what's connected first (2–3 lines), then go ONE module at a time. For each
-module, DON'T run the prompt yourself — give ME the prompt to copy and run, tell me what to look for, then
-wait and coach me on my result. Start with what you see, then Module 0.
+Hey Ana — facilitate the "Admin & Governance" workshop with me on this workspace. It has steps I do in the
+console/CLI, so: first inspect the current state (connectors / roles / context / git, as relevant) and
+tell me where we're starting. Then go ONE step at a time — for analysis steps, hand me the prompt to
+run; for console/setup steps, tell me exactly what to do, then WAIT until I say "done" and re-check
+before moving on (don't assume a setup step is done). If I leave and come back, re-inspect and resume.
+Start by telling me what you see.
 ```
 
 ## Methodology (what this teaches)
 
 A hands-on workshop for workspace administrators: identity and SSO, roles and permissions, connector governance, capability and model controls, monitoring, and the day-to-day operations of running TextQL safely at scale.
 
-## Modules — Ana adapts each `[bracket]` to the connected data, then hands the prompt to the learner to run
+## Instructions to Ana (the v2 HOW)
 
-| # | Module | Prompt for the learner to run (resolve the brackets) |
+1. **Inspect current state first** — connectors / roles / context / git, as relevant; tell me where we start.
+2. **Gate on each prerequisite.** For a console/setup step, hand me the exact action and **WAIT**; re-check on return; **never fake completion**.
+3. **One step at a time.** Analysis steps → hand me the prompt + what to look for. Setup steps → the console action, then wait.
+4. **Persist progress** so a new thread resumes where we left off.
+5. **Adapt to my actual workspace; never fabricate.**
+
+## Modules — Ana gates on setup steps, hands analysis prompts to the learner
+
+| # | Module | Step — Ana hands you the prompt, or the console action |
 |---|---|---|
 | 0 | The Admin Surface | Give me an admin baseline of this organization: how many members and what roles they hold, which connectors exist and whether they are read-only or read-write, which tools are enabled org-wide, and which AI models are enabled. Format it as a table I can save. |
 | 1 | Identity: SSO & SCIM | From the audit log, list all member provisioning and deprovisioning events in the last 30 days. Flag any member created manually rather than via SCIM. |
@@ -32,4 +41,4 @@ A hands-on workshop for workspace administrators: identity and SSO, roles and pe
 
 ## When done
 
-Recap in 3 bullets. Offer to save anything the learner *built* as a **Playbook** for reuse. Do **not** write the workshop into the governed ontology.
+Recap in 3 bullets. Offer to save anything built as a **Playbook**. Do **not** write the workshop into the governed ontology.

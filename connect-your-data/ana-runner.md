@@ -1,26 +1,35 @@
-# Connect Your Data — Ana-Led Runner
+# Connect Your Data — Ana-Led Runner (v2: gated)
 
-> Pairs with `../ana-workshop-facilitator.md` (the generic HOW). This is the **module list** (the WHAT) for the Connect Your Data workshop.
-> Delivery: **inline** (paste it) or just give Ana the workshop URL — she fetches it. Facilitation: **in-thread, interactive — the learner runs each prompt, Ana coaches.**
-> ⚙️ Setup/operational workshop — some steps are console/config, not data queries; Ana guides rather than runs them.
+> A **gated** runner (v2). This workshop has steps you do in the **console/CLI**, so Ana inspects your
+> workspace state, **gates on each prerequisite**, hands you the setup action and **waits**, then re-checks
+> — and resumes if you step away. Pairs with `../ana-workshop-facilitator.md`. Delivery: inline / URL.
 
-## Step-0 prompt (paste this, or use the workshop URL)
+## Step-0 prompt (paste this)
 
 ```
-Hey Ana — facilitate the "Connect Your Data" workshop with me in this thread, on the data connected here.
-Pull the steps from https://textqllabs.github.io/workshops/connect-your-data/ (or use the module list below).
-Run it interactively: look at what's connected first (2–3 lines), then go ONE module at a time. For each
-module, DON'T run the prompt yourself — give ME the prompt to copy and run, tell me what to look for, then
-wait and coach me on my result. Start with what you see, then Module 0.
+Hey Ana — facilitate the "Connect Your Data" workshop with me on this workspace. It has steps I do in the
+console/CLI, so: first inspect the current state (connectors / roles / context / git, as relevant) and
+tell me where we're starting. Then go ONE step at a time — for analysis steps, hand me the prompt to
+run; for console/setup steps, tell me exactly what to do, then WAIT until I say "done" and re-check
+before moving on (don't assume a setup step is done). If I leave and come back, re-inspect and resume.
+Start by telling me what you see.
 ```
 
 ## Methodology (what this teaches)
 
 A hands-on workshop for data engineers, platform admins, and technical leads: get every kind of data source connected to TextQL correctly the first time — warehouses, private-network databases, BI tools, files, Google Drive, and external APIs — with credentials done right and a validation habit…
 
-## Modules — Ana adapts each `[bracket]` to the connected data, then hands the prompt to the learner to run
+## Instructions to Ana (the v2 HOW)
 
-| # | Module | Prompt for the learner to run (resolve the brackets) |
+1. **Inspect current state first** — connectors / roles / context / git, as relevant; tell me where we start.
+2. **Gate on each prerequisite.** For a console/setup step, hand me the exact action and **WAIT**; re-check on return; **never fake completion**.
+3. **One step at a time.** Analysis steps → hand me the prompt + what to look for. Setup steps → the console action, then wait.
+4. **Persist progress** so a new thread resumes where we left off.
+5. **Adapt to my actual workspace; never fabricate.**
+
+## Modules — Ana gates on setup steps, hands analysis prompts to the learner
+
+| # | Module | Step — Ana hands you the prompt, or the console action |
 |---|---|---|
 | 0 | Before You Connect | List the connectors that already exist in this org with their types and visibility. I'm about to add [source] — flag anything that looks like a duplicate or overlapping source. |
 | 1 | Network & Credentials | *(Ana orients you)* — explain **Network & Credentials** in 3 bullets, grounded in my connected data, then move on. |
@@ -32,4 +41,4 @@ A hands-on workshop for data engineers, platform admins, and technical leads: ge
 
 ## When done
 
-Recap in 3 bullets. Offer to save anything the learner *built* as a **Playbook** for reuse. Do **not** write the workshop into the governed ontology.
+Recap in 3 bullets. Offer to save anything built as a **Playbook**. Do **not** write the workshop into the governed ontology.
