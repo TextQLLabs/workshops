@@ -166,15 +166,22 @@
 <h2>Who this is for</h2>
 <ul><li>Platform owners who decide what Ana knows org-wide</li><li>Workspace admins who provision different behavior for different teams</li><li>Enablement champions onboarding populations with different needs (executives vs analysts vs operations)</li><li>Anyone in a regulated environment who needs access behavior to be auditable, not anecdotal</li></ul>
 <h2>What you'll be able to do</h2>
-<table><tr><th>After module</th><th>You can...</th></tr><tr><td>0</td><td>Place any "I want Ana to..." request in the right context layer</td></tr><tr><td>1</td><td>Stand up the substrate: seed <code>ANA.md</code> and verify Ana loads the per-user and per-persona conventions</td></tr><tr><td>2</td><td>Build your own personal context and verify it persists across threads</td></tr><tr><td>3</td><td>Propose org-level definitions, glossary entries, and documents through review</td></tr><tr><td>4</td><td>Author complete role persona files from the four-section anatomy</td></tr><tr><td>5</td><td>Prove persona behavior with the same-question test, and change it through governance</td></tr><tr><td>6</td><td>Provision personas through identity (SSO/SCIM groups), fail-closed</td></tr><tr><td>7</td><td>Operate the stack: versioning, persona reviews, and the failure modes to watch</td></tr></table>
+<table><tr><th>After module</th><th>You can...</th></tr><tr><td>0</td><td>Place any "I want Ana to..." request in the right context layer</td></tr><tr><td>1</td><td>Stand up the routing setup: seed <code>ANA.md</code> and verify Ana loads the per-user and per-persona conventions</td></tr><tr><td>2</td><td>Build your own personal context and verify it persists across threads</td></tr><tr><td>3</td><td>Propose org-level definitions, glossary entries, and documents through review</td></tr><tr><td>4</td><td>Author complete role persona files from the four-section anatomy</td></tr><tr><td>5</td><td>Prove persona behavior with the same-question test, and change it through governance</td></tr><tr><td>6</td><td>Provision personas through identity (SSO/SCIM groups), fail-closed</td></tr><tr><td>7</td><td>Operate the stack: versioning, persona reviews, and the failure modes to watch</td></tr></table>
 <h2>Workshop modules</h2>
 <table><tr><th>Module</th><th>Time</th></tr><tr><td>0 · The Context Stack</td><td>10 min</td></tr><tr><td>1 · Prepare the Environment</td><td>10 min</td></tr><tr><td>2 · Build Your Personal Context</td><td>20 min</td></tr><tr><td>3 · Curate the Org Context</td><td>15 min</td></tr><tr><td>4 · Author Role Profiles</td><td>25 min</td></tr><tr><td>5 · The Same-Question Test</td><td>20 min</td></tr><tr><td>6 · Provisioning &amp; Identity</td><td>15 min</td></tr><tr><td>7 · Operate the Context Stack</td><td>15 min</td></tr><tr><td>Persona library</td><td>reference</td></tr></table>
 <h2>How to use this workshop</h2>
 <ol><li>Prerequisites: an org with an ontology/context library in place (the <a href="../build-your-ontology/"><b>Build Your Ontology</b></a> workshop if not) <b>plus the context routing file (<code>ANA.md</code>) seeded per Module 1</b>; admin access for Modules 4–6; and a test user account for Module 5's side-by-side.</li><li>Work <b>in order</b> — each layer builds on the previous, and Module 5's proof needs Module 4's personas.</li><li>Swap <code>[bracketed]</code> placeholders for your own teams, metrics, and domains. The restricted-persona examples use a care-management flavor; the pattern is industry-agnostic.</li><li>Context mechanics follow the current documentation at <a href="https://docs.textql.com">docs.textql.com</a> (Context Library and Ontology sections) — verify click-paths there as the surface evolves.</li></ol>
 
   <details><summary>For facilitators — running this as a guided session</summary><div class="body">
-    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; run Module 1's two verification probes ("what conventions are loaded?" and the write-test) to confirm <code>ANA.md</code> is seeded and loading before anyone starts; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
+    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; run Module 1's two verification probes ("what conventions are loaded?" and the write-test) to confirm <code>ANA.md</code> is seeded and loading before anyone starts; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog.</p>
   </div></details>
+
+  <div id="run-with-ana" style="margin-top:30px;border:1px solid var(--green);border-left:4px solid var(--green);background:var(--green-soft);border-radius:10px;padding:18px 20px">
+    <h3 style="margin:0 0 8px;color:var(--green-dark)">🤖 Prefer to have Ana run this workshop?</h3>
+    <p style="margin:0 0 10px">Open a TextQL thread with your data connected and paste the prompt below — Ana walks you through this workshop on <b>your own data</b>, one step at a time. You run each prompt; she coaches.</p>
+    <pre style="white-space:pre-wrap;background:var(--code-bg,#0f1f1b);color:#e8f3ee;padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.5;overflow:auto">Hey Ana — facilitate the "Context Stack" workshop with me in this thread, on the data connected here. Pull the steps from https://textqllabs.github.io/workshops/context-stack/ and run it interactively: look at my data first (2–3 lines), then go ONE module at a time. For each module, give ME the prompt to copy and run as my next message, tell me what to look for, then wait and coach me on my result. Start with what you see, then Module 0.</pre>
+    <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">Ana fetches the steps from the link — no copy/paste of the workshop needed. (Air-gapped / VPC tenants where Ana can't reach the web: paste the module list from this workshop's <code>ana-runner.md</code> instead.)</p>
+  </div>
 </section>
 
 <section class="page" id="m0" data-title="Module 0 · The Context Stack" data-group="Getting Started" data-time="10 minutes">
@@ -205,12 +212,12 @@
   <div class="kicker">Module 1</div>
   <h1>Module 1 · Prepare the Environment</h1>
   <div class="page-meta"><span>⏱️ <b>10 minutes</b></span><span>Admin pre-flight — do this once per workspace</span></div>
-<p><b>Goal:</b> stand up the substrate the rest of the stack depends on — a root routing file (the <code>ANA.md</code> convention) plus the folder layout — and verify Ana actually loads it. This is a one-time admin step; skip it and Module 2 dead-ends.</p>
+<p><b>Goal:</b> stand up the routing setup the rest of the stack depends on — a root routing file (the <code>ANA.md</code> convention) plus the folder layout — and verify Ana actually loads it. This is a one-time admin step; skip it and Module 2 dead-ends.</p>
 <h2>1.1 · Why this comes first</h2>
 <p>The three-layer stack only works if a root-level routing file — by convention <code>ANA.md</code> — <b>exists in the context library and is loaded into every chat.</b> That file is what teaches Ana the conventions the other modules assume:</p>
 <ul><li>the <b>personal-context</b> convention <code>users/&lt;email-local-part&gt;/context.md</code>, and the rule that Ana reads <i>only the active user's</i> file at the start of each thread;</li><li>the <b>role-context</b> convention <code>behaviors/&lt;persona&gt;/org_context.md</code>;</li><li>where <b>org-wide</b> definitions, glossary, and routing tables live.</li></ul>
   <div class="callout warn"><span class="label">The most common setup failure</span>
-    <p>Without <code>ANA.md</code>, Ana has no concept of "personal context." Asked to "remember my preferences," she falls back to writing an undifferentiated note into the shared library — visible to everyone, keyed to no one. If that happens, the substrate isn't loaded. You're doing this module so it never does.</p>
+    <p>Without <code>ANA.md</code>, Ana has no concept of "personal context." Asked to "remember my preferences," she falls back to writing an undifferentiated note into the shared library — visible to everyone, keyed to no one. If that happens, the routing setup isn't loaded. You're doing this module so it never does.</p>
   </div>
 <h2>1.2 · The folder layout you're standing up</h2>
 <p>Here's the shape you'll end up with — just folders and files, versioned and reviewable like any repo. You won't hand-build it; Ana creates it in the next step. This is the map:</p>
@@ -261,14 +268,14 @@ Each persona is behaviors/&lt;persona&gt;/org_context.md with four sections: 1. 
   <div class="callout"><span class="label">You can do this whole workshop with zero connectors</span>
     <p><b>Typed</b> preferences, personas, and definitions need only the writable library. Connectors matter only for the optional flourish of having Ana enrich a personal profile from real data (e.g., "look at my recent threads and propose my default time window"). If you have no connectors, skip those asides — every checkpoint still passes.</p>
   </div>
-<h2>1.5 · Verify the substrate is loaded</h2>
+<h2>1.5 · Verify the routing setup is loaded</h2>
 <p>Two probes. Run them in a fresh thread after seeding <code>ANA.md</code> — don't move on until both pass.</p>
   <div class="prompt"><span class="tag">PROMPT — PROBE 1</span><button>Copy</button>
 <pre>What context conventions are loaded in this workspace?</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana describe the three layers and name the <code>users/</code> and <code>behaviors/</code> paths. If she can't, <code>ANA.md</code> isn't being loaded into the chat — recheck step 1.3.</div>
   <div class="prompt"><span class="tag">PROMPT — PROBE 2 (THE WRITE TEST)</span><button>Copy</button>
 <pre>Save a test preference to my personal context and tell me the exact file path you wrote it to.</pre></div>
-  <div class="yousee"><b>You'll see:</b> Ana name <code>users/&lt;your-email-local-part&gt;/context.md</code> — your own per-user file. <b>If she names a generic or shared path, or says she can only write to the shared library, the substrate isn't loaded</b> — go back to step 1.3 and confirm <code>ANA.md</code> is at the library root and attached to the thread.</div>
+  <div class="yousee"><b>You'll see:</b> Ana name <code>users/&lt;your-email-local-part&gt;/context.md</code> — your own per-user file. <b>If she names a generic or shared path, or says she can only write to the shared library, the routing setup isn't loaded</b> — go back to step 1.3 and confirm <code>ANA.md</code> is at the library root and attached to the thread.</div>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> <code>ANA.md</code> exists at the context-library root with your <code>[org]</code> values filled in</label>
     <label><input type="checkbox"> The <code>users/</code> and <code>behaviors/</code> folders exist (even if empty)</label>
@@ -283,7 +290,7 @@ Each persona is behaviors/&lt;persona&gt;/org_context.md with four sections: 1. 
   <div class="page-meta"><span>⏱️ <b>20 minutes</b></span></div>
 <p><b>Goal:</b> build your own personal context — preferences, vocabulary, a saved workflow — verify it persists across threads, and learn what must never go in it.</p>
   <div class="callout warn"><span class="label">If a save lands in the wrong place</span>
-    <p>If Ana says she can only save to the shared library, or writes to a generic path instead of <code>users/&lt;your-email&gt;/context.md</code>, the routing file from <b>Module 1</b> isn't loaded. Stop and fix the substrate before continuing — every later module depends on it.</p>
+    <p>If Ana says she can only save to the shared library, or writes to a generic path instead of <code>users/&lt;your-email&gt;/context.md</code>, the routing file from <b>Module 1</b> isn't loaded. Stop and fix the routing setup — the <code>ANA.md</code> file from Module 1 isn't loaded — before continuing; every later module depends on it.</p>
   </div>
 <h2>2.1 · Preferences</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
