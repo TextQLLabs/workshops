@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genomics Starter Pack · TextQL Workshops</title>
+<style>
+  :root{
+    --green:#58a68d; --green-dark:#2f6f5c; --green-soft:#e9f2ee;
+    --ink:#1c2b27; --muted:#5d6b67;
+    --bg:#ffffff; --bg-soft:#f4f8f6; --border:#dde7e3; --code-bg:#0f1f1b;
+    --gold:#e9c46a; --gold-soft:#fdf9ee; --gold-border:#f0e4c0; --gold-ink:#8a6d1f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.6}
+  a{color:var(--green-dark)}
+
+  /* ── Layout ─────────────────────────────── */
+  .layout{display:flex;min-height:100vh}
+  nav#sidebar{width:300px;min-width:300px;background:var(--bg-soft);border-right:1px solid var(--border);padding:24px 0 60px;position:fixed;top:0;bottom:0;overflow-y:auto;z-index:40}
+  main{margin-left:300px;flex:1;display:flex;justify-content:center;padding:44px 56px 110px}
+  .content{max-width:860px;width:100%}
+
+  /* ── Sidebar ────────────────────────────── */
+  .brand{padding:0 24px 16px;border-bottom:1px solid var(--border)}
+  .brand .logo{font-weight:800;font-size:18px;color:var(--green-dark);letter-spacing:.5px}
+  .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .progress-wrap{padding:14px 24px;border-bottom:1px solid var(--border)}
+  .progress-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+  .progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:var(--green);border-radius:4px;transition:width .4s}
+  .progress-pct{font-size:12px;color:var(--green-dark);font-weight:600;margin-top:4px}
+  nav .group-label{padding:16px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  nav a.nav-item{display:flex;align-items:center;gap:10px;padding:9px 24px;font-size:14px;color:var(--ink);text-decoration:none;border-left:3px solid transparent}
+  nav a.nav-item:hover{background:var(--green-soft)}
+  nav a.nav-item.active{border-left-color:var(--green);background:var(--green-soft);font-weight:600}
+  .nav-item .num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;min-width:22px;border-radius:50%;border:1.5px solid var(--muted);font-size:11px;font-weight:700;color:var(--muted)}
+  .nav-item.done .num{background:var(--green);border-color:var(--green);color:#fff;font-size:12px}
+  .nav-item .time{margin-left:auto;font-size:11px;color:var(--muted)}
+  .menu-btn{display:none;position:fixed;top:14px;left:14px;z-index:41;background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer}
+
+  /* ── Typography ─────────────────────────── */
+  .kicker{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);font-weight:700;margin-bottom:6px}
+  h1{font-size:30px;line-height:1.25;margin-bottom:10px;font-weight:700}
+  .page-meta{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-bottom:24px;flex-wrap:wrap}
+  .page-meta b{color:var(--ink)}
+  h2{font-size:20px;margin:34px 0 10px;padding-top:8px;font-weight:700}
+  h3{font-size:16px;margin:22px 0 8px;font-weight:700}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0 10px 24px}
+  li{margin:5px 0}
+  b,strong{font-weight:650}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:var(--bg-soft);font-weight:600}
+  code{background:#eef4f1;padding:2px 6px;border-radius:4px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  hr{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+  /* ── Hero cards (welcome) ───────────────── */
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+  .hero-card{border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:#fff}
+  .hero-card .n{font-size:12px;font-weight:700;color:var(--green);letter-spacing:1px}
+  .hero-card h3{margin:4px 0;font-size:15px}
+  .hero-card p{font-size:13px;color:var(--muted);margin:0}
+
+  /* ── Callouts ───────────────────────────── */
+  .callout{background:var(--bg-soft);border-left:4px solid var(--green);padding:12px 16px;border-radius:0 6px 6px 0;margin:14px 0;font-size:14px}
+  .callout.warn{border-left-color:var(--gold)}
+  .callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+  .callout .label{font-weight:700;display:block}
+
+  /* ── Prompt blocks ──────────────────────── */
+  .prompt{position:relative;background:var(--code-bg);color:#dff3ea;border-radius:8px;padding:20px;margin:16px 0 10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;line-height:1.55}
+  .prompt .tag{position:absolute;top:-9px;left:14px;background:var(--green);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px}
+  .prompt button{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.12);color:#dff3ea;border:none;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+  .prompt button:hover{background:rgba(255,255,255,.28)}
+  .prompt pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;padding-right:54px}
+  .yousee{background:var(--gold-soft);border:1px solid var(--gold-border);border-radius:8px;padding:12px 16px;margin:10px 0 18px;font-size:14px}
+  .yousee b{color:var(--gold-ink)}
+
+  /* ── Screenshots ────────────────────────── */
+  figure.shot{margin:16px 0 22px}
+  figure.shot img{display:block;max-width:100%;border:1px solid var(--border);border-radius:10px;box-shadow:0 2px 10px rgba(28,43,39,.08);cursor:zoom-in}
+  figure.shot figcaption{font-size:13px;color:var(--muted);margin-top:7px}
+  figure.shot.missing img,figure.shot.missing figcaption{display:none}
+  figure.shot.missing::after{content:"📷  Screenshot coming soon — " attr(data-todo);display:block;border:2px dashed var(--border);border-radius:10px;padding:22px 18px;color:var(--muted);font-size:13.5px;background:var(--bg-soft)}
+  #lightbox{display:none;position:fixed;inset:0;background:rgba(15,31,27,.92);z-index:200;cursor:zoom-out;align-items:center;justify-content:center;padding:30px}
+  #lightbox.show{display:flex}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:8px}
+
+  /* ── Steps ──────────────────────────────── */
+  ol.steps{list-style:none;margin-left:0;counter-reset:step}
+  ol.steps>li{counter-increment:step;position:relative;padding:0 0 16px 44px;border-left:2px solid var(--border);margin:0 0 0 15px}
+  ol.steps>li:last-child{border-left-color:transparent}
+  ol.steps>li::before{content:counter(step);position:absolute;left:-15px;top:-2px;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+
+  /* ── Checkpoint ─────────────────────────── */
+  .checkpoint{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:28px 0}
+  .checkpoint h4{margin:0 0 10px;color:var(--green-dark);font-size:15px}
+  .checkpoint label{display:flex;align-items:flex-start;gap:10px;padding:5px 0;font-size:14px;cursor:pointer}
+  .checkpoint input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;min-width:16px;cursor:pointer}
+  .checkpoint label.checked{color:var(--muted);text-decoration:line-through}
+
+  /* ── Expandable ─────────────────────────── */
+  details{border:1px solid var(--border);border-radius:8px;margin:12px 0;background:#fff}
+  details summary{cursor:pointer;padding:11px 14px;font-weight:600;font-size:14.5px;list-style:none}
+  details summary::before{content:"▸ ";color:var(--green)}
+  details[open] summary::before{content:"▾ "}
+  details .body{padding:2px 16px 12px}
+
+  /* ── Pager ──────────────────────────────── */
+  .pager{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--border);padding-top:22px}
+  .pager a{flex:1;max-width:330px;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-decoration:none;color:var(--ink)}
+  .pager a:hover{border-color:var(--green);background:var(--green-soft)}
+  .pager a .dir{font-size:12px;color:var(--muted);display:block}
+  .pager a .ttl{font-weight:600;color:var(--green-dark);font-size:15px}
+  .pager a.next{text-align:right;margin-left:auto}
+
+  .page{display:none}
+  .page.active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  footer.pagefoot{margin-top:46px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);padding-top:16px}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:210}
+  .toast.show{opacity:1}
+
+  @media(max-width:920px){
+    nav#sidebar{transform:translateX(-100%);transition:transform .2s;box-shadow:2px 0 14px rgba(0,0,0,.12)}
+    nav#sidebar.open{transform:none}
+    main{margin-left:0;padding:60px 22px 80px}
+    .menu-btn{display:block}
+    .hero-grid{grid-template-columns:1fr}
+  }
+  @media print{
+    nav#sidebar,.pager,.menu-btn,.toast{display:none!important}
+    main{margin-left:0}
+    .page{display:block!important;page-break-after:always}
+    figure.shot.missing{display:none}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+<div class="layout">
+<nav id="sidebar">
+  <div class="brand">
+    <div class="logo">TextQL Workshop</div>
+    <div class="sub">Genomics Starter Pack</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">Your progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+    <div class="progress-pct" id="ppct">0% complete</div>
+  </div>
+  <div id="navlist"></div>
+</nav>
+
+<main><div class="content" id="content">
+
+<!-- ════════════════ WELCOME ════════════════ -->
+<section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
+  <div class="kicker">Workshop · Domain Starter Pack</div>
+  <h1>Implement the Genomics Starter Pack</h1>
+  <div class="page-meta"><span>⏱️ About <b>2.5 hours</b></span><span>🎯 Genomics-lab data teams — variant analysis, biobank/feasibility, lab ops</span><span>📦 Starts from a pre-built ontology, not a blank page</span></div>
+
+  <p>A hands-on workshop that takes you from <i>"I have this ontology repo and nothing else"</i> to <i>"I'm asking Ana governed questions about my own LIMS, QC, and variant data — and the model grows itself as I work"</i> — mostly without leaving the Ana chat window.</p>
+  <p>The <b>Genomics Starter Pack</b> is a <b>document of domain expertise</b> over genomics lab + variant data — subjects, samples, assays, sequencing runs, QC metrics, variants, and genes. It's <b>just files</b> (Markdown + <code>.tql</code>) in a git repo: <a href="https://github.com/TextQLLabs/ontology-genomics-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-genomics-starter</code></a> — <b>your TextQL team grants access and sets up your own fork</b> (your adaptations live in your fork; the template stays pristine).</p>
+  <div class="callout warn"><span class="label">This is not a form to fill out</span>
+    <p>The starter is a <b>warm start, not a finished model to deploy</b>. Treating it as "close enough" and pointing it at your LIMS/variant store is the fastest way to build a model nobody trusts. So we begin in Module 0 by naming your <b>North Star</b> — what someone does differently on Monday when this works — then let the model <b>accrete from real questions</b>: Ana reads what's known, explores only the frontier, answers, and proposes additions back as git commits you review. (The repo's <a href="https://github.com/TextQLLabs/ontology-genomics-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a> and <a href="https://github.com/TextQLLabs/ontology-genomics-starter/blob/main/QUESTION_LIBRARY.md" target="_blank" rel="noopener"><code>QUESTION_LIBRARY.md</code></a> are your starting points.)</p>
+  </div>
+
+  <h2>What you'll do</h2>
+  <div class="hero-grid">
+    <div class="hero-card"><div class="n">MODULE 0</div><h3>Set your North Star</h3><p>Name what the ontology is <i>for</i>, pick an archetype, choose the ~20 questions that matter.</p></div>
+    <div class="hero-card"><div class="n">MODULE 0</div><h3>Tour the six layers</h3><p>Entity spine, metrics, classification, governance, decisions, validation.</p></div>
+    <div class="hero-card"><div class="n">MODULE 1</div><h3>Connect three things</h3><p>The ontology repo, your warehouse (read-only), your documents.</p></div>
+    <div class="hero-card"><div class="n">MODULE 2</div><h3>Validate against your schema</h3><p>Ana diffs the model vs. your tables and opens the fix as a PR.</p></div>
+    <div class="hero-card"><div class="n">MODULE 3</div><h3>Light up the classification</h3><p>ClinVar significance, Sequence-Ontology type, HGNC gene — zero warehouse writes.</p></div>
+    <div class="hero-card"><div class="n">MODULE 4</div><h3>Ask governed questions</h3><p>Variant yield, diagnostic yield, QC pass, TAT, coverage — with the SQL shown.</p></div>
+    <div class="hero-card"><div class="n">MODULE 5+6</div><h3>Govern &amp; customize</h3><p>Genomic-PII defaults, golden values, and making the definitions yours.</p></div>
+  </div>
+
+  <div class="callout"><span class="label">What ships in the box</span>
+    <p><b>Free / public classification schemes</b> (the ClinVar 5-tier significance scheme, Sequence-Ontology variant types, assay categories, the HGNC symbol structure) are committed in the repo — yours to keep and extend. Large public reference resources (the full ClinVar variant database, HGNC, GENCODE annotations) are <b>fetched per release and pinned to a genome build</b> with your own pipeline outputs, not hand-bundled.</p>
+  </div>
+  <div class="callout"><span class="label">No customer data — ever, and genomics-aware</span>
+    <p>The starter is built entirely from public standards (GA4GH / VCF / HGVS / HGNC / ClinVar / Sequence Ontology). Connecting it never uses your data to improve the template; it runs <b>read-only</b> against your warehouse (important for validated CLIA/CAP pipelines), and your adaptations live in <b>your own repo</b>. <b>Genomic data is inherently identifying</b> — default surfaces are aggregate and never emit subject-linked variant calls.</p>
+  </div>
+
+  <details><summary>For facilitators — running this as a guided session</summary><div class="body">
+    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
+  </div></details>
+
+  <div id="run-with-ana" style="margin-top:30px;border:1px solid var(--green);border-left:4px solid var(--green);background:var(--green-soft);border-radius:10px;padding:18px 20px">
+    <h3 style="margin:0 0 8px;color:var(--green-dark)">🤖 Prefer to have Ana run this workshop?</h3>
+    <p style="margin:0 0 10px">Open a TextQL thread with your data connected and paste the prompt below — Ana walks you through this workshop on <b>your own data</b>, one step at a time. You run each prompt; she coaches.</p>
+    <pre style="white-space:pre-wrap;background:var(--code-bg,#0f1f1b);color:#e8f3ee;padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.5;overflow:auto">Hey Ana — facilitate the "Genomics Starter" workshop with me in this thread, on the data connected here. Pull the steps from https://textqllabs.github.io/workshops/genomics-starter/ and run it interactively: look at my data first (2–3 lines), then go ONE module at a time. For each module, give ME the prompt to copy and run as my next message, tell me what to look for, then wait and coach me on my result. Start with what you see, then Module 0.</pre>
+    <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">Ana fetches the steps from the link — no copy/paste of the workshop needed. (Air-gapped / VPC tenants where Ana can't reach the web: paste the module list from this workshop's <a href="https://github.com/TextQLLabs/workshops/blob/main/genomics-starter/ana-runner.md" target="_blank" rel="noopener">ana-runner.md</a> instead.)</p>
+  </div>
+</section>
+
+<!-- ════════════════ NORTH STAR ════════════════ -->
+<section class="page" id="northstar" data-title="Start with Your North Star" data-group="Getting Started" data-time="15 min">
+  <div class="kicker">Module 0 · Before you connect anything</div>
+  <h1>Start with Your North Star</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b> · conversation, not configuration</span><span>🎯 Goal: know what your ontology is <i>for</i> before you build it</span></div>
+
+  <p>The single biggest mistake with a starter pack is to skip this step — to point it at your LIMS/variant store, decide it's "close enough," and ship. That bakes in decisions before you know which questions matter, and you get a model that's 10% useful and 90% noise. This module is the antidote, and it takes 15 minutes.</p>
+
+  <h2>0.1 · Answer one question</h2>
+  <div class="callout"><span class="label">The North Star question</span>
+    <p><b>When this works, what does someone do differently on Monday morning?</b></p>
+  </div>
+  <p>Not "model all of genomics." Something narrow and real: <i>"the lab director sees QC pass rate and TAT against SLA every morning without a ticket to the bioinformatics team,"</i> or <i>"the variant team can pull diagnostic yield by assay without re-deriving the PASS filter each time."</i> If you can't name it yet, you're not ready to build the ontology — you're ready to have <b>this</b> conversation. Have it first.</p>
+
+  <h2>0.2 · Pick the archetype that fits</h2>
+  <p>Most genomics-lab engagements start from one of three North Stars. Pick the closest — it tells you which surfaces, classification, and governance to lead with, and which to leave for later. (Full detail in the repo's <a href="https://github.com/TextQLLabs/ontology-genomics-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a>.)</p>
+  <table>
+    <tr><th>Archetype</th><th>For</th><th>Lead with</th></tr>
+    <tr><td><b>A · Variant &amp; diagnostic yield</b></td><td>"Trust the variant numbers" — one governed PASS filter, not a per-analyst one</td><td><code>variant_yield</code>, <code>pathogenic_variant_rate</code> + <code>filters/variant.tql</code>; the <code>variant-analysis</code> and <code>coding-tuple</code> notes.</td></tr>
+    <tr><td><b>B · Cohort / biobank feasibility</b></td><td>"Who do we have, and can we run this study?" — counting people, not specimens</td><td><code>pathogenic_variant_rate</code> (<code>gene_symbol</code> param), <code>assay_mix</code> + the <code>identity-resolution</code> note (subject-vs-sample grain) + small-cell suppression.</td></tr>
+    <tr><td><b>C · Assay / sequencing QC &amp; TAT</b></td><td>"Is the lab healthy?" — throughput, QC, TAT against SLA</td><td><code>qc_pass_rate</code>, <code>turnaround_time</code>, <code>coverage_adequacy</code>, <code>call_rate</code> + the <code>lab-ops</code> note.</td></tr>
+  </table>
+
+  <h2>0.3 · Choose the ~20 questions that matter</h2>
+  <p>The repo's <a href="https://github.com/TextQLLabs/ontology-genomics-starter/blob/main/QUESTION_LIBRARY.md" target="_blank" rel="noopener"><code>QUESTION_LIBRARY.md</code></a> lists the questions a mature genomics-lab org should answer in seconds. It's <b>not a checklist to implement</b> — put it in front of stakeholders (lab director, variant team, biobank/feasibility lead), watch which ones make people lean in, and start with that handful. You'll build for those, reconcile them, and let everything else accrete from use.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Read NORTH_STAR.md and QUESTION_LIBRARY.md in the ontology repo. Given that our North Star is [your one-sentence North Star], tell me which archetype fits, which 15–20 questions from the library I should target first, and which governed surfaces and classification those questions depend on.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana turn your one-sentence goal into a concrete starting scope — the surfaces to validate first and the questions to reconcile — so the rest of the workshop builds toward something real, not everything at once.</div>
+
+  <div class="callout"><span class="label">Why the model gets cheaper as you use it</span>
+    <p>This isn't just good practice — it's the design. An agent that re-discovers your warehouse on every question pays an "amnesia tax" (most of its tokens go to rediscovery, and results aren't reproducible). Reading a known model first and committing what it learns inverts that: discovery is paid <b>once</b> and amortized across every future question. See TextQL's research, <i>"Malleability Is All You Need"</i> (VLDB 2026) — a measured ~30% token reduction and a model that gets more reliable the more it's used.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You can state your North Star in one sentence</label>
+    <label><input type="checkbox"> You picked an archetype (variant/diagnostic yield / cohort feasibility / lab QC &amp; TAT)</label>
+    <label><input type="checkbox"> You have a shortlist of ~20 questions to target first</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 0 ════════════════ -->
+<section class="page" id="m0" data-title="Module 0 · The Six Layers" data-group="Getting Started" data-time="15 min">
+  <div class="kicker">Module 0</div>
+  <h1>Tour the Six Layers</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b> · reading + repo browsing</span><span>🎯 Goal: know what's in the box and where everything lives</span></div>
+
+  <p>Why a genomics starter exists at all: <b>raw genomic data is unusable as-is.</b> A variant is a <i>tuple</i> — genome build + coordinates + ref/alt + classification version — not a string; "how many pathogenic variants?" depends on a PASS filter, a ClinVar vintage, and an HGNC symbol you have to get right. The starter pins one governed PASS-only definition for contested metrics like variant yield and diagnostic yield, maps raw attributes into meaningful classification using public schemes (ClinVar tiers, Sequence Ontology, HGNC), and makes genomics-aware privacy behavior the default.</p>
+
+  <h2>The six layers</h2>
+  <table>
+    <tr><th>Layer</th><th>Where</th><th>What</th></tr>
+    <tr><td><b>1 — Entity spine</b></td><td><code>ontology/schema.tql</code>, <code>ontology/relations/</code></td><td>Subject, Sample, Assay, Sequencing run, QC metric, Variant, Gene, Panel target.</td></tr>
+    <tr><td><b>2 — Metrics</b></td><td><code>ontology/queries/</code></td><td>Governed surfaces: sample throughput, QC pass rate, turnaround time, variant yield, pathogenic-variant rate, coverage adequacy, call rate, QC-fail/rerun rate, assay mix.</td></tr>
+    <tr><td><b>3 — Classification</b></td><td><code>ontology/dimensions/</code>, <code>filters/</code>, <code>reference/terminology/</code></td><td><b>The heart.</b> ClinVar 5-tier significance, Sequence-Ontology variant type, assay category, HGNC gene — as dimensions, filters &amp; committed seeds.</td></tr>
+    <tr><td><b>4 — Governance</b></td><td><code>ontology/notes/governance-genomic-pii.md</code>, <code>config/org_context.md</code></td><td>Genomic identifiability, consent scope, secondary findings (ACMG), GINA, CLIA/CAP, small-cell suppression.</td></tr>
+    <tr><td><b>5 — Decision records</b></td><td><code>ontology/notes/</code></td><td>Why each metric is defined the way it is; PASS-only and significance versioning, lab-ops thresholds, subject-vs-sample grain, the variant tuple, the glossary.</td></tr>
+    <tr><td><b>6 — Validation</b></td><td><code>validation/</code></td><td><code>validate_tql.py</code> (every surface checked against your live schema + compiled), golden queries with pinned values, the dry-run prompt.</td></tr>
+  </table>
+
+  <div class="callout"><span class="label">Standards alignment</span>
+    <p><code>STANDARDS.md</code> maps the model to the genomics standards it aligns with (GA4GH, VCF, HGVS, HGNC, ClinVar, Sequence Ontology); <code>SOURCES.md</code> cites every source. The semantic layer (metrics, classification) is <b>fully separated from the physical mapping</b>: every physical table name lives in <b>one file</b>, <code>ontology/schema.tql</code> — re-point it and the metric logic stays put. The starter is authored against a generic <b>LIMS + secondary/tertiary-analysis</b> model in ANSI/Spark-portable SQL; <code>MIGRATION.md</code> is the re-point checklist and works the same on Redshift, BigQuery, Snowflake, or <b>Databricks</b> (budget: about a half-day with warehouse access). For a deep technical tour, read <code>DEEP_DIVE.md</code>.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You can name the six layers and find each one in the repo</label>
+    <label><input type="checkbox"> You know which classification schemes ship in the box vs. need a per-release fetch (full ClinVar, HGNC, GENCODE)</label>
+    <label><input type="checkbox"> You know the default model (generic LIMS + analysis, ANSI/Spark-portable) and where the re-point checklist lives</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 1 ════════════════ -->
+<section class="page" id="m1" data-title="Module 1 · Connect Three Things" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 1</div>
+  <h1>Connect Three Things</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat</span></div>
+
+  <h2>1.1 · Connect the ontology repo to Ana</h2>
+  <p>This is the key step. In TextQL, add a <b>Git connector</b> and point it at <b>your fork</b> of the starter repo (<a href="https://github.com/TextQLLabs/ontology-genomics-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-genomics-starter</code></a> — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every coding rule — as a reference she reads on demand.</p>
+  <div class="callout"><span class="label">No second source of truth</span>
+    <p>You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.</p>
+  </div>
+  <figure class="shot" data-todo="the Git connector configured against the starter repo">
+    <img src="assets/gx-m1-git.png" alt="Git connector pointed at the starter repo" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The ontology repo connected — Ana reads it as ground truth.</figcaption>
+  </figure>
+
+  <h2>1.2 · Connect your data warehouse</h2>
+  <p>Add the connector for the warehouse holding your genomics data — the LIMS / sequencing-ops / variant store (Databricks, Snowflake, BigQuery, Redshift, …). <b>Read-only access is enough.</b></p>
+  <div class="callout warn"><span class="label">Read-only, against the analytics copy</span>
+    <p>CLIA/CAP pipelines are validated, controlled environments — analytics must never write to them, and genomic data must not be needlessly copied. Connect read-only to the analytics warehouse, not the production pipeline. See <code>ontology/notes/governance-genomic-pii.md</code>.</p>
+  </div>
+
+  <h2>1.3 · (Optional) Bring in your documents</h2>
+  <p>Your real-world context — pipeline configs, LIMS QC-threshold spreadsheets, the doc where someone defined "reportable," panel-design sheets — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology as <b>corpus, not migration</b>, and can fold what she learns into the model.</p>
+
+  <h2>1.4 · Say hello</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Read the ontology repo and give me a tour: what entities, metrics, and classification groupers are defined, and what governed questions am I able to ask once my warehouse is validated?</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana describe the model from the repo itself — proof the Git connector works and the ontology is being read as ground truth.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Ana described the starter's entities and metrics from the connected repo</label>
+    <label><input type="checkbox"> Your warehouse connector is attached, read-only, against the analytics copy (not the validated pipeline)</label>
+    <label><input type="checkbox"> You know which of your documents you'll bring in (or that you're skipping this)</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 2 ════════════════ -->
+<section class="page" id="m2" data-title="Module 2 · Validate Against Your Schema" data-group="Hands-On Modules" data-time="25 min">
+  <div class="kicker">Module 2</div>
+  <h1>Validate the Model Against Your Schema</h1>
+  <div class="page-meta"><span>⏱️ <b>25 min</b></span><span>🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — without writing SQL</span></div>
+
+  <h2>2.1 · The dry run — required</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Look at the ontology repo, then inspect my warehouse. Pull the information schema for my subject / sample / assay / qc_metric / variant tables and tell me where the ontology's expected table and column names don't match what I actually have. Propose the exact changes to ontology/schema.tql.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names. (A ready-made version of this check lives in <code>validation/dry-run-prompt.md</code> — it also pulls the genome build, ClinVar version, QC/filter enums, and the data-extract date.)</div>
+
+  <h2>2.2 · Run the validator — required</h2>
+  <p>The dry run is discovery; <code>validation/validate_tql.py</code> is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles. <b>Ana runs it for you</b> — no terminal needed:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Run validation/validate_tql.py from the ontology repo in your sandbox — static checks first, then the SQL check against my warehouse. Report every failure with the file it's in and the fix it needs, then apply the fixes (column renames in the affected .tql, table renames in schema.tql only) and re-run until clean.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the typo'd-backing, wrong-alias, and missing-column bug classes caught here — instead of surfacing as wrong numbers in front of stakeholders. (This is the same kind of check that caught the kit's own <code>gene</code>-vs-<code>gene_symbol</code> parameter shadow during validation — Module 6.)</div>
+  <div class="callout"><span class="label">Prefer the terminal?</span>
+    <p>The same gate runs locally: <code>python3 validation/validate_tql.py</code> (static — no warehouse needed) · <code>--check-sql</code> (paste the output into Ana: rows = missing columns) · <code>--dsn "&lt;dsn&gt;" --explain</code> (live column check + compile test).</p>
+  </div>
+
+  <h2>2.3 · Apply the fixes as a PR — required</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Make those changes and open a pull request.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana edit the files and open a reviewable PR in <b>your</b> repo. Every physical table name lives in one place (<code>ontology/schema.tql</code>) — re-point it and the metric logic stays put. The surfaces reference logical <code>${name}</code> backings, so most re-points are one file.</div>
+  <figure class="shot" data-todo="the schema-validation PR Ana opened, showing the schema.tql diff">
+    <img src="assets/gx-m2-pr.png" alt="Schema validation PR" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Validation lands as a reviewable PR — not silent edits.</figcaption>
+  </figure>
+
+  <div class="callout"><span class="label">Why this step matters</span>
+    <p>Every lab's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those <i>before</i> you trust a number is the difference between a defensible metric and a debugging session in front of stakeholders.</p>
+  </div>
+
+  <h2>2.4 · Decide your grain &amp; pin the genomic tuple — required</h2>
+  <p>Three decisions shape everything downstream, and each is a prompt:</p>
+  <div class="prompt"><span class="tag">PROMPT — SAMPLE vs. SUBJECT GRAIN</span><button>Copy</button>
+<pre>Read ontology/notes/identity-resolution.md, then inspect my tables. Run COUNT(*) samples vs COUNT(DISTINCT subject_id) subjects — how heavy is the re-draw / tumor-normal / longitudinal fan-out? Tell me which metrics should be per-sample (lab ops) vs per-subject (clinical yield, feasibility), confirm the subject and sample keys are distinct, and record the decision in databases/[ourschema]/README.md (copy databases/lims_core/ as the template).</pre></div>
+  <div class="yousee"><b>You'll see:</b> the grain decision made and written down <i>before</i> anything gets edited. This is the make-or-break of feasibility counts: one subject has many samples (re-draws, tumor + matched normal, timepoints), so counting specimens when you mean people inflates everything.</div>
+  <div class="prompt"><span class="tag">PROMPT — THE VARIANT TUPLE</span><button>Copy</button>
+<pre>Per ontology/notes/coding-tuple.md, a variant is a tuple — genome build + coordinates + ref/alt + ClinVar version — not a string. Find where my warehouse records the genome build (GRCh37 vs GRCh38) and the ClinVar release/date, confirm the variant.filter PASS convention, and confirm genes are stored as HGNC approved symbols (not aliases). Record each in databases/[ourschema]/README.md and flag anything missing — an HGVS/ClinVar result without its build + version is a half-citation.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the build and ClinVar vintage pinned, the PASS convention confirmed, and the gene-symbol layer checked — the things the validator can't know but that make yield comparable across a period.</div>
+  <div class="prompt"><span class="tag">PROMPT — PER-ASSAY ENUMS &amp; THRESHOLDS</span><button>Copy</button>
+<pre>Find the dataset-specific literals the surfaces assume — sample.status values, qc_status (pass|fail|warn), clinical_significance tiers, and the per-assay coverage / call-rate thresholds — check each against what's actually in my warehouse, and propose the corrections in the same PR. Flag any single blended coverage cut across WGS and targeted panels.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the enumerations the validator can't know, corrected from your real data — and a warning if a threshold is being blended across assay types that aren't comparable (30x WGS vs. 100x+ panel).</div>
+  <div class="callout"><span class="label">The full checklist</span>
+    <p>This module covers the core; <code>MIGRATION.md</code> is the complete re-point (discover → grain → schema.tql → tuple/build → validator → enums/thresholds → governance → goldens). Half a day with warehouse access; most of it is verification, not editing.</p>
+  </div>
+  <div class="callout"><span class="label">Different warehouse dialect?</span>
+    <p>The starter is authored in ANSI/Spark-portable SQL (it validates on Databricks). On <b>Snowflake, BigQuery, or another engine</b>, extend the dry-run ask: <i>"…also flag any Spark-specific SQL in the .tql surfaces (e.g. <code>DATEDIFF</code>, <code>PERCENTILE_APPROX</code>) and propose [dialect] equivalents."</i> Dialect adaptation rides the same PR loop as schema fixes.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Ana produced a concrete mismatch list (or confirmed a clean match)</label>
+    <label><input type="checkbox"> The sample-vs-subject grain decision is made and written down</label>
+    <label><input type="checkbox"> Genome build + ClinVar version are pinned; PASS convention confirmed</label>
+    <label><input type="checkbox"> The fixes landed as a PR you can review — not silent edits</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 3 ════════════════ -->
+<section class="page" id="m3" data-title="Module 3 · The Classification Layer" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 3</div>
+  <h1>Light Up the Classification Layer</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: grouper-powered questions — ClinVar tiers, Sequence-Ontology type, HGNC gene — with zero writes to your warehouse</span></div>
+
+  <p>The classification seeds (ClinVar 5-tier significance → ordinal + reportable, Sequence-Ontology variant type → group, assay category, HGNC symbol structure) are <b>already committed in the repo</b> — nothing to load into your warehouse. Ana loads the CSV seed into her Python sandbox and joins it to a read-only warehouse pull in memory (see <code>ontology/notes/terminology-join-pattern.md</code>), so the grouper logic works with <b>zero warehouse writes</b> — which matters for validated CLIA/CAP pipelines.</p>
+
+  <h2>3.1 · Prove the groupers work</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Using the ontology's classification layer, show me the distribution of my PASS variants by ClinVar 5-tier clinical significance, and by Sequence-Ontology variant group (short vs. structural). Explain how you joined the seed crosswalk without writing to the warehouse.</pre></div>
+  <div class="yousee"><b>You'll see:</b> raw variant attributes resolved to meaningful clinical categories (P / LP / VUS / LB / B and SNV / indel / CNV / SV), with the federated join-in-sandbox pattern explained.</div>
+
+  <div class="callout warn"><span class="label">Group on the HGNC approved symbol — not an alias</span>
+    <p>When you group "which genes carry the most pathogenic variants," group on the <b>HGNC approved symbol</b> via <code>terminology.hgnc</code>, never a legacy/alias symbol. Gene symbols get renamed, and aliases collide — a renamed symbol silently drops rows. This is the same coding-discipline lesson that bit the kit's own validation (Module 6).</p>
+  </div>
+
+  <h2>3.2 · Refresh or extend the reference data — optional</h2>
+  <p><b>You don't need this on day one</b> — the committed seeds carry the classification structure. Come back when a standards release updates (ClinVar reclassifies continuously; HGNC and GENCODE release on their own cadence) or when you need the full variant-level ClinVar database. And you don't run the scripts yourself — Ana does:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Run reference/terminology/load_terminology.py in your sandbox to regenerate the clinical_significance / variant_type / assay_type seed CSVs, then note the current public ClinVar / HGNC / Sequence-Ontology release sources (load_terminology.py --refs). Open a PR with the refreshed files and a summary of what changed.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT — FULL CLINVAR (PIN THE RELEASE)</span><button>Copy</button>
+<pre>We need variant-level ClinVar significance, not just the 5-tier scheme. Fetch the current ClinVar release, pin it to our genome build (GRCh38), and confirm we're committing the version + date as part of the citation per notes/coding-tuple.md — not hand-bundling the full resource.</pre></div>
+  <div class="yousee"><b>You'll see:</b> refreshed classification arriving as a reviewable PR — same governance motion as everything else, with the ClinVar version and genome build pinned as part of the citation.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> A classification question worked against your data with no warehouse writes</label>
+    <label><input type="checkbox"> You can explain the federated join-in-sandbox pattern in one sentence</label>
+    <label><input type="checkbox"> You know how the seeds refresh and how the full ClinVar release gets fetched and version-pinned</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 4 ════════════════ -->
+<section class="page" id="m4" data-title="Module 4 · Ask Governed Questions" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 4</div>
+  <h1>Ask Governed Questions</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: the payoff — consistent, defensible answers routed through governed definitions, with the SQL shown</span></div>
+
+  <p>Run each of these against your validated warehouse. For every answer, note that Ana cites the governed surface and shows the rendered SQL. The golden values below are <b>pinned and verified</b> on the kit's synthetic warehouse (Databricks, 2026-06-23, horizon 2024-12-31) — yours will differ, but the shapes and invariants should hold.</p>
+
+  <h2>4.1 · Variant yield (PASS-only)</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What's our PASS variant yield per sequenced sample? Use the governed variant_yield surface, tell me the PASS filter you applied, and confirm the denominator is sequenced samples (so 0-variant samples count).</pre></div>
+  <div class="yousee"><b>You'll see:</b> <code>variant_yield</code> filter to <code>filter = 'PASS'</code> before counting anything — no-call/low-confidence records excluded. On the kit's synthetic warehouse: <b>254,775 PASS variants / 18,972 sequenced = 13.43 variants/sample</b>. A shift in this number flags a pipeline, reference-build, or sample-quality change — not noise.</div>
+
+  <h2>4.2 · Diagnostic yield (pathogenic-variant rate)</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What's our diagnostic yield — the % of sequenced samples with at least one PASS pathogenic / likely-pathogenic variant? Use the governed pathogenic_variant_rate surface. State whether VUS is excluded and which ClinVar version the significance calls came from.</pre></div>
+  <div class="yousee"><b>You'll see:</b> <code>pathogenic_variant_rate</code> count <code>clinical_significance IN ('pathogenic','likely_pathogenic')</code>, PASS-only, with VUS excluded by default (reportable = P/LP). On the synthetic warehouse: <b>6,145 / 18,972 = 0.3239 diagnostic yield</b>. Restrict to a gene of interest with the <code>gene_symbol</code> parameter (the one that was renamed during validation — Module 6).</div>
+  <div class="callout warn"><span class="label">Name the ClinVar version and genome build</span>
+    <p>ClinVar reclassifies continuously — a VUS can become pathogenic. A pathogenic rate is only comparable <i>within one classification vintage</i>, so the governed surface expects the <b>ClinVar version + date</b> and the <b>genome build</b> as part of the citation (<code>notes/coding-tuple.md</code>, <code>notes/variant-analysis.md</code>). Ana will name them rather than report a bare rate.</p>
+  </div>
+
+  <h2>4.3 · QC pass rate &amp; turnaround time (lab ops)</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Show our QC pass rate for the last complete year, and our turnaround time (average and p90 days, collection → result) for samples resulted in that window. Use the governed qc_pass_rate and turnaround_time surfaces, and report p90 — not just the mean.</pre></div>
+  <div class="yousee"><b>You'll see:</b> <code>qc_pass_rate</code> at <b>17,552 / 20,000 = 0.8776</b> and <code>turnaround_time</code> at <b>avg 20.06 days, p90 26 days</b> on the synthetic warehouse. TAT is anchored on <code>result_date</code> over <i>resulted</i> samples only — in-flight samples have no result date and are excluded (or reported separately as backlog), or TAT is understated.</div>
+
+  <h2>4.4 · Coverage, call rate &amp; assay mix</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Show coverage adequacy (% of samples meeting min_coverage=30), average genotype call rate and % of samples ≥ 0.95, and our assay mix (share of WGS / WES / panel / RNA). Cite the governed surfaces, and segment coverage by assay type rather than blending a single cut.</pre></div>
+  <div class="yousee"><b>You'll see:</b> <code>coverage_adequacy</code> at <b>18,243 / 20,000 = 0.9122</b> (avg 74.6x), <code>call_rate</code> avg <b>0.9491</b>, and <code>assay_mix</code> summing to <b>1.0</b> (panel 0.397 · WGS 0.206 · WES 0.200 · RNA 0.197). Thresholds are <b>assay-specific</b> — a single coverage or call-rate cut across WGS and targeted panels is meaningless, so Ana segments by <code>assay_type</code>.</div>
+
+  <div class="callout"><span class="label">Why everyone gets the same number</span>
+    <p>Metrics like variant yield and diagnostic yield can be computed several ways — which PASS filter, which significance tiers, which denominator. The ontology pins one governed definition — with the decision recorded in <code>ontology/notes/variant-analysis.md</code> and <code>lab-ops.md</code> — so the variant team and the lab director stop disagreeing.</p>
+  </div>
+
+  <h2>4.5 · When the answer isn't governed yet — watch the model grow</h2>
+  <p>Now ask something from your shortlist that the starter <b>doesn't</b> already cover. This is the important beat: a starter pack is a head start, not the finished model.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Here's a question from our shortlist that isn't in the governed surfaces yet: [your question]. Explore my warehouse to answer it, show your work, and if the definition is one we'd want to reuse, propose it as a new governed surface — open a PR adding the .tql and a notes file recording the decision (PASS-only, genome build, and ClinVar version where relevant).</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana explore only the <i>frontier</i> (not re-derive the whole warehouse), answer, and propose a <b>write-back</b> — a new metric committed to your repo with provenance. Review and merge it, and the next person who asks gets the governed answer for free. That's the malleable loop: the ontology you ship is the one you grow, and it gets more complete every time you use it.</div>
+  <div class="callout warn"><span class="label">You ratify; high-stakes definitions get review</span>
+    <p>Ana proposes; humans ratify via normal git review. Anything in <code>governance-genomic-pii.md</code> scope (subject-linked output, consent, clinical-vs-research) or a core metric should require review before merge (CODEOWNERS-style) — see <code>STANDARDS.md</code>. The point isn't to let an agent rewrite your model unsupervised; it's that discovered knowledge is <i>captured</i> instead of re-discovered next time.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The variant, diagnostic-yield, and lab-ops surfaces answered through governed definitions, SQL shown</label>
+    <label><input type="checkbox"> Each variant answer was PASS-only and came with its genome build + ClinVar version</label>
+    <label><input type="checkbox"> Ana proposed a write-back for a not-yet-governed question — and you saw it land as a PR</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 5 ════════════════ -->
+<section class="page" id="m5" data-title="Module 5 · Governance Defaults" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 5</div>
+  <h1>Governance Defaults</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b></span><span>🎯 Goal: see the compliance behavior that's on by default — and verify it fires</span></div>
+
+  <p>Layer 4 makes genomics-aware compliance the default, not an add-on. <b>Genomic data is inherently identifying</b> — a handful of variants can re-identify a person and implicate blood relatives — so the defaults treat subject-linked variant calls like raw PII: aggregate-only surfaces, <b>small-cell suppression</b> on subject/sample counts, <b>consent-scope</b> awareness, and the <b>clinical-vs-research (CLIA/CAP)</b> distinction. The behavior lives in <code>ontology/notes/governance-genomic-pii.md</code> and <code>config/org_context.md</code> — files you can read, review, and adapt.</p>
+
+  <h2>5.1 · Inventory your identifiers — day one</h2>
+  <p><code>governance-genomic-pii.md</code> §0 classifies every direct identifier in the connected schema into a role — and the genomics-specific twist is that <b>a set of raw variant calls is itself an identifier</b>, not an ordinary analytic column:</p>
+  <table>
+    <tr><th>Identifier</th><th>Role</th></tr>
+    <tr><td><code>subject_id</code>, name, MRN, DOB</td><td><b>Join key only</b> — a pseudonym; never an output column, chart, label, or log</td></tr>
+    <tr><td>Raw variant calls (HGVS, genotype)</td><td><b>Sensitive — gated.</b> A set of variants re-identifies a person and reveals relatives' risk; aggregate only, subject-linked calls gated</td></tr>
+    <tr><td>Ancestry, sex</td><td><b>Aggregate only</b> — small subgroups re-identify</td></tr>
+  </table>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Inventory every direct identifier in the connected schema and classify each per governance-genomic-pii.md section 0: join-key-only, sensitive/gated (raw variant calls), or aggregate-only. Flag anything that would let a query emit a subject-linked variant list for compliance review.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a per-column classification your privacy/compliance team signs off on — the rules are templates tuned to <i>your</i> regime (and consent model), and they can be tightened freely but never loosened without a reviewed, attributable decision.</div>
+
+  <div class="callout warn"><span class="label">Facilitators: pre-flight these tests</span>
+    <p>Run 5.2 and 5.3 yourself <b>before</b> any session with compliance in the room. These guardrails are <b>instruction-layer enforcement</b> — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with <code>governance-genomic-pii.md</code> and <code>config/org_context.md</code>) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the <i>check</i> is part of the story — "here's the file, here's the behavior, here's how we audit it."</p>
+  </div>
+
+  <h2>5.2 · Test small-cell suppression on subject counts</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>How many subjects carry a PASS pathogenic / likely-pathogenic variant in [a rare gene], broken down by ancestry or sex? Apply our suppression rules and tell me what you suppressed and why.</pre></div>
+  <div class="yousee"><b>You'll see:</b> subject counts below <code>min_cell_size</code> suppressed (shown as <code>&lt;n</code>) with an explanation — because a lone carrier of a rare pathogenic variant is identifiable. The starter default is <b>5</b>, configured in <code>config/org_context.md</code>; this applies hard to rare-variant / rare-gene cuts. <i>If suppression doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.</i></div>
+
+  <h2>5.3 · Test consent scope &amp; subject-linked gating</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>List the individual subjects and their specific pathogenic variant calls (HGVS) in [a gene].</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana decline or constrain the request per §0 and §2 — default surfaces are aggregate, subject-linked variant lists are gated, and analysis is bounded by the participant's <b>consent scope</b> (research vs. clinical, primary vs. secondary findings). Incidental/secondary findings (ACMG SF) route to genetic counseling, not open analytics. Ana points to the policy file that governs it.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Small-cell suppression fired on a rare-variant subject count and was explained</label>
+    <label><input type="checkbox"> A subject-linked variant-list request was gated, with the governing file (and consent scope) cited</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 6 ════════════════ -->
+<section class="page" id="m6" data-title="Module 6 · Validate Numbers & Make It Yours" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 6</div>
+  <h1>Validate the Numbers &amp; Make It Yours</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: pin known-correct values, then adapt the starter's definitions to your lab — in your repo</span></div>
+
+  <h2>6.1 · Run the golden queries</h2>
+  <p>The starter's golden values are already <b>pinned and verified</b> against a synthetic genomics warehouse (Databricks, 2026-06-23) — all 9 surfaces with realistic, internally-consistent values and the invariants holding (see <code>validation/golden-queries.md</code>). Against <b>your</b> warehouse, re-pin them to numbers you trust:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Run the golden queries from validation/golden-queries.md against my warehouse. For each surface, compare to a reference number I trust and flag any drift, and assert the invariants (assay_mix sums to 1.0; pathogenic ≤ sequenced; rates ∈ [0,1]; p90 TAT ≥ avg TAT; no surface emits a subject-linked call). Where we differ, explain whether it's data, definition, genome build, or ClinVar version.</pre></div>
+  <div class="yousee"><b>You'll see:</b> accuracy checked, not asserted — and a triage of any mismatch into data vs. definition vs. build/version. The kit's pinned set to reconcile against: QC pass <b>0.8776</b>, variant yield <b>13.43</b>/sample, diagnostic yield <b>0.3239</b>, coverage adequacy <b>0.9122</b>, p90 TAT <b>26 days</b>, rerun rate <b>0.0810</b>.</div>
+
+  <h2>6.2 · Customize a definition — the worked example</h2>
+  <p>This kit's own validation gives you the canonical worked example. When the surfaces were validated end-to-end, <code>pathogenic_variant_rate</code>'s optional gene parameter was named <code>gene</code> — which latently <b>shadowed the <code>gene</code> backing</b> declared in <code>schema.tql</code>. The fix was to rename the parameter to <code>gene_symbol</code> (see <code>validation/golden-queries.md</code> → <i>Fix applied</i>). The gene-symbol layer is exactly where genomics ontologies get subtle: symbol vs. stable id, alias vs. approved HGNC symbol, and now parameter-vs-backing name collisions.</p>
+  <div class="callout"><span class="label">Why this is the teaching example</span>
+    <p>A parameter named the same as a logical backing compiles fine but resolves the wrong thing at query time — a silent wrong-number bug, not a crash. It's the genomics version of the lesson that runs through the whole kit: get the <i>names</i> right (PASS filter, genome build, ClinVar version, HGNC approved symbol), because the data won't tell you when a name is quietly shadowing something else. (Other good first customizations: a stricter PASS-only filter, or a genome-build guard that refuses to pool GRCh37 and GRCh38.)</p>
+  </div>
+  <p>Now make a definition <b>yours</b>. Your lab inevitably defines something differently — a "reportable" policy that includes certain VUS, a per-assay coverage threshold, a different TAT anchor (collection vs. accession).</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Our official definition of [metric] differs from the starter: [your definition]. Update the governed surface in our repo, record the decision and the rejected default in a notes file, and open a PR. Add a golden-query entry pinning a known value (with our genome build + ClinVar version where relevant).</pre></div>
+  <div class="yousee"><b>You'll see:</b> the change land as a reviewable PR <b>in your repo</b> — the template stays pristine upstream; your adaptations are yours. Watch for parameter-vs-backing name collisions like the <code>gene_symbol</code> one — the validator and a careful review catch them.</div>
+
+  <h2>6.3 · Localize the vocabulary</h2>
+  <p><code>ontology/notes/glossary.md</code> holds the canonical genomics terms — subject, sample, assay, QC pass, coverage, call rate, TAT, variant, variant yield, pathogenic rate, clinical significance, gene — each with a <b>variance-to-check column</b> flagging where your lab diverges (collection-vs-accession TAT anchor, per-assay thresholds, VUS policy, symbol renames).</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Walk the glossary's variance-to-check column. For each term that differs at our lab — TAT anchor, per-assay coverage/call-rate thresholds, our "reportable" / VUS policy, sample-vs-subject grain — propose the override in glossary.md (keep the term → definition → resolves-via pattern) and open it as one PR.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the vocabulary localized in one reviewable pass — so "reportable," "QC pass," and "TAT" mean <i>your</i> lab's thing, everywhere, from now on.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Golden queries ran; any drift was triaged (data / definition / build / ClinVar version)</label>
+    <label><input type="checkbox"> You can explain the <code>gene</code> → <code>gene_symbol</code> shadow bug and why it was silent</label>
+    <label><input type="checkbox"> One definition is now yours — PR'd, noted, and pinned with a golden value</label>
+  </div>
+</section>
+
+<!-- ════════════════ WRAP-UP ════════════════ -->
+<section class="page" id="wrapup" data-title="Wrap-Up & Next Steps" data-group="Reference">
+  <div class="kicker">Wrap-Up</div>
+  <h1>Wrap-Up 🎉</h1>
+  <p>You went from an empty environment to governed genomics analytics — and, more importantly, to a model that <b>grows itself</b>:</p>
+  <ul>
+    <li><b>North Star set:</b> you named what the ontology is <i>for</i>, picked an archetype, and chose the questions that matter — before touching the schema</li>
+    <li><b>Connected:</b> ontology repo (live, git-backed) + warehouse (read-only) + your documents</li>
+    <li><b>Validated:</b> the model diffed against your actual schema, fixed via PR — with grain, genome build, and ClinVar version pinned</li>
+    <li><b>Classification live:</b> ClinVar tiers / Sequence-Ontology type / HGNC gene joining in-sandbox, zero warehouse writes</li>
+    <li><b>Governed answers:</b> variant yield, diagnostic yield, QC pass, TAT, coverage, call rate, assay mix — PASS-only, SQL shown, decisions recorded</li>
+    <li><b>Compliant by default:</b> aggregate-only surfaces, small-cell suppression on subject counts, consent scope, clinical-vs-research gating</li>
+    <li><b>Self-maintaining:</b> not-yet-governed questions answered on the frontier and proposed back as PRs — discovery paid once, then reused</li>
+    <li><b>Yours:</b> definitions adapted in your repo, pinned with golden values</li>
+  </ul>
+
+  <h2>Where to go from here</h2>
+  <ul>
+    <li><b>Operate it:</b> the <a href="../ontology-operations/index.html">Ontology Operations</a> workshop covers the production loop — git workflows, access control, accuracy testing, scaling across teams.</li>
+    <li><b>Understand the build:</b> <a href="../build-your-ontology/index.html">Build Your Ontology, End to End</a> teaches the from-scratch method the starter packages up.</li>
+    <li><b>Roll it out:</b> point your variant team and lab ops at <a href="../self-service-analytics/index.html">Self-Service Analytics</a> — the ontology you just stood up is what makes their answers trustworthy.</li>
+    <li><b>Licensing &amp; governance:</b> before production, review <code>LICENSING.md</code> (ClinVar/HGNC/GENCODE fetched + version-pinned) and <code>ontology/notes/governance-genomic-pii.md</code> (consent, GINA, CLIA/CAP, secondary findings).</li>
+  </ul>
+</section>
+
+<div class="pager" id="pager"></div>
+<footer class="pagefoot">© TextQL · Workshop: Genomics Starter Pack · Example prompts are illustrative — adapt them to your own data. · <a href="mailto:jacob@textql.com?subject=TextQL%20Workshops%20feedback">Give feedback</a></footer>
+</div></main>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+<div id="lightbox" onclick="this.classList.remove('show')"><img src="" alt=""></div>
+
+<script>
+(function(){
+  const WS_KEY='textql-ws-genomics-starter';
+  const pages=[...document.querySelectorAll('section.page')];
+  const navlist=document.getElementById('navlist');
+  const pager=document.getElementById('pager');
+
+  // Build sidebar nav grouped by data-group
+  let group=null, num=0;
+  pages.forEach(p=>{
+    if(p.dataset.group!==group){
+      group=p.dataset.group;
+      const g=document.createElement('div');g.className='group-label';g.textContent=group;navlist.appendChild(g);
+    }
+    const a=document.createElement('a');a.className='nav-item';a.href='#/'+p.id;a.dataset.page=p.id;
+    a.innerHTML='<span class="num"><span>'+(num++)+'</span></span><span>'+p.dataset.title.replace(/^Module \d+ · /,'')+'</span>'+
+      (p.dataset.time?'<span class="time">'+p.dataset.time+'</span>':'');
+    navlist.appendChild(a);
+  });
+
+  function show(id){
+    let page=pages.find(p=>p.id===id)||pages[0];
+    pages.forEach(p=>p.classList.toggle('active',p===page));
+    navlist.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.page===page.id));
+    const i=pages.indexOf(page);
+    pager.innerHTML=
+      (i>0?'<a class="prev" href="#/'+pages[i-1].id+'"><span class="dir">← Previous</span><span class="ttl">'+pages[i-1].dataset.title+'</span></a>':'<span></span>')+
+      (i<pages.length-1?'<a class="next" href="#/'+pages[i+1].id+'"><span class="dir">Next →</span><span class="ttl">'+pages[i+1].dataset.title+'</span></a>':'');
+    window.scrollTo(0,0);
+    document.getElementById('sidebar').classList.remove('open');
+  }
+  const hashId=()=>location.hash.replace(/^#\/?/,'');
+  window.addEventListener('hashchange',()=>show(hashId()));
+  show(hashId());
+
+  // Copy buttons + toast
+  document.querySelectorAll('.prompt').forEach(box=>{
+    const btn=box.querySelector('button');
+    btn.addEventListener('click',()=>{
+      navigator.clipboard.writeText(box.querySelector('pre').textContent.trim()).then(()=>{
+        const t=document.getElementById('toast');
+        t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400);
+      });
+    });
+  });
+
+  // Screenshot lightbox
+  const lb=document.getElementById('lightbox');
+  document.querySelectorAll('figure.shot img').forEach(img=>{
+    img.addEventListener('click',()=>{lb.querySelector('img').src=img.src;lb.classList.add('show');});
+  });
+
+  // Checkpoint persistence + progress
+  let saved={};try{saved=JSON.parse(localStorage.getItem(WS_KEY)||'{}')}catch(e){}
+  const trackable=pages.filter(p=>p.querySelector('.checkpoint input'));
+  function refreshProgress(){
+    let done=0;
+    trackable.forEach(p=>{
+      const boxes=[...p.querySelectorAll('.checkpoint input')];
+      const allDone=boxes.length&&boxes.every(b=>b.checked);
+      const link=navlist.querySelector('a[data-page="'+p.id+'"]');
+      link.classList.toggle('done',allDone);
+      if(allDone){link.querySelector('.num').innerHTML='✓';done++;}
+      else{link.querySelector('.num').innerHTML='<span>'+pages.indexOf(p)+'</span>';}
+    });
+    const pct=trackable.length?Math.round(100*done/trackable.length):0;
+    document.getElementById('pfill').style.width=pct+'%';
+    document.getElementById('ppct').textContent=pct+'% complete';
+  }
+  document.querySelectorAll('.checkpoint input[type=checkbox]').forEach((cb,i)=>{
+    cb.checked=!!saved[i];
+    cb.closest('label').classList.toggle('checked',cb.checked);
+    cb.addEventListener('change',()=>{
+      saved[i]=cb.checked;
+      cb.closest('label').classList.toggle('checked',cb.checked);
+      try{localStorage.setItem(WS_KEY,JSON.stringify(saved))}catch(e){}
+      refreshProgress();
+    });
+  });
+  refreshProgress();
+})();
+</script>
+
+<script>
+/* TextQL workshops analytics — PostHog via first-party proxy */
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once identify alias set_config reset opt_in_capturing opt_out_capturing".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init('phc_cmTpctVWkmjZZDI0vGNMD5wHY3ywg9FdQCA48kdfEp2',{api_host:'https://hermes.textql.com',persistence:'localStorage'});
+(function(){
+  var segs=location.pathname.split('/').filter(function(x){return x&&x!=='index.html'});
+  var ws=segs.length>1?segs[segs.length-1]:'catalog';
+  if(ws==='workshops')ws='catalog';
+  function page(){return location.hash.replace(/^#\/?/,'')||'welcome'}
+  function cap(ev,props){props=props||{};props.workshop=ws;props.page=page();props.site='workshops';try{posthog.capture(ev,props)}catch(e){}}
+  cap('workshop_page_view');
+  window.addEventListener('hashchange',function(){cap('workshop_page_view')});
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('.prompt button');
+    if(b){cap('workshop_prompt_copied');return}
+    var c=e.target.closest&&e.target.closest('a.card');
+    if(c&&c.getAttribute('href')&&c.getAttribute('href')!=='#'){cap('workshop_card_clicked',{target_workshop:c.getAttribute('href').split('/')[0]})}
+  });
+  document.addEventListener('change',function(e){
+    if(!(e.target.matches&&e.target.matches('.checkpoint input')))return;
+    var cp=e.target.closest('.checkpoint');
+    var boxes=cp.querySelectorAll('input[type=checkbox]');
+    var all=true;for(var i=0;i<boxes.length;i++)if(!boxes[i].checked)all=false;
+    if(all)cap('workshop_checkpoint_completed');
+    var pages=document.querySelectorAll('section.page');
+    var withCp=0,done=0;
+    pages.forEach(function(p){var bx=p.querySelectorAll('.checkpoint input');if(bx.length){withCp++;var ok=true;bx.forEach(function(b){if(!b.checked)ok=false});if(ok)done++}});
+    if(withCp&&done===withCp)cap('workshop_completed');
+  });
+})();
+</script>
+</body>
+</html>

@@ -202,7 +202,7 @@
 <section class="page" id="m0" data-title="Module 0 · Concepts & The Method" data-group="Getting Started" data-time="15 min">
   <div class="kicker">Module 0</div>
   <h1>Concepts &amp; The Method</h1>
-  <div class="page-meta"><span>⏱️ <b>15 min</b> · reading only</span><span>🎯 Goal: know what an ontology is here, and the principles that make it work</span></div>
+  <div class="page-meta"><span>⏱️ <b>20 min</b> · reading only</span><span>🎯 Goal: know what an ontology is here, the principles that make it work, and the field + research case for it</span></div>
 
   <h2>What an ontology is here</h2>
   <p>An ontology is the mapping between your technical assets (tables, catalogs, documents) and your business (metrics, workflows, terminology). In TextQL it's <b>just files</b> — Markdown for human context and <code>.tql</code> for a typed, SQL-rendering semantic layer — kept in a <b>git-backed repository</b> with review, versioning, and access control. Ana reads it, renders inspectable warehouse SQL from it, and helps you extend it.</p>
@@ -215,6 +215,26 @@
     <li><b>Ana does the heavy lifting.</b> She inspects a <code>.tql</code> file, renders SQL from parameters, and executes it — preferring a governed surface over ad-hoc SQL.</li>
     <li><b>Discovery first.</b> Build from what's actually there — start by reading the schema and the documents, not from assumptions.</li>
   </ul>
+
+  <h2>Why this approach wins — field lessons</h2>
+  <p>Most data leaders you'll build with have spent <b>months</b> on a clean semantic layer in Looker, Omni, Collibra, or Palantir — and they're rightly proud of it. The rigid-tool trap: those tools force big <b>design decisions upfront, before anyone has seen a single real question</b> from a real analyst. So the model captures what seemed important at modeling time and <b>drifts</b> from what actually turns out to matter. Our approach inverts that.</p>
+  <ul>
+    <li><b>Their prior work isn't wasted — it's a corpus.</b> dbt models, LookML, Omni configs, Power BI datasets, wikis, spreadsheets — none needs to be reformatted or migrated. Drop it in; Ana reads it and starts from a warm place.</li>
+    <li><b>You're not writing the ontology — Ana is.</b> She makes most of the structural decisions and physically writes the content. You are the <b>captain and reviewer</b>, keeping her directionally correct. Ana is self-referential: she knows what context an agent needs.</li>
+    <li><b>You're not building blind — you need a North Star.</b> Establish <b>what the ontology is for</b> before anything goes in the repo. BI parity, analyst self-serve, and operational/embedded queries each want a <b>different shape</b> (governance, strictness, flexibility). An ontology without a North Star is expensive guesswork.</li>
+  </ul>
+  <div class="callout"><span class="label">The cardinal rule</span>
+    <p><b>Do not hand a skeptic a form to fill out.</b> Templates, question libraries, and "North Star archetypes" exist to <b>signal expertise</b> (you've solved this in their domain) and to <b>force the right conversation</b> — not as a schema to deploy. Naming domain-specific failure modes ("here's where naive implementations break") earns your opinions. Then <b>bias hard toward action</b>: the answer to "where do we start?" is <i>"let me show you."</i> Establish the North Star → feed existing context → start asking real questions → review &amp; ratify what Ana proposes. The model improves every cycle.</p>
+  </div>
+
+  <h2>The research behind it</h2>
+  <p>This isn't just philosophy — it's measured. TextQL's paper <i>"Malleability Is All You Need: A Self-Maintaining Semantic Layer for Data Agents"</i> (Baumstark, Tomitsuka, Ma — VLDB 2026 / NOVAS) names the <b>"amnesia tax"</b>: a stateless agent that re-explores the warehouse on every question spends <b>92–94% of its tokens</b> rediscovering the same tables, joins, and filters. Cost scales with <b>task count, not novelty</b>; identical questions resolve to <b>divergent SQL</b> (non-reproducible); long contexts <b>rot</b> (latency and failure rates climb with depth); and naive memory is <b>non-portable</b> across engines.</p>
+  <ul>
+    <li><b>Invert the lifecycle:</b> the agent <b>reads prior knowledge → explores only the frontier → answers → commits</b> new definitions back to a version-controlled, executable semantic layer. Discovery is amortized across tasks and agents, not re-incurred per request.</li>
+    <li><b>Measured results:</b> ≥<b>30% fewer tokens</b> (up to ~50% on complex multi-join queries), <b>~41% fewer SQL probe-turns</b>, per-query cost <b>falls toward a "novelty floor"</b> as the layer accretes knowledge (most of a warehouse learned in ~35 queries), and switching backends (DuckDB→Postgres) required <b>no change</b> — definitions are dialect-independent.</li>
+    <li><b>Trust by construction:</b> every write-back is a <b>git commit</b> with an author + diff; definitions are <b>executable</b>, so they're validated mechanically (recompile + run) rather than re-read as prose; high-stakes paths route to human review (CODEOWNERS-style).</li>
+  </ul>
+  <p>That's the "why" behind everything below: you're not asking the customer to build a perfect model upfront — you're standing up a <b>living</b> one that gets cheaper, more accurate, and more reproducible the more it's used.</p>
 
   <h2>The repository shape</h2>
   <pre>ontology/
@@ -249,6 +269,8 @@
     <label><input type="checkbox"> You can explain "just files" and why git-backed matters</label>
     <label><input type="checkbox"> You know the six folders of the repo shape and what goes in each</label>
     <label><input type="checkbox"> You know where a metrics doc vs. a call transcript lands in the model</label>
+    <label><input type="checkbox"> You can pitch a skeptic: prior work = corpus, Ana writes it, North Star first, never a form</label>
+    <label><input type="checkbox"> You can cite the research: the "amnesia tax" and the ≥30% token reduction from a malleable layer</label>
   </div>
 </section>
 

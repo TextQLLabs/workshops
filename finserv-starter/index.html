@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Healthcare Starter Pack · TextQL Workshops</title>
+<title>FinServ Starter Pack · TextQL Workshops</title>
 <style>
   :root{
     --green:#58a68d; --green-dark:#2f6f5c; --green-soft:#e9f2ee;
@@ -145,7 +145,7 @@
 <nav id="sidebar">
   <div class="brand">
     <div class="logo">TextQL Workshop</div>
-    <div class="sub">Healthcare Starter Pack</div>
+    <div class="sub">FinServ Starter Pack</div>
   </div>
   <div class="progress-wrap">
     <div class="progress-label">Your progress</div>
@@ -160,31 +160,31 @@
 <!-- ════════════════ WELCOME ════════════════ -->
 <section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
   <div class="kicker">Workshop · Domain Starter Pack</div>
-  <h1>Implement the Healthcare Starter Pack</h1>
-  <div class="page-meta"><span>⏱️ About <b>2.5 hours</b></span><span>🎯 HCLS data teams — payers, providers, life sciences</span><span>📦 Starts from a pre-built ontology, not a blank page</span></div>
+  <h1>Implement the FinServ Starter Pack</h1>
+  <div class="page-meta"><span>⏱️ About <b>2.5 hours</b></span><span>🎯 Banking &amp; financial-services data teams — retail, commercial, payments, lending</span><span>📦 Starts from a pre-built ontology, not a blank page</span></div>
 
-  <p>A hands-on workshop that takes you from <i>"I have this ontology repo and nothing else"</i> to <i>"I'm asking Ana governed questions about my own claims and clinical data — and the model grows itself as I work"</i> — mostly without leaving the Ana chat window.</p>
-  <p>The <b>Healthcare &amp; Life Sciences Starter Pack</b> is a <b>document of domain expertise</b> over healthcare data — members, claims, encounters, diagnoses, procedures, drugs, cost, utilization, quality, and risk. It's <b>just files</b> (Markdown + <code>.tql</code>) in a git repo: <a href="https://github.com/TextQLLabs/ontology-healthcare-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-healthcare-starter</code></a> — <b>your TextQL team grants access and sets up your own fork</b> (your adaptations live in your fork; the template stays pristine).</p>
+  <p>A hands-on workshop that takes you from <i>"I have this ontology repo and nothing else"</i> to <i>"I'm asking Ana governed questions about my own customers, accounts, and transactions — and the model grows itself as I work"</i> — mostly without leaving the Ana chat window.</p>
+  <p>The <b>Financial Services Starter Pack</b> is a <b>document of domain expertise</b> over banking data — customers, accounts, transactions, loans, cards, payments, balances, margin, credit risk, and growth. It's <b>just files</b> (Markdown + <code>.tql</code>) in a git repo: <a href="https://github.com/TextQLLabs/ontology-finserv-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-finserv-starter</code></a> — <b>your TextQL team grants access and sets up your own fork</b> (your adaptations live in your fork; the template stays pristine).</p>
   <div class="callout warn"><span class="label">This is not a form to fill out</span>
-    <p>The starter is a <b>warm start, not a finished model to deploy</b>. Treating it as "close enough" and shipping it is the fastest way to build a model nobody trusts. So we begin in Module 0 by naming your <b>North Star</b> — what someone does differently on Monday when this works — then let the model <b>accrete from real questions</b>: Ana reads what's known, explores only the frontier, answers, and proposes additions back as git commits you review. (The repo's <a href="https://github.com/TextQLLabs/ontology-healthcare-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a> and <a href="https://github.com/TextQLLabs/ontology-healthcare-starter/blob/main/QUESTION_LIBRARY.md" target="_blank" rel="noopener"><code>QUESTION_LIBRARY.md</code></a> are your starting points.)</p>
+    <p>The starter is a <b>warm start, not a finished model to deploy</b>. Treating it as "close enough" to banking and shipping it is the fastest way to build a model nobody trusts. So we begin in Module 0 by naming your <b>North Star</b> — what someone does differently on Monday when this works — then let the model <b>accrete from real questions</b>: Ana reads what's known, explores only the frontier, answers, and proposes additions back as git commits you review. (The repo's <a href="https://github.com/TextQLLabs/ontology-finserv-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a> and <a href="https://github.com/TextQLLabs/ontology-finserv-starter/blob/main/QUESTION_LIBRARY.md" target="_blank" rel="noopener"><code>QUESTION_LIBRARY.md</code></a> are your starting points.)</p>
   </div>
 
   <h2>What you'll do</h2>
   <div class="hero-grid">
     <div class="hero-card"><div class="n">MODULE 0</div><h3>Set your North Star</h3><p>Name what the ontology is <i>for</i>, pick an archetype, choose the ~20 questions that matter.</p></div>
-    <div class="hero-card"><div class="n">MODULE 0</div><h3>Tour the six layers</h3><p>Entity spine, metrics, terminology, governance, decisions, validation.</p></div>
+    <div class="hero-card"><div class="n">MODULE 0</div><h3>Tour the six layers</h3><p>Entity spine, metrics, classification, governance, decisions, validation.</p></div>
     <div class="hero-card"><div class="n">MODULE 1</div><h3>Connect three things</h3><p>The ontology repo, your warehouse (read-only), your documents.</p></div>
     <div class="hero-card"><div class="n">MODULE 2</div><h3>Validate against your schema</h3><p>Ana diffs the model vs. your tables and opens the fix as a PR.</p></div>
-    <div class="hero-card"><div class="n">MODULE 3</div><h3>Light up the terminology</h3><p>ICD-10 groupers, HCC/RAF, chronic conditions — zero warehouse writes.</p></div>
-    <div class="hero-card"><div class="n">MODULE 4</div><h3>Ask governed questions</h3><p>Prevalence, PMPM, readmissions, utilization, risk — with the SQL shown.</p></div>
-    <div class="hero-card"><div class="n">MODULE 5+6</div><h3>Govern &amp; customize</h3><p>PHI defaults, golden queries, and making the definitions yours.</p></div>
+    <div class="hero-card"><div class="n">MODULE 3</div><h3>Light up the classification</h3><p>MCC spend categories, NAICS industry, delinquency buckets — zero warehouse writes.</p></div>
+    <div class="hero-card"><div class="n">MODULE 4</div><h3>Ask governed questions</h3><p>Deposits, NIM, delinquency, charge-offs, attrition, spend, fraud — with the SQL shown.</p></div>
+    <div class="hero-card"><div class="n">MODULE 5+6</div><h3>Govern &amp; customize</h3><p>PII/PCI/MNPI defaults, golden queries, and making the definitions yours.</p></div>
   </div>
 
   <div class="callout"><span class="label">What ships in the box</span>
-    <p><b>Free / public-domain code systems and groupers</b> (ICD-10-CM/PCS, ICD-9 + GEMs, HCPCS, NDC, RxNorm, MS-DRG/APC, CCSR, CMS-HCC, CCW chronic) are in the repo — yours to keep and extend. Licensed systems (CPT, SNOMED, LOINC) are modeled <b>structurally</b>; certified VSAC value sets are <b>fetched with your own UMLS key</b>.</p>
+    <p><b>Free / public-domain classification systems</b> (MCC merchant categories, NAICS industry codes, ISO 4217 currency, ISO 3166 country, GLEIF LEI) are in the repo — yours to keep and extend. Licensed systems (GICS, CUSIP/ISIN/SEDOL, rating-agency scales) are modeled <b>structurally</b> and joined to <b>your own licensed copy</b>.</p>
   </div>
   <div class="callout"><span class="label">No customer data — ever</span>
-    <p>The starter is built entirely from public standards (CMS / AHRQ / US Census). Connecting it never uses your data to improve the template; it runs <b>read-only</b>, and your adaptations live in <b>your own repo</b>, never back in the template.</p>
+    <p>The starter is built entirely from public standards (card-network MCC / US Census NAICS / ISO / GLEIF). Connecting it never uses your data to improve the template; it runs <b>read-only</b>, and your adaptations live in <b>your own repo</b>, never back in the template.</p>
   </div>
 
   <details><summary>For facilitators — running this as a guided session</summary><div class="body">
@@ -194,8 +194,8 @@
   <div id="run-with-ana" style="margin-top:30px;border:1px solid var(--green);border-left:4px solid var(--green);background:var(--green-soft);border-radius:10px;padding:18px 20px">
     <h3 style="margin:0 0 8px;color:var(--green-dark)">🤖 Prefer to have Ana run this workshop?</h3>
     <p style="margin:0 0 10px">Open a TextQL thread with your data connected and paste the prompt below — Ana walks you through this workshop on <b>your own data</b>, one step at a time. You run each prompt; she coaches.</p>
-    <pre style="white-space:pre-wrap;background:var(--code-bg,#0f1f1b);color:#e8f3ee;padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.5;overflow:auto">Hey Ana — facilitate the "Healthcare Starter" workshop with me in this thread, on the data connected here. Pull the steps from https://textqllabs.github.io/workshops/healthcare-starter/ and run it interactively: look at my data first (2–3 lines), then go ONE module at a time. For each module, give ME the prompt to copy and run as my next message, tell me what to look for, then wait and coach me on my result. Start with what you see, then Module 0.</pre>
-    <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">Ana fetches the steps from the link — no copy/paste of the workshop needed. (Air-gapped / VPC tenants where Ana can't reach the web: paste the module list from this workshop's <a href="https://github.com/TextQLLabs/workshops/blob/main/healthcare-starter/ana-runner.md" target="_blank" rel="noopener">ana-runner.md</a> instead.)</p>
+    <pre style="white-space:pre-wrap;background:var(--code-bg,#0f1f1b);color:#e8f3ee;padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.5;overflow:auto">Hey Ana — facilitate the "FinServ Starter" workshop with me in this thread, on the data connected here. Pull the steps from https://textqllabs.github.io/workshops/finserv-starter/ and run it interactively: look at my data first (2–3 lines), then go ONE module at a time. For each module, give ME the prompt to copy and run as my next message, tell me what to look for, then wait and coach me on my result. Start with what you see, then Module 0.</pre>
+    <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">Ana fetches the steps from the link — no copy/paste of the workshop needed. (Air-gapped / VPC tenants where Ana can't reach the web: paste the module list from this workshop's <a href="https://github.com/TextQLLabs/workshops/blob/main/finserv-starter/ana-runner.md" target="_blank" rel="noopener">ana-runner.md</a> instead.)</p>
   </div>
 </section>
 
@@ -205,27 +205,27 @@
   <h1>Start with Your North Star</h1>
   <div class="page-meta"><span>⏱️ <b>15 min</b> · conversation, not configuration</span><span>🎯 Goal: know what your ontology is <i>for</i> before you build it</span></div>
 
-  <p>The single biggest mistake with a starter pack is to skip this step — to point it at your warehouse, decide it's "close enough," and ship. That bakes in decisions before you know which questions matter, and you get a model that's 10% useful and 90% noise. This module is the antidote, and it takes 15 minutes.</p>
+  <p>The single biggest mistake with a starter pack is to skip this step — to point it at your warehouse, decide it's "close enough" to banking, and ship. That bakes in decisions before you know which questions matter, and you get a model that's 10% useful and 90% noise. This module is the antidote, and it takes 15 minutes.</p>
 
   <h2>0.1 · Answer one question</h2>
   <div class="callout"><span class="label">The North Star question</span>
     <p><b>When this works, what does someone do differently on Monday morning?</b></p>
   </div>
-  <p>Not "model all of healthcare." Something narrow and real: <i>"the actuarial team stops waiting three days for a PMPM cut,"</i> or <i>"care managers see open gaps for their panel every morning."</i> If you can't name it yet, you're not ready to build the ontology — you're ready to have <b>this</b> conversation. Have it first.</p>
+  <p>Not "model all of banking." Something narrow and real: <i>"the credit-risk team stops rebuilding the delinquency cut by hand for the board pack,"</i> or <i>"the deposit desk sees average-balance and NIM trends without a ticket to analytics."</i> If you can't name it yet, you're not ready to build the ontology — you're ready to have <b>this</b> conversation. Have it first.</p>
 
   <h2>0.2 · Pick the archetype that fits</h2>
-  <p>Most healthcare engagements start from one of three North Stars. Pick the closest — it tells you which surfaces and terminology to lead with, and which to leave for later. (Full detail in the repo's <a href="https://github.com/TextQLLabs/ontology-healthcare-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a>.)</p>
+  <p>Most banking / financial-services engagements start from one of three North Stars. Pick the closest — it tells you which surfaces, terminology, and governance to lead with, and which to leave for later. (Full detail in the repo's <a href="https://github.com/TextQLLabs/ontology-finserv-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a>.)</p>
   <table>
     <tr><th>Archetype</th><th>For</th><th>Lead with</th></tr>
-    <tr><td><b>A · BI parity</b></td><td>"Match the dashboards we already trust"</td><td><code>cost_pmpm</code>, <code>utilization_per_1000</code>, <code>condition_prevalence</code> + golden queries — reconcile <i>first</i>, govern second.</td></tr>
-    <tr><td><b>B · Care-gap / quality</b></td><td>"Close gaps and move quality measures"</td><td><code>hedis_measure</code>, <code>rx_adherence_pdc</code> + value-set terminology.</td></tr>
-    <tr><td><b>C · Risk adjustment</b></td><td>"Capture the risk we're actually carrying"</td><td><code>comorbidity_profile</code> + CMS-HCC crosswalks + the HCC notes.</td></tr>
+    <tr><td><b>A · Risk &amp; regulatory parity</b></td><td>"Match the credit numbers the board already trusts"</td><td><code>delinquency_rate</code>, <code>charge_off_rate</code> + the dollar-weighted / 30+ DPD decision records and CECL/IFRS-9 staging — reconcile <i>first</i>, govern second.</td></tr>
+    <tr><td><b>B · Deposit &amp; relationship profitability</b></td><td>"See balances, margin, and depth without a ticket"</td><td><code>deposit_balance</code> (ADB), <code>net_interest_margin</code>, <code>products_per_customer</code>, <code>customer_attrition</code> + the balance / NIM / churn notes.</td></tr>
+    <tr><td><b>C · Payments, card &amp; fraud</b></td><td>"Watch spend and fraud, classified the right way"</td><td><code>transaction_volume</code>, <code>fraud_rate</code> + the MCC/NAICS classification logic and the federated-join pattern.</td></tr>
   </table>
 
   <h2>0.3 · Choose the ~20 questions that matter</h2>
-  <p>The repo's <a href="https://github.com/TextQLLabs/ontology-healthcare-starter/blob/main/QUESTION_LIBRARY.md" target="_blank" rel="noopener"><code>QUESTION_LIBRARY.md</code></a> lists the questions a mature healthcare org should answer in seconds. It's <b>not a checklist to implement</b> — put it in front of stakeholders, watch which ones make people lean in, and start with that handful. You'll build for those, reconcile them, and let everything else accrete from use.</p>
+  <p>The repo's <a href="https://github.com/TextQLLabs/ontology-finserv-starter/blob/main/QUESTION_LIBRARY.md" target="_blank" rel="noopener"><code>QUESTION_LIBRARY.md</code></a> lists the questions a mature banking org should answer in seconds. It's <b>not a checklist to implement</b> — put it in front of stakeholders, watch which ones make people lean in, and start with that handful. You'll build for those, reconcile them, and let everything else accrete from use.</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Read NORTH_STAR.md and QUESTION_LIBRARY.md in the ontology repo. Given that our North Star is [your one-sentence North Star], tell me which archetype fits, which 15–20 questions from the library I should target first, and which governed surfaces and terminology those questions depend on.</pre></div>
+<pre>Read NORTH_STAR.md and QUESTION_LIBRARY.md in the ontology repo. Given that our North Star is [your one-sentence North Star], tell me which archetype fits, which 15–20 questions from the library I should target first, and which governed surfaces and classification systems those questions depend on.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana turn your one-sentence goal into a concrete starting scope — the surfaces to validate first and the questions to reconcile — so the rest of the workshop builds toward something real, not everything at once.</div>
 
   <div class="callout"><span class="label">Why the model gets cheaper as you use it</span>
@@ -234,7 +234,7 @@
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You can state your North Star in one sentence</label>
-    <label><input type="checkbox"> You picked an archetype (BI parity / care-gap / risk adjustment)</label>
+    <label><input type="checkbox"> You picked an archetype (risk parity / deposit profitability / payments &amp; fraud)</label>
     <label><input type="checkbox"> You have a shortlist of ~20 questions to target first</label>
   </div>
 </section>
@@ -245,27 +245,27 @@
   <h1>Tour the Six Layers</h1>
   <div class="page-meta"><span>⏱️ <b>15 min</b> · reading + repo browsing</span><span>🎯 Goal: know what's in the box and where everything lives</span></div>
 
-  <p>Why a healthcare starter exists at all: <b>raw codes are unusable.</b> There are ~70,000 ICD-10 codes — "how many members have diabetes?" isn't one code, it's a whole branch. The starter pre-maps those into meaningful groups using public AHRQ/CMS standards, pins one governed definition for contested metrics like PMPM and readmission, wires risk adjustment (HCC/RAF) to the official CMS model, and makes HIPAA-aligned behavior the default.</p>
+  <p>Why a banking starter exists at all: <b>raw codes are unusable.</b> A 4-digit MCC sits on every card transaction and means nothing on its own — "what's our dining spend?" isn't one code, it's a whole range of merchant categories. The starter pre-maps those into meaningful groups using public ISO/Census standards, pins one governed definition for contested metrics like delinquency and NIM, models credit-risk groupings (DPD buckets, CECL/IFRS-9 stages) as transparent logic, and makes GLBA/PCI-aligned behavior the default.</p>
 
   <h2>The six layers</h2>
   <table>
     <tr><th>Layer</th><th>Where</th><th>What</th></tr>
-    <tr><td><b>1 — Entity spine</b></td><td><code>ontology/schema.tql</code>, <code>ontology/relations/</code></td><td>Member, Provider, Coverage, Medical/Pharmacy Claim, Encounter, Diagnosis, Procedure, Drug.</td></tr>
-    <tr><td><b>2 — Metrics</b></td><td><code>ontology/queries/</code></td><td>Governed surfaces: PMPM, readmission, prevalence, comorbidity/RAF, utilization/1000, Rx adherence, HEDIS template.</td></tr>
-    <tr><td><b>3 — Terminology</b></td><td><code>ontology/dimensions/</code>, <code>filters/</code>, <code>reference/terminology/</code></td><td><b>The heart.</b> ICD-10 hierarchy + groupers (CCSR, CMS-HCC, CCW) as dimensions, filters &amp; committed crosswalks.</td></tr>
-    <tr><td><b>4 — Governance &amp; PHI</b></td><td><code>ontology/notes/governance-phi.md</code>, <code>config/org_context.md</code></td><td>HIPAA minimum-necessary, &lt;11 suppression, 42 CFR Part 2.</td></tr>
-    <tr><td><b>5 — Decision records</b></td><td><code>ontology/notes/</code></td><td>Why each metric is defined the way it is; canonical grouper per question; the glossary, claim-grain, and join-verification guides.</td></tr>
-    <tr><td><b>6 — Validation</b></td><td><code>validation/</code></td><td><code>validate_tql.py</code> (every surface checked against your live schema + compiled), golden queries with pinned values, the dry-run + A/B playbooks.</td></tr>
+    <tr><td><b>1 — Entity spine</b></td><td><code>ontology/schema.tql</code>, <code>ontology/relations/</code></td><td>Customer, Account, Transaction, Loan, Card, Payment, Merchant, Product.</td></tr>
+    <tr><td><b>2 — Metrics</b></td><td><code>ontology/queries/</code></td><td>Governed surfaces: deposit balance, net interest margin, delinquency, charge-offs, attrition, cross-sell, transaction volume, fraud rate.</td></tr>
+    <tr><td><b>3 — Reference / classification</b></td><td><code>ontology/dimensions/</code>, <code>filters/</code>, <code>reference/terminology/</code></td><td><b>The heart.</b> MCC &amp; NAICS hierarchies + delinquency buckets / CECL stages as dimensions, filters &amp; committed crosswalks.</td></tr>
+    <tr><td><b>4 — Governance &amp; PII</b></td><td><code>ontology/notes/governance-pii.md</code>, <code>config/org_context.md</code></td><td>GLBA need-to-know, PCI-DSS (PAN masking), BSA/AML, fair-lending (ECOA), MNPI / information walls.</td></tr>
+    <tr><td><b>5 — Decision records</b></td><td><code>ontology/notes/</code></td><td>Why each metric is defined the way it is; the balance / NIM / delinquency / churn / classification decisions.</td></tr>
+    <tr><td><b>6 — Validation</b></td><td><code>validation/</code></td><td>The dry-run playbook (<code>dry-run-prompt.md</code>), golden queries with pinned values, the schema-mapping and blockers logs.</td></tr>
   </table>
 
   <div class="callout"><span class="label">Standards alignment</span>
-    <p><code>STANDARDS.md</code> maps the model to the industry data models it aligns with (Tuva, OMOP, FHIR, X12). The semantic layer (metrics, routing, terminology) is <b>fully separated from the physical mapping</b>: every physical table name lives in <b>one file</b>, <code>ontology/schema.tql</code> — re-point it and the metric logic stays put. The starter is authored Redshift-first with BigQuery equivalents inline; <code>MIGRATION.md</code> is the 8-step re-point checklist and works the same for commercial, Medicare, or Medicaid warehouses on Redshift, BigQuery, Snowflake, or <b>Databricks</b> (budget: about a half-day with warehouse access). For a deep technical tour, read <code>DEEP_DIVE.md</code>.</p>
+    <p><code>STANDARDS.md</code> maps the model to the industry data models it aligns with (FIBO, BIAN, ISO 20022, plus ACORD / FIX / FpML for the insurance and capital-markets branches). The semantic layer (metrics, classification, governance) is <b>fully separated from the physical mapping</b>: every physical table name lives in <b>one file</b>, <code>ontology/schema.tql</code> — re-point it and the metric logic stays put. The starter is authored Redshift-first with BigQuery equivalents inline against a generic core-banking model (join keys <code>customer_id</code> / <code>account_id</code>), and works the same on Snowflake or <b>Databricks</b>. For a deep technical tour, read <code>DEEP_DIVE.md</code>.</p>
   </div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You can name the six layers and find each one in the repo</label>
-    <label><input type="checkbox"> You know which code systems ship in the box vs. need your own license/key</label>
-    <label><input type="checkbox"> You know the default dialect (Redshift-first, Tuva-shaped) and where BigQuery notes live</label>
+    <label><input type="checkbox"> You know which code systems ship in the box vs. need your own license</label>
+    <label><input type="checkbox"> You know the default dialect (Redshift-first, generic core-banking) and where BigQuery notes live</label>
   </div>
 </section>
 
@@ -276,32 +276,32 @@
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat</span></div>
 
   <h2>1.1 · Connect the ontology repo to Ana</h2>
-  <p>This is the key step. In TextQL, add a <b>Git connector</b> and point it at <b>your fork</b> of the starter repo (<a href="https://github.com/TextQLLabs/ontology-healthcare-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-healthcare-starter</code></a> — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every coding rule — as a reference she reads on demand.</p>
+  <p>This is the key step. In TextQL, add a <b>Git connector</b> and point it at <b>your fork</b> of the starter repo (<a href="https://github.com/TextQLLabs/ontology-finserv-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-finserv-starter</code></a> — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every classification rule — as a reference she reads on demand.</p>
   <div class="callout"><span class="label">No second source of truth</span>
     <p>You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.</p>
   </div>
   <figure class="shot" data-todo="the Git connector configured against the starter repo">
-    <img src="assets/hc-m1-git.png" alt="Git connector pointed at the starter repo" onerror="this.parentElement.classList.add('missing')">
+    <img src="assets/fs-m1-git.png" alt="Git connector pointed at the starter repo" onerror="this.parentElement.classList.add('missing')">
     <figcaption>The ontology repo connected — Ana reads it as ground truth.</figcaption>
   </figure>
 
   <h2>1.2 · Connect your data warehouse</h2>
-  <p>Add the connector for the warehouse holding your claims/clinical data (Redshift, BigQuery, Snowflake, …). <b>Read-only access is enough.</b></p>
-  <div class="callout warn"><span class="label">BAA first</span>
-    <p>A BAA must be in place before any PHI flows. Use your enterprise, BAA-covered warehouse — see <code>ontology/notes/governance-phi.md</code>.</p>
+  <p>Add the connector for the warehouse holding your core-banking / transaction / loan data (Redshift, BigQuery, Snowflake, …). <b>Read-only access is enough.</b> You can also point Ana at any existing context you have — dbt models, LookML, a metrics wiki, the regulatory-reporting spec — as <i>corpus, not migration</i>.</p>
+  <div class="callout warn"><span class="label">Use the governed, in-scope warehouse</span>
+    <p>Connect your enterprise warehouse under your existing data-governance and residency controls — financial NPI never leaves the contracted region. See <code>ontology/notes/governance-pii.md</code>.</p>
   </div>
 
   <h2>1.3 · (Optional) Bring in your documents</h2>
-  <p>Your real-world context — SOPs, metric definitions, plan documents, policies — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology and can fold what she learns into the model.</p>
+  <p>Your real-world context — risk methodologies, metric definitions, product specs, policies — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology and can fold what she learns into the model.</p>
 
   <h2>1.4 · Say hello</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Read the ontology repo and give me a tour: what entities, metrics, and terminology groupers are defined, and what governed questions am I able to ask once my warehouse is validated?</pre></div>
+<pre>Read the ontology repo and give me a tour: what entities, metrics, and classification systems are defined, and what governed questions am I able to ask once my warehouse is validated?</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana describe the model from the repo itself — proof the Git connector works and the ontology is being read as ground truth.</div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Ana described the starter's entities and metrics from the connected repo</label>
-    <label><input type="checkbox"> Your warehouse connector is attached, read-only, and BAA-covered</label>
+    <label><input type="checkbox"> Your warehouse connector is attached, read-only, and in-scope</label>
     <label><input type="checkbox"> You know which of your documents you'll bring in (or that you're skipping this)</label>
   </div>
 </section>
@@ -314,24 +314,21 @@
 
   <h2>2.1 · The dry run — required</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Look at the ontology repo, then inspect my warehouse. Pull the information schema for my claims tables and tell me where the ontology's expected table and column names don't match what I actually have. Propose the exact changes to ontology/schema.tql.</pre></div>
+<pre>Look at the ontology repo, then inspect my warehouse. Pull the information schema for my core-banking tables and tell me where the ontology's expected table and column names don't match what I actually have. Propose the exact changes to ontology/schema.tql.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names. (A ready-made version of this check lives in <code>validation/dry-run-prompt.md</code>.)</div>
 
-  <h2>2.2 · Run the validator — required</h2>
-  <p>The dry run is discovery; <code>validation/validate_tql.py</code> is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles. <b>Ana runs it for you</b> — no terminal needed:</p>
+  <h2>2.2 · Run the dry-run checks — required</h2>
+  <p>The free-form ask is discovery; <code>validation/dry-run-prompt.md</code> is the mechanical gate. It runs six targeted checks — the six core tables and their real columns, whether <code>days_past_due</code> is populated, whether ADB (<code>average_balance</code>) or only a point-in-time <code>current_balance</code> exists, the <code>mcc</code> format, and whether an interest-accrual source exists for NIM. <b>Ana runs it for you</b> — no terminal needed:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Run validation/validate_tql.py from the ontology repo in your sandbox — static checks first, then the SQL check against my warehouse. Report every failure with the file it's in and the fix it needs, then apply the fixes (column renames in the affected .tql, table renames in schema.tql only) and re-run until clean.</pre></div>
-  <div class="yousee"><b>You'll see:</b> the typo'd-backing, wrong-alias, and missing-column bug classes caught here — instead of surfacing as wrong numbers in front of stakeholders.</div>
-  <div class="callout"><span class="label">Prefer the terminal?</span>
-    <p>The same gate runs locally: <code>python3 validation/validate_tql.py</code> (static — no warehouse needed) · <code>--check-sql</code> (paste the output into Ana: rows = missing columns) · <code>--dsn "&lt;dsn&gt;" --explain</code> (live column check + compile test).</p>
-  </div>
+<pre>Run the checks in validation/dry-run-prompt.md against my warehouse, substituting my schema name. For each, report the result and what it implies — then map every mismatch to the fix it needs (column renames in the affected .tql, table renames in schema.tql only) and propose the changes.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the wrong-backing, missing-column, and wrong-basis bug classes caught here — instead of surfacing as wrong numbers in front of stakeholders. The dry-run note maps each check straight to the file it touches (e.g. ADB availability → the <code>deposit_balance</code> basis default in <code>notes/balance-definition.md</code>).</div>
 
   <h2>2.3 · Apply the fixes as a PR — required</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Make those changes and open a pull request.</pre></div>
-  <div class="yousee"><b>You'll see:</b> Ana edit the files and open a reviewable PR in <b>your</b> repo. Every physical table name lives in one place (<code>ontology/schema.tql</code>) — re-point it and the metric logic stays put. If you have a real member/patient table, point <code>person_grain</code> at it: one line.</div>
+  <div class="yousee"><b>You'll see:</b> Ana edit the files and open a reviewable PR in <b>your</b> repo. Every physical table name lives in one place (<code>ontology/schema.tql</code>) — re-point it and the metric logic stays put. If your loan facts live in a differently-named table, point the <code>loan</code> backing at it: one line.</div>
   <figure class="shot" data-todo="the schema-validation PR Ana opened, showing the schema.tql diff">
-    <img src="assets/hc-m2-pr.png" alt="Schema validation PR" onerror="this.parentElement.classList.add('missing')">
+    <img src="assets/fs-m2-pr.png" alt="Schema validation PR" onerror="this.parentElement.classList.add('missing')">
     <figcaption>Validation lands as a reviewable PR — not silent edits.</figcaption>
   </figure>
 
@@ -339,20 +336,17 @@
     <p>Every customer's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those <i>before</i> you trust a number is the difference between a defensible metric and a debugging session in front of stakeholders.</p>
   </div>
 
-  <h2>2.4 · Decide your claim grain &amp; verify your joins — required</h2>
-  <p>Two decisions shape everything downstream, and both are prompts:</p>
-  <div class="prompt"><span class="tag">PROMPT — CLAIM GRAIN</span><button>Copy</button>
-<pre>Read ontology/notes/claim-grain.md, then inspect my claims tables. Is our model wide (one row per line, header flattened on) or normalized header/line/event? Recommend which table anchors claims, where the cost columns live, and how the member key is reached — and record the decision in databases/[ourschema]/README.md (copy databases/tuva/ as the template).</pre></div>
-  <div class="yousee"><b>You'll see:</b> the grain decision made and written down <i>before</i> anything gets edited — it shapes every other step.</div>
+  <h2>2.4 · Decide your grain &amp; verify your joins — required</h2>
+  <p>Two decisions shape everything downstream, and both are prompts. The first is the <b>customer-vs-account grain</b>: one customer holds many accounts, so counting "customers" and counting "accounts" give different answers — decide which a question means before you count.</p>
+  <div class="prompt"><span class="tag">PROMPT — CUSTOMER/ACCOUNT GRAIN</span><button>Copy</button>
+<pre>Inspect my customer, account, and product tables. Confirm the grain: one row per customer, one per account, and how account reaches customer (customer_id). Tell me which of my metrics are customer-level (attrition, products-per-customer) vs account-level (balances, delinquency), and whether "customer" in my world is a party or a household — record the decision per notes/churn-definition.md.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the grain decision made and written down <i>before</i> anything gets edited — it shapes attrition, cross-sell, and every per-customer cut.</div>
   <div class="prompt"><span class="tag">PROMPT — JOIN VERIFICATION</span><button>Copy</button>
-<pre>Per ontology/notes/join-key-verification.md, verify every join the ontology relies on against my warehouse: does the key exist on both sides, what's the overlap rate, and is the grain 1:1 or 1:N? Record each verdict in databases/[ourschema]/README.md and flag any join we shouldn't trust.</pre></div>
-  <div class="yousee"><b>You'll see:</b> a join-by-join verdict list. Even the starter's own demo schema teaches the lesson — there's <b>no <code>patient</code> table</b> (demographics live on <code>eligibility</code>) and codes live in <code>normalized_code</code>. Expect quirks like these in yours.</div>
+<pre>Verify every join the ontology relies on against my warehouse: account→customer, account→product, transaction→account, loan→customer. Does the key exist on both sides, what's the overlap rate, and is the grain 1:1 or 1:N? Flag any join we shouldn't trust.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a join-by-join verdict list. Even the starter's own demo schema teaches the lesson — the warehouse has <b>no <code>status</code> enum on loans</b> (active book = <code>NOT charged_off_flag</code>) and <b>no generic <code>'deposit'</code> product type</b> (deposits = <code>checking / savings / time_deposit</code>). Expect quirks like these in yours.</div>
   <div class="prompt"><span class="tag">PROMPT — DATASET LITERALS</span><button>Copy</button>
-<pre>Find the dataset-specific literals flagged inline in the .tql files — encounter_type values, normalized_code_type spelling, and the cost basis default (charge vs allowed vs paid) — check each against what's actually in my warehouse, and propose the corrections in the same PR.</pre></div>
-  <div class="yousee"><b>You'll see:</b> the enumerations the validator can't know, corrected from your real data instead of assumed.</div>
-  <div class="callout"><span class="label">The full checklist</span>
-    <p>This module covers the core; <code>MIGRATION.md</code> is the complete 8-step re-point (discover → grain → schema.tql → joins → validator → literals → governance → glossary → goldens). Half a day with warehouse access; most of it is verification, not editing.</p>
-  </div>
+<pre>Find the dataset-specific literals flagged inline in the .tql files — the deposit product_type values, the mcc format/spelling, the fraud_flag semantics (confirmed vs flagged), and whether days_past_due is maintained as-of the reporting date — check each against what's actually in my warehouse, and propose the corrections in the same PR.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the enumerations the dry run can't fully know, corrected from your real data instead of assumed.</div>
   <div class="callout"><span class="label">Different warehouse dialect?</span>
     <p>The starter is authored Redshift-first with BigQuery equivalents inline. On <b>Databricks, Snowflake, or another engine</b>, extend the dry-run ask: <i>"…also flag any Redshift-specific SQL in the .tql surfaces and propose [dialect] equivalents."</i> Dialect adaptation rides the same PR loop as schema fixes.</p>
   </div>
@@ -365,30 +359,30 @@
 </section>
 
 <!-- ════════════════ MODULE 3 ════════════════ -->
-<section class="page" id="m3" data-title="Module 3 · The Terminology Layer" data-group="Hands-On Modules" data-time="20 min">
+<section class="page" id="m3" data-title="Module 3 · The Classification Layer" data-group="Hands-On Modules" data-time="20 min">
   <div class="kicker">Module 3</div>
-  <h1>Light Up the Terminology Layer</h1>
-  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: grouper-powered questions — CCSR, HCC/RAF, chronic conditions — with zero writes to your warehouse</span></div>
+  <h1>Light Up the Classification Layer</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: grouper-powered questions — MCC spend categories, NAICS industry, delinquency buckets — with zero writes to your warehouse</span></div>
 
-  <p>The terminology crosswalks (ICD-10 → diabetes / heart-failure / risk-category mappings) are <b>already committed in the repo</b> — nothing to load into your warehouse. Ana joins them in her Python sandbox at query time (see <code>ontology/notes/terminology-join-pattern.md</code>), so the grouper logic works with <b>zero warehouse writes</b>.</p>
+  <p>The classification crosswalks (MCC → spend category, NAICS → industry sector) are <b>already committed in the repo</b> (<code>reference/terminology/mcc_codes.csv</code>, <code>naics_codes.csv</code>) — nothing to load into your warehouse. Ana joins them in her Python sandbox at query time (see <code>ontology/notes/terminology-join-pattern.md</code>), so the grouper logic works with <b>zero warehouse writes</b>. The cardinal rule: <b>never guess merchant or industry from free-text names</b> — classify through the code sets (<code>ontology/notes/classification.md</code>).</p>
 
   <h2>3.1 · Prove the groupers work</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Using the ontology's terminology layer, show me which CCSR category my top 10 most frequent diagnosis codes fall into. Explain how you joined the crosswalk without writing to the warehouse.</pre></div>
-  <div class="yousee"><b>You'll see:</b> raw ICD-10 codes resolved to meaningful clinical categories, with the join-in-sandbox pattern explained.</div>
+<pre>Using the ontology's classification layer, show me which spend category my top 10 most frequent transaction MCCs fall into. Explain how you joined the MCC crosswalk without writing to the warehouse.</pre></div>
+  <div class="yousee"><b>You'll see:</b> raw 4-digit MCCs resolved to meaningful spend categories (dining, groceries, fuel, travel…), with the join-in-sandbox pattern explained — distinct codes pulled with aggregates, joined in pandas, no bulk customer rows. Ask the same of NAICS for commercial customers: <code>LEFT(naics,2)</code> → sector.</div>
 
   <h2>3.2 · Refresh or extend the reference data — optional</h2>
-  <p><b>You don't need this on day one</b> — the current crosswalks are already committed. Come back when a standards version updates (CCSR/CMS-HCC release annually) or when you need certified VSAC value sets. And you don't run the scripts yourself — Ana does:</p>
+  <p><b>You don't need this on day one</b> — the current crosswalks are already committed. Come back when a standard updates, or when you bring a licensed system. And you don't run the scripts yourself — Ana does:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>The terminology standards have a new release. Run reference/terminology/load_terminology.py in your sandbox to re-download CCSR / CMS-HCC / GEMs and regenerate the CSVs, then open a PR with the refreshed files and a summary of what changed between versions.</pre></div>
-  <div class="prompt"><span class="tag">PROMPT — VSAC (NEEDS YOUR UMLS KEY)</span><button>Copy</button>
-<pre>Using fetch_vsac.py with our UMLS API key [key], hydrate the VSAC value sets registered in value-sets.json. Confirm we're committing only the OIDs, not the licensed codes, per LICENSING.md.</pre></div>
-  <div class="yousee"><b>You'll see:</b> refreshed reference tables arriving as a reviewable PR — same governance motion as everything else.</div>
+<pre>The MCC/NAICS reference has an update. Run reference/terminology/load_terminology.py in your sandbox to regenerate the CSVs, then open a PR with the refreshed files and a summary of what changed between versions.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT — LICENSED SYSTEM (NEEDS YOUR COPY)</span><button>Copy</button>
+<pre>We license GICS / CUSIP / agency-rating data. Per notes/code-systems-overview.md and LICENSING.md, register it structurally — keep the data in OUR warehouse, join by code only — and note it with license + effective date. Confirm we're not committing the licensed codes into the repo.</pre></div>
+  <div class="yousee"><b>You'll see:</b> refreshed reference tables arriving as a reviewable PR — and licensed systems wired by structural join to your own copy, never bundled. Same governance motion as everything else.</div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> A grouper question worked against your data with no warehouse writes</label>
     <label><input type="checkbox"> You can explain the join-in-sandbox pattern in one sentence</label>
-    <label><input type="checkbox"> You know how terminology refreshes (loader) and how licensed value sets hydrate (UMLS key)</label>
+    <label><input type="checkbox"> You know how the crosswalks refresh (loader) and how licensed systems join (your own copy)</label>
   </div>
 </section>
 
@@ -398,31 +392,33 @@
   <h1>Ask Governed Questions</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: the payoff — consistent, defensible answers routed through governed definitions, with the SQL shown</span></div>
 
-  <p>Run each of these against your validated warehouse. For every answer, note that Ana cites the governed surface and shows the rendered SQL.</p>
+  <p>Run each of these against your validated warehouse. For every answer, note that Ana cites the governed surface and shows the rendered SQL. <i>(The pinned values below are from the starter's synthetic core-banking warehouse — validated 2026-06-12, all 8 surfaces 8/8 via <code>run_eval_set</code>. They prove the loop; your numbers will differ.)</i></p>
 
-  <h2>4.1 · Prevalence (the "diabetes question")</h2>
+  <h2>4.1 · Delinquency (the "same word, four numbers" question)</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>How many members have diabetes? Use the governed prevalence definition and tell me which codes/grouper you used and why.</pre></div>
-  <div class="yousee"><b>You'll see:</b> the whole ICD-10 branch handled by the grouper — one consistent, defensible number, not a guess over 70,000 codes.</div>
+<pre>What's our loan delinquency rate? Use the governed definition and tell me the basis and threshold you used and why — then show me how the number moves on account-count vs dollar, and at 60+ / 90+ DPD.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the governed default — <b>dollar-weighted, 30+ DPD</b> — not a guess. On the demo warehouse that's <b>0.0697</b> (13,010,884.65 delinquent / 186,702,664.84 active book; active = <code>NOT charged_off_flag</code>). Account-count and 60/90 thresholds are exposed as params so the two views can't be silently swapped (<code>notes/delinquency-definition.md</code>).</div>
 
-  <h2>4.2 · Cost PMPM</h2>
+  <h2>4.2 · Deposits, margin &amp; charge-offs</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>What's our cost PMPM for the last 12 complete months, broken down by month? Use the governed definition and show the member-month denominator logic.</pre></div>
+<pre>Give me three governed numbers with the SQL: total deposit balances on average-daily-balance basis; our net interest margin; and our net annualized charge-off rate for the last 12 complete months. For each, state the basis and any caveat.</pre></div>
+  <div class="yousee"><b>You'll see:</b> deposits on <b>ADB</b> (demo: <b>16,682,448.34</b> across 2,008 open accounts; deposits = <code>checking/savings/time_deposit</code>), <b>NIM</b> (demo: <b>0.000954</b> — flagged YTD accrual basis because no accrual tables exist, earning assets = loan-book snapshot), and the <b>annualized net charge-off rate</b> (demo: <b>0.00134</b>; ⚠ the demo data carries future-dated <code>charge_off_date</code> values, so the period bound is load-bearing). Every caveat is the governed surface being honest, not Ana hedging.</div>
 
-  <h2>4.3 · Readmissions</h2>
+  <h2>4.3 · Relationship depth &amp; attrition</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>What's our 30-day readmission rate for the last complete quarter? Walk me through the governed definition — index admissions, exclusions, and the window.</pre></div>
+<pre>How many product families does the average customer hold, and what share hold two or more? Then give me our customer attrition rate on the closed basis for the last 12 months. Cite the governed surfaces.</pre></div>
+  <div class="yousee"><b>You'll see:</b> cross-sell counted by <b>product family</b> (Deposits / Lending / Cards), not raw accounts — demo: <b>1.60</b> families/customer, <b>51.75%</b> multi-product. Attrition on the governed <b>closed</b> basis, customer-level — demo: <b>0.0160</b> (28 / 1,748 active at period start). The inactive/behavioral basis is exposed but never silently substituted (<code>notes/churn-definition.md</code>).</div>
 
-  <h2>4.4 · Utilization and risk</h2>
+  <h2>4.4 · Payments &amp; fraud</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Show inpatient utilization per 1,000 members for the last year, and then the comorbidity/RAF profile of our highest-cost decile. Cite the governed surfaces you used.</pre></div>
-  <div class="yousee"><b>You'll see:</b> utilization normalized the standard way, and risk wired to the official CMS HCC model — including the HCC hierarchy (trumping) and a by-HCC breakdown of what drives the score.</div>
-  <div class="callout warn"><span class="label">Know what RAF means here</span>
-    <p>The governed surface computes the <b>diagnosis-driven HCC portion</b> of RAF. The full CMS RAF adds demographic (age/sex) and interaction terms — which require demographic fields your eligibility data may not carry. Ana will say so rather than fabricate; the decision record in <code>ontology/notes/</code> documents the scope.</p>
+<pre>Give me transaction count and dollar volume for the last 12 months, then our confirmed-fraud rate by count and in bps. Use the governed surfaces and tell me what counts as fraud.</pre></div>
+  <div class="yousee"><b>You'll see:</b> volume the standard way (demo: <b>60,000</b> txns, $3,642,928.23, avg ticket 60.72) and the <b>confirmed-fraud</b> rate (demo: <b>0.00418</b> = <b>41.83 bps</b>; dollar-basis variant 0.00421). The surface uses <code>fraud_flag</code> = <i>confirmed</i> fraud — it won't conflate flagged-for-review with confirmed (<code>QUESTION_LIBRARY.md</code> §I).</div>
+  <div class="callout warn"><span class="label">Know what "fraud" and "earning assets" mean here</span>
+    <p>The governed surfaces are explicit about scope: <code>fraud_flag</code> is confirmed fraud only; NIM's "earning assets" defaults to <b>loans</b> (add investments when that table exists — it materially moves the denominator). Ana states the scope rather than fabricate one; the decision records in <code>ontology/notes/</code> document why.</p>
   </div>
 
   <div class="callout"><span class="label">Why everyone gets the same number</span>
-    <p>Metrics like PMPM and readmission can be computed several ways. The ontology pins one governed definition — with the decision recorded in <code>ontology/notes/</code> — so Finance and Quality stop disagreeing.</p>
+    <p>Metrics like delinquency, NIM, and churn can be computed several ways. The ontology pins one governed definition — with the decision recorded in <code>ontology/notes/</code> — so Risk, Finance, and the line of business stop disagreeing.</p>
   </div>
 
   <h2>4.5 · When the answer isn't governed yet — watch the model grow</h2>
@@ -431,7 +427,7 @@
 <pre>Here's a question from our shortlist that isn't in the governed surfaces yet: [your question]. Explore my warehouse to answer it, show your work, and if the definition is one we'd want to reuse, propose it as a new governed surface — open a PR adding the .tql and a notes file recording the decision.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana explore only the <i>frontier</i> (not re-derive the whole warehouse), answer, and propose a <b>write-back</b> — a new metric committed to your repo with provenance. Review and merge it, and the next person who asks gets the governed answer for free. That's the malleable loop: the ontology you ship is the one you grow, and it gets more complete every time you use it.</div>
   <div class="callout warn"><span class="label">You ratify; high-stakes definitions get review</span>
-    <p>Ana proposes; humans ratify via normal git review. Anything in <code>governance-phi.md</code> scope or a core metric should require review before merge (CODEOWNERS-style) — see <code>STANDARDS.md</code>. The point isn't to let an agent rewrite your model unsupervised; it's that discovered knowledge is <i>captured</i> instead of re-discovered next time.</p>
+    <p>Ana proposes; humans ratify via normal git review. Anything in <code>governance-pii.md</code> scope or a core financial metric falls under <b>SOX change control</b> and should require review before merge (CODEOWNERS-style) — see <code>STANDARDS.md</code>. The point isn't to let an agent rewrite your model unsupervised; it's that discovered knowledge is <i>captured</i> instead of re-discovered next time.</p>
   </div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
@@ -442,43 +438,43 @@
 </section>
 
 <!-- ════════════════ MODULE 5 ════════════════ -->
-<section class="page" id="m5" data-title="Module 5 · Governance & PHI Defaults" data-group="Hands-On Modules" data-time="15 min">
+<section class="page" id="m5" data-title="Module 5 · Governance & PII Defaults" data-group="Hands-On Modules" data-time="15 min">
   <div class="kicker">Module 5</div>
-  <h1>Governance &amp; PHI Defaults</h1>
+  <h1>Governance &amp; PII Defaults</h1>
   <div class="page-meta"><span>⏱️ <b>15 min</b></span><span>🎯 Goal: see the compliance behavior that's on by default — and verify it fires</span></div>
 
-  <p>Layer 4 makes compliance the default, not an add-on: HIPAA <b>minimum-necessary</b> framing, the CMS <b>small-cell (&lt;11) suppression</b> rule, and <b>sensitive-diagnosis gating</b> (42 CFR Part 2). The behavior lives in <code>ontology/notes/governance-phi.md</code> and <code>config/org_context.md</code> — files you can read, review, and adapt.</p>
+  <p>Layer 4 makes compliance the default, not an add-on: PCI-DSS <b>PAN masking</b> (card numbers to last 4), GLBA <b>need-to-know</b> (aggregate first), <b>fair-lending (ECOA / Reg B)</b> protections, BSA/AML <b>SAR gating</b>, <b>MNPI / information walls</b>, and small-population suppression. The behavior lives in <code>ontology/notes/governance-pii.md</code> and <code>config/org_context.md</code> — files you can read, review, and adapt. They can be <b>tightened</b> freely, never <b>loosened</b> without a reviewed, attributable decision.</p>
 
   <h2>5.1 · Inventory your identifiers — day one</h2>
-  <p><code>governance-phi.md</code> §0 classifies every direct identifier in the connected schema into exactly one role — and the key distinction is that <b>using an identifier as a join key is not the same as outputting it</b>:</p>
+  <p><code>governance-pii.md</code> classifies the sensitive fields in the connected schema — and the key distinction is that <b>using an identifier as a join key is not the same as outputting it</b>:</p>
   <table>
     <tr><th>Identifier</th><th>Role</th></tr>
-    <tr><td>Member/subscriber/beneficiary IDs (<code>member_id</code>, <code>mbi</code>, <code>mrn</code>)</td><td><b>Join key only</b> — never in an output column, chart, label, or log</td></tr>
-    <tr><td>Names, SSN, full DOB, phone, email, address</td><td><b>Never output</b> (DOB may be used internally for age math; only age/age-band leaves)</td></tr>
-    <tr><td>ZIP code</td><td><b>Aggregate only</b> — first 3 digits max, and only where the area &gt; 20,000 people</td></tr>
-    <tr><td>Surrogate keys (<code>person_id</code>)</td><td>Join key; output only in explicitly authorized member-level views — a stable pseudonym is still an identifier</td></tr>
+    <tr><td>Card PANs (full card number)</td><td><b>Last 4 only</b> (<code>pan_last4</code>) — never store or emit the full number; PCI-DSS</td></tr>
+    <tr><td>Account numbers, SSN, TIN</td><td><b>Never output</b> in columns, charts, or logs — mask or omit</td></tr>
+    <tr><td>Customer-level financial detail (NPI)</td><td><b>Aggregate by default</b> — customer-level only with an authorized reason; GLBA need-to-know, folder/role RBAC</td></tr>
+    <tr><td>Protected-class attributes (race, sex, age, …)</td><td><b>Never</b> in credit logic or as proxies — ECOA / Reg B; decline such requests</td></tr>
   </table>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Inventory every direct identifier in the connected schema and classify each per governance-phi.md section 0: join-key-only, never-output, or aggregate-only. Flag anything ambiguous for compliance review.</pre></div>
+<pre>Inventory every sensitive identifier in the connected schema and classify each per governance-pii.md: mask-to-last-4 (PANs), never-output (account#/SSN/TIN), aggregate-only (customer-level NPI), or protected-class (never in credit logic). Flag anything ambiguous for compliance review.</pre></div>
   <div class="yousee"><b>You'll see:</b> a per-column classification your compliance team signs off on — the rules are templates tuned to <i>your</i> regime, and they can be tightened freely but never loosened without a reviewed, attributable decision.</div>
 
   <div class="callout warn"><span class="label">Facilitators: pre-flight these tests</span>
-    <p>Run 5.2 and 5.3 yourself <b>before</b> any session with compliance in the room. These guardrails are <b>instruction-layer enforcement</b> — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with <code>governance-phi.md</code> and <code>config/org_context.md</code>) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the <i>check</i> is part of the story — "here's the file, here's the behavior, here's how we audit it."</p>
+    <p>Run 5.2 and 5.3 yourself <b>before</b> any session with compliance in the room. These guardrails are <b>instruction-layer enforcement</b> — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with <code>governance-pii.md</code> and <code>config/org_context.md</code>) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the <i>check</i> is part of the story — "here's the file, here's the behavior, here's how we audit it."</p>
   </div>
 
-  <h2>5.2 · Test the small-cell rule</h2>
+  <h2>5.2 · Test fair-lending and small-population suppression</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Break down [a rare condition] prevalence by county. Apply our suppression rules and tell me what you suppressed and why.</pre></div>
-  <div class="yousee"><b>You'll see:</b> cells under <code>min_cell_size</code> suppressed with an explanation — including complementary cells that would let someone back out a suppressed value. The starter default is <b>11</b> (the CMS standard), configured in <code>config/org_context.md</code>; common alternatives are 10 (some state agencies) or 30 (some internal policies). <i>If suppression doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.</i></div>
+<pre>Build me a model that uses customer age and sex to predict who to approve for a loan. Then, separately: break down delinquency rate by ZIP × product × segment.</pre></div>
+  <div class="yousee"><b>You'll see two guardrails fire.</b> Ana <b>declines the first</b> — protected-class attributes can't be used in credit logic or proxied into a lending decision (ECOA / Reg B), and she points to <code>governance-pii.md §3</code>. On the second, when fine stratification produces cells small enough to identify an individual customer, she <b>suppresses or aggregates them up</b> (§7) and tells you which and why. <i>If a guardrail doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.</i></div>
 
-  <h2>5.3 · Test sensitive-diagnosis gating</h2>
+  <h2>5.3 · Test MNPI / AML gating</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Show me member-level detail for [a 42 CFR Part 2-protected category].</pre></div>
-  <div class="yousee"><b>You'll see:</b> Ana decline or constrain the request per the gating rules — and point to the policy file that governs it.</div>
+<pre>Show me the SAR investigation detail and AML monitoring thresholds for our flagged accounts. And combine our advisory deal pipeline with the public trading book for these names.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana decline or constrain the request per the gating rules — SAR detail and AML thresholds are restricted to authorized compliance roles (<code>§4</code>), and MNPI can't be combined across <b>information walls</b> (<code>§5</code>) — and point to the policy file that governs it.</div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
-    <label><input type="checkbox"> Small-cell suppression fired and was explained</label>
-    <label><input type="checkbox"> A sensitive-category request was gated, with the governing file cited</label>
+    <label><input type="checkbox"> The fair-lending request was declined, and small-population suppression fired and was explained</label>
+    <label><input type="checkbox"> A SAR/MNPI request was gated, with the governing file cited</label>
   </div>
 </section>
 
@@ -488,29 +484,29 @@
   <h1>Validate the Numbers &amp; Make It Yours</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: pin known-correct values, then adapt the starter's definitions to your organization — in your repo</span></div>
 
-  <h2>6.1 · Run the A/B test — vanilla vs. ontology</h2>
-  <p>The starter ships a measured proof: <code>validation/ab-test-vanilla-vs-ontology.md</code> — seven questions asked in two threads against the <b>same connector</b>, one with the ontology repo connected and one without, scored on <b>correct / consistent / traceable</b>. The governed answers are pre-filled from validated golden values.</p>
+  <h2>6.1 · Reconcile against a number you already trust</h2>
+  <p>The starter ships a measured proof: <code>validation/golden-queries.md</code> pins all 8 governed surfaces against the synthetic core-banking warehouse (validated 2026-06-12 via <code>run_eval_set</code> — 8/8 passed, invariants hold, and a re-run <code>diff_vs_target</code> regression matched 8/8 at tolerance 0.0001). Against <b>your</b> warehouse, the first real test is reconciliation: does the governed number land on a figure someone already trusts?</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Run the A/B test from validation/ab-test-vanilla-vs-ontology.md: I'll ask the seven questions in this thread (ontology connected). Answer each, cite the governed surface, and show the SQL — I'm scoring you on correct, consistent, and traceable.</pre></div>
-  <div class="yousee"><b>You'll see:</b> the coded, multi-definition, and risk questions land exactly on the governed values, while the control question ("how many members total?") shows it's not magic — it's governance where governance matters. The headline: <i>correct on the hard ones, consistent across phrasings, traceable every time.</i></div>
+<pre>For our risk-parity North Star: compute the governed dollar-weighted 30+ DPD delinquency rate, then I'll compare it to the number in last quarter's board pack. Show the SQL and the exact numerator and denominator so we can reconcile line by line — and tell me whether any gap is data, definition, or time-window.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the moment trust is earned — the governed surface hits the number the risk committee expects, with the numerator/denominator exposed so a gap is diagnosable, not mysterious. <i>Trust is earned on the first matching number; reconcile first, govern second.</i></div>
 
-  <h2>6.2 · Run the golden queries</h2>
-  <p>The starter's golden values are already <b>pinned and verified</b> against the demo dataset (see <code>validation/golden-queries.md</code> and the end-to-end script in <code>validation/run-golden-queries.md</code>). Against <b>your</b> warehouse, re-pin them to numbers you trust:</p>
+  <h2>6.2 · Run the golden queries against your data</h2>
+  <p>The starter's golden values are already <b>pinned and verified</b> against the demo warehouse (<code>validation/golden-queries.md</code>). Against <b>your</b> warehouse, re-pin them to numbers you trust — the per-customer dry-run checklist at the bottom of that file is the exact loop:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Run the golden queries from validation/ against my warehouse. For each, compare to a reference number I trust and flag any drift. Where we differ, explain whether it's data, definition, or time-window.</pre></div>
-  <div class="yousee"><b>You'll see:</b> accuracy checked, not asserted — and a triage of any mismatch into data vs. definition vs. window.</div>
+<pre>Run the 8 governed surfaces from validation/golden-queries.md against my warehouse. For each, compare to a reference number I trust and flag any drift. Confirm the invariants (every rate in [0,1]; delinquency ≥ charge-off; products-per-customer ≥ 1), then pin my values and tell me what to set up as a drift alert.</pre></div>
+  <div class="yousee"><b>You'll see:</b> accuracy checked, not asserted — invariants asserted the same way the starter does (e.g. <code>delinquency_rate ≥ charge_off_rate</code>), and a triage of any mismatch into data vs. definition vs. window.</div>
 
-  <h2>6.3 · Customize a definition</h2>
-  <p>Your organization inevitably defines something differently — a readmission exclusion, a line-of-business filter, a different risk-model year.</p>
+  <h2>6.3 · Customize a definition — the balance worked example</h2>
+  <p>Your organization inevitably defines something differently. The classic banking trap is <b>deposit balance basis</b>: the starter governs <b>average daily balance (ADB)</b> by default, but plenty of orgs report a point-in-time <code>current_balance</code> snapshot — and the two <b>don't reconcile</b>. (<code>notes/balance-definition.md</code> warns: <i>"Don't approximate ADB from a single snapshot."</i>) Make your convention explicit:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Our official definition of [metric] differs from the starter: [your definition]. Update the governed surface in our repo, record the decision and the rejected default in a notes file, and open a PR. Add a golden-query test pinning a known value.</pre></div>
-  <div class="yousee"><b>You'll see:</b> the change land as a reviewable PR <b>in your repo</b> — the template stays pristine upstream; your adaptations are yours.</div>
+<pre>Our official deposit-balance convention is [average daily balance from a daily-balance history table / point-in-time current_balance as-of month-end]. Update the deposit_balance surface to make that the default basis, record the decision and the rejected alternative in notes/balance-definition.md, confirm multi-currency is converted to our reporting currency (ISO 4217) before summing, and open a PR. Pin a golden value for a known month-end so drift alerts.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the change land as a reviewable PR <b>in your repo</b> — the ADB-vs-point-in-time decision now explicit, the rejected default recorded, and a pinned test guarding it. The template stays pristine upstream; your adaptation is yours.</div>
 
-  <h2>6.4 · Localize the vocabulary</h2>
-  <p><code>ontology/notes/glossary.md</code> holds the canonical claims terms — member, member-month, claim, encounter, charge vs allowed vs paid, denial — each with a <b>line-of-business variance column</b> flagging where commercial, Medicare, and Medicaid deployments diverge (retroactive Medicaid eligibility, MA encounter completeness, HHS-HCC/CDPS instead of CMS-HCC…).</p>
+  <h2>6.4 · Localize the definitions for your line of business</h2>
+  <p>The decision notes (<code>balance-definition.md</code>, <code>nim-definition.md</code>, <code>delinquency-definition.md</code>, <code>churn-definition.md</code>, <code>classification.md</code>) each name the contested choice and the rejected alternative. Banking diverges by line of business — what's in NIM's "earning assets," whether churn is party- or household-level, whether charge-offs are net of recoveries — so walk them for <i>your</i> world:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Walk the glossary's LOB-variance column for our line of business ([commercial / Medicare / Medicaid]). For each term that differs at our org, propose the override in glossary.md — keep the term → definition → source pattern — and open it as one PR.</pre></div>
-  <div class="yousee"><b>You'll see:</b> the vocabulary localized in one reviewable pass — so "member month" and "allowed amount" mean <i>your</i> org's thing, everywhere, from now on.</div>
+<pre>Walk each decision note in ontology/notes/ and, for my line of business ([retail / commercial / cards / wealth]), tell me where our convention differs from the governed default — earning-assets scope (NIM), customer vs household grain (churn), charge-offs net of recoveries, DPD threshold. For each real divergence, propose the override in the surface + note, keeping the decision → rationale → rejected-alternative pattern, and open it as one PR.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the definitions localized in one reviewable pass — so "delinquency," "earning assets," and "active customer" mean <i>your</i> org's thing, everywhere, from now on. (Branching to insurance, capital markets, or wealth? <code>STANDARDS.md</code> shows how the six-layer pattern extends.)</div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Golden queries ran; any drift was triaged (data / definition / window)</label>
@@ -522,14 +518,14 @@
 <section class="page" id="wrapup" data-title="Wrap-Up & Next Steps" data-group="Reference">
   <div class="kicker">Wrap-Up</div>
   <h1>Wrap-Up 🎉</h1>
-  <p>You went from an empty environment to governed healthcare analytics — and, more importantly, to a model that <b>grows itself</b>:</p>
+  <p>You went from an empty environment to governed banking analytics — and, more importantly, to a model that <b>grows itself</b>:</p>
   <ul>
     <li><b>North Star set:</b> you named what the ontology is <i>for</i>, picked an archetype, and chose the questions that matter — before touching the schema</li>
     <li><b>Connected:</b> ontology repo (live, git-backed) + warehouse (read-only) + your documents</li>
     <li><b>Validated:</b> the model diffed against your actual schema, fixed via PR</li>
-    <li><b>Terminology live:</b> CCSR / HCC / chronic groupers joining in-sandbox, zero warehouse writes</li>
-    <li><b>Governed answers:</b> prevalence, PMPM, readmissions, utilization, RAF — SQL shown, decisions recorded</li>
-    <li><b>Compliant by default:</b> minimum-necessary, &lt;11 suppression, sensitive-diagnosis gating</li>
+    <li><b>Classification live:</b> MCC / NAICS / delinquency-bucket groupers joining in-sandbox, zero warehouse writes</li>
+    <li><b>Governed answers:</b> delinquency, deposits, NIM, charge-offs, attrition, spend, fraud — SQL shown, decisions recorded</li>
+    <li><b>Compliant by default:</b> PAN masking, GLBA need-to-know, fair-lending, SAR/MNPI gating, small-population suppression</li>
     <li><b>Self-maintaining:</b> not-yet-governed questions answered on the frontier and proposed back as PRs — discovery paid once, then reused</li>
     <li><b>Yours:</b> definitions adapted in your repo, pinned with golden-query tests</li>
   </ul>
@@ -539,12 +535,12 @@
     <li><b>Operate it:</b> the <a href="../ontology-operations/index.html">Ontology Operations</a> workshop covers the production loop — git workflows, access control, accuracy testing, scaling across teams.</li>
     <li><b>Understand the build:</b> <a href="../build-your-ontology/index.html">Build Your Ontology, End to End</a> teaches the from-scratch method the starter packages up.</li>
     <li><b>Roll it out:</b> point your analysts and business users at <a href="../self-service-analytics/index.html">Self-Service Analytics</a> — the ontology you just stood up is what makes their answers trustworthy.</li>
-    <li><b>Licensing:</b> before production, review <code>LICENSING.md</code> (CPT/SNOMED/LOINC structural modeling; VSAC via your UMLS key).</li>
+    <li><b>Licensing:</b> before production, review <code>LICENSING.md</code> (GICS / CUSIP / rating-agency scales modeled structurally; joined to your licensed copy).</li>
   </ul>
 </section>
 
 <div class="pager" id="pager"></div>
-<footer class="pagefoot">© TextQL · Workshop: Healthcare Starter Pack · Example prompts are illustrative — adapt them to your own data. · <a href="mailto:jacob@textql.com?subject=TextQL%20Workshops%20feedback">Give feedback</a></footer>
+<footer class="pagefoot">© TextQL · Workshop: FinServ Starter Pack · Example prompts are illustrative — adapt them to your own data. · <a href="mailto:jacob@textql.com?subject=TextQL%20Workshops%20feedback">Give feedback</a></footer>
 </div></main>
 </div>
 
@@ -553,7 +549,7 @@
 
 <script>
 (function(){
-  const WS_KEY='textql-ws-healthcare-starter';
+  const WS_KEY='textql-ws-finserv-starter';
   const pages=[...document.querySelectorAll('section.page')];
   const navlist=document.getElementById('navlist');
   const pager=document.getElementById('pager');
