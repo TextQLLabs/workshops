@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Estate Starter Pack · TextQL Workshops</title>
+<style>
+  :root{
+    --green:#58a68d; --green-dark:#2f6f5c; --green-soft:#e9f2ee;
+    --ink:#1c2b27; --muted:#5d6b67;
+    --bg:#ffffff; --bg-soft:#f4f8f6; --border:#dde7e3; --code-bg:#0f1f1b;
+    --gold:#e9c46a; --gold-soft:#fdf9ee; --gold-border:#f0e4c0; --gold-ink:#8a6d1f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.6}
+  a{color:var(--green-dark)}
+
+  /* ── Layout ─────────────────────────────── */
+  .layout{display:flex;min-height:100vh}
+  nav#sidebar{width:300px;min-width:300px;background:var(--bg-soft);border-right:1px solid var(--border);padding:24px 0 60px;position:fixed;top:0;bottom:0;overflow-y:auto;z-index:40}
+  main{margin-left:300px;flex:1;display:flex;justify-content:center;padding:44px 56px 110px}
+  .content{max-width:860px;width:100%}
+
+  /* ── Sidebar ────────────────────────────── */
+  .brand{padding:0 24px 16px;border-bottom:1px solid var(--border)}
+  .brand .logo{font-weight:800;font-size:18px;color:var(--green-dark);letter-spacing:.5px}
+  .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .progress-wrap{padding:14px 24px;border-bottom:1px solid var(--border)}
+  .progress-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+  .progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:var(--green);border-radius:4px;transition:width .4s}
+  .progress-pct{font-size:12px;color:var(--green-dark);font-weight:600;margin-top:4px}
+  nav .group-label{padding:16px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  nav a.nav-item{display:flex;align-items:center;gap:10px;padding:9px 24px;font-size:14px;color:var(--ink);text-decoration:none;border-left:3px solid transparent}
+  nav a.nav-item:hover{background:var(--green-soft)}
+  nav a.nav-item.active{border-left-color:var(--green);background:var(--green-soft);font-weight:600}
+  .nav-item .num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;min-width:22px;border-radius:50%;border:1.5px solid var(--muted);font-size:11px;font-weight:700;color:var(--muted)}
+  .nav-item.done .num{background:var(--green);border-color:var(--green);color:#fff;font-size:12px}
+  .nav-item .time{margin-left:auto;font-size:11px;color:var(--muted)}
+  .menu-btn{display:none;position:fixed;top:14px;left:14px;z-index:41;background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer}
+
+  /* ── Typography ─────────────────────────── */
+  .kicker{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);font-weight:700;margin-bottom:6px}
+  h1{font-size:30px;line-height:1.25;margin-bottom:10px;font-weight:700}
+  .page-meta{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-bottom:24px;flex-wrap:wrap}
+  .page-meta b{color:var(--ink)}
+  h2{font-size:20px;margin:34px 0 10px;padding-top:8px;font-weight:700}
+  h3{font-size:16px;margin:22px 0 8px;font-weight:700}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0 10px 24px}
+  li{margin:5px 0}
+  b,strong{font-weight:650}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:var(--bg-soft);font-weight:600}
+  code{background:#eef4f1;padding:2px 6px;border-radius:4px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  hr{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+  /* ── Hero cards (welcome) ───────────────── */
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+  .hero-card{border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:#fff}
+  .hero-card .n{font-size:12px;font-weight:700;color:var(--green);letter-spacing:1px}
+  .hero-card h3{margin:4px 0;font-size:15px}
+  .hero-card p{font-size:13px;color:var(--muted);margin:0}
+
+  /* ── Callouts ───────────────────────────── */
+  .callout{background:var(--bg-soft);border-left:4px solid var(--green);padding:12px 16px;border-radius:0 6px 6px 0;margin:14px 0;font-size:14px}
+  .callout.warn{border-left-color:var(--gold)}
+  .callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+  .callout .label{font-weight:700;display:block}
+
+  /* ── Prompt blocks ──────────────────────── */
+  .prompt{position:relative;background:var(--code-bg);color:#dff3ea;border-radius:8px;padding:20px;margin:16px 0 10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;line-height:1.55}
+  .prompt .tag{position:absolute;top:-9px;left:14px;background:var(--green);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px}
+  .prompt button{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.12);color:#dff3ea;border:none;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+  .prompt button:hover{background:rgba(255,255,255,.28)}
+  .prompt pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;padding-right:54px}
+  .yousee{background:var(--gold-soft);border:1px solid var(--gold-border);border-radius:8px;padding:12px 16px;margin:10px 0 18px;font-size:14px}
+  .yousee b{color:var(--gold-ink)}
+
+  /* ── Screenshots ────────────────────────── */
+  figure.shot{margin:16px 0 22px}
+  figure.shot img{display:block;max-width:100%;border:1px solid var(--border);border-radius:10px;box-shadow:0 2px 10px rgba(28,43,39,.08);cursor:zoom-in}
+  figure.shot figcaption{font-size:13px;color:var(--muted);margin-top:7px}
+  figure.shot.missing img,figure.shot.missing figcaption{display:none}
+  figure.shot.missing::after{content:"📷  Screenshot coming soon — " attr(data-todo);display:block;border:2px dashed var(--border);border-radius:10px;padding:22px 18px;color:var(--muted);font-size:13.5px;background:var(--bg-soft)}
+  #lightbox{display:none;position:fixed;inset:0;background:rgba(15,31,27,.92);z-index:200;cursor:zoom-out;align-items:center;justify-content:center;padding:30px}
+  #lightbox.show{display:flex}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:8px}
+
+  /* ── Steps ──────────────────────────────── */
+  ol.steps{list-style:none;margin-left:0;counter-reset:step}
+  ol.steps>li{counter-increment:step;position:relative;padding:0 0 16px 44px;border-left:2px solid var(--border);margin:0 0 0 15px}
+  ol.steps>li:last-child{border-left-color:transparent}
+  ol.steps>li::before{content:counter(step);position:absolute;left:-15px;top:-2px;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+
+  /* ── Checkpoint ─────────────────────────── */
+  .checkpoint{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:28px 0}
+  .checkpoint h4{margin:0 0 10px;color:var(--green-dark);font-size:15px}
+  .checkpoint label{display:flex;align-items:flex-start;gap:10px;padding:5px 0;font-size:14px;cursor:pointer}
+  .checkpoint input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;min-width:16px;cursor:pointer}
+  .checkpoint label.checked{color:var(--muted);text-decoration:line-through}
+
+  /* ── Expandable ─────────────────────────── */
+  details{border:1px solid var(--border);border-radius:8px;margin:12px 0;background:#fff}
+  details summary{cursor:pointer;padding:11px 14px;font-weight:600;font-size:14.5px;list-style:none}
+  details summary::before{content:"▸ ";color:var(--green)}
+  details[open] summary::before{content:"▾ "}
+  details .body{padding:2px 16px 12px}
+
+  /* ── Pager ──────────────────────────────── */
+  .pager{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--border);padding-top:22px}
+  .pager a{flex:1;max-width:330px;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-decoration:none;color:var(--ink)}
+  .pager a:hover{border-color:var(--green);background:var(--green-soft)}
+  .pager a .dir{font-size:12px;color:var(--muted);display:block}
+  .pager a .ttl{font-weight:600;color:var(--green-dark);font-size:15px}
+  .pager a.next{text-align:right;margin-left:auto}
+
+  .page{display:none}
+  .page.active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  footer.pagefoot{margin-top:46px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);padding-top:16px}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:210}
+  .toast.show{opacity:1}
+
+  @media(max-width:920px){
+    nav#sidebar{transform:translateX(-100%);transition:transform .2s;box-shadow:2px 0 14px rgba(0,0,0,.12)}
+    nav#sidebar.open{transform:none}
+    main{margin-left:0;padding:60px 22px 80px}
+    .menu-btn{display:block}
+    .hero-grid{grid-template-columns:1fr}
+  }
+  @media print{
+    nav#sidebar,.pager,.menu-btn,.toast{display:none!important}
+    main{margin-left:0}
+    .page{display:block!important;page-break-after:always}
+    figure.shot.missing{display:none}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+<div class="layout">
+<nav id="sidebar">
+  <div class="brand">
+    <div class="logo">TextQL Workshop</div>
+    <div class="sub">Real Estate Starter Pack</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">Your progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+    <div class="progress-pct" id="ppct">0% complete</div>
+  </div>
+  <div id="navlist"></div>
+</nav>
+
+<main><div class="content" id="content">
+
+<!-- ════════════════ WELCOME ════════════════ -->
+<section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
+  <div class="kicker">Workshop · Domain Starter Pack</div>
+  <h1>Implement the Real Estate Starter Pack</h1>
+  <div class="page-meta"><span>⏱️ About <b>2.5 hours</b></span><span>🎯 Property-management & real-estate data teams — asset management, operations, leasing, finance</span><span>📦 Starts from a pre-built ontology, not a blank page</span></div>
+
+  <p>A hands-on workshop that takes you from <i>"I have this ontology repo and nothing else"</i> to <i>"I'm asking Ana governed questions about my own property, lease, and ledger data — and the model grows itself as I work"</i> — mostly without leaving the Ana chat window.</p>
+  <p>The <b>Real Estate Starter Pack</b> is a <b>document of domain expertise</b> over property-management data — properties, units, leases, tenants, rent roll, the lease ledger (billed vs. collected), property financials, NOI and operating-expense ratio, occupancy, delinquency, renewals, lease expirations, work orders, and owners/funds. It's <b>just files</b> (Markdown + <code>.tql</code>) in a git repo: <a href="https://github.com/TextQLLabs/ontology-realestate-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-realestate-starter</code></a> — <b>your TextQL team grants access and sets up your own fork</b> (your adaptations live in your fork; the template stays pristine).</p>
+  <div class="callout warn"><span class="label">This is not a form to fill out</span>
+    <p>The starter is a <b>warm start, not a finished model to deploy</b>. Treating it as "close enough" and shipping it is the fastest way to build a model nobody trusts. So we begin by naming your <b>North Star</b> — what someone does differently on Monday when this works — and in <b>Module 1</b> Ana looks at your actual data and drafts it with you. Then let the model <b>accrete from real questions</b>: Ana reads what's known, explores only the frontier, answers, and proposes additions back as git commits you review. (The repo's <a href="https://github.com/TextQLLabs/ontology-realestate-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a> is your starting point.)</p>
+  </div>
+
+  <h2>What you'll do</h2>
+  <div class="hero-grid">
+    <div class="hero-card"><div class="n">MODULE 0</div><h3>Set your North Star</h3><p>Name what the ontology is <i>for</i> — what someone does differently on Monday morning.</p></div>
+    <div class="hero-card"><div class="n">MODULE 0</div><h3>Tour the six layers</h3><p>Entity spine, metrics, classification, governance, decisions, validation.</p></div>
+    <div class="hero-card"><div class="n">MODULE 1</div><h3>Define your North Star</h3><p>Ana reads your data, runs the scoping conversation, and drafts <code>north_star.md</code> with you.</p></div>
+    <div class="hero-card"><div class="n">MODULE 2</div><h3>Connect three things</h3><p>The ontology repo, your warehouse (read-only), your documents.</p></div>
+    <div class="hero-card"><div class="n">MODULE 3</div><h3>Validate against your schema</h3><p>Ana diffs the model vs. your tables — and settles the lease/ledger/property-financial grain — then opens the fix as a PR.</p></div>
+    <div class="hero-card"><div class="n">MODULE 4</div><h3>Light up the classification</h3><p>Property-type → sector and charge-type → recoverable rollups — zero warehouse writes.</p></div>
+    <div class="hero-card"><div class="n">MODULE 5</div><h3>Ask governed questions</h3><p>Occupancy, rent roll, NOI, collections, delinquency, renewals, work orders — with the SQL shown.</p></div>
+    <div class="hero-card"><div class="n">MODULE 6+7</div><h3>Govern &amp; customize</h3><p>Fair-housing &amp; tenant-PII defaults, golden values, and making the definitions yours.</p></div>
+  </div>
+
+  <div class="callout"><span class="label">What ships in the box</span>
+    <p><b>Free / public classification</b> (the property-type → sector grouping, the charge-type → revenue/recoverable grouping, US Census CBSA geography) is in the repo — yours to keep and extend. Licensed systems (CoStar / RealPage / Yardi Matrix market rents, comps, and submarket analytics) are modeled <b>structurally</b>; their data is <b>sourced from your own licensed feed</b> and joined by code. See <a href="https://github.com/TextQLLabs/ontology-realestate-starter/blob/main/LICENSING.md" target="_blank" rel="noopener"><code>LICENSING.md</code></a>.</p>
+  </div>
+  <div class="callout"><span class="label">No customer data — ever</span>
+    <p>The starter is built entirely from public conventions (US Census CBSA, property/charge grouping) and a generic reference model. Connecting it never uses your data to improve the template; it runs <b>read-only</b>, and your adaptations live in <b>your own repo</b>, never back in the template.</p>
+  </div>
+
+  <details><summary>For facilitators — running this as a guided session</summary><div class="body">
+    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
+  </div></details>
+
+  <div id="run-with-ana" style="margin-top:30px;border:1px solid var(--green);border-left:4px solid var(--green);background:var(--green-soft);border-radius:10px;padding:18px 20px">
+    <h3 style="margin:0 0 8px;color:var(--green-dark)">🤖 Prefer to have Ana run this workshop?</h3>
+    <p style="margin:0 0 10px">Open a TextQL thread with your data connected and paste the prompt below — Ana walks you through this workshop on <b>your own data</b>, one step at a time. You run each prompt; she coaches.</p>
+    <pre style="white-space:pre-wrap;background:var(--code-bg,#0f1f1b);color:#e8f3ee;padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.5;overflow:auto">Hey Ana — facilitate the "Real Estate Starter" workshop with me in this thread, on the data connected here. Pull the steps from https://textqllabs.github.io/workshops/realestate-starter/ and run it interactively: look at my data first (2–3 lines), then go ONE module at a time. For each module, give ME the prompt to copy and run as my next message, tell me what to look for, then wait and coach me on my result. Start with what you see, then Module 0.</pre>
+    <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">Ana fetches the steps from the link — no copy/paste of the workshop needed. (Air-gapped / VPC tenants where Ana can't reach the web: paste the module list from this workshop's <a href="https://github.com/TextQLLabs/workshops/blob/main/realestate-starter/ana-runner.md" target="_blank" rel="noopener">ana-runner.md</a> instead.)</p>
+  </div>
+</section>
+
+<!-- ════════════════ NORTH STAR ════════════════ -->
+<section class="page" id="northstar" data-title="Start with Your North Star" data-group="Getting Started" data-time="15 min">
+  <div class="kicker">Module 0 · Before you connect anything</div>
+  <h1>Start with Your North Star</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b> · conversation, not configuration</span><span>🎯 Goal: know what your ontology is <i>for</i> before you build it</span></div>
+
+  <p>The single biggest mistake with a starter pack is to skip this step — to point it at your warehouse, decide it's "close enough," and ship. That bakes in decisions before you know which questions matter, and you get a model that's 10% useful and 90% noise. This module is the antidote, and it takes 15 minutes.</p>
+
+  <h2>0.1 · Answer one question</h2>
+  <div class="callout"><span class="label">The North Star question</span>
+    <p><b>When this works, what does someone do differently on Monday morning?</b></p>
+  </div>
+  <p>Not "model all of real estate." Something narrow and real: <i>"the asset manager stops waiting a week for a same-store NOI cut by market,"</i> or <i>"the operations lead sees delinquency creeping in a sub-portfolio in time to act before it hits collections."</i> If you can't name it yet, you're not ready to build the ontology — you're ready to have <b>this</b> conversation. Have it first.</p>
+
+  <h2>0.2 · What a North Star looks like (examples to spark yours)</h2>
+  <p>Most property-management / real-estate teams land on a North Star adjacent to one of the three below. These are <b>examples, not a menu to pick from</b> — yours might be one of these, a blend, or something next to them. In <b>Module 1</b>, Ana drafts yours from your actual data; reading these now just tells you which surfaces and classification become relevant once it's set. (Full detail in the repo's <a href="https://github.com/TextQLLabs/ontology-realestate-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a>.)</p>
+  <table>
+    <tr><th>Archetype</th><th>For</th><th>Lead with</th></tr>
+    <tr><td><b>A · Portfolio / asset reporting parity</b></td><td>"Match the asset-management numbers we already report to owners"</td><td><code>noi</code>, <code>occupancy_rate</code>, <code>operating_expense_ratio</code> + golden queries (occupancy ≈ <b>0.948</b>, NOI margin ≈ <b>0.552</b>, opex ratio ≈ <b>0.448</b>) — reconcile <i>first</i>, govern second.</td></tr>
+    <tr><td><b>B · Revenue &amp; collections</b></td><td>"See billings, cash, and arrears before they hit the rent roll"</td><td><code>rent_roll</code>, <code>collections_rate</code>, <code>delinquency_rate</code> + the billed-vs-collected note + the in-place rent roll (≈ <b>$112M/mo</b>).</td></tr>
+    <tr><td><b>C · Operations &amp; leasing</b></td><td>"Manage the maintenance backlog and the rollover window"</td><td><code>work_order_resolution</code>, <code>lease_expirations</code>, <code>renewal_rate</code> + the grain discipline + the leasing vocabulary.</td></tr>
+  </table>
+
+  <h2>0.3 · You won't fill out a checklist — Ana drafts it</h2>
+  <p>There's no question bank to work through and no form to fill out. In <b>Module 1</b> you'll paste one prompt and Ana looks at your actual data, runs a short scoping conversation, recommends the archetype that fits, and writes your North Star down as <code>north_star.md</code> — a paragraph on what the ontology is <i>for</i> plus the 6–8 questions it must answer in 30 days. That single artifact is what every later module builds toward. The watch-outs that make you sound like the expert in the room — physical vs. economic occupancy, billed vs. collected, what counts in NOI — live in the repo's decision notes, and Ana surfaces them as they come up.</p>
+
+  <div class="callout"><span class="label">Why the model gets cheaper as you use it</span>
+    <p>This isn't just good practice — it's the design. An agent that re-discovers your warehouse on every question pays an "amnesia tax" (most of its tokens go to rediscovery, and results aren't reproducible). Reading a known model first and committing what it learns inverts that: discovery is paid <b>once</b> and amortized across every future question. See TextQL's research, <i>"Malleability Is All You Need"</i> (VLDB 2026) — a measured ~30% token reduction and a model that gets more reliable the more it's used.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You can state your North Star in one sentence</label>
+    <label><input type="checkbox"> You have a candidate archetype in mind (asset-reporting parity / revenue &amp; collections / operations &amp; leasing) — or you'll let Ana recommend one in Module 1</label>
+    <label><input type="checkbox"> You're ready to let Ana draft <code>north_star.md</code> from your data in Module 1</label>
+  </div>
+  <p style="margin-top:14px"><b>Not sure which archetype?</b> That's fine — in <b>Module 1</b> Ana looks at your data and recommends one. You don't have to decide here.</p>
+</section>
+
+<!-- ════════════════ MODULE 0 ════════════════ -->
+<section class="page" id="m0" data-title="Module 0 · The Six Layers" data-group="Getting Started" data-time="15 min">
+  <div class="kicker">Module 0</div>
+  <h1>Tour the Six Layers</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b> · reading + repo browsing</span><span>🎯 Goal: know what's in the box and where everything lives</span></div>
+
+  <p>Why a real-estate starter exists at all: <b>the headline numbers are contested by construction.</b> "What's our occupancy?" isn't one query — it depends on physical vs. economic occupancy, whether down/offline units count, and which period. "What's our NOI?" depends on what counts as operating expense (and what's correctly excluded — debt service, capex, depreciation, tax). A naive answer silently mixes them. The starter pins one governed definition for each contested metric, externalizes the sector and recoverable-charge rollups so they aren't hard-coded, makes fair-housing and tenant-PII behavior the default, and writes down the reasoning so a stakeholder can argue with the <i>definition</i>, not the number.</p>
+
+  <h2>The six layers</h2>
+  <table>
+    <tr><th>Layer</th><th>Where</th><th>What</th></tr>
+    <tr><td><b>1 — Entity spine</b></td><td><code>ontology/schema.tql</code>, <code>ontology/relations/</code></td><td>Property, Unit, Lease, Tenant, Lease ledger, Property financial, Work order, Owner/fund.</td></tr>
+    <tr><td><b>2 — Metrics</b></td><td><code>ontology/queries/</code></td><td>Governed surfaces: occupancy, rent roll, NOI, operating-expense ratio, collections, delinquency, renewal rate, lease expirations, work-order resolution.</td></tr>
+    <tr><td><b>3 — Classification</b></td><td><code>ontology/dimensions/</code>, <code>filters/</code>, <code>reference/terminology/</code></td><td><b>The heart.</b> Property-type → sector + charge-type → revenue/recoverable grouping + CBSA geography — as dimensions, filters &amp; committed seeds.</td></tr>
+    <tr><td><b>4 — Governance &amp; PII</b></td><td><code>ontology/notes/governance-pii-fairhousing.md</code>, <code>config/org_context.md</code></td><td>Identifier inventory, &lt;5 small-cell suppression, fair-housing / anti-steering, tenant-PII sensitivity, owner/fund segregation.</td></tr>
+    <tr><td><b>5 — Decision records</b></td><td><code>ontology/notes/</code></td><td>Why each metric is defined the way it is — physical-vs-economic occupancy, billed-vs-collected, what counts in NOI, renewal basis; plus the glossary, grain, and identity guides.</td></tr>
+    <tr><td><b>6 — Validation</b></td><td><code>validation/</code></td><td><code>validate_tql.py</code> (every surface checked against your live schema + compiled), golden queries with pinned values, the dry-run prompt.</td></tr>
+  </table>
+
+  <div class="callout"><span class="label">Standards alignment</span>
+    <p><code>STANDARDS.md</code> maps the model to the conventions it aligns with (NCREIF / NAREIT reporting, BOMA/IREM expense classifications, US Census CBSA geography). The semantic layer (metrics, routing, classification) is <b>fully separated from the physical mapping</b>: every physical table name lives in <b>one file</b>, <code>ontology/schema.tql</code> — re-point it and the metric logic stays put. The starter is authored against a generic property-management + financials model (Yardi/MRI/RealPage/Entrata-shaped) with ANSI/Spark-portable SQL; <code>MIGRATION.md</code> is the 8-step re-point checklist and works the same on Redshift, BigQuery, Snowflake, or <b>Databricks</b> (budget: about a half-day with warehouse access). For a deep technical tour, read <code>DEEP_DIVE.md</code>.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You can name the six layers and find each one in the repo</label>
+    <label><input type="checkbox"> You know which classification ships in the box vs. needs your own licensed feed (CoStar/RealPage/Yardi Matrix)</label>
+    <label><input type="checkbox"> You know the default model (generic property-management + financials, ANSI/Spark-portable) and where re-point lives (schema.tql)</label>
+  </div>
+</section>
+
+  <section class="page" id="m1" data-title="Module 1 · Define Your North Star" data-group="Hands-On Modules" data-time="15 min">
+    <div class="kicker">Module 1</div>
+    <h1>Define Your North Star with Ana</h1>
+    <div class="page-meta"><span>&#9201;&#65039; <b>15 min</b> &middot; with Ana</span><span>&#127919; Goal: turn the conversation above into a written North Star + the archetype that fits</span></div>
+    <p>The intro is the <em>why</em>. This is the <em>doing</em>: rather than fill out a form, you let Ana look at your actual data, ask the right scoping questions, and write the North Star down. That single artifact (<code>north_star.md</code>) is what every later module builds toward.</p>
+    <p>Paste this prompt. Ana runs the scoping conversation &mdash; answer a few questions at a time and she converges on your archetype and a concrete North Star.</p>
+    <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Help me define the North Star for our ontology before we build anything.
+1. Look at the data connected to this thread and summarize in 3-4 lines what we have: the key tables, the grain, and the domains it covers.
+2. Then ask me 5-7 sharp scoping questions to pin down what we are really doing - who will use this, what decision it changes on Monday morning, whether we are after portfolio/asset reporting parity / revenue and collections / operations and leasing, what "working" looks like in 30 days, and where our data is messiest. Ask a few at a time, not all at once.
+3. From my answers plus the data, recommend the archetype that fits (A portfolio/asset reporting parity, B revenue and collections, or C operations and leasing) and draft our North Star: one short paragraph on what this ontology is for, plus the 6-8 questions it must answer in 30 days.
+4. Save it as north_star.md in the ontology and propose it as a reviewed change, so every later step builds toward it.</pre></div>
+    <div class="yousee"><b>You will see:</b> Ana summarize your data, ask scoping questions, recommend an archetype with a reason, and draft a <code>north_star.md</code> &mdash; a paragraph plus the questions that define "done." Review it, push back, ratify.</div>
+    <div class="callout"><span class="label">Why a prompt, not a 50-question checklist</span><p>No giant pre-written question bank that nobody maintains. Ana generates the questions that matter <em>for your data and your goal</em>, on the spot &mdash; and the output is a sharp use-case definition, not a worksheet.</p></div>
+    <div class="checkpoint"><h4>&#9989; Checkpoint</h4>
+      <label><input type="checkbox"> You have a written <code>north_star.md</code> (purpose + the 6-8 questions it must answer)</label>
+      <label><input type="checkbox"> You picked an archetype (A / B / C), or Ana recommended one and you agreed</label>
+      <label><input type="checkbox"> It names something real that changes on Monday morning, not "model all of real estate"</label>
+    </div>
+  </section>
+
+<!-- ════════════════ MODULE 2 ════════════════ -->
+<section class="page" id="m2" data-title="Module 2 · Connect Three Things" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 2</div>
+  <h1>Connect Three Things</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat</span></div>
+
+  <h2>2.1 · Connect the ontology repo to Ana</h2>
+  <p>This is the key step. In TextQL, add a <b>Git connector</b> and point it at <b>your fork</b> of the starter repo (<a href="https://github.com/TextQLLabs/ontology-realestate-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-realestate-starter</code></a> — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every classification rule — as a reference she reads on demand.</p>
+  <div class="callout"><span class="label">No second source of truth</span>
+    <p>You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.</p>
+  </div>
+  <figure class="shot" data-todo="the Git connector configured against the starter repo">
+    <img src="assets/re-m1-git.png" alt="Git connector pointed at the starter repo" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The ontology repo connected — Ana reads it as ground truth.</figcaption>
+  </figure>
+
+  <h2>2.2 · Connect your data warehouse</h2>
+  <p>Add the connector for the warehouse holding your property-management / leasing / financials data (Redshift, BigQuery, Snowflake, Databricks, …) — typically sourced from Yardi, MRI, RealPage, or Entrata. <b>Read-only access is enough.</b></p>
+  <div class="callout warn"><span class="label">Use your governed, contracted warehouse</span>
+    <p>Real estate is fair-housing regulated and tenant records carry PII (names, and SSNs for residential applicants). Connect the enterprise warehouse that's already in scope for your data-residency and audit obligations — see <code>ontology/notes/governance-pii-fairhousing.md</code>.</p>
+  </div>
+
+  <h2>2.3 · (Optional) Bring in your documents</h2>
+  <p>Your real-world context — the asset-management reporting workbook, an operating-expense classification policy, dbt models, the spreadsheet where someone defined "occupancy" — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology <b>as corpus, not migration</b>, and can fold what she learns into the model.</p>
+
+  <h2>2.4 · Say hello</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Read the ontology repo and give me a tour: what entities, metrics, and classification dimensions are defined, and what governed questions am I able to ask once my warehouse is validated?</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana describe the model from the repo itself — proof the Git connector works and the ontology is being read as ground truth.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Ana described the starter's entities and metrics from the connected repo</label>
+    <label><input type="checkbox"> Your warehouse connector is attached, read-only, and in your contracted region</label>
+    <label><input type="checkbox"> You know which of your documents you'll bring in (or that you're skipping this)</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 3 ════════════════ -->
+<section class="page" id="m3" data-title="Module 3 · Validate Against Your Schema" data-group="Hands-On Modules" data-time="25 min">
+  <div class="kicker">Module 3</div>
+  <h1>Validate the Model Against Your Schema</h1>
+  <div class="page-meta"><span>⏱️ <b>25 min</b></span><span>🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — and settle the grain — without writing SQL</span></div>
+
+  <h2>3.1 · The dry run — required</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Look at the ontology repo, then inspect my warehouse. Run validation/dry-run-prompt.md against my schema: pull the information schema for my property, unit, lease, ledger, and property-financial tables and tell me where the ontology's expected table and column names don't match what I actually have — including whether unit status is a point-in-time snapshot or a period series, and whether the ledger carries billed and paid separately. Propose the exact changes to ontology/schema.tql.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names, and the all-important unit-status and billed-vs-collected questions. (The ready-made version lives in <code>validation/dry-run-prompt.md</code>.)</div>
+
+  <h2>3.2 · Run the validator — required</h2>
+  <p>The dry run is discovery; <code>validation/validate_tql.py</code> is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles. <b>Ana runs it for you</b> — no terminal needed:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Run validation/validate_tql.py from the ontology repo in your sandbox — static checks first, then the SQL check against my warehouse. Report every failure with the file it's in and the fix it needs, then apply the fixes (column renames in the affected .tql, table renames in schema.tql only) and re-run until clean.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the typo'd-backing, wrong-alias, and missing-column bug classes caught here — instead of surfacing as wrong numbers in front of stakeholders.</div>
+  <div class="callout"><span class="label">Prefer the terminal?</span>
+    <p>The same gate runs locally: <code>python3 validation/validate_tql.py</code> (static — no warehouse needed) · <code>--check-sql</code> (paste the output into Ana: rows = missing columns) · <code>--dsn "&lt;dsn&gt;" --explain</code> (live column check + compile test).</p>
+  </div>
+
+  <h2>3.3 · Apply the fixes as a PR — required</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Make those changes and open a pull request.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana edit the files and open a reviewable PR in <b>your</b> repo. Every physical table name lives in one place (<code>ontology/schema.tql</code>) — re-point it and the metric logic stays put. The join keys the surfaces rely on are <code>property_id</code>, <code>unit_id</code>, <code>lease_id</code>, and <code>tenant_id</code>.</div>
+  <figure class="shot" data-todo="the schema-validation PR Ana opened, showing the schema.tql diff">
+    <img src="assets/re-m2-pr.png" alt="Schema validation PR" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Validation lands as a reviewable PR — not silent edits.</figcaption>
+  </figure>
+
+  <div class="callout"><span class="label">Why this step matters</span>
+    <p>Every operator's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those <i>before</i> you trust a number is the difference between a defensible NOI and a debugging session in front of the asset manager.</p>
+  </div>
+
+  <h2>3.4 · Decide your grain &amp; verify your joins — required</h2>
+  <p>Real-estate data fans out across several grains — <b>property vs. unit vs. lease vs. ledger vs. property-financial</b> — and joining across them carelessly multiplies counts. Two decisions dominate this module, and both are prompts: which fact answers which question, and whether <b>unit status is a point-in-time snapshot</b> (one row per unit, current) or a <b>period series</b> (one row per unit per month).</p>
+  <table>
+    <tr><th>Table</th><th>Grain</th><th>Count this for…</th></tr>
+    <tr><td><code>property</code></td><td>1 / property</td><td>property counts, portfolio rollups</td></tr>
+    <tr><td><code>unit</code></td><td>1 / leasable unit (point-in-time status)</td><td>occupancy (occupied ÷ rentable, down units excluded) — <b>not</b> property counts</td></tr>
+    <tr><td><code>lease</code></td><td>1 / lease</td><td>rent roll, renewals, lease expirations</td></tr>
+    <tr><td><code>lease_ledger</code></td><td>1 / lease / period / charge</td><td>collections, delinquency (billed vs. paid)</td></tr>
+    <tr><td><code>property_financial</code></td><td>1 / property / month</td><td>NOI, operating-expense ratio (sum the series over the window)</td></tr>
+  </table>
+  <div class="prompt"><span class="tag">PROMPT — GRAIN</span><button>Copy</button>
+<pre>Read ontology/notes/grain.md, then inspect my tables. Confirm the grain of each: is there one property table and a separate unit table (many units per property)? Is unit status a point-in-time snapshot (one current row per unit) or a monthly period series? Is the lease_ledger one row per lease per period per charge, and is property_financial one row per property per month? Tell me where counting unit rows as properties, or summing a monthly financial series as if it were a single period, would fan out — and record the decision in databases/[ourschema]/README.md (copy databases/property_core/ as the template).</pre></div>
+  <div class="yousee"><b>You'll see:</b> the grain decision made and written down <i>before</i> anything gets edited — it shapes every count downstream. The trap to confirm: occupancy is a <b>point-in-time</b> question over the <code>unit</code> snapshot, while NOI and collections are <b>period</b> questions that sum a monthly series; <b>anchor unit counts on the snapshot and never sum a monthly financial row as a single period</b>.</div>
+  <div class="prompt"><span class="tag">PROMPT — JOIN &amp; BASIS VERIFICATION</span><button>Copy</button>
+<pre>Verify every join the ontology relies on against my warehouse: does the key (property_id / unit_id / lease_id / tenant_id) exist on both sides, what's the overlap rate, and is the grain 1:1 or 1:N? Then confirm the bases: in the ledger, are amount_billed and amount_paid both populated (so collections and delinquency are real, not assumed)? Is unit.status carrying the occupied / vacant / down values the occupancy surface expects? Record each verdict in databases/[ourschema]/README.md and flag any join or basis we shouldn't trust.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a join-by-join verdict list plus a basis check — because collections needs both billed and paid, and occupancy needs the down/offline status to exclude it from the denominator; a billed-only or status-less warehouse changes the number.</div>
+  <div class="prompt"><span class="tag">PROMPT — DATASET LITERALS</span><button>Copy</button>
+<pre>Find the dataset-specific literals the surfaces hard-code — the unit status enums (occupied/vacant/down), the lease status ('active'), the renewal_status values ('renewed'/'non_renewed'/'month_to_month'), the property_type spelling, and the charge_type values — check each against what's actually in my warehouse, and propose the corrections in the same PR.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the enumerations the validator can't know — <code>status = 'occupied'</code>, <code>lease.status = 'active'</code>, the renewal flag, the property-type and charge-type spellings — corrected from your real data instead of assumed.</div>
+  <div class="callout"><span class="label">The full checklist</span>
+    <p>This module covers the core; <code>MIGRATION.md</code> is the complete 8-step re-point (discover → grain → schema.tql → identity → validator → literals → governance → glossary → goldens). Half a day with warehouse access; most of it is verification, not editing.</p>
+  </div>
+  <div class="callout"><span class="label">No monthly financial series?</span>
+    <p>If your warehouse stores income and expense only as an <b>annual</b> or single-period roll-up (no <code>property_financial</code> monthly series), the NOI and opex surfaces can't sum a window directly — you must align the period grain first. Flag it in the dry run; <code>notes/noi-definition.md</code> has the derivation. This is the difference between a true same-store NOI and one that double-counts or omits months.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Ana produced a concrete mismatch list (or confirmed a clean match)</label>
+    <label><input type="checkbox"> The property/unit/lease/ledger/property-financial grain — and unit status point-in-time vs. period — is decided and written down</label>
+    <label><input type="checkbox"> The fixes landed as a PR you can review — not silent edits — and you merged it (or know who reviews it)</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 4 ════════════════ -->
+<section class="page" id="m4" data-title="Module 4 · The Classification Layer" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 4</div>
+  <h1>Light Up the Classification Layer</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: rollup-powered questions — property-type → sector, charge-type → recoverable — with zero writes to your warehouse</span></div>
+
+  <p>The classification seeds (granular property type → sector; raw charge type → revenue/recoverable grouping) are <b>already committed in the repo</b> as CSVs (<code>reference/terminology/property_type.csv</code>, <code>charge_type.csv</code>) — nothing to load into your warehouse. Ana loads the CSV into her Python sandbox and joins it to a read-only warehouse pull in memory (see <code>ontology/notes/terminology-join-pattern.md</code>), so the grouping logic works with <b>zero warehouse writes</b>. The shipped surfaces filter <code>property_type</code> on the fact, so they run with no seed dependency at all — the seeds add the <i>rollups</i> (multifamily/single_family → residential; office/retail/mixed_use → commercial; industrial/self_storage → industrial; cam/utility/tax_recovery → recoverable).</p>
+
+  <h2>4.1 · Prove the rollups work</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Using the ontology's classification layer, roll my granular property-type values up to sector (residential / commercial / industrial), and group my charge_type values into the revenue/recoverable grouping (base_rent / recoverable / other_income), then show me recoverable charges as a share of billings. Explain how you joined the seed CSVs without writing to the warehouse.</pre></div>
+  <div class="yousee"><b>You'll see:</b> raw property and charge codes resolved to meaningful sectors and recoverable groupings, with the federated join-in-sandbox pattern explained — and a reminder to analyze <i>groupings</i>, never free-text charge codes.</div>
+
+  <h2>4.2 · Bring in your licensed feed — optional</h2>
+  <p><b>You don't need this on day one</b> — the public property-type and charge-type groupings are already committed. Come back when you want <b>market rents, comps, or submarket analytics</b>. These are <b>licensed</b> (CoStar / RealPage / Yardi Matrix) — the repo ships the structure and join logic, and the data comes from <b>your own licensed feed</b>:</p>
+  <div class="prompt"><span class="tag">PROMPT — LICENSED FEED (STRUCTURAL ONLY)</span><button>Copy</button>
+<pre>We have a CoStar / RealPage market-rent feed in our warehouse at [table]. Per LICENSING.md, join it to unit.market_rent / property.market by submarket so we get market rent vs. in-place rent (loss-to-lease) — keep the licensed data in our warehouse, commit only the join logic, and note the license + effective date in LICENSING.md. Open it as a PR.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the structural model light up with your licensed market data — the modeling logic versioned in git, the licensed comps staying in your warehouse, same governance motion as everything else.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> A sector and recoverable-charge rollup worked against your data with no warehouse writes</label>
+    <label><input type="checkbox"> You can explain the federated join-in-sandbox pattern in one sentence</label>
+    <label><input type="checkbox"> You know which classification ships public (property-type/charge-type/CBSA) vs. licensed (CoStar/RealPage/Yardi Matrix, from your feed)</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 5 ════════════════ -->
+<section class="page" id="m5" data-title="Module 5 · Ask Governed Questions" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 5</div>
+  <h1>Ask Governed Questions</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: the payoff — consistent, defensible answers routed through governed definitions, with the SQL shown</span></div>
+
+  <p>Run each of these against your validated warehouse. For every answer, note that Ana cites the governed surface, names the <b>basis</b> (physical vs. economic occupancy, billed vs. collected, the period window), and shows the rendered SQL. The golden values below are pinned against the synthetic property-management warehouse (window 2024, reporting date 2024-12-31) in <code>validation/golden-queries.md</code> — your numbers will differ, but the <i>shape</i> and the invariants should hold.</p>
+
+  <h2>5.1 · Occupancy (the headline operations metric)</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What's our physical occupancy as of the reporting date? Use the governed definition (occupancy_rate.tql) and tell me the basis — physical vs. economic, and whether down/offline units are in the denominator — and why.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the governed surface return occupied units ÷ rentable units, with down/offline units <b>excluded from the denominator</b> — the synthetic portfolio pins occupancy ≈ <b>0.948</b>. Ana names the basis (physical, point-in-time) instead of silently picking one; economic occupancy (rent-weighted, net of concessions) is a separate definition.</div>
+
+  <h2>5.2 · Rent roll &amp; NOI</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Show me the in-place monthly rent roll as of the reporting date (rent_roll.tql) and our NOI and NOI margin for 2024 (noi.tql). For NOI, tell me explicitly what's included and what's correctly excluded.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the in-place rent roll ≈ <b>$112M/mo</b> (sum of contractual rent for leases in force, + annualized), and NOI = (rental + other income) − operating expense with NOI margin ≈ <b>0.552</b>. Ana states that NOI <b>excludes</b> debt service, capex, depreciation, and tax (below-the-line) — the definition asserted in the golden queries.</div>
+
+  <h2>5.3 · Collections &amp; delinquency (the two cash levers)</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Show me our collections rate (collections_rate.tql) and delinquency rate (delinquency_rate.tql) for 2024, report them together, and tell me which is the cash-efficiency signal and which is the arrears/credit-risk signal.</pre></div>
+  <div class="yousee"><b>You'll see:</b> collections ≈ <b>0.958</b> (amount paid ÷ amount billed) and delinquency ≈ <b>0.042</b> (past-due outstanding ÷ billed, as of the reporting date) — paired, because collections alone hides whether the gap is timing or true arrears. Note collections + the uncollected share reconcile against the ledger.</div>
+  <div class="callout warn"><span class="label">Know the billed-vs-collected basis</span>
+    <p>The governed <code>collections_rate</code> and <code>delinquency_rate</code> surfaces both read the <b>ledger</b> (<code>amount_billed</code> vs. <code>amount_paid</code>). If your system only stores <b>billed</b> charges (no cash applied back), these can't be computed honestly — Ana will say which it used rather than imply cash. See <code>notes/collections.md</code>.</p>
+  </div>
+
+  <h2>5.4 · Operating-expense ratio, renewals &amp; rollover</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Show our operating-expense ratio for 2024 (operating_expense_ratio.tql), our lease renewal rate (renewal_rate.tql), and our lease-expiration / rollover exposure for the next 12 months (lease_expirations.tql). Tell me how opex ratio relates to NOI margin.</pre></div>
+  <div class="yousee"><b>You'll see:</b> opex ratio ≈ <b>0.448</b> (operating expense ÷ total income) — with Ana noting <b>opex_ratio + noi_margin ≈ 1</b> — renewal rate ≈ <b>0.503</b> (renewed ÷ up-for-renewal), and ≈ <b>38,753</b> leases expiring in the rollover window. The renewal surface supports a rent-weighted (dollar-retention) basis too.</div>
+  <div class="callout warn"><span class="label">Renewal modeled as a flag vs. a successor lease</span>
+    <p>The governed <code>renewal_rate</code> reads a <code>renewal_status</code> outcome column. If your system models renewal as a <b>successor lease</b> (a new lease_id linked to the prior one) instead of a status flag, the surface needs adapting — Ana will say which pattern your data uses. See <code>notes/leasing.md</code>.</p>
+  </div>
+
+  <div class="callout"><span class="label">Why everyone gets the same number</span>
+    <p>Occupancy, NOI, and collections can each be computed several ways. The ontology pins one governed definition — physical occupancy, NOI excluding below-the-line, collections on the ledger basis, with the decision recorded in <code>ontology/notes/</code> — so Asset Management, Operations, and Finance stop disagreeing about which number is "the" number.</p>
+  </div>
+
+  <h2>5.5 · When the answer isn't governed yet — watch the model grow</h2>
+  <p>Now ask something from your shortlist that the starter <b>doesn't</b> already cover — your economic-occupancy fact (rent-weighted, net of concessions), a loss-to-lease cut against market rent, a same-store comparison, a turnover/days-vacant metric. This is the important beat: a starter pack is a head start, not the finished model.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Here's a question from our shortlist that isn't in the governed surfaces yet: [your question]. Explore my warehouse to answer it, show your work, and if the definition is one we'd want to reuse, propose it as a new governed surface — open a PR adding the .tql and a notes file recording the decision and the basis.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana explore only the <i>frontier</i> (not re-derive the whole warehouse), answer, and propose a <b>write-back</b> — a new metric committed to your repo with provenance. Review and merge it, and the next person who asks gets the governed answer for free. That's the malleable loop: the ontology you ship is the one you grow, and it gets more complete every time you use it.</div>
+  <div class="callout warn"><span class="label">You ratify; high-stakes definitions get review</span>
+    <p>Ana proposes; humans ratify via normal git review. Anything in <code>governance-pii-fairhousing.md</code> scope (fair housing, tenant PII, owner/fund segregation) or a core financial surface (NOI, occupancy, collections) should require review before merge (CODEOWNERS-style) — see <code>STANDARDS.md</code>. The point isn't to let an agent rewrite your model unsupervised; it's that discovered knowledge is <i>captured</i> instead of re-discovered next time.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Occupancy, rent roll/NOI, collections/delinquency, opex ratio, renewals and lease expirations all answered through governed surfaces, SQL and basis shown</label>
+    <label><input type="checkbox"> You can point to the notes file explaining at least one metric's definition decision</label>
+    <label><input type="checkbox"> Ana proposed a write-back for a not-yet-governed question — and you saw it land as a PR</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 6 ════════════════ -->
+<section class="page" id="m6" data-title="Module 6 · Governance & PII Defaults" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 6</div>
+  <h1>Governance &amp; PII Defaults</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b></span><span>🎯 Goal: see the compliance behavior that's on by default — and verify it fires</span></div>
+
+  <p>Layer 4 makes compliance the default, not an add-on: an <b>identifier inventory</b>, a <b>small-cell (&lt;5) suppression</b> rule, the real-estate-specific <b>fair-housing / anti-steering</b> guardrails (no disparate-impact proxies in leasing/pricing cuts), <b>tenant-PII gating</b>, and <b>owner/fund segregation</b> (a manager's analysts see only their fund's properties). The behavior lives in <code>ontology/notes/governance-pii-fairhousing.md</code> and <code>config/org_context.md</code> — files you can read, review, and adapt.</p>
+
+  <h2>6.1 · Inventory your identifiers — day one</h2>
+  <p><code>governance-pii-fairhousing.md</code> §0 classifies every direct identifier in the connected schema into exactly one role — and the key distinction is that <b>using an identifier as a join key is not the same as outputting it</b>:</p>
+  <table>
+    <tr><th>Identifier</th><th>Role</th></tr>
+    <tr><td>Property/unit/lease/tenant IDs, tenant SSN (residential)</td><td><b>Join key only</b> — allowed in <code>ON</code>/<code>WHERE</code>/<code>GROUP BY</code>; never an output column, chart, or log</td></tr>
+    <tr><td>Tenant name, unit-level address, phone, email, DOB</td><td><b>Never output</b> (DOB may be used internally for age math only)</td></tr>
+    <tr><td>Protected-class attributes or their proxies (race, familial status, national origin; and proxies like specific-building demographic mix)</td><td><b>Fair-housing sensitive</b> — never an axis of a leasing/pricing cut (anti-steering / disparate-impact)</td></tr>
+    <tr><td>Unit-level address, ZIP</td><td><b>Aggregate only</b> — roll to property / market / CBSA; small geos re-identify a household</td></tr>
+  </table>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Inventory every direct identifier in the connected schema and classify each per governance-pii-fairhousing.md section 0: join-key-only, never-output, fair-housing-sensitive, or aggregate-only. Flag anything ambiguous for compliance review.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a per-column classification your compliance team signs off on — the rules are templates tuned to <i>your</i> regime, and they can be tightened freely but never loosened without a reviewed, attributable decision.</div>
+
+  <div class="callout warn"><span class="label">Facilitators: pre-flight these tests</span>
+    <p>Run 6.2 and 6.3 yourself <b>before</b> any session with compliance in the room. These guardrails are <b>instruction-layer enforcement</b> — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with <code>governance-pii-fairhousing.md</code> and <code>config/org_context.md</code>) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the <i>check</i> is part of the story — "here's the file, here's the behavior, here's how we audit it."</p>
+  </div>
+
+  <h2>6.2 · Test the fair-housing / small-cell rule</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Break down occupancy and renewal rate by property × market × unit_type to inform leasing strategy. Apply our fair-housing rules: do NOT introduce any protected-class attribute or proxy as a grouping axis, aggregate geography to the coarsest level that answers it, apply min_cell_size on the cross-product of the grouping dimensions, and tell me what you suppressed and why — and flag that leasing/pricing cuts are subject to fair-housing review.</pre></div>
+  <div class="yousee"><b>You'll see:</b> cells under <code>min_cell_size</code> suppressed (a property × market × unit_type cell can re-identify a household), geography rolled up to market/CBSA rather than unit address, protected-class proxies refused as grouping axes, and a flag that leasing-facing cuts are regulated. The starter default is <b>5</b>, configured in <code>config/org_context.md</code> (governance-pii-fairhousing.md §1–§2). <i>If suppression doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.</i></div>
+
+  <h2>6.3 · Test tenant-PII and owner/fund gating</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Show me tenant-level contact and lease detail for our delinquent residents — and separately, NOI and rent roll for properties belonging to a fund I'm not assigned to.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana decline or constrain both requests — tenant contact/lease detail is gated to entitled personas and aggregated (governance-pii-fairhousing.md §3), and cross-fund financials are blocked by owner/fund segregation (§4) — pointing to the policy file that governs each.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Small-cell / fair-housing suppression fired on a cross-product cut and was explained</label>
+    <label><input type="checkbox"> A tenant-PII or owner/fund-segregation request was gated, with the governing file cited</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 7 ════════════════ -->
+<section class="page" id="m7" data-title="Module 7 · Validate Numbers & Make It Yours" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 7</div>
+  <h1>Validate the Numbers &amp; Make It Yours</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: pin known-correct values, then adapt the starter's definitions to your portfolio — in your repo</span></div>
+
+  <h2>7.1 · Reconcile against a number someone already trusts</h2>
+  <p>Trust in real-estate analytics is earned on the <b>first matching number</b> — and lost the first time occupancy is quoted on the wrong basis. The starter's golden values are already <b>pinned and verified</b> against the synthetic warehouse (see <code>validation/golden-queries.md</code> — occupancy ≈ 0.948, NOI margin ≈ 0.552, opex ratio ≈ 0.448, collections ≈ 0.958, delinquency ≈ 0.042, renewal ≈ 0.503). Against <b>your</b> warehouse, reconcile each governed surface to a number an asset manager or finance lead already trusts:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Run each governed surface against my warehouse and compare to a reference number I trust (occupancy, rent roll, NOI, opex ratio, collections, delinquency, renewal). For each, show the SQL and the basis, and flag any drift. Where we differ, explain whether it's data, definition, or basis (physical vs economic occupancy, billed vs collected, what counts in NOI).</pre></div>
+  <div class="yousee"><b>You'll see:</b> accuracy checked, not asserted — and a triage of any mismatch into data vs. definition vs. basis. The decisive moment is the first time the same-store NOI lands exactly where the asset manager expected.</div>
+
+  <h2>7.2 · Assert the invariants</h2>
+  <p>Even before you have an external reference, some numbers must agree with each other. The golden queries assert these:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Check the cross-surface invariants from validation/golden-queries.md against my data: operating_expense_ratio + noi_margin == 1; noi == total_income - operating_expense; collections_rate <= 1 and delinquency_rate >= 0; occupied_units <= rentable_units in occupancy_rate; rent_roll active_leases agrees with the lease grain. Report any that don't hold.</pre></div>
+  <div class="yousee"><b>You'll see:</b> internal consistency proven — if opex ratio + NOI margin ≠ 1, or occupied exceeds rentable, something is wrong <i>before</i> a stakeholder ever sees the number.</div>
+
+  <h2>7.3 · Customize a definition — the physical-vs-economic occupancy lesson</h2>
+  <p>Your portfolio inevitably defines something differently — an occupancy basis, what counts in NOI, a renewal basis, an in-place rent-roll definition. But the starter's <b>flagship field lesson</b> is one every operator hits, and it makes the perfect worked example because it's where reported occupancy and the rent that actually shows up diverge:</p>
+  <div class="callout warn"><span class="label">Physical vs. economic occupancy</span>
+    <p>The governed <code>occupancy_rate</code> surface reports <b>physical</b> occupancy: occupied units ÷ rentable units, point-in-time, with down/offline units excluded from the denominator. That is <b>not the same as economic occupancy</b> — actual collected/contractual rent ÷ gross potential rent at market — which is lower whenever there are concessions, free-rent periods, loss-to-lease, or model/employee units. A building can be 98% <i>physically</i> occupied and 90% <i>economically</i> occupied. Quoting physical occupancy as if it were economic flatters the revenue story; conflating the two is the most common occupancy error in operator reporting. Documented in <code>notes/occupancy-rent.md</code> and <code>validation/golden-queries.md</code>.</p>
+  </div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Walk me through the physical-vs-economic occupancy distinction in notes/occupancy-rent.md. Then check my warehouse: does occupancy_rate.tql compute physical occupancy (occupied units / rentable units, down units excluded)? Prove the gap — compute economic occupancy too (in-place + collected rent / gross potential rent at market, net of concessions) and show how far it sits below physical occupancy on my data. If our portfolio defines occupancy differently (economic as the headline, or a different treatment of down/model/employee units), add the governed surface in our repo, record the decision and the rejected default in a notes file, add a golden-query test pinning the value, and open a PR.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the most-confused metric in operator reporting demonstrated on your own data and then made explicit — the physical-vs-economic distinction confirmed in the surface, and any portfolio-specific basis change landing as a reviewable PR <b>in your repo</b> with a pinned golden value. The template stays pristine upstream; your adaptations are yours.</div>
+
+  <h2>7.4 · Localize the vocabulary</h2>
+  <p><code>ontology/notes/glossary.md</code> holds the canonical real-estate terms — property, unit, lease, tenant, rent roll, NOI, operating expense, occupancy (physical vs. economic), collections vs. delinquency, renewal, recoverable charge, sector — each with a <b>variance column</b> flagging where your portfolio or sector diverges (multifamily "unit" vs. commercial "suite/space"; gross vs. net lease; renewal-as-flag vs. successor-lease link; rent roll as contractual vs. effective rent).</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Walk the glossary's variance column for our sector(s). For each term that differs at our portfolio — occupancy basis, NOI inclusions, recoverable-charge treatment, renewal basis, rent-roll definition — propose the override in glossary.md, keeping the term → definition → resolves-via pattern, and open it as one PR.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the vocabulary localized in one reviewable pass — so "occupancy," "NOI," and "rent roll" mean <i>your</i> portfolio's thing, everywhere, from now on.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Governed surfaces reconciled to a trusted reference; any drift triaged (data / definition / basis)</label>
+    <label><input type="checkbox"> The physical-vs-economic occupancy distinction demonstrated and made explicit on your data</label>
+    <label><input type="checkbox"> One definition is now yours — PR'd, noted, and pinned with a golden-query test</label>
+  </div>
+</section>
+
+<!-- ════════════════ WRAP-UP ════════════════ -->
+<section class="page" id="wrapup" data-title="Wrap-Up & Next Steps" data-group="Reference">
+  <div class="kicker">Wrap-Up</div>
+  <h1>Wrap-Up 🎉</h1>
+  <p>You went from an empty environment to governed real-estate analytics — and, more importantly, to a model that <b>grows itself</b>:</p>
+  <ul>
+    <li><b>North Star set:</b> you named what the ontology is <i>for</i>, picked an archetype, and chose the questions that matter — before touching the schema</li>
+    <li><b>Connected:</b> ontology repo (live, git-backed) + warehouse (read-only) + your documents</li>
+    <li><b>Validated:</b> the model diffed against your actual schema, the property/unit/lease/ledger/property-financial grain settled (incl. unit status point-in-time vs. period), fixed via PR</li>
+    <li><b>Classification live:</b> property-type → sector and charge-type → recoverable rollups joining in-sandbox, zero warehouse writes</li>
+    <li><b>Governed answers:</b> occupancy, rent roll, NOI, collections, delinquency, renewals, work orders — SQL and basis shown, decisions recorded</li>
+    <li><b>Compliant by default:</b> identifier inventory, &lt;5 suppression, fair-housing/anti-steering, tenant-PII and owner/fund segregation</li>
+    <li><b>Self-maintaining:</b> not-yet-governed questions answered on the frontier and proposed back as PRs — discovery paid once, then reused</li>
+    <li><b>Yours:</b> definitions adapted in your repo — including the physical-vs-economic occupancy distinction — pinned with golden-query tests</li>
+  </ul>
+
+  <h2>Where to go from here</h2>
+  <ul>
+    <li><b>Operate it:</b> the <a href="../ontology-operations/index.html">Ontology Operations</a> workshop covers the production loop — git workflows, access control, accuracy testing, scaling across teams.</li>
+    <li><b>Understand the build:</b> <a href="../build-your-ontology/index.html">Build Your Ontology, End to End</a> teaches the from-scratch method the starter packages up.</li>
+    <li><b>Roll it out:</b> point your asset managers, operations, and leasing teams at <a href="../self-service-analytics/index.html">Self-Service Analytics</a> — the ontology you just stood up is what makes their answers trustworthy.</li>
+    <li><b>Licensing:</b> before production, review <code>LICENSING.md</code> (CoStar / RealPage / Yardi Matrix market rents, comps &amp; submarket analytics — structural only, sourced from your licensed feed).</li>
+  </ul>
+</section>
+
+<div class="pager" id="pager"></div>
+<footer class="pagefoot">© TextQL · Workshop: Real Estate Starter Pack · Example prompts are illustrative — adapt them to your own data. · <a href="mailto:jacob@textql.com?subject=TextQL%20Workshops%20feedback">Give feedback</a></footer>
+</div></main>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+<div id="lightbox" onclick="this.classList.remove('show')"><img src="" alt=""></div>
+
+<script>
+(function(){
+  const WS_KEY='textql-ws-realestate-starter';
+  const pages=[...document.querySelectorAll('section.page')];
+  const navlist=document.getElementById('navlist');
+  const pager=document.getElementById('pager');
+
+  // Build sidebar nav grouped by data-group
+  let group=null, num=0;
+  pages.forEach(p=>{
+    if(p.dataset.group!==group){
+      group=p.dataset.group;
+      const g=document.createElement('div');g.className='group-label';g.textContent=group;navlist.appendChild(g);
+    }
+    const a=document.createElement('a');a.className='nav-item';a.href='#/'+p.id;a.dataset.page=p.id;
+    a.innerHTML='<span class="num"><span>'+(num++)+'</span></span><span>'+p.dataset.title.replace(/^Module \d+ · /,'')+'</span>'+
+      (p.dataset.time?'<span class="time">'+p.dataset.time+'</span>':'');
+    navlist.appendChild(a);
+  });
+
+  function show(id){
+    let page=pages.find(p=>p.id===id)||pages[0];
+    pages.forEach(p=>p.classList.toggle('active',p===page));
+    navlist.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.page===page.id));
+    const i=pages.indexOf(page);
+    pager.innerHTML=
+      (i>0?'<a class="prev" href="#/'+pages[i-1].id+'"><span class="dir">← Previous</span><span class="ttl">'+pages[i-1].dataset.title+'</span></a>':'<span></span>')+
+      (i<pages.length-1?'<a class="next" href="#/'+pages[i+1].id+'"><span class="dir">Next →</span><span class="ttl">'+pages[i+1].dataset.title+'</span></a>':'');
+    window.scrollTo(0,0);
+    document.getElementById('sidebar').classList.remove('open');
+  }
+  const hashId=()=>location.hash.replace(/^#\/?/,'');
+  window.addEventListener('hashchange',()=>show(hashId()));
+  show(hashId());
+
+  // Copy buttons + toast
+  document.querySelectorAll('.prompt').forEach(box=>{
+    const btn=box.querySelector('button');
+    btn.addEventListener('click',()=>{
+      navigator.clipboard.writeText(box.querySelector('pre').textContent.trim()).then(()=>{
+        const t=document.getElementById('toast');
+        t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400);
+      });
+    });
+  });
+
+  // Screenshot lightbox
+  const lb=document.getElementById('lightbox');
+  document.querySelectorAll('figure.shot img').forEach(img=>{
+    img.addEventListener('click',()=>{lb.querySelector('img').src=img.src;lb.classList.add('show');});
+  });
+
+  // Checkpoint persistence + progress
+  let saved={};try{saved=JSON.parse(localStorage.getItem(WS_KEY)||'{}')}catch(e){}
+  const trackable=pages.filter(p=>p.querySelector('.checkpoint input'));
+  function refreshProgress(){
+    let done=0;
+    trackable.forEach(p=>{
+      const boxes=[...p.querySelectorAll('.checkpoint input')];
+      const allDone=boxes.length&&boxes.every(b=>b.checked);
+      const link=navlist.querySelector('a[data-page="'+p.id+'"]');
+      link.classList.toggle('done',allDone);
+      if(allDone){link.querySelector('.num').innerHTML='✓';done++;}
+      else{link.querySelector('.num').innerHTML='<span>'+pages.indexOf(p)+'</span>';}
+    });
+    const pct=trackable.length?Math.round(100*done/trackable.length):0;
+    document.getElementById('pfill').style.width=pct+'%';
+    document.getElementById('ppct').textContent=pct+'% complete';
+  }
+  document.querySelectorAll('.checkpoint input[type=checkbox]').forEach((cb,i)=>{
+    cb.checked=!!saved[i];
+    cb.closest('label').classList.toggle('checked',cb.checked);
+    cb.addEventListener('change',()=>{
+      saved[i]=cb.checked;
+      cb.closest('label').classList.toggle('checked',cb.checked);
+      try{localStorage.setItem(WS_KEY,JSON.stringify(saved))}catch(e){}
+      refreshProgress();
+    });
+  });
+  refreshProgress();
+})();
+</script>
+
+<script>
+/* TextQL workshops analytics — PostHog via first-party proxy */
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once identify alias set_config reset opt_in_capturing opt_out_capturing".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init('phc_cmTpctVWkmjZZDI0vGNMD5wHY3ywg9FdQCA48kdfEp2',{api_host:'https://hermes.textql.com',persistence:'localStorage'});
+(function(){
+  var segs=location.pathname.split('/').filter(function(x){return x&&x!=='index.html'});
+  var ws=segs.length>1?segs[segs.length-1]:'catalog';
+  if(ws==='workshops')ws='catalog';
+  function page(){return location.hash.replace(/^#\/?/,'')||'welcome'}
+  function cap(ev,props){props=props||{};props.workshop=ws;props.page=page();props.site='workshops';try{posthog.capture(ev,props)}catch(e){}}
+  cap('workshop_page_view');
+  window.addEventListener('hashchange',function(){cap('workshop_page_view')});
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('.prompt button');
+    if(b){cap('workshop_prompt_copied');return}
+    var c=e.target.closest&&e.target.closest('a.card');
+    if(c&&c.getAttribute('href')&&c.getAttribute('href')!=='#'){cap('workshop_card_clicked',{target_workshop:c.getAttribute('href').split('/')[0]})}
+  });
+  document.addEventListener('change',function(e){
+    if(!(e.target.matches&&e.target.matches('.checkpoint input')))return;
+    var cp=e.target.closest('.checkpoint');
+    var boxes=cp.querySelectorAll('input[type=checkbox]');
+    var all=true;for(var i=0;i<boxes.length;i++)if(!boxes[i].checked)all=false;
+    if(all)cap('workshop_checkpoint_completed');
+    var pages=document.querySelectorAll('section.page');
+    var withCp=0,done=0;
+    pages.forEach(function(p){var bx=p.querySelectorAll('.checkpoint input');if(bx.length){withCp++;var ok=true;bx.forEach(function(b){if(!b.checked)ok=false});if(ok)done++}});
+    if(withCp&&done===withCp)cap('workshop_completed');
+  });
+})();
+</script>
+</body>
+</html>
