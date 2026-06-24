@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capital Markets Starter Pack · TextQL Workshops</title>
+<style>
+  :root{
+    --green:#58a68d; --green-dark:#2f6f5c; --green-soft:#e9f2ee;
+    --ink:#1c2b27; --muted:#5d6b67;
+    --bg:#ffffff; --bg-soft:#f4f8f6; --border:#dde7e3; --code-bg:#0f1f1b;
+    --gold:#e9c46a; --gold-soft:#fdf9ee; --gold-border:#f0e4c0; --gold-ink:#8a6d1f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.6}
+  a{color:var(--green-dark)}
+
+  /* ── Layout ─────────────────────────────── */
+  .layout{display:flex;min-height:100vh}
+  nav#sidebar{width:300px;min-width:300px;background:var(--bg-soft);border-right:1px solid var(--border);padding:24px 0 60px;position:fixed;top:0;bottom:0;overflow-y:auto;z-index:40}
+  main{margin-left:300px;flex:1;display:flex;justify-content:center;padding:44px 56px 110px}
+  .content{max-width:860px;width:100%}
+
+  /* ── Sidebar ────────────────────────────── */
+  .brand{padding:0 24px 16px;border-bottom:1px solid var(--border)}
+  .brand .logo{font-weight:800;font-size:18px;color:var(--green-dark);letter-spacing:.5px}
+  .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .progress-wrap{padding:14px 24px;border-bottom:1px solid var(--border)}
+  .progress-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+  .progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:var(--green);border-radius:4px;transition:width .4s}
+  .progress-pct{font-size:12px;color:var(--green-dark);font-weight:600;margin-top:4px}
+  nav .group-label{padding:16px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  nav a.nav-item{display:flex;align-items:center;gap:10px;padding:9px 24px;font-size:14px;color:var(--ink);text-decoration:none;border-left:3px solid transparent}
+  nav a.nav-item:hover{background:var(--green-soft)}
+  nav a.nav-item.active{border-left-color:var(--green);background:var(--green-soft);font-weight:600}
+  .nav-item .num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;min-width:22px;border-radius:50%;border:1.5px solid var(--muted);font-size:11px;font-weight:700;color:var(--muted)}
+  .nav-item.done .num{background:var(--green);border-color:var(--green);color:#fff;font-size:12px}
+  .nav-item .time{margin-left:auto;font-size:11px;color:var(--muted)}
+  .menu-btn{display:none;position:fixed;top:14px;left:14px;z-index:41;background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer}
+
+  /* ── Typography ─────────────────────────── */
+  .kicker{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);font-weight:700;margin-bottom:6px}
+  h1{font-size:30px;line-height:1.25;margin-bottom:10px;font-weight:700}
+  .page-meta{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-bottom:24px;flex-wrap:wrap}
+  .page-meta b{color:var(--ink)}
+  h2{font-size:20px;margin:34px 0 10px;padding-top:8px;font-weight:700}
+  h3{font-size:16px;margin:22px 0 8px;font-weight:700}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0 10px 24px}
+  li{margin:5px 0}
+  b,strong{font-weight:650}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:var(--bg-soft);font-weight:600}
+  code{background:#eef4f1;padding:2px 6px;border-radius:4px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  hr{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+  /* ── Hero cards (welcome) ───────────────── */
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+  .hero-card{border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:#fff}
+  .hero-card .n{font-size:12px;font-weight:700;color:var(--green);letter-spacing:1px}
+  .hero-card h3{margin:4px 0;font-size:15px}
+  .hero-card p{font-size:13px;color:var(--muted);margin:0}
+
+  /* ── Callouts ───────────────────────────── */
+  .callout{background:var(--bg-soft);border-left:4px solid var(--green);padding:12px 16px;border-radius:0 6px 6px 0;margin:14px 0;font-size:14px}
+  .callout.warn{border-left-color:var(--gold)}
+  .callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+  .callout .label{font-weight:700;display:block}
+
+  /* ── Prompt blocks ──────────────────────── */
+  .prompt{position:relative;background:var(--code-bg);color:#dff3ea;border-radius:8px;padding:20px;margin:16px 0 10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;line-height:1.55}
+  .prompt .tag{position:absolute;top:-9px;left:14px;background:var(--green);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px}
+  .prompt button{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.12);color:#dff3ea;border:none;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+  .prompt button:hover{background:rgba(255,255,255,.28)}
+  .prompt pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;padding-right:54px}
+  .yousee{background:var(--gold-soft);border:1px solid var(--gold-border);border-radius:8px;padding:12px 16px;margin:10px 0 18px;font-size:14px}
+  .yousee b{color:var(--gold-ink)}
+
+  /* ── Screenshots ────────────────────────── */
+  figure.shot{margin:16px 0 22px}
+  figure.shot img{display:block;max-width:100%;border:1px solid var(--border);border-radius:10px;box-shadow:0 2px 10px rgba(28,43,39,.08);cursor:zoom-in}
+  figure.shot figcaption{font-size:13px;color:var(--muted);margin-top:7px}
+  figure.shot.missing img,figure.shot.missing figcaption{display:none}
+  figure.shot.missing::after{content:"📷  Screenshot coming soon — " attr(data-todo);display:block;border:2px dashed var(--border);border-radius:10px;padding:22px 18px;color:var(--muted);font-size:13.5px;background:var(--bg-soft)}
+  #lightbox{display:none;position:fixed;inset:0;background:rgba(15,31,27,.92);z-index:200;cursor:zoom-out;align-items:center;justify-content:center;padding:30px}
+  #lightbox.show{display:flex}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:8px}
+
+  /* ── Steps ──────────────────────────────── */
+  ol.steps{list-style:none;margin-left:0;counter-reset:step}
+  ol.steps>li{counter-increment:step;position:relative;padding:0 0 16px 44px;border-left:2px solid var(--border);margin:0 0 0 15px}
+  ol.steps>li:last-child{border-left-color:transparent}
+  ol.steps>li::before{content:counter(step);position:absolute;left:-15px;top:-2px;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+
+  /* ── Checkpoint ─────────────────────────── */
+  .checkpoint{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:28px 0}
+  .checkpoint h4{margin:0 0 10px;color:var(--green-dark);font-size:15px}
+  .checkpoint label{display:flex;align-items:flex-start;gap:10px;padding:5px 0;font-size:14px;cursor:pointer}
+  .checkpoint input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;min-width:16px;cursor:pointer}
+  .checkpoint label.checked{color:var(--muted);text-decoration:line-through}
+
+  /* ── Expandable ─────────────────────────── */
+  details{border:1px solid var(--border);border-radius:8px;margin:12px 0;background:#fff}
+  details summary{cursor:pointer;padding:11px 14px;font-weight:600;font-size:14.5px;list-style:none}
+  details summary::before{content:"▸ ";color:var(--green)}
+  details[open] summary::before{content:"▾ "}
+  details .body{padding:2px 16px 12px}
+
+  /* ── Pager ──────────────────────────────── */
+  .pager{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--border);padding-top:22px}
+  .pager a{flex:1;max-width:330px;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-decoration:none;color:var(--ink)}
+  .pager a:hover{border-color:var(--green);background:var(--green-soft)}
+  .pager a .dir{font-size:12px;color:var(--muted);display:block}
+  .pager a .ttl{font-weight:600;color:var(--green-dark);font-size:15px}
+  .pager a.next{text-align:right;margin-left:auto}
+
+  .page{display:none}
+  .page.active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  footer.pagefoot{margin-top:46px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);padding-top:16px}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:210}
+  .toast.show{opacity:1}
+
+  @media(max-width:920px){
+    nav#sidebar{transform:translateX(-100%);transition:transform .2s;box-shadow:2px 0 14px rgba(0,0,0,.12)}
+    nav#sidebar.open{transform:none}
+    main{margin-left:0;padding:60px 22px 80px}
+    .menu-btn{display:block}
+    .hero-grid{grid-template-columns:1fr}
+  }
+  @media print{
+    nav#sidebar,.pager,.menu-btn,.toast{display:none!important}
+    main{margin-left:0}
+    .page{display:block!important;page-break-after:always}
+    figure.shot.missing{display:none}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+<div class="layout">
+<nav id="sidebar">
+  <div class="brand">
+    <div class="logo">TextQL Workshop</div>
+    <div class="sub">Capital Markets Starter Pack</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">Your progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+    <div class="progress-pct" id="ppct">0% complete</div>
+  </div>
+  <div id="navlist"></div>
+</nav>
+
+<main><div class="content" id="content">
+
+<!-- ════════════════ WELCOME ════════════════ -->
+<section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
+  <div class="kicker">Workshop · Domain Starter Pack</div>
+  <h1>Implement the Capital Markets Starter Pack</h1>
+  <div class="page-meta"><span>⏱️ About <b>2.5 hours</b></span><span>🎯 Sell-side markets businesses — trading performance, market risk, exposure & concentration</span><span>📦 Starts from a pre-built ontology, not a blank page</span></div>
+
+  <p>A hands-on workshop that takes you from <i>"I have this ontology repo and nothing else"</i> to <i>"I'm asking Ana governed questions about my own trade, position, P&amp;L, and risk data — and the model grows itself as I work"</i> — mostly without leaving the Ana chat window.</p>
+  <p>The <b>Capital Markets Starter Pack</b> is a <b>document of domain expertise</b> over a sell-side / broker-dealer markets division — executions, positions, daily P&amp;L, market and credit risk, instruments, trading books and desks, and counterparties. It pins governed definitions for trading volume, trading P&amp;L, P&amp;L volatility, position value, gross/net exposure, position concentration, VaR limit utilization, DV01 exposure, and counterparty exposure. It's <b>just files</b> (Markdown + <code>.tql</code>) in a git repo: <a href="https://github.com/TextQLLabs/ontology-capital-markets-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-capital-markets-starter</code></a> — <b>your TextQL team grants access and sets up your own fork</b> (your adaptations live in your fork; the template stays pristine).</p>
+  <div class="callout warn"><span class="label">This is not a form to fill out</span>
+    <p>The starter is a <b>warm start, not a finished model to deploy</b>. Treating it as "close enough" and shipping it is the fastest way to build a model nobody trusts. So we begin by naming your <b>North Star</b> — what someone does differently on Monday when this works — and in <b>Module 1</b> Ana looks at your actual data and drafts it with you. Then let the model <b>accrete from real questions</b>: Ana reads what's known, explores only the frontier, answers, and proposes additions back as git commits you review. (The repo's <a href="https://github.com/TextQLLabs/ontology-capital-markets-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a> is your starting point.)</p>
+  </div>
+
+  <h2>What you'll do</h2>
+  <div class="hero-grid">
+    <div class="hero-card"><div class="n">MODULE 0</div><h3>Set your North Star</h3><p>Name what the ontology is <i>for</i> — what someone does differently on Monday morning.</p></div>
+    <div class="hero-card"><div class="n">MODULE 0</div><h3>Tour the six layers</h3><p>Entity spine, metrics, classification, governance, decisions, validation.</p></div>
+    <div class="hero-card"><div class="n">MODULE 1</div><h3>Define your North Star</h3><p>Ana reads your data, runs the scoping conversation, and drafts <code>north_star.md</code> with you.</p></div>
+    <div class="hero-card"><div class="n">MODULE 2</div><h3>Connect three things</h3><p>The ontology repo, your warehouse (read-only), your documents.</p></div>
+    <div class="hero-card"><div class="n">MODULE 3</div><h3>Validate against your schema</h3><p>Ana diffs the model vs. your tables — and settles the trade / position-snapshot / P&amp;L / risk grain — then opens the fix as a PR.</p></div>
+    <div class="hero-card"><div class="n">MODULE 4</div><h3>Light up the classification</h3><p>asset class → super-asset-class/desk, rating → IG/HY notch, venue → lit/dark/OTC — zero warehouse writes.</p></div>
+    <div class="hero-card"><div class="n">MODULE 5</div><h3>Ask governed questions</h3><p>Volume, trading P&amp;L, P&amp;L vol, position value, gross/net, concentration, VaR utilization, DV01, counterparty exposure — with the SQL shown.</p></div>
+    <div class="hero-card"><div class="n">MODULE 6+7</div><h3>Govern &amp; customize</h3><p>MNPI / information-barrier &amp; small-cell defaults, golden values, and making the definitions yours.</p></div>
+  </div>
+
+  <div class="callout"><span class="label">What ships in the box</span>
+    <p><b>Free / public classification</b> (the asset-class → super-asset-class/desk grouping, the public IG/HY rating-scale convention, the lit/dark/OTC + MIC-region venue typing) is in the repo — yours to keep and extend. Licensed market &amp; reference content (Bloomberg / Refinitiv instrument reference, issuer hierarchies, authoritative agency rating feeds) is modeled <b>structurally</b>; its data is <b>sourced from your own licensed feed</b> and joined by code. See <a href="https://github.com/TextQLLabs/ontology-capital-markets-starter/blob/main/LICENSING.md" target="_blank" rel="noopener"><code>LICENSING.md</code></a>.</p>
+  </div>
+  <div class="callout"><span class="label">No trading data — ever</span>
+    <p>The starter is built entirely from public conventions (super-asset-class rollups, the IG/HY rating scale, lit/dark/OTC venue typing, MIC regions) and a generic markets reference model. Connecting it never uses your data to improve the template; it runs <b>read-only</b>, and your adaptations live in <b>your own repo</b>, never back in the template.</p>
+  </div>
+
+  <details><summary>For facilitators — running this as a guided session</summary><div class="body">
+    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
+  </div></details>
+
+  <div id="run-with-ana" style="margin-top:30px;border:1px solid var(--green);border-left:4px solid var(--green);background:var(--green-soft);border-radius:10px;padding:18px 20px">
+    <h3 style="margin:0 0 8px;color:var(--green-dark)">🤖 Prefer to have Ana run this workshop?</h3>
+    <p style="margin:0 0 10px">Open a TextQL thread with your data connected and paste the prompt below — Ana walks you through this workshop on <b>your own data</b>, one step at a time. You run each prompt; she coaches.</p>
+    <pre style="white-space:pre-wrap;background:var(--code-bg,#0f1f1b);color:#e8f3ee;padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.5;overflow:auto">Hey Ana — facilitate the "Capital Markets Starter" workshop with me in this thread, on the data connected here. Pull the steps from https://textqllabs.github.io/workshops/capital-markets-starter/ and run it interactively: look at my data first (2–3 lines), then go ONE module at a time. For each module, give ME the prompt to copy and run as my next message, tell me what to look for, then wait and coach me on my result. Start with what you see, then Module 0.</pre>
+    <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">Ana fetches the steps from the link — no copy/paste of the workshop needed. (Air-gapped / VPC tenants where Ana can't reach the web: paste the module list from this workshop's <a href="https://github.com/TextQLLabs/workshops/blob/main/capital-markets-starter/ana-runner.md" target="_blank" rel="noopener">ana-runner.md</a> instead.)</p>
+  </div>
+</section>
+
+<!-- ════════════════ NORTH STAR ════════════════ -->
+<section class="page" id="northstar" data-title="Start with Your North Star" data-group="Getting Started" data-time="15 min">
+  <div class="kicker">Module 0 · Before you connect anything</div>
+  <h1>Start with Your North Star</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b> · conversation, not configuration</span><span>🎯 Goal: know what your ontology is <i>for</i> before you build it</span></div>
+
+  <p>The single biggest mistake with a starter pack is to skip this step — to point it at your warehouse, decide it's "close enough," and ship. That bakes in decisions before you know which questions matter, and you get a model that's 10% useful and 90% noise. This module is the antidote, and it takes 15 minutes.</p>
+
+  <h2>0.1 · Answer one question</h2>
+  <div class="callout"><span class="label">The North Star question</span>
+    <p><b>When this works, what does someone do differently on Monday morning?</b></p>
+  </div>
+  <p>Not "model all of capital markets." Something narrow and real: <i>"the desk head sees which books are carrying P&amp;L volatility out of proportion to their VaR before the next risk meeting,"</i> or <i>"the market-risk officer sees which books are pushing VaR-limit utilization toward a breach before the close."</i> If you can't name it yet, you're not ready to build the ontology — you're ready to have <b>this</b> conversation. Have it first.</p>
+
+  <h2>0.2 · What a North Star looks like (examples to spark yours)</h2>
+  <p>Most sell-side markets / trading-analytics teams land on a North Star adjacent to one of the three below. These are <b>examples, not a menu to pick from</b> — yours might be one of these, a blend, or something next to them. In <b>Module 1</b>, Ana drafts yours from your actual data; reading these now just tells you which surfaces and classification become relevant once it's set. (Full detail in the repo's <a href="https://github.com/TextQLLabs/ontology-capital-markets-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a>.)</p>
+  <table>
+    <tr><th>Archetype</th><th>For</th><th>Lead with</th></tr>
+    <tr><td><b>A · Trading performance &amp; P&amp;L</b></td><td>"See where flow and P&amp;L are coming from, and whether earnings are steady or lumpy by desk"</td><td><code>trading_volume</code>, <code>trading_pnl</code>, <code>pnl_volatility</code> + golden queries (notional ≈ <b>$6.63T</b> over <b>500k</b> trades, trading P&amp;L ≈ <b>$3.63B</b>) — reconcile <i>first</i>, govern second.</td></tr>
+    <tr><td><b>B · Market risk &amp; limits</b></td><td>"Catch a VaR-limit breach or a rates-sensitivity spike before the desk does"</td><td><code>var_utilization</code>, <code>dv01_exposure</code>, <code>gross_net_exposure</code> + the VaR-vs-limit basis + the signed long/short MV convention (VaR util ≈ <b>0.7449</b>, DV01 ≈ <b>$5.79M</b>).</td></tr>
+    <tr><td><b>C · Exposure &amp; concentration</b></td><td>"See single-name and counterparty concentration before it becomes a credit or liquidity problem"</td><td><code>counterparty_exposure</code>, <code>position_concentration</code>, <code>position_value</code> + the gross-vs-net basis + the snapshot-as-of convention (top counterparty share ≈ <b>0.349%</b>, top instrument share ≈ <b>0.085%</b>).</td></tr>
+  </table>
+
+  <h2>0.3 · You won't fill out a checklist — Ana drafts it</h2>
+  <p>There's no question bank to work through and no form to fill out. In <b>Module 1</b> you'll paste one prompt and Ana looks at your actual data, runs a short scoping conversation, recommends the archetype that fits, and writes your North Star down as <code>north_star.md</code> — a paragraph on what the ontology is <i>for</i> plus the 6–8 questions it must answer in 30 days. That single artifact is what every later module builds toward. The watch-outs that make you sound like the expert in the room — signed long/short market value, gross vs. net exposure, snapshot-as-of vs. window, VaR methodology and limit basis — live in the repo's decision notes, and Ana surfaces them as they come up.</p>
+
+  <div class="callout"><span class="label">Why the model gets cheaper as you use it</span>
+    <p>This isn't just good practice — it's the design. An agent that re-discovers your warehouse on every question pays an "amnesia tax" (most of its tokens go to rediscovery, and results aren't reproducible). Reading a known model first and committing what it learns inverts that: discovery is paid <b>once</b> and amortized across every future question. See TextQL's research, <i>"Malleability Is All You Need"</i> (VLDB 2026) — a measured ~30% token reduction and a model that gets more reliable the more it's used.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You can state your North Star in one sentence</label>
+    <label><input type="checkbox"> You have a candidate archetype in mind (trading performance &amp; P&amp;L / market risk &amp; limits / exposure &amp; concentration) — or you'll let Ana recommend one in Module 1</label>
+    <label><input type="checkbox"> You're ready to let Ana draft <code>north_star.md</code> from your data in Module 1</label>
+  </div>
+  <p style="margin-top:14px"><b>Not sure which archetype?</b> That's fine — in <b>Module 1</b> Ana looks at your data and recommends one. You don't have to decide here.</p>
+</section>
+
+<!-- ════════════════ MODULE 0 ════════════════ -->
+<section class="page" id="m0" data-title="Module 0 · The Six Layers" data-group="Getting Started" data-time="15 min">
+  <div class="kicker">Module 0</div>
+  <h1>Tour the Six Layers</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b> · reading + repo browsing</span><span>🎯 Goal: know what's in the box and where everything lives</span></div>
+
+  <p>Why a capital-markets starter exists at all: <b>the headline numbers are contested by construction.</b> "What's our exposure?" isn't one query — it depends on whether you mean directional bias (<i>net</i>) or balance-sheet usage (<i>gross</i>), and whether long and short net against each other. "What's our P&amp;L?" depends on realized vs. unrealized and the period window. "What's our VaR utilization?" depends on the VaR methodology and which approved limit is the denominator. A naive answer silently mixes them — and conflates a point-in-time <i>snapshot</i> with a window. The starter pins one governed definition for each contested metric, externalizes the asset-class, rating, and venue rollups so they aren't hard-coded, makes MNPI / information-barrier and small-cell behavior the default, and writes down the reasoning so a stakeholder can argue with the <i>definition</i>, not the number.</p>
+
+  <h2>The six layers</h2>
+  <table>
+    <tr><th>Layer</th><th>Where</th><th>What</th></tr>
+    <tr><td><b>1 — Entity spine</b></td><td><code>ontology/schema.tql</code>, <code>ontology/relations/</code></td><td>Trade (the execution spine), Position (snapshot), P&amp;L (daily), Risk (daily), Instrument, Book/desk, Counterparty.</td></tr>
+    <tr><td><b>2 — Metrics</b></td><td><code>ontology/queries/</code></td><td>Nine governed surfaces: trading volume, trading P&amp;L, P&amp;L volatility, position value, gross/net exposure, position concentration, VaR utilization, DV01 exposure, counterparty exposure.</td></tr>
+    <tr><td><b>3 — Classification</b></td><td><code>ontology/dimensions/</code>, <code>filters/</code>, <code>reference/terminology/</code></td><td><b>The heart.</b> asset class → super-asset-class/desk + rating → IG/HY notch + venue → lit/dark/OTC — as dimensions, filters &amp; committed seeds.</td></tr>
+    <tr><td><b>4 — Governance &amp; MNPI</b></td><td><code>ontology/notes/governance-mnpi.md</code>, <code>config/org_context.md</code></td><td>Information barriers (desk Chinese walls), trade-surveillance posture, position/VaR-limit governance, no counterparty-identifying leakage, small-cell suppression.</td></tr>
+    <tr><td><b>5 — Decision records</b></td><td><code>ontology/notes/</code></td><td>Why each metric is defined the way it is — signed long/short MV, gross-vs-net exposure, snapshot-as-of vs. window, VaR methodology &amp; limit basis, realized-vs-unrealized P&amp;L; plus the glossary, grain, and identity guides.</td></tr>
+    <tr><td><b>6 — Validation</b></td><td><code>validation/</code></td><td><code>validate_tql.py</code> (every surface checked against your live schema + compiled), golden queries with pinned values, the dry-run prompt.</td></tr>
+  </table>
+
+  <div class="callout"><span class="label">Standards alignment</span>
+    <p><code>STANDARDS.md</code> maps the model to the conventions it aligns with (ISO 4217 currencies, ISO 10383 MIC venue codes, the IG/HY rating-scale convention, a 252-day annualization basis). The semantic layer (metrics, routing, classification) is <b>fully separated from the physical mapping</b>: every physical table name lives in <b>one file</b>, <code>ontology/schema.tql</code> — re-point it and the metric logic stays put. The starter is authored against a generic execution / position / P&amp;L / risk model (an execution/trade store, a position/risk system, a P&amp;L/PAA store, and a counterparty/reference master) with ANSI/Spark-portable SQL; <code>MIGRATION.md</code> is the 8-step re-point checklist and works the same on Redshift, BigQuery, Snowflake, or <b>Databricks</b> (budget: about a half-day with warehouse access). For a deep technical tour, read <code>DEEP_DIVE.md</code>.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You can name the six layers and find each one in the repo</label>
+    <label><input type="checkbox"> You know which classification ships in the box vs. needs your own licensed feed (Bloomberg / Refinitiv / agency rating feeds)</label>
+    <label><input type="checkbox"> You know the default model (generic execution / position / P&amp;L / risk, ANSI/Spark-portable) and where re-point lives (schema.tql)</label>
+  </div>
+</section>
+
+  <section class="page" id="m1" data-title="Module 1 · Define Your North Star" data-group="Hands-On Modules" data-time="15 min">
+    <div class="kicker">Module 1</div>
+    <h1>Define Your North Star with Ana</h1>
+    <div class="page-meta"><span>&#9201;&#65039; <b>15 min</b> &middot; with Ana</span><span>&#127919; Goal: turn the conversation above into a written North Star + the archetype that fits</span></div>
+    <p>The intro is the <em>why</em>. This is the <em>doing</em>: rather than fill out a form, you let Ana look at your actual data, ask the right scoping questions, and write the North Star down. That single artifact (<code>north_star.md</code>) is what every later module builds toward.</p>
+    <p>Paste this prompt. Ana runs the scoping conversation &mdash; answer a few questions at a time and she converges on your archetype and a concrete North Star.</p>
+    <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Help me define the North Star for our ontology before we build anything.
+1. Look at the data connected to this thread and summarize in 3-4 lines what we have: the key tables, the grain, and the domains it covers (trades/executions, positions, daily P&L, market/credit risk, counterparties).
+2. Then ask me 5-7 sharp scoping questions to pin down what we are really doing - who will use this, what decision it changes on Monday morning, whether we are after trading performance and P&L / market risk and limits / exposure and concentration, what "working" looks like in 30 days, and where our data is messiest. Ask a few at a time, not all at once.
+3. From my answers plus the data, recommend the archetype that fits (A trading performance and P&L, B market risk and limits, or C exposure and concentration) and draft our North Star: one short paragraph on what this ontology is for, plus the 6-8 questions it must answer in 30 days.
+4. Save it as north_star.md in the ontology and propose it as a reviewed change, so every later step builds toward it.</pre></div>
+    <div class="yousee"><b>You will see:</b> Ana summarize your data, ask scoping questions, recommend an archetype with a reason, and draft a <code>north_star.md</code> &mdash; a paragraph plus the questions that define "done." Review it, push back, ratify.</div>
+    <div class="callout"><span class="label">Why a prompt, not a 50-question checklist</span><p>No giant pre-written question bank that nobody maintains. Ana generates the questions that matter <em>for your data and your goal</em>, on the spot &mdash; and the output is a sharp use-case definition, not a worksheet.</p></div>
+    <div class="checkpoint"><h4>&#9989; Checkpoint</h4>
+      <label><input type="checkbox"> You have a written <code>north_star.md</code> (purpose + the 6-8 questions it must answer)</label>
+      <label><input type="checkbox"> You picked an archetype (A / B / C), or Ana recommended one and you agreed</label>
+      <label><input type="checkbox"> It names something real that changes on Monday morning, not "model all of capital markets"</label>
+    </div>
+  </section>
+
+<!-- ════════════════ MODULE 2 ════════════════ -->
+<section class="page" id="m2" data-title="Module 2 · Connect Three Things" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 2</div>
+  <h1>Connect Three Things</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat</span></div>
+
+  <h2>2.1 · Connect the ontology repo to Ana</h2>
+  <p>This is the key step. In TextQL, add a <b>Git connector</b> and point it at <b>your fork</b> of the starter repo (<a href="https://github.com/TextQLLabs/ontology-capital-markets-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-capital-markets-starter</code></a> — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every classification rule — as a reference she reads on demand.</p>
+  <div class="callout"><span class="label">No second source of truth</span>
+    <p>You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.</p>
+  </div>
+  <figure class="shot" data-todo="the Git connector configured against the starter repo">
+    <img src="assets/cm-m1-git.png" alt="Git connector pointed at the starter repo" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The ontology repo connected — Ana reads it as ground truth.</figcaption>
+  </figure>
+
+  <h2>2.2 · Connect your data warehouse</h2>
+  <p>Add the connector for the warehouse holding your trade / position / P&amp;L / risk data (Redshift, BigQuery, Snowflake, Databricks, …) — typically sourced from your execution/trade store (OMS/EMS, FIX drop-copy), your position/risk system, your P&amp;L/PAA store, and your counterparty/reference master. <b>Read-only access is enough.</b></p>
+  <div class="callout warn"><span class="label">Use your governed, contracted warehouse</span>
+    <p>Trading data carries <b>material non-public information (MNPI)</b> and is subject to information barriers, trade-surveillance, and regulatory obligations. Connect the enterprise warehouse that's already in scope for your data-residency, supervisory, and audit obligations — see <code>ontology/notes/governance-mnpi.md</code>.</p>
+  </div>
+
+  <h2>2.3 · (Optional) Bring in your documents</h2>
+  <p>Your real-world context — the desk P&amp;L reporting workbook, the VaR methodology memo, the limit policy, dbt models, the spreadsheet where someone defined "net exposure" — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology <b>as corpus, not migration</b>, and can fold what she learns into the model.</p>
+
+  <h2>2.4 · Say hello</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Read the ontology repo and give me a tour: what entities, metrics, and classification dimensions are defined, and what governed questions am I able to ask once my warehouse is validated?</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana describe the model from the repo itself — proof the Git connector works and the ontology is being read as ground truth.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Ana described the starter's entities and metrics from the connected repo</label>
+    <label><input type="checkbox"> Your warehouse connector is attached, read-only, and in your contracted region</label>
+    <label><input type="checkbox"> You know which of your documents you'll bring in (or that you're skipping this)</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 3 ════════════════ -->
+<section class="page" id="m3" data-title="Module 3 · Validate Against Your Schema" data-group="Hands-On Modules" data-time="25 min">
+  <div class="kicker">Module 3</div>
+  <h1>Validate the Model Against Your Schema</h1>
+  <div class="page-meta"><span>⏱️ <b>25 min</b></span><span>🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — and settle the grain — without writing SQL</span></div>
+
+  <h2>3.1 · The dry run — required</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Look at the ontology repo, then inspect my warehouse. Run validation/dry-run-prompt.md against my schema: pull the information schema for my trade, position, pnl, risk, instrument, book, and counterparty tables and tell me where the ontology's expected table and column names don't match what I actually have — including whether trade carries notional (precomputed) or must derive it from quantity × price, whether position.market_value is SIGNED (+ long / − short), whether position is a point-in-time as_of_date snapshot, and whether risk carries var_95, var_limit, and dv01. Propose the exact changes to ontology/schema.tql.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names, and the all-important signed-MV, notional-derivation, and snapshot-grain questions. (The ready-made version lives in <code>validation/dry-run-prompt.md</code>.)</div>
+
+  <h2>3.2 · Run the validator — required</h2>
+  <p>The dry run is discovery; <code>validation/validate_tql.py</code> is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles. <b>Ana runs it for you</b> — no terminal needed:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Run validation/validate_tql.py from the ontology repo in your sandbox — static checks first, then the SQL check against my warehouse. Report every failure with the file it's in and the fix it needs, then apply the fixes (column renames in the affected .tql, table renames in schema.tql only) and re-run until clean.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the typo'd-backing, wrong-alias, and missing-column bug classes caught here — instead of surfacing as wrong numbers in front of the desk head or the risk committee.</div>
+  <div class="callout"><span class="label">Prefer the terminal?</span>
+    <p>The same gate runs locally: <code>python3 validation/validate_tql.py</code> (static — no warehouse needed) · <code>--check-sql</code> (paste the output into Ana: rows = missing columns) · <code>--dsn "&lt;dsn&gt;" --explain</code> (live column check + compile test).</p>
+  </div>
+
+  <h2>3.3 · Apply the fixes as a PR — required</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Make those changes and open a pull request.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana edit the files and open a reviewable PR in <b>your</b> repo. Every physical table name lives in one place (<code>ontology/schema.tql</code>) — re-point it and the metric logic stays put. The join keys the surfaces rely on are <code>instrument_id</code>, <code>book_id</code>, and <code>counterparty_id</code>.</div>
+  <figure class="shot" data-todo="the schema-validation PR Ana opened, showing the schema.tql diff">
+    <img src="assets/cm-m2-pr.png" alt="Schema validation PR" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Validation lands as a reviewable PR — not silent edits.</figcaption>
+  </figure>
+
+  <div class="callout"><span class="label">Why this step matters</span>
+    <p>Every markets shop's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain, an unsigned market_value. Finding those <i>before</i> you trust a number is the difference between a defensible net exposure and a debugging session in front of the CRO.</p>
+  </div>
+
+  <h2>3.4 · Decide your grain &amp; verify your joins — required</h2>
+  <p>Markets data fans out across several grains — <b>trade (execution) vs. position snapshot vs. P&amp;L daily vs. risk daily</b> — and joining across them carelessly multiplies counts. Three decisions dominate this module, and all are prompts: which fact answers which question, whether <b>position is a point-in-time snapshot</b> at <code>as_of_date</code> with a <b>signed</b> <code>market_value</code> (+ long / − short, so it's <i>not additive over time</i>), and whether your headline exposure question is a <b>snapshot-as-of</b> or a <b>window</b> question.</p>
+  <table>
+    <tr><th>Table</th><th>Grain</th><th>Count this for…</th></tr>
+    <tr><td><code>trade</code></td><td>1 / execution</td><td>trading volume, counterparty exposure — the activity spine over a <b>window</b></td></tr>
+    <tr><td><code>position</code></td><td>1 / book / instrument / <code>as_of_date</code> (SNAPSHOT)</td><td>position value, gross/net exposure, concentration — filter to one <code>as_of_date</code>; <code>market_value</code> is SIGNED, <b>not</b> additive across dates</td></tr>
+    <tr><td><code>pnl</code></td><td>1 / book / <code>pnl_date</code></td><td>trading P&amp;L (sum over window), P&amp;L volatility (stddev of daily)</td></tr>
+    <tr><td><code>risk</code></td><td>1 / book / <code>risk_date</code></td><td>VaR utilization, DV01 — filter to one <code>risk_date</code> for an as-of view</td></tr>
+  </table>
+  <div class="prompt"><span class="tag">PROMPT — GRAIN</span><button>Copy</button>
+<pre>Read ontology/notes/grain.md, then inspect my tables. Confirm the grain of each: is trade one row per execution? Is position a point-in-time snapshot (one row per book per instrument per as_of_date) with a SIGNED market_value (+ long / − short) that I filter to a single as_of_date — NOT something I sum across dates? Are pnl and risk one row per book per day? Tell me where summing position snapshots across as_of_dates, or treating a signed short market_value as if it were positive, would distort the numbers — and record the decision in databases/[ourschema]/README.md (copy databases/markets_core/ as the template).</pre></div>
+  <div class="yousee"><b>You'll see:</b> the grain decision made and written down <i>before</i> anything gets edited — it shapes every count downstream. The traps to confirm: exposure and concentration are <b>snapshot-as-of</b> questions over one <code>position.as_of_date</code> (never sum snapshots across dates); volume and counterparty exposure are <b>window</b> questions over the trade spine; and <code>market_value</code> is <b>signed</b>, so gross is <code>SUM(ABS(...))</code> and net is <code>SUM(...)</code> — confuse them and net long/short cancels into nonsense.</div>
+  <div class="prompt"><span class="tag">PROMPT — JOIN &amp; BASIS VERIFICATION</span><button>Copy</button>
+<pre>Verify every join the ontology relies on against my warehouse: does the key (instrument_id / book_id / counterparty_id) exist on both sides, what's the overlap rate, and is the grain 1:1 or 1:N? Then confirm the bases: does trade carry notional (precomputed) or must I derive it from quantity × price? Is position.market_value SIGNED (+ long / − short)? Does risk carry var_95, var_limit and dv01, and is var_95 a 1-day 95% figure? Record each verdict in databases/[ourschema]/README.md and flag any join or basis we shouldn't trust.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a join-by-join verdict list plus a basis check — because gross/net exposure needs a <b>signed</b> <code>market_value</code>, VaR utilization needs both <code>var_95</code> and <code>var_limit</code> on the same horizon, and DV01 needs <code>dv01</code> on the risk snapshot; an unsigned MV or a mismatched VaR horizon changes the number.</div>
+  <div class="prompt"><span class="tag">PROMPT — DATASET LITERALS</span><button>Copy</button>
+<pre>Find the dataset-specific literals the surfaces hard-code — the asset_class enums ('equity'/'rates'/'credit'/'fx'/'commodity'), the trade side values ('buy'/'sell'), the counterparty_type spellings ('bank'/'hedge_fund'/'corporate'/'asset_manager'), the rating values, and the venue codes — check each against what's actually in my warehouse, and propose the corrections in the same PR. Also confirm the annualization basis (√252 trading days) and the as_of_date / reporting date my snapshots should pin to.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the enumerations the validator can't know — <code>asset_class = 'rates'</code>, <code>side = 'sell'</code>, <code>counterparty_type = 'hedge_fund'</code>, the venue codes — corrected from your real data instead of assumed, plus the 252-day annualization basis and the reporting <code>as_of_date</code> pinned for your snapshots.</div>
+  <div class="callout"><span class="label">The full checklist</span>
+    <p>This module covers the core; <code>MIGRATION.md</code> is the complete 8-step re-point (discover → grain → schema.tql → identity → validator → literals → governance → glossary → goldens). Half a day with warehouse access; most of it is verification, not editing.</p>
+  </div>
+  <div class="callout"><span class="label">Unsigned market_value, or a missing as_of_date?</span>
+    <p>If your warehouse stores <code>market_value</code> as an <b>unsigned</b> magnitude with a separate long/short flag, gross/net exposure can still be derived — but you must reconstruct the sign first (<code>CASE WHEN side='short' THEN -mv ELSE mv END</code>), or net exposure silently equals gross. And if positions aren't snapshotted to a clean <code>as_of_date</code>, exposure becomes ambiguous. Flag both in the dry run; <code>notes/gross-net-exposure.md</code> has the derivation. This is the difference between a true net exposure and one that double-counts.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Ana produced a concrete mismatch list (or confirmed a clean match)</label>
+    <label><input type="checkbox"> The trade / position-snapshot / P&amp;L / risk grain — and signed-MV, plus snapshot-as-of-vs-window — is decided and written down</label>
+    <label><input type="checkbox"> The fixes landed as a PR you can review — not silent edits — and you merged it (or know who reviews it)</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 4 ════════════════ -->
+<section class="page" id="m4" data-title="Module 4 · The Classification Layer" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 4</div>
+  <h1>Light Up the Classification Layer</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: rollup-powered questions — asset class → super-asset-class/desk, rating → IG/HY notch, venue → lit/dark/OTC — with zero writes to your warehouse</span></div>
+
+  <p>The classification seeds (asset class → super-asset-class + desk grouping; rating → IG/HY grade + numeric notch; venue → lit/dark/OTC type + MIC region) are <b>already committed in the repo</b> as CSVs (<code>reference/terminology/asset_class.csv</code>, <code>cpty_rating.csv</code>, <code>venue.csv</code>) — nothing to load into your warehouse. Ana loads the CSV into her Python sandbox and joins it to a read-only warehouse pull in memory (see <code>ontology/notes/terminology-join-pattern.md</code>), so the grouping logic works with <b>zero warehouse writes</b>. The shipped surfaces read <code>asset_class</code> off the instrument and <code>desk</code> off the book, so they run with no seed dependency at all — the seeds add the <i>rollups</i> (rates/credit → fixed_income; equity → equities; AAA…BBB → IG, BB…D → HY; XNYS/XLON → lit, SIGMA_X → dark, OTC/RFQ → OTC).</p>
+
+  <h2>4.1 · Prove the rollups work</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Using the ontology's classification layer, roll my instrument asset_class values up to super-asset-class (equities / fixed_income / macro) and desk grouping, classify my counterparty rating values into IG vs. HY grade with the numeric notch, and group my venue codes into lit / dark / OTC with MIC region, then show me trading notional and trade count by super-asset-class and by venue type. Explain how you joined the seed CSVs without writing to the warehouse.</pre></div>
+  <div class="yousee"><b>You'll see:</b> raw asset_class, rating, and venue codes resolved to meaningful super-asset-classes, IG/HY grades, and lit/dark/OTC venue types, with the federated join-in-sandbox pattern explained — and a reminder to analyze <i>groupings</i>, never raw codes.</div>
+
+  <h2>4.2 · Bring in your licensed feed — optional</h2>
+  <p><b>You don't need this on day one</b> — the public asset-class, rating-scale, and venue groupings are already committed (and the <code>cpty_rating</code> seed is a generic public-scale convention; hydrate your authoritative agency mapping before reporting credit exposure externally). Come back when you want <b>licensed market &amp; reference data</b> beyond the public conventions. These are <b>licensed</b> (Bloomberg / Refinitiv instrument reference, issuer hierarchies, agency rating feeds) — the repo ships the structure and join logic, and the data comes from <b>your own licensed feed</b>:</p>
+  <div class="prompt"><span class="tag">PROMPT — LICENSED FEED (STRUCTURAL ONLY)</span><button>Copy</button>
+<pre>We have a licensed reference-data feed (e.g. Bloomberg / Refinitiv issuer hierarchy or an agency rating feed) in our warehouse at [table]. Per LICENSING.md, join it to the instrument/counterparty by code so we get the authoritative classification — keep the licensed data in our warehouse, commit only the join logic, and note the license + effective date in LICENSING.md. Open it as a PR.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the structural model light up with your licensed reference data — the modeling logic versioned in git, the licensed content staying in your warehouse, same governance motion as everything else.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> A super-asset-class, IG/HY rating, and venue-type rollup worked against your data with no warehouse writes</label>
+    <label><input type="checkbox"> You can explain the federated join-in-sandbox pattern in one sentence</label>
+    <label><input type="checkbox"> You know which classification ships public (asset-class/rating-scale/venue) vs. licensed (Bloomberg/Refinitiv/agency feeds, from your feed) — and that the bundled rating seed is a generic convention, not an agency feed</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 5 ════════════════ -->
+<section class="page" id="m5" data-title="Module 5 · Ask Governed Questions" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 5</div>
+  <h1>Ask Governed Questions</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: the payoff — consistent, defensible answers routed through governed definitions, with the SQL shown</span></div>
+
+  <p>Run each of these against your validated warehouse. For every answer, note that Ana cites the governed surface, names the <b>basis</b> (signed long/short MV, gross vs. net, snapshot-as-of vs. window, VaR methodology &amp; limit, realized vs. unrealized, the period window), and shows the rendered SQL. The golden values below are pinned against the synthetic capital-markets warehouse (window 2024, reporting/as-of date 2024-12-31) in <code>validation/golden-queries.md</code> — your numbers will differ, but the <i>shape</i> and the invariants should hold.</p>
+
+  <h2>5.1 · Trading volume &amp; trading P&amp;L (the flow + earnings pair)</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What's our trading volume for 2024 (trading_volume.tql) — total notional and trade count — and our trading P&L over the same window (trading_pnl.tql), split into realized and unrealized? Tell me the basis — the trade window, and whether P&L is realized vs. unrealized — and why.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the governed surface return notional ≈ <b>$6.63T</b> over <b>500,000</b> trades (window 2024) and trading P&amp;L ≈ <b>$3.63B</b> (realized + unrealized). Ana names the basis (executed notional over the trade-date window; P&amp;L split into realized/unrealized) instead of silently picking one.</div>
+
+  <h2>5.2 · Position value &amp; gross/net exposure (the book-shape headline)</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What's our position value as of 2024-12-31 (position_value.tql) and our gross/net exposure (gross_net_exposure.tql)? Tell me the basis — that market_value is SIGNED (+ long / − short), that net = SUM(market_value) and gross = SUM(ABS(market_value)) over the single as_of_date snapshot — and confirm you're reading one snapshot, not summing across dates.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the governed surface return net market value ≈ <b>$20.58B</b> and gross ≈ <b>$101.77B</b>, with long ≈ <b>$61.18B</b> and short ≈ <b>−$40.59B</b> (long + short = net; |long| + |short| = gross). Ana names the basis (single <code>as_of_date</code> snapshot, signed MV) instead of conflating net with gross.</div>
+  <div class="callout warn"><span class="label">Know the signed-MV / gross-vs-net basis</span>
+    <p>The governed <code>gross_net_exposure</code> surface treats <code>market_value</code> as <b>signed</b> (+ long / − short): <b>net</b> = <code>SUM(market_value)</code> (directional bias) and <b>gross</b> = <code>SUM(ABS(market_value))</code> (balance-sheet usage). If your warehouse stores MV unsigned with a separate side flag, net silently equals gross — reconstruct the sign first. See <code>notes/gross-net-exposure.md</code>.</p>
+  </div>
+
+  <h2>5.3 · VaR utilization &amp; DV01 exposure (the market-risk pair)</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Show me VaR limit utilization as of 2024-12-31 (var_utilization.tql) — VaR used, the approved limit, and utilization — and aggregate DV01 (dv01_exposure.tql). For VaR, confirm it's the 1-day 95% figure over its approved limit (>1.0 means breach); for DV01, tell me it's the dollar P&L impact of a 1bp parallel rate move.</pre></div>
+  <div class="yousee"><b>You'll see:</b> VaR utilization ≈ <b>0.7449</b> (1-day 95% VaR ÷ approved limit; under 1.0, so within limit) and DV01 ≈ <b>$5.79M</b> (dollar P&amp;L per 1bp parallel rate move, summed across books). Ana notes the VaR horizon (1-day, 95%) and which limit is the denominator.</div>
+  <div class="callout warn"><span class="label">Know the VaR methodology &amp; limit basis</span>
+    <p>The governed <code>var_utilization</code> surface uses a <b>1-day 95% VaR</b> over the <b>approved book VaR limit</b> as of the risk date; utilization &gt; 1.0 is a breach. If your firm runs a different horizon or confidence (10-day, 99%) or a different limit basis (firm vs. desk), that changes the number — Ana will say which it used. See <code>notes/var-utilization.md</code>.</p>
+  </div>
+
+  <h2>5.4 · P&amp;L volatility &amp; position concentration (the stability + single-name pair)</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Show our daily P&L volatility for 2024 (pnl_volatility.tql) — the stddev of daily trading P&L and the annualized figure — and our single-name position concentration as of 2024-12-31 (position_concentration.tql). Tell me how the annualization works and confirm concentration uses gross (ABS) market value, not signed.</pre></div>
+  <div class="yousee"><b>You'll see:</b> daily P&amp;L stddev ≈ <b>$1.15M</b> (annualized ≈ <b>$18.27M</b> via × √252) and a top single-instrument share ≈ <b>0.085%</b> of total gross MV — with Ana flagging that concentration is computed on <b>gross (ABS)</b> market value (a short is still exposure), <b>not</b> the signed net.</div>
+  <div class="callout warn"><span class="label">Annualization &amp; gross-basis concentration</span>
+    <p>The governed <code>pnl_volatility</code> annualizes daily P&amp;L stddev by <b>× √252</b> (trading days); if your firm uses 250 or 260, the annualized figure shifts. And <code>position_concentration</code> uses <b>gross</b> (<code>ABS(market_value)</code>) — a large short is concentration risk too, so signing it would understate the single-name exposure. See <code>notes/pnl-volatility.md</code> and <code>notes/position-concentration.md</code>.</p>
+  </div>
+
+  <h2>5.5 · Counterparty exposure (the credit-concentration signal)</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Show me our counterparty trading exposure for 2024 (counterparty_exposure.tql) — total notional traded, distinct counterparties, and the single-name concentration (the largest counterparty's notional and its share of the total). Tell me whether this is a window (traded over the period) or a snapshot question, and pair it with the credit-grade cut.</pre></div>
+  <div class="yousee"><b>You'll see:</b> total notional traded with a top-counterparty share ≈ <b>0.349%</b> of total notional (a low, well-diversified single-name share) over the 2024 trade window. Ana names the basis — counterparty exposure here is a <b>traded-notional window</b> question over the trade spine, distinct from a current settlement/credit snapshot — and pairs it with the IG/HY grade cut.</div>
+
+  <div class="callout"><span class="label">Why everyone gets the same number</span>
+    <p>Exposure, P&amp;L, and VaR utilization can each be computed several ways. The ontology pins one governed definition — net = signed-MV sum, gross = ABS sum on a single snapshot; trading P&amp;L split realized/unrealized over the window; VaR as 1-day 95% over the approved limit, with the decision recorded in <code>ontology/notes/</code> — so the Trading, Risk, Finance, and Treasury desks stop disagreeing about which number is "the" number.</p>
+  </div>
+
+  <h2>5.6 · When the answer isn't governed yet — watch the model grow</h2>
+  <p>Now ask something from your shortlist that the starter <b>doesn't</b> already cover — a Sharpe-style return-on-VaR ratio, intraday VaR breaches, P&amp;L attribution by asset class, a turnover (volume ÷ average gross position) measure, or a basis between booked and risk-system MV. This is the important beat: a starter pack is a head start, not the finished model.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Here's a question from our shortlist that isn't in the governed surfaces yet: [your question]. Explore my warehouse to answer it, show your work, and if the definition is one we'd want to reuse, propose it as a new governed surface — open a PR adding the .tql and a notes file recording the decision and the basis.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana explore only the <i>frontier</i> (not re-derive the whole warehouse), answer, and propose a <b>write-back</b> — a new metric committed to your repo with provenance. Review and merge it, and the next person who asks gets the governed answer for free. That's the malleable loop: the ontology you ship is the one you grow, and it gets more complete every time you use it.</div>
+  <div class="callout warn"><span class="label">You ratify; high-stakes definitions get review</span>
+    <p>Ana proposes; humans ratify via normal git review. Anything in <code>governance-mnpi.md</code> scope (MNPI, information barriers, small-cell) or a core risk/P&amp;L surface (gross/net exposure, VaR utilization, trading P&amp;L) should require review before merge (CODEOWNERS-style) — see <code>STANDARDS.md</code>. The point isn't to let an agent rewrite your model unsupervised; it's that discovered knowledge is <i>captured</i> instead of re-discovered next time.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Trading volume/P&amp;L, position value/gross-net, VaR utilization/DV01, P&amp;L vol/concentration, and counterparty exposure all answered through governed surfaces, SQL and basis shown</label>
+    <label><input type="checkbox"> You can point to the notes file explaining at least one metric's definition decision</label>
+    <label><input type="checkbox"> Ana proposed a write-back for a not-yet-governed question — and you saw it land as a PR</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 6 ════════════════ -->
+<section class="page" id="m6" data-title="Module 6 · Governance & MNPI Defaults" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 6</div>
+  <h1>Governance &amp; MNPI Defaults</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b></span><span>🎯 Goal: see the MNPI / information-barrier behavior that's on by default — and verify it fires</span></div>
+
+  <p>Layer 4 makes compliance the default, not an add-on: an <b>identifier inventory</b>, <b>information barriers</b> (desk-level Chinese walls so a desk only sees its own books), a <b>trade-surveillance</b> posture, <b>position/VaR-limit governance</b> (limits are governed, not casually edited), <b>no counterparty-identifying leakage</b> (counterparty IDs as join keys only; small panels suppressed), and a <b>small-cell (&lt;11) suppression</b> rule. The behavior lives in <code>ontology/notes/governance-mnpi.md</code> and <code>config/org_context.md</code> — files you can read, review, and adapt.</p>
+
+  <h2>6.1 · Inventory your identifiers — day one</h2>
+  <p><code>governance-mnpi.md</code> §0 classifies every direct identifier in the connected schema into exactly one role — and the key distinction is that <b>using an identifier as a join key is not the same as outputting it</b>:</p>
+  <table>
+    <tr><th>Identifier</th><th>Role</th></tr>
+    <tr><td>counterparty_id, counterparty name, LEI</td><td><b>Join key only</b> — allowed in <code>ON</code>/<code>WHERE</code>/<code>GROUP BY</code>; never an output column for a single small counterparty cell (re-identifies the relationship)</td></tr>
+    <tr><td>Trader / book owner identity, individual P&amp;L attribution</td><td><b>Minimum-necessary</b> — individual-level performance cuts gated to entitled supervisory personas; small books subject to small-cell suppression</td></tr>
+    <tr><td>book_id / desk + position &amp; risk detail outside your wall</td><td><b>Information-barrier gated</b> — a desk sees only its own books; cross-wall position/risk detail is blocked (governance-mnpi.md §3)</td></tr>
+    <tr><td>Pre-trade / order &amp; unpublished research signals</td><td><b>MNPI — never output</b>; surveillance-relevant, handled under information-barrier policy, not exposed in self-service analytics</td></tr>
+  </table>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Inventory every direct identifier in the connected schema and classify each per governance-mnpi.md section 0: join-key-only, minimum-necessary, information-barrier-gated, or MNPI-never-output. Flag anything ambiguous for compliance / surveillance review.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a per-column classification your compliance / surveillance team signs off on — the rules are templates tuned to <i>your</i> information-barrier posture, and they can be tightened freely but never loosened without a reviewed, attributable decision.</div>
+
+  <div class="callout warn"><span class="label">Facilitators: pre-flight these tests</span>
+    <p>Run 6.2 and 6.3 yourself <b>before</b> any session with compliance / surveillance in the room. These guardrails are <b>instruction-layer enforcement</b> — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with <code>governance-mnpi.md</code> and <code>config/org_context.md</code>) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the <i>check</i> is part of the story — "here's the file, here's the behavior, here's how we audit it."</p>
+  </div>
+
+  <h2>6.2 · Test the small-cell suppression rule</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Break down trading notional and counterparty exposure by counterparty × asset class × desk to inform a credit review. Apply our governance rules: apply min_cell_size on the cross-product of the grouping dimensions, suppress any single-counterparty cell small enough to re-identify the relationship, and tell me what you suppressed and why — and confirm you reported counterparty grade (IG/HY), never naming an individual small counterparty.</pre></div>
+  <div class="yousee"><b>You'll see:</b> cells under <code>min_cell_size</code> suppressed (a counterparty × asset-class × desk cell can re-identify a single trading relationship and leak MNPI), and counterparty reported by IG/HY grade rather than name where the cell is small. The starter default is <b>11</b>, configured in <code>config/org_context.md</code> (governance-mnpi.md §1–§2). <i>If suppression doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.</i></div>
+
+  <h2>6.3 · Test information-barrier and limit gating</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Show me position and VaR detail for a desk I'm not assigned to (cross-wall), and separately, individual-trader P&L attribution naming specific people — and then change a book's VaR limit so utilization looks better.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana decline or constrain all three — cross-wall position/risk detail is blocked by the information barrier (governance-mnpi.md §3), individual-trader P&amp;L is gated by minimum-necessary to entitled supervisors (§4), and VaR limits are <b>governed</b> (changed only through a reviewed, attributable change, not casually in chat) — pointing to the policy file that governs each.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Small-cell (&lt;11) suppression fired on a cross-product cut and was explained</label>
+    <label><input type="checkbox"> An information-barrier (cross-wall) or limit-governance request was gated, with the governing file cited</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 7 ════════════════ -->
+<section class="page" id="m7" data-title="Module 7 · Validate Numbers & Make It Yours" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 7</div>
+  <h1>Validate the Numbers &amp; Make It Yours</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: pin known-correct values, then adapt the starter's definitions to your markets business — in your repo</span></div>
+
+  <h2>7.1 · Reconcile against a number someone already trusts</h2>
+  <p>Trust in markets analytics is earned on the <b>first matching number</b> — and lost the first time net exposure is quoted on the wrong basis (gross reported as net, say, because <code>market_value</code> wasn't signed). The starter's golden values are already <b>pinned and verified</b> against the synthetic warehouse (see <code>validation/golden-queries.md</code> — notional ≈ $6.63T over 500k trades, trading P&amp;L ≈ $3.63B, net MV ≈ $20.58B / gross ≈ $101.77B, long ≈ $61.18B / short ≈ −$40.59B, VaR utilization ≈ 0.7449, DV01 ≈ $5.79M, top counterparty share ≈ 0.349%, daily P&amp;L stddev ≈ $1.15M / annualized ≈ $18.27M, top instrument share ≈ 0.085%). Against <b>your</b> warehouse, reconcile each governed surface to a number a desk head or the CRO already trusts:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Run each governed surface against my warehouse and compare to a reference number I trust (trading volume, trading P&L, P&L volatility, position value, gross/net exposure, position concentration, VaR utilization, DV01, counterparty exposure). For each, show the SQL and the basis, and flag any drift. Where we differ, explain whether it's data, definition, or basis (signed vs. unsigned MV, gross vs. net, snapshot-as-of vs. window, VaR horizon/limit, realized vs. unrealized, 252 vs. 260 annualization).</pre></div>
+  <div class="yousee"><b>You'll see:</b> accuracy checked, not asserted — and a triage of any mismatch into data vs. definition vs. basis. The decisive moment is the first time net exposure or VaR utilization lands exactly where the risk officer expected.</div>
+
+  <h2>7.2 · Assert the invariants</h2>
+  <p>Even before you have an external reference, some numbers must agree with each other. The golden queries assert these:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Check the cross-surface invariants from validation/golden-queries.md against my data: in gross_net_exposure, long_mv + short_mv == net_mv and |long_mv| + |short_mv| == gross_mv and gross_mv >= ABS(net_mv); in position_value, net_market_value == SUM(market_value) and gross_market_value == SUM(ABS(market_value)) and gross >= ABS(net); var_utilization == SUM(var_95)/SUM(var_limit) and is non-negative; top_counterparty_share and top_instrument_share are between 0 and 1; annualized_pnl_vol == daily_pnl_stddev * SQRT(252); trading_pnl == realized_pnl + unrealized_pnl. Report any that don't hold.</pre></div>
+  <div class="yousee"><b>You'll see:</b> internal consistency proven — if gross is less than the absolute value of net, or a share falls outside [0,1], or realized + unrealized doesn't reconcile to trading P&amp;L, something is wrong <i>before</i> a stakeholder ever sees the number.</div>
+
+  <h2>7.3 · Customize a definition — the VaR methodology / limit-basis lesson</h2>
+  <p>Your markets business inevitably defines something differently — a VaR horizon, a limit basis, an exposure convention. But the starter's <b>flagship field lesson</b> is one every risk shop hits, and it makes the perfect worked example because it's where the number on the desk's risk screen and the number the limit framework enforces diverge:</p>
+  <div class="callout warn"><span class="label">VaR methodology &amp; limit basis (or signed-MV gross-vs-net)</span>
+    <p>The governed <code>var_utilization</code> surface reports a <b>1-day 95% VaR</b> over the <b>approved book VaR limit</b>. That is <b>not the same as</b> a <b>10-day 99% regulatory VaR</b>, nor a firm-level limit, nor an Expected Shortfall (ES) basis under FRTB — and the horizon scales the number (a 1-day figure ≈ a 10-day figure ÷ √10). A desk can look comfortable on the 1-day 95% utilization and still be tight against a 10-day 99% regulatory limit. Quoting the management number as if it were the regulatory one misreads the headroom; conflating the two is the most common VaR error in desk reporting. The same shape applies to the <b>signed-MV gross-vs-net exposure convention</b> — reporting gross as net (or failing to sign <code>market_value</code>) flatters or destroys directional bias. Documented in <code>notes/var-utilization.md</code> / <code>notes/gross-net-exposure.md</code> and <code>validation/golden-queries.md</code>.</p>
+  </div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Walk me through the VaR methodology / limit-basis distinction in notes/var-utilization.md (1-day 95% management VaR over approved book limit). Then check my warehouse: does var_utilization.tql compute SUM(var_95)/SUM(var_limit) on a single risk_date? Prove the gap — if I have a 10-day or 99% VaR column, or a firm-level limit, approximate a regulatory-style utilization and show how far it sits from the management number on my data. If our markets business reports VaR differently (a different horizon/confidence, an ES/FRTB basis, or a firm-level limit as headline) — or signs market_value differently for gross/net — add the governed surface in our repo, record the decision and the rejected default in a notes file, add a golden-query test pinning the value, and open a PR.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the most-confused metric in desk reporting demonstrated on your own data and then made explicit — the management-vs-regulatory VaR distinction (or the signed-MV gross-vs-net convention) confirmed in the surface, and any business-specific basis change landing as a reviewable PR <b>in your repo</b> with a pinned golden value. The template stays pristine upstream; your adaptations are yours.</div>
+
+  <h2>7.4 · Localize the vocabulary</h2>
+  <p><code>ontology/notes/glossary.md</code> holds the canonical capital-markets terms — trade/execution, notional, position, signed market value, long vs. short, gross vs. net exposure, trading P&amp;L (realized vs. unrealized), P&amp;L volatility, VaR (horizon &amp; confidence), VaR limit, DV01, concentration (gross basis), counterparty exposure, super-asset-class — each with a <b>variance column</b> flagging where your business diverges (VaR horizon/confidence; limit basis firm-vs-desk; annualization 252-vs-260; gross-vs-net sign convention; notional definition).</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Walk the glossary's variance column for our desk(s). For each term that differs at our business — VaR horizon/confidence, limit basis (firm vs. desk), annualization basis, gross-vs-net sign convention, what counts as notional — propose the override in glossary.md, keeping the term → definition → resolves-via pattern, and open it as one PR.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the vocabulary localized in one reviewable pass — so "VaR utilization," "net exposure," and "P&amp;L volatility" mean <i>your</i> business's thing, everywhere, from now on.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Governed surfaces reconciled to a trusted reference; any drift triaged (data / definition / basis)</label>
+    <label><input type="checkbox"> The VaR methodology / limit-basis distinction (or the signed-MV gross-vs-net convention) demonstrated and made explicit on your data</label>
+    <label><input type="checkbox"> One definition is now yours — PR'd, noted, and pinned with a golden-query test</label>
+  </div>
+</section>
+
+<!-- ════════════════ WRAP-UP ════════════════ -->
+<section class="page" id="wrapup" data-title="Wrap-Up & Next Steps" data-group="Reference">
+  <div class="kicker">Wrap-Up</div>
+  <h1>Wrap-Up 🎉</h1>
+  <p>You went from an empty environment to governed capital-markets analytics — and, more importantly, to a model that <b>grows itself</b>:</p>
+  <ul>
+    <li><b>North Star set:</b> you named what the ontology is <i>for</i>, picked an archetype, and chose the questions that matter — before touching the schema</li>
+    <li><b>Connected:</b> ontology repo (live, git-backed) + warehouse (read-only) + your documents</li>
+    <li><b>Validated:</b> the model diffed against your actual schema, the trade/position-snapshot/P&amp;L/risk grain settled (incl. signed-MV and snapshot-as-of-vs-window), fixed via PR</li>
+    <li><b>Classification live:</b> asset class → super-asset-class/desk, rating → IG/HY notch, venue → lit/dark/OTC rollups joining in-sandbox, zero warehouse writes</li>
+    <li><b>Governed answers:</b> trading volume, trading P&amp;L, P&amp;L volatility, position value, gross/net exposure, concentration, VaR utilization, DV01, counterparty exposure — SQL and basis shown, decisions recorded</li>
+    <li><b>Compliant by default:</b> identifier inventory, &lt;11 small-cell suppression, MNPI / information barriers, no counterparty-identifying leakage, limit governance</li>
+    <li><b>Self-maintaining:</b> not-yet-governed questions answered on the frontier and proposed back as PRs — discovery paid once, then reused</li>
+    <li><b>Yours:</b> definitions adapted in your repo — including the VaR methodology / limit-basis distinction — pinned with golden-query tests</li>
+  </ul>
+
+  <h2>Where to go from here</h2>
+  <ul>
+    <li><b>Operate it:</b> the <a href="../ontology-operations/index.html">Ontology Operations</a> workshop covers the production loop — git workflows, access control, accuracy testing, scaling across teams.</li>
+    <li><b>Understand the build:</b> <a href="../build-your-ontology/index.html">Build Your Ontology, End to End</a> teaches the from-scratch method the starter packages up.</li>
+    <li><b>Roll it out:</b> point your trading, market-risk, finance, and treasury teams at <a href="../self-service-analytics/index.html">Self-Service Analytics</a> — the ontology you just stood up is what makes their answers trustworthy.</li>
+    <li><b>Licensing:</b> before production, review <code>LICENSING.md</code> (licensed market &amp; reference data beyond the public conventions — Bloomberg / Refinitiv / agency rating feeds, structural only, sourced from your licensed feed) and hydrate your authoritative rating &amp; instrument-reference mapping.</li>
+  </ul>
+</section>
+
+<div class="pager" id="pager"></div>
+<footer class="pagefoot">© TextQL · Workshop: Capital Markets Starter Pack · Example prompts are illustrative — adapt them to your own data. · <a href="mailto:jacob@textql.com?subject=TextQL%20Workshops%20feedback">Give feedback</a></footer>
+</div></main>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+<div id="lightbox" onclick="this.classList.remove('show')"><img src="" alt=""></div>
+
+<script>
+(function(){
+  const WS_KEY='textql-ws-capital-markets-starter';
+  const pages=[...document.querySelectorAll('section.page')];
+  const navlist=document.getElementById('navlist');
+  const pager=document.getElementById('pager');
+
+  // Build sidebar nav grouped by data-group
+  let group=null, num=0;
+  pages.forEach(p=>{
+    if(p.dataset.group!==group){
+      group=p.dataset.group;
+      const g=document.createElement('div');g.className='group-label';g.textContent=group;navlist.appendChild(g);
+    }
+    const a=document.createElement('a');a.className='nav-item';a.href='#/'+p.id;a.dataset.page=p.id;
+    a.innerHTML='<span class="num"><span>'+(num++)+'</span></span><span>'+p.dataset.title.replace(/^Module \d+ · /,'')+'</span>'+
+      (p.dataset.time?'<span class="time">'+p.dataset.time+'</span>':'');
+    navlist.appendChild(a);
+  });
+
+  function show(id){
+    let page=pages.find(p=>p.id===id)||pages[0];
+    pages.forEach(p=>p.classList.toggle('active',p===page));
+    navlist.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.page===page.id));
+    const i=pages.indexOf(page);
+    pager.innerHTML=
+      (i>0?'<a class="prev" href="#/'+pages[i-1].id+'"><span class="dir">← Previous</span><span class="ttl">'+pages[i-1].dataset.title+'</span></a>':'<span></span>')+
+      (i<pages.length-1?'<a class="next" href="#/'+pages[i+1].id+'"><span class="dir">Next →</span><span class="ttl">'+pages[i+1].dataset.title+'</span></a>':'');
+    window.scrollTo(0,0);
+    document.getElementById('sidebar').classList.remove('open');
+  }
+  const hashId=()=>location.hash.replace(/^#\/?/,'');
+  window.addEventListener('hashchange',()=>show(hashId()));
+  show(hashId());
+
+  // Copy buttons + toast
+  document.querySelectorAll('.prompt').forEach(box=>{
+    const btn=box.querySelector('button');
+    btn.addEventListener('click',()=>{
+      navigator.clipboard.writeText(box.querySelector('pre').textContent.trim()).then(()=>{
+        const t=document.getElementById('toast');
+        t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400);
+      });
+    });
+  });
+
+  // Screenshot lightbox
+  const lb=document.getElementById('lightbox');
+  document.querySelectorAll('figure.shot img').forEach(img=>{
+    img.addEventListener('click',()=>{lb.querySelector('img').src=img.src;lb.classList.add('show');});
+  });
+
+  // Checkpoint persistence + progress
+  let saved={};try{saved=JSON.parse(localStorage.getItem(WS_KEY)||'{}')}catch(e){}
+  const trackable=pages.filter(p=>p.querySelector('.checkpoint input'));
+  function refreshProgress(){
+    let done=0;
+    trackable.forEach(p=>{
+      const boxes=[...p.querySelectorAll('.checkpoint input')];
+      const allDone=boxes.length&&boxes.every(b=>b.checked);
+      const link=navlist.querySelector('a[data-page="'+p.id+'"]');
+      link.classList.toggle('done',allDone);
+      if(allDone){link.querySelector('.num').innerHTML='✓';done++;}
+      else{link.querySelector('.num').innerHTML='<span>'+pages.indexOf(p)+'</span>';}
+    });
+    const pct=trackable.length?Math.round(100*done/trackable.length):0;
+    document.getElementById('pfill').style.width=pct+'%';
+    document.getElementById('ppct').textContent=pct+'% complete';
+  }
+  document.querySelectorAll('.checkpoint input[type=checkbox]').forEach((cb,i)=>{
+    cb.checked=!!saved[i];
+    cb.closest('label').classList.toggle('checked',cb.checked);
+    cb.addEventListener('change',()=>{
+      saved[i]=cb.checked;
+      cb.closest('label').classList.toggle('checked',cb.checked);
+      try{localStorage.setItem(WS_KEY,JSON.stringify(saved))}catch(e){}
+      refreshProgress();
+    });
+  });
+  refreshProgress();
+})();
+</script>
+
+<script>
+/* TextQL workshops analytics — PostHog via first-party proxy */
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once identify alias set_config reset opt_in_capturing opt_out_capturing".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init('phc_cmTpctVWkmjZZDI0vGNMD5wHY3ywg9FdQCA48kdfEp2',{api_host:'https://hermes.textql.com',persistence:'localStorage'});
+(function(){
+  var segs=location.pathname.split('/').filter(function(x){return x&&x!=='index.html'});
+  var ws=segs.length>1?segs[segs.length-1]:'catalog';
+  if(ws==='workshops')ws='catalog';
+  function page(){return location.hash.replace(/^#\/?/,'')||'welcome'}
+  function cap(ev,props){props=props||{};props.workshop=ws;props.page=page();props.site='workshops';try{posthog.capture(ev,props)}catch(e){}}
+  cap('workshop_page_view');
+  window.addEventListener('hashchange',function(){cap('workshop_page_view')});
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('.prompt button');
+    if(b){cap('workshop_prompt_copied');return}
+    var c=e.target.closest&&e.target.closest('a.card');
+    if(c&&c.getAttribute('href')&&c.getAttribute('href')!=='#'){cap('workshop_card_clicked',{target_workshop:c.getAttribute('href').split('/')[0]})}
+  });
+  document.addEventListener('change',function(e){
+    if(!(e.target.matches&&e.target.matches('.checkpoint input')))return;
+    var cp=e.target.closest('.checkpoint');
+    var boxes=cp.querySelectorAll('input[type=checkbox]');
+    var all=true;for(var i=0;i<boxes.length;i++)if(!boxes[i].checked)all=false;
+    if(all)cap('workshop_checkpoint_completed');
+    var pages=document.querySelectorAll('section.page');
+    var withCp=0,done=0;
+    pages.forEach(function(p){var bx=p.querySelectorAll('.checkpoint input');if(bx.length){withCp++;var ok=true;bx.forEach(function(b){if(!b.checked)ok=false});if(ok)done++}});
+    if(withCp&&done===withCp)cap('workshop_completed');
+  });
+})();
+</script>
+</body>
+</html>

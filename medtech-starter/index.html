@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedTech Starter Pack · TextQL Workshops</title>
+<style>
+  :root{
+    --green:#58a68d; --green-dark:#2f6f5c; --green-soft:#e9f2ee;
+    --ink:#1c2b27; --muted:#5d6b67;
+    --bg:#ffffff; --bg-soft:#f4f8f6; --border:#dde7e3; --code-bg:#0f1f1b;
+    --gold:#e9c46a; --gold-soft:#fdf9ee; --gold-border:#f0e4c0; --gold-ink:#8a6d1f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:15.5px;line-height:1.6}
+  a{color:var(--green-dark)}
+
+  /* ── Layout ─────────────────────────────── */
+  .layout{display:flex;min-height:100vh}
+  nav#sidebar{width:300px;min-width:300px;background:var(--bg-soft);border-right:1px solid var(--border);padding:24px 0 60px;position:fixed;top:0;bottom:0;overflow-y:auto;z-index:40}
+  main{margin-left:300px;flex:1;display:flex;justify-content:center;padding:44px 56px 110px}
+  .content{max-width:860px;width:100%}
+
+  /* ── Sidebar ────────────────────────────── */
+  .brand{padding:0 24px 16px;border-bottom:1px solid var(--border)}
+  .brand .logo{font-weight:800;font-size:18px;color:var(--green-dark);letter-spacing:.5px}
+  .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .progress-wrap{padding:14px 24px;border-bottom:1px solid var(--border)}
+  .progress-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+  .progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;width:0%;background:var(--green);border-radius:4px;transition:width .4s}
+  .progress-pct{font-size:12px;color:var(--green-dark);font-weight:600;margin-top:4px}
+  nav .group-label{padding:16px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  nav a.nav-item{display:flex;align-items:center;gap:10px;padding:9px 24px;font-size:14px;color:var(--ink);text-decoration:none;border-left:3px solid transparent}
+  nav a.nav-item:hover{background:var(--green-soft)}
+  nav a.nav-item.active{border-left-color:var(--green);background:var(--green-soft);font-weight:600}
+  .nav-item .num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;min-width:22px;border-radius:50%;border:1.5px solid var(--muted);font-size:11px;font-weight:700;color:var(--muted)}
+  .nav-item.done .num{background:var(--green);border-color:var(--green);color:#fff;font-size:12px}
+  .nav-item .time{margin-left:auto;font-size:11px;color:var(--muted)}
+  .menu-btn{display:none;position:fixed;top:14px;left:14px;z-index:41;background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer}
+
+  /* ── Typography ─────────────────────────── */
+  .kicker{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);font-weight:700;margin-bottom:6px}
+  h1{font-size:30px;line-height:1.25;margin-bottom:10px;font-weight:700}
+  .page-meta{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-bottom:24px;flex-wrap:wrap}
+  .page-meta b{color:var(--ink)}
+  h2{font-size:20px;margin:34px 0 10px;padding-top:8px;font-weight:700}
+  h3{font-size:16px;margin:22px 0 8px;font-weight:700}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0 10px 24px}
+  li{margin:5px 0}
+  b,strong{font-weight:650}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:var(--bg-soft);font-weight:600}
+  code{background:#eef4f1;padding:2px 6px;border-radius:4px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  hr{border:none;border-top:1px solid var(--border);margin:28px 0}
+
+  /* ── Hero cards (welcome) ───────────────── */
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+  .hero-card{border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:#fff}
+  .hero-card .n{font-size:12px;font-weight:700;color:var(--green);letter-spacing:1px}
+  .hero-card h3{margin:4px 0;font-size:15px}
+  .hero-card p{font-size:13px;color:var(--muted);margin:0}
+
+  /* ── Callouts ───────────────────────────── */
+  .callout{background:var(--bg-soft);border-left:4px solid var(--green);padding:12px 16px;border-radius:0 6px 6px 0;margin:14px 0;font-size:14px}
+  .callout.warn{border-left-color:var(--gold)}
+  .callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+  .callout .label{font-weight:700;display:block}
+
+  /* ── Prompt blocks ──────────────────────── */
+  .prompt{position:relative;background:var(--code-bg);color:#dff3ea;border-radius:8px;padding:20px;margin:16px 0 10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;line-height:1.55}
+  .prompt .tag{position:absolute;top:-9px;left:14px;background:var(--green);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px}
+  .prompt button{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.12);color:#dff3ea;border:none;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+  .prompt button:hover{background:rgba(255,255,255,.28)}
+  .prompt pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;padding-right:54px}
+  .yousee{background:var(--gold-soft);border:1px solid var(--gold-border);border-radius:8px;padding:12px 16px;margin:10px 0 18px;font-size:14px}
+  .yousee b{color:var(--gold-ink)}
+
+  /* ── Screenshots ────────────────────────── */
+  figure.shot{margin:16px 0 22px}
+  figure.shot img{display:block;max-width:100%;border:1px solid var(--border);border-radius:10px;box-shadow:0 2px 10px rgba(28,43,39,.08);cursor:zoom-in}
+  figure.shot figcaption{font-size:13px;color:var(--muted);margin-top:7px}
+  figure.shot.missing img,figure.shot.missing figcaption{display:none}
+  figure.shot.missing::after{content:"📷  Screenshot coming soon — " attr(data-todo);display:block;border:2px dashed var(--border);border-radius:10px;padding:22px 18px;color:var(--muted);font-size:13.5px;background:var(--bg-soft)}
+  #lightbox{display:none;position:fixed;inset:0;background:rgba(15,31,27,.92);z-index:200;cursor:zoom-out;align-items:center;justify-content:center;padding:30px}
+  #lightbox.show{display:flex}
+  #lightbox img{max-width:100%;max-height:100%;border-radius:8px}
+
+  /* ── Steps ──────────────────────────────── */
+  ol.steps{list-style:none;margin-left:0;counter-reset:step}
+  ol.steps>li{counter-increment:step;position:relative;padding:0 0 16px 44px;border-left:2px solid var(--border);margin:0 0 0 15px}
+  ol.steps>li:last-child{border-left-color:transparent}
+  ol.steps>li::before{content:counter(step);position:absolute;left:-15px;top:-2px;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+
+  /* ── Checkpoint ─────────────────────────── */
+  .checkpoint{background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:28px 0}
+  .checkpoint h4{margin:0 0 10px;color:var(--green-dark);font-size:15px}
+  .checkpoint label{display:flex;align-items:flex-start;gap:10px;padding:5px 0;font-size:14px;cursor:pointer}
+  .checkpoint input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;min-width:16px;cursor:pointer}
+  .checkpoint label.checked{color:var(--muted);text-decoration:line-through}
+
+  /* ── Expandable ─────────────────────────── */
+  details{border:1px solid var(--border);border-radius:8px;margin:12px 0;background:#fff}
+  details summary{cursor:pointer;padding:11px 14px;font-weight:600;font-size:14.5px;list-style:none}
+  details summary::before{content:"▸ ";color:var(--green)}
+  details[open] summary::before{content:"▾ "}
+  details .body{padding:2px 16px 12px}
+
+  /* ── Pager ──────────────────────────────── */
+  .pager{display:flex;justify-content:space-between;gap:14px;margin-top:50px;border-top:1px solid var(--border);padding-top:22px}
+  .pager a{flex:1;max-width:330px;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-decoration:none;color:var(--ink)}
+  .pager a:hover{border-color:var(--green);background:var(--green-soft)}
+  .pager a .dir{font-size:12px;color:var(--muted);display:block}
+  .pager a .ttl{font-weight:600;color:var(--green-dark);font-size:15px}
+  .pager a.next{text-align:right;margin-left:auto}
+
+  .page{display:none}
+  .page.active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  footer.pagefoot{margin-top:46px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);padding-top:16px}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:210}
+  .toast.show{opacity:1}
+
+  @media(max-width:920px){
+    nav#sidebar{transform:translateX(-100%);transition:transform .2s;box-shadow:2px 0 14px rgba(0,0,0,.12)}
+    nav#sidebar.open{transform:none}
+    main{margin-left:0;padding:60px 22px 80px}
+    .menu-btn{display:block}
+    .hero-grid{grid-template-columns:1fr}
+  }
+  @media print{
+    nav#sidebar,.pager,.menu-btn,.toast{display:none!important}
+    main{margin-left:0}
+    .page{display:block!important;page-break-after:always}
+    figure.shot.missing{display:none}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+<div class="layout">
+<nav id="sidebar">
+  <div class="brand">
+    <div class="logo">TextQL Workshop</div>
+    <div class="sub">MedTech Starter Pack</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">Your progress</div>
+    <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+    <div class="progress-pct" id="ppct">0% complete</div>
+  </div>
+  <div id="navlist"></div>
+</nav>
+
+<main><div class="content" id="content">
+
+<!-- ════════════════ WELCOME ════════════════ -->
+<section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
+  <div class="kicker">Workshop · Domain Starter Pack</div>
+  <h1>Implement the MedTech Starter Pack</h1>
+  <div class="page-meta"><span>⏱️ About <b>2.5 hours</b></span><span>🎯 Medical-device &amp; diagnostics commercial, service, and quality teams — revenue, installed base, field service, post-market quality</span><span>📦 Starts from a pre-built ontology, not a blank page</span></div>
+
+  <p>A hands-on workshop that takes you from <i>"I have this ontology repo and nothing else"</i> to <i>"I'm asking Ana governed questions about my own product, installed-base, service, and complaint data — and the model grows itself as I work"</i> — mostly without leaving the Ana chat window.</p>
+  <p>The <b>MedTech Starter Pack</b> is a <b>document of domain expertise</b> over medical-device &amp; diagnostics operations — the product catalog, customer accounts, sales transactions, the installed base of devices in the field, field-service events, and the post-market complaint record. It pins governed definitions for product revenue, active installed base, consumable attach rate, complaint rate, MDR-reportable share, serious-event rate, complaint closure time, service resolution &amp; first-time-fix, and device availability. It's <b>just files</b> (Markdown + <code>.tql</code>) in a git repo: <a href="https://github.com/TextQLLabs/ontology-medtech-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-medtech-starter</code></a> — <b>your TextQL team grants access and sets up your own fork</b> (your adaptations live in your fork; the template stays pristine).</p>
+  <div class="callout warn"><span class="label">This is not a form to fill out</span>
+    <p>The starter is a <b>warm start, not a finished model to deploy</b>. Treating it as "close enough" and shipping it is the fastest way to build a model nobody trusts. So we begin by naming your <b>North Star</b> — what someone does differently on Monday when this works — and in <b>Module 1</b> Ana looks at your actual data and drafts it with you. Then let the model <b>accrete from real questions</b>: Ana reads what's known, explores only the frontier, answers, and proposes additions back as git commits you review. (The repo's <a href="https://github.com/TextQLLabs/ontology-medtech-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a> is your starting point.)</p>
+  </div>
+
+  <h2>What you'll do</h2>
+  <div class="hero-grid">
+    <div class="hero-card"><div class="n">MODULE 0</div><h3>Set your North Star</h3><p>Name what the ontology is <i>for</i> — what someone does differently on Monday morning.</p></div>
+    <div class="hero-card"><div class="n">MODULE 0</div><h3>Tour the six layers</h3><p>Entity spine, metrics, classification, governance, decisions, validation.</p></div>
+    <div class="hero-card"><div class="n">MODULE 1</div><h3>Define your North Star</h3><p>Ana reads your data, runs the scoping conversation, and drafts <code>north_star.md</code> with you.</p></div>
+    <div class="hero-card"><div class="n">MODULE 2</div><h3>Connect three things</h3><p>The ontology repo, your warehouse (read-only), your documents.</p></div>
+    <div class="hero-card"><div class="n">MODULE 3</div><h3>Validate against your schema</h3><p>Ana diffs the model vs. your tables — and settles the product / device / service / complaint grain — then opens the fix as a PR.</p></div>
+    <div class="hero-card"><div class="n">MODULE 4</div><h3>Light up the classification</h3><p>product family → category/modality, device class → FDA risk, complaint type → grouping rollups — zero warehouse writes.</p></div>
+    <div class="hero-card"><div class="n">MODULE 5</div><h3>Ask governed questions</h3><p>Revenue, installed base, attach, complaint &amp; MDR rate, serious events, closure, service resolution, availability — with the SQL shown.</p></div>
+    <div class="hero-card"><div class="n">MODULE 6+7</div><h3>Govern &amp; customize</h3><p>FDA quality-record &amp; account-confidentiality defaults, golden values, and making the definitions yours.</p></div>
+  </div>
+
+  <div class="callout"><span class="label">What ships in the box</span>
+    <p><b>Free / public classification</b> (the product-family → category/modality rollup, the FDA device-risk-class descriptions per 21 CFR 860, the complaint-type → malfunction/injury/use-error grouping) is in the repo — yours to keep and extend. Licensed nomenclature (GMDN coded device terms, IQVIA/vendor market-share datasets) is modeled <b>structurally</b>; its data is <b>sourced from your own licensed feed</b> and joined by code. See <a href="https://github.com/TextQLLabs/ontology-medtech-starter/blob/main/LICENSING.md" target="_blank" rel="noopener"><code>LICENSING.md</code></a>.</p>
+  </div>
+  <div class="callout"><span class="label">No customer or patient data — ever</span>
+    <p>The starter is built entirely from public conventions (FDA risk class per 21 CFR 860, MDR-reportability per 21 CFR 803, product/complaint grouping) and a generic reference model. Connecting it never uses your data to improve the template; it runs <b>read-only</b>, and your adaptations live in <b>your own repo</b>, never back in the template.</p>
+  </div>
+
+  <details><summary>For facilitators — running this as a guided session</summary><div class="body">
+    <p><b>T-minus-1-day pre-flight:</b> run the workshop's key prompts end-to-end in the session workspace — confirm logins, connectors, and the features this workshop touches are enabled for every attendee; have a fallback demo workspace ready in case a customer connector fails live. <b>Pacing:</b> when a long prompt is running (2–4 min), fire it first, then discuss the concept while Ana works — never watch a spinner in silence. If behind schedule, cut sections marked optional, never the checkpoints. <b>Group sessions:</b> attendees drive, you narrate; collect every miss or wrong answer in a shared doc — that list is the ontology backlog. With 10+ attendees on one warehouse, stagger the heavy prompts.</p>
+  </div></details>
+
+  <div id="run-with-ana" style="margin-top:30px;border:1px solid var(--green);border-left:4px solid var(--green);background:var(--green-soft);border-radius:10px;padding:18px 20px">
+    <h3 style="margin:0 0 8px;color:var(--green-dark)">🤖 Prefer to have Ana run this workshop?</h3>
+    <p style="margin:0 0 10px">Open a TextQL thread with your data connected and paste the prompt below — Ana walks you through this workshop on <b>your own data</b>, one step at a time. You run each prompt; she coaches.</p>
+    <pre style="white-space:pre-wrap;background:var(--code-bg,#0f1f1b);color:#e8f3ee;padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.5;overflow:auto">Hey Ana — facilitate the "MedTech Starter" workshop with me in this thread, on the data connected here. Pull the steps from https://textqllabs.github.io/workshops/medtech-starter/ and run it interactively: look at my data first (2–3 lines), then go ONE module at a time. For each module, give ME the prompt to copy and run as my next message, tell me what to look for, then wait and coach me on my result. Start with what you see, then Module 0.</pre>
+    <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">Ana fetches the steps from the link — no copy/paste of the workshop needed. (Air-gapped / VPC tenants where Ana can't reach the web: paste the module list from this workshop's <a href="https://github.com/TextQLLabs/workshops/blob/main/medtech-starter/ana-runner.md" target="_blank" rel="noopener">ana-runner.md</a> instead.)</p>
+  </div>
+</section>
+
+<!-- ════════════════ NORTH STAR ════════════════ -->
+<section class="page" id="northstar" data-title="Start with Your North Star" data-group="Getting Started" data-time="15 min">
+  <div class="kicker">Module 0 · Before you connect anything</div>
+  <h1>Start with Your North Star</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b> · conversation, not configuration</span><span>🎯 Goal: know what your ontology is <i>for</i> before you build it</span></div>
+
+  <p>The single biggest mistake with a starter pack is to skip this step — to point it at your warehouse, decide it's "close enough," and ship. That bakes in decisions before you know which questions matter, and you get a model that's 10% useful and 90% noise. This module is the antidote, and it takes 15 minutes.</p>
+
+  <h2>0.1 · Answer one question</h2>
+  <div class="callout"><span class="label">The North Star question</span>
+    <p><b>When this works, what does someone do differently on Monday morning?</b></p>
+  </div>
+  <p>Not "model all of medtech." Something narrow and real: <i>"the commercial lead sees consumable attach slipping on a placed-instrument family before the quarter closes,"</i> or <i>"the post-market quality lead sees the complaint rate on a product line cross threshold in time to open an investigation, not after the next audit."</i> If you can't name it yet, you're not ready to build the ontology — you're ready to have <b>this</b> conversation. Have it first.</p>
+
+  <h2>0.2 · What a North Star looks like (examples to spark yours)</h2>
+  <p>Most medical-device commercial / service / quality teams land on a North Star adjacent to one of the three below. These are <b>examples, not a menu to pick from</b> — yours might be one of these, a blend, or something next to them. In <b>Module 1</b>, Ana drafts yours from your actual data; reading these now just tells you which surfaces and classification become relevant once it's set. (Full detail in the repo's <a href="https://github.com/TextQLLabs/ontology-medtech-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a>.)</p>
+  <table>
+    <tr><th>Archetype</th><th>For</th><th>Lead with</th></tr>
+    <tr><td><b>A · Commercial performance</b></td><td>"See where the book is growing and whether placed capital is pulling its consumable revenue through"</td><td><code>product_revenue</code>, <code>installed_base</code>, <code>attach_rate</code> + golden queries (revenue ≈ <b>$7.65B</b> over <b>42,498</b> active devices, attach ≈ <b>$78.3k</b> per device) — reconcile <i>first</i>, govern second.</td></tr>
+    <tr><td><b>B · Post-market quality &amp; safety</b></td><td>"Catch a quality signal on a product line before it becomes a recall or an MDR escalation"</td><td><code>complaint_rate</code>, <code>mdr_rate</code>, <code>serious_event_rate</code>, <code>complaint_closure_days</code> + the per-1k-device basis + the 21 CFR 803/820 reportability notes (complaint ≈ <b>941</b> /1k, MDR ≈ <b>0.0998</b>, closure ≈ <b>30.5d</b>).</td></tr>
+    <tr><td><b>C · Field service &amp; reliability</b></td><td>"Get more uptime out of the installed base and fix more on the first visit"</td><td><code>service_resolution</code>, <code>device_availability</code> + the corrective-vs-PM basis + the first-time-fix lever (resolution ≈ <b>20.5d</b>, first-time-fix ≈ <b>0.6976</b>, availability ≈ <b>0.8483</b>).</td></tr>
+  </table>
+
+  <h2>0.3 · You won't fill out a checklist — Ana drafts it</h2>
+  <p>There's no question bank to work through and no form to fill out. In <b>Module 1</b> you'll paste one prompt and Ana looks at your actual data, runs a short scoping conversation, recommends the archetype that fits, and writes your North Star down as <code>north_star.md</code> — a paragraph on what the ontology is <i>for</i> plus the 6–8 questions it must answer in 30 days. That single artifact is what every later module builds toward. The watch-outs that make you sound like the expert in the room — capital vs. consumable revenue, active vs. decommissioned devices in the denominator, what counts as MDR-reportable, corrective vs. preventive service — live in the repo's decision notes, and Ana surfaces them as they come up.</p>
+
+  <div class="callout"><span class="label">Why the model gets cheaper as you use it</span>
+    <p>This isn't just good practice — it's the design. An agent that re-discovers your warehouse on every question pays an "amnesia tax" (most of its tokens go to rediscovery, and results aren't reproducible). Reading a known model first and committing what it learns inverts that: discovery is paid <b>once</b> and amortized across every future question. See TextQL's research, <i>"Malleability Is All You Need"</i> (VLDB 2026) — a measured ~30% token reduction and a model that gets more reliable the more it's used.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You can state your North Star in one sentence</label>
+    <label><input type="checkbox"> You have a candidate archetype in mind (commercial performance / post-market quality &amp; safety / field service &amp; reliability) — or you'll let Ana recommend one in Module 1</label>
+    <label><input type="checkbox"> You're ready to let Ana draft <code>north_star.md</code> from your data in Module 1</label>
+  </div>
+  <p style="margin-top:14px"><b>Not sure which archetype?</b> That's fine — in <b>Module 1</b> Ana looks at your data and recommends one. You don't have to decide here.</p>
+</section>
+
+<!-- ════════════════ MODULE 0 ════════════════ -->
+<section class="page" id="m0" data-title="Module 0 · The Six Layers" data-group="Getting Started" data-time="15 min">
+  <div class="kicker">Module 0</div>
+  <h1>Tour the Six Layers</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b> · reading + repo browsing</span><span>🎯 Goal: know what's in the box and where everything lives</span></div>
+
+  <p>Why a medtech starter exists at all: <b>the headline numbers are contested by construction.</b> "What's our revenue?" isn't one query — it depends on whether you mean capital placements, consumable pull-through, or service contracts, and which recognition window. "What's our installed base?" depends on whether decommissioned units are in the count and as of which reporting date. "What's our complaint rate?" depends on whether it's per raw count or normalized per active installed unit — and what counts as MDR-reportable under 21 CFR 803 is a regulatory judgment, not a flag you can assume. A naive answer silently mixes them. The starter pins one governed definition for each contested metric, externalizes the product-category, device-class, and complaint-type rollups so they aren't hard-coded, makes FDA quality-record and account-confidentiality behavior the default, and writes down the reasoning so a stakeholder can argue with the <i>definition</i>, not the number.</p>
+
+  <h2>The six layers</h2>
+  <table>
+    <tr><th>Layer</th><th>Where</th><th>What</th></tr>
+    <tr><td><b>1 — Entity spine</b></td><td><code>ontology/schema.tql</code>, <code>ontology/relations/</code></td><td>Product (SKU), Account (customer), Sales transaction, Device (the installed-unit spine), Service order, Complaint.</td></tr>
+    <tr><td><b>2 — Metrics</b></td><td><code>ontology/queries/</code></td><td>Nine governed surfaces: product revenue, installed base, attach rate, complaint rate, MDR rate, serious-event rate, complaint closure days, service resolution &amp; first-time-fix, device availability.</td></tr>
+    <tr><td><b>3 — Classification</b></td><td><code>ontology/dimensions/</code>, <code>filters/</code>, <code>reference/terminology/</code></td><td><b>The heart.</b> product family → category/modality + device class → FDA risk + complaint type → grouping — as dimensions, filters &amp; committed seeds.</td></tr>
+    <tr><td><b>4 — Governance &amp; quality records</b></td><td><code>ontology/notes/governance-quality.md</code>, <code>config/org_context.md</code></td><td>FDA quality-record handling (21 CFR 820 / 803), audit trail, account/customer confidentiality, &lt;11 small-cell suppression.</td></tr>
+    <tr><td><b>5 — Decision records</b></td><td><code>ontology/notes/</code></td><td>Why each metric is defined the way it is — capital-vs-consumable revenue, active-vs-decommissioned installed base, MDR reportability &amp; timing, corrective-vs-PM service, per-1k-device denominators; plus the glossary, grain, and identity guides.</td></tr>
+    <tr><td><b>6 — Validation</b></td><td><code>validation/</code></td><td><code>validate_tql.py</code> (every surface checked against your live schema + compiled), golden queries with pinned values, the dry-run prompt.</td></tr>
+  </table>
+
+  <div class="callout"><span class="label">Standards alignment</span>
+    <p><code>STANDARDS.md</code> maps the model to the conventions it aligns with (FDA device risk class per 21 CFR 860, MDR reportability per 21 CFR 803, complaint handling per 21 CFR 820.198, GMDN nomenclature structurally). The semantic layer (metrics, routing, classification) is <b>fully separated from the physical mapping</b>: every physical table name lives in <b>one file</b>, <code>ontology/schema.tql</code> — re-point it and the metric logic stays put. The starter is authored against a generic catalog / installed-base / service / complaint model (SAP or other ERP, Salesforce CRM, ServiceMax field service, TrackWise/Veeva QMS-shaped) with ANSI/Spark-portable SQL; <code>MIGRATION.md</code> is the 8-step re-point checklist and works the same on Redshift, BigQuery, Snowflake, or <b>Databricks</b> (budget: about a half-day with warehouse access). For a deep technical tour, read <code>DEEP_DIVE.md</code>.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You can name the six layers and find each one in the repo</label>
+    <label><input type="checkbox"> You know which classification ships in the box vs. needs your own licensed feed (GMDN coded terms, vendor market-share)</label>
+    <label><input type="checkbox"> You know the default model (generic catalog / installed-base / service / complaint, ANSI/Spark-portable) and where re-point lives (schema.tql)</label>
+  </div>
+</section>
+
+  <section class="page" id="m1" data-title="Module 1 · Define Your North Star" data-group="Hands-On Modules" data-time="15 min">
+    <div class="kicker">Module 1</div>
+    <h1>Define Your North Star with Ana</h1>
+    <div class="page-meta"><span>&#9201;&#65039; <b>15 min</b> &middot; with Ana</span><span>&#127919; Goal: turn the conversation above into a written North Star + the archetype that fits</span></div>
+    <p>The intro is the <em>why</em>. This is the <em>doing</em>: rather than fill out a form, you let Ana look at your actual data, ask the right scoping questions, and write the North Star down. That single artifact (<code>north_star.md</code>) is what every later module builds toward.</p>
+    <p>Paste this prompt. Ana runs the scoping conversation &mdash; answer a few questions at a time and she converges on your archetype and a concrete North Star.</p>
+    <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Help me define the North Star for our ontology before we build anything.
+1. Look at the data connected to this thread and summarize in 3-4 lines what we have: the key tables, the grain, and the domains it covers (product catalog, accounts, sales, installed base, field service, post-market complaints).
+2. Then ask me 5-7 sharp scoping questions to pin down what we are really doing - who will use this, what decision it changes on Monday morning, whether we are after commercial performance / post-market quality and safety / field service and reliability, what "working" looks like in 30 days, and where our data is messiest. Ask a few at a time, not all at once.
+3. From my answers plus the data, recommend the archetype that fits (A commercial performance, B post-market quality and safety, or C field service and reliability) and draft our North Star: one short paragraph on what this ontology is for, plus the 6-8 questions it must answer in 30 days.
+4. Save it as north_star.md in the ontology and propose it as a reviewed change, so every later step builds toward it.</pre></div>
+    <div class="yousee"><b>You will see:</b> Ana summarize your data, ask scoping questions, recommend an archetype with a reason, and draft a <code>north_star.md</code> &mdash; a paragraph plus the questions that define "done." Review it, push back, ratify.</div>
+    <div class="callout"><span class="label">Why a prompt, not a 50-question checklist</span><p>No giant pre-written question bank that nobody maintains. Ana generates the questions that matter <em>for your data and your goal</em>, on the spot &mdash; and the output is a sharp use-case definition, not a worksheet.</p></div>
+    <div class="checkpoint"><h4>&#9989; Checkpoint</h4>
+      <label><input type="checkbox"> You have a written <code>north_star.md</code> (purpose + the 6-8 questions it must answer)</label>
+      <label><input type="checkbox"> You picked an archetype (A / B / C), or Ana recommended one and you agreed</label>
+      <label><input type="checkbox"> It names something real that changes on Monday morning, not "model all of medtech"</label>
+    </div>
+  </section>
+
+<!-- ════════════════ MODULE 2 ════════════════ -->
+<section class="page" id="m2" data-title="Module 2 · Connect Three Things" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 2</div>
+  <h1>Connect Three Things</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat</span></div>
+
+  <h2>2.1 · Connect the ontology repo to Ana</h2>
+  <p>This is the key step. In TextQL, add a <b>Git connector</b> and point it at <b>your fork</b> of the starter repo (<a href="https://github.com/TextQLLabs/ontology-medtech-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-medtech-starter</code></a> — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every classification rule — as a reference she reads on demand.</p>
+  <div class="callout"><span class="label">No second source of truth</span>
+    <p>You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.</p>
+  </div>
+  <figure class="shot" data-todo="the Git connector configured against the starter repo">
+    <img src="assets/mt-m1-git.png" alt="Git connector pointed at the starter repo" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>The ontology repo connected — Ana reads it as ground truth.</figcaption>
+  </figure>
+
+  <h2>2.2 · Connect your data warehouse</h2>
+  <p>Add the connector for the warehouse holding your product, installed-base, service, and complaint data (Redshift, BigQuery, Snowflake, Databricks, …) — typically sourced from your ERP (SAP) and CRM (Salesforce) for sales + installed base, your field-service system (ServiceMax), and your post-market quality system (TrackWise/Veeva QMS). <b>Read-only access is enough.</b></p>
+  <div class="callout warn"><span class="label">Use your governed, contracted warehouse</span>
+    <p>Post-market complaint and MDR data are <b>FDA-regulated quality records</b> (21 CFR 820 / 803) — auditable, with reportability timing that matters. Connect the enterprise warehouse that's already in scope for your quality-system, data-residency, and audit obligations — see <code>ontology/notes/governance-quality.md</code>.</p>
+  </div>
+
+  <h2>2.3 · (Optional) Bring in your documents</h2>
+  <p>Your real-world context — the commercial reporting workbook, the complaint-handling / MDR decision SOP, dbt models, the spreadsheet where someone defined "attach rate" — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology <b>as corpus, not migration</b>, and can fold what she learns into the model.</p>
+
+  <h2>2.4 · Say hello</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Read the ontology repo and give me a tour: what entities, metrics, and classification dimensions are defined, and what governed questions am I able to ask once my warehouse is validated?</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana describe the model from the repo itself — proof the Git connector works and the ontology is being read as ground truth.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Ana described the starter's entities and metrics from the connected repo</label>
+    <label><input type="checkbox"> Your warehouse connector is attached, read-only, and in your contracted region</label>
+    <label><input type="checkbox"> You know which of your documents you'll bring in (or that you're skipping this)</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 3 ════════════════ -->
+<section class="page" id="m3" data-title="Module 3 · Validate Against Your Schema" data-group="Hands-On Modules" data-time="25 min">
+  <div class="kicker">Module 3</div>
+  <h1>Validate the Model Against Your Schema</h1>
+  <div class="page-meta"><span>⏱️ <b>25 min</b></span><span>🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — and settle the grain — without writing SQL</span></div>
+
+  <h2>3.1 · The dry run — required</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Look at the ontology repo, then inspect my warehouse. Run validation/dry-run-prompt.md against my schema: pull the information schema for my product, account, sales_txn, device, service_order, and complaint tables and tell me where the ontology's expected table and column names don't match what I actually have — including whether product carries category ('capital'/'consumable'/'service') and device_class, whether device carries status ('active'/'decommissioned') and install_date, whether service_order carries is_corrective and first_visit_resolved, and whether complaint carries is_mdr and is_serious flags. Propose the exact changes to ontology/schema.tql.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names, and the all-important category, device-status, service-flag, and complaint-flag questions. (The ready-made version lives in <code>validation/dry-run-prompt.md</code>.)</div>
+
+  <h2>3.2 · Run the validator — required</h2>
+  <p>The dry run is discovery; <code>validation/validate_tql.py</code> is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles. <b>Ana runs it for you</b> — no terminal needed:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Run validation/validate_tql.py from the ontology repo in your sandbox — static checks first, then the SQL check against my warehouse. Report every failure with the file it's in and the fix it needs, then apply the fixes (column renames in the affected .tql, table renames in schema.tql only) and re-run until clean.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the typo'd-backing, wrong-alias, and missing-column bug classes caught here — instead of surfacing as wrong numbers in front of stakeholders.</div>
+  <div class="callout"><span class="label">Prefer the terminal?</span>
+    <p>The same gate runs locally: <code>python3 validation/validate_tql.py</code> (static — no warehouse needed) · <code>--check-sql</code> (paste the output into Ana: rows = missing columns) · <code>--dsn "&lt;dsn&gt;" --explain</code> (live column check + compile test).</p>
+  </div>
+
+  <h2>3.3 · Apply the fixes as a PR — required</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Make those changes and open a pull request.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana edit the files and open a reviewable PR in <b>your</b> repo. Every physical table name lives in one place (<code>ontology/schema.tql</code>) — re-point it and the metric logic stays put. The join keys the surfaces rely on are <code>product_id</code>, <code>account_id</code>, and <code>device_id</code>.</div>
+  <figure class="shot" data-todo="the schema-validation PR Ana opened, showing the schema.tql diff">
+    <img src="assets/mt-m2-pr.png" alt="Schema validation PR" onerror="this.parentElement.classList.add('missing')">
+    <figcaption>Validation lands as a reviewable PR — not silent edits.</figcaption>
+  </figure>
+
+  <div class="callout"><span class="label">Why this step matters</span>
+    <p>Every medtech company's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those <i>before</i> you trust a number is the difference between a defensible attach rate and a debugging session in front of the CCO.</p>
+  </div>
+
+  <h2>3.4 · Decide your grain &amp; verify your joins — required</h2>
+  <p>Medtech data fans out across several grains — <b>product (SKU) vs. device (installed unit) vs. service order vs. complaint</b> — and joining across them carelessly multiplies counts. Three decisions dominate this module, and all are prompts: which fact answers which question, whether <b>device is an active-vs-decommissioned snapshot</b> counted as of the reporting date (the denominator behind attach, complaint, and availability rates), and how the per-1k-device rates use the active installed base — not the order line — as the denominator.</p>
+  <table>
+    <tr><th>Table</th><th>Grain</th><th>Count this for…</th></tr>
+    <tr><td><code>product</code></td><td>1 / product (SKU)</td><td>the catalog cut — capital vs. consumable vs. service, device class</td></tr>
+    <tr><td><code>sales_txn</code></td><td>1 / sales order line</td><td>product revenue, units, accounts (the commercial spine)</td></tr>
+    <tr><td><code>device</code></td><td>1 / installed unit (active / decommissioned)</td><td>active installed base — the per-1k-device denominator; <b>count active as-of the reporting date</b>, not every row</td></tr>
+    <tr><td><code>service_order</code></td><td>1 / field-service event</td><td>resolution time, first-time-fix; corrective open events drive availability</td></tr>
+    <tr><td><code>complaint</code></td><td>1 / complaint (regulated record)</td><td>complaint rate, MDR share, serious-event rate, closure time</td></tr>
+  </table>
+  <div class="prompt"><span class="tag">PROMPT — GRAIN</span><button>Copy</button>
+<pre>Read ontology/notes/grain.md, then inspect my tables. Confirm the grain of each: is product one row per SKU with category ('capital'/'consumable'/'service') and device_class? Is device one row per installed unit with status ('active'/'decommissioned') and install_date, so the active installed base is COUNT(*) WHERE status='active' AND install_date <= reporting date — NOT a row per order? Is sales_txn one row per order line, service_order one row per service event, and complaint one row per regulated complaint record? Tell me where counting decommissioned devices in the rate denominator, or treating a sales line as an installed unit, would distort the numbers — and record the decision in databases/[ourschema]/README.md (copy databases/device_core/ as the template).</pre></div>
+  <div class="yousee"><b>You'll see:</b> the grain decision made and written down <i>before</i> anything gets edited — it shapes every count downstream. The traps to confirm: the per-1k-device rates (complaint, serious-event) and attach are <b>active-installed-base</b> questions over a device snapshot (never count decommissioned units, never count sales lines as devices); revenue is a <b>sales-line</b> question; and availability counts <b>open corrective</b> service orders against that same active base.</div>
+  <div class="prompt"><span class="tag">PROMPT — JOIN &amp; BASIS VERIFICATION</span><button>Copy</button>
+<pre>Verify every join the ontology relies on against my warehouse: does the key (product_id / account_id / device_id) exist on both sides, what's the overlap rate, and is the grain 1:1 or 1:N? Then confirm the bases: does sales_txn carry revenue, units and channel? Does device carry status and install_date so the active snapshot resolves? Do service_order.is_corrective and first_visit_resolved, and complaint.is_mdr and is_serious, exist as booleans? Record each verdict in databases/[ourschema]/README.md and flag any join or basis we shouldn't trust.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a join-by-join verdict list plus a basis check — because attach rate needs <code>category='consumable'</code> on the product, the per-1k rates need a resolvable active-device snapshot, first-time-fix needs <code>first_visit_resolved</code>, and MDR rate needs <code>is_mdr</code>; a missing column or a mislabeled flag changes the number.</div>
+  <div class="prompt"><span class="tag">PROMPT — DATASET LITERALS</span><button>Copy</button>
+<pre>Find the dataset-specific literals the surfaces hard-code — the category enums ('capital'/'consumable'/'service'), the device_class values ('I'/'II'/'III'), the device status values ('active'/'decommissioned'), the channel spellings ('direct'/'distributor'), and the service_type values ('repair'/'pm'/'install') — check each against what's actually in my warehouse, and propose the corrections in the same PR. Also confirm the closure/resolution-day DATEDIFF dialect for my warehouse (Spark 2-arg DATEDIFF(end,start) vs. Redshift DATEDIFF(day,start,end) vs. BigQuery DATE_DIFF(end,start,DAY)).</pre></div>
+  <div class="yousee"><b>You'll see:</b> the enumerations the validator can't know — <code>category = 'consumable'</code>, <code>device_class = 'III'</code>, <code>status = 'active'</code>, the channel spellings — corrected from your real data instead of assumed, plus the closure/resolution DATEDIFF dialect pinned for your engine.</div>
+  <div class="callout"><span class="label">The full checklist</span>
+    <p>This module covers the core; <code>MIGRATION.md</code> is the complete 8-step re-point (discover → grain → schema.tql → identity → validator → literals → governance → glossary → goldens). Half a day with warehouse access; most of it is verification, not editing.</p>
+  </div>
+  <div class="callout"><span class="label">No device-status snapshot, or no install_date?</span>
+    <p>If your warehouse can't resolve an <b>active</b> installed base as of the reporting date — no status flag, or no install_date — then every per-1k-device rate (complaint, serious-event) and attach loses its denominator and the numbers are meaningless. Flag it in the dry run; <code>notes/installed-base.md</code> has the as-of-date derivation. This is the difference between a true complaint rate and one divided by every unit ever shipped.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Ana produced a concrete mismatch list (or confirmed a clean match)</label>
+    <label><input type="checkbox"> The product / device-snapshot / service-order / complaint grain — and active-vs-decommissioned, plus per-1k-device denominators — is decided and written down</label>
+    <label><input type="checkbox"> The fixes landed as a PR you can review — not silent edits — and you merged it (or know who reviews it)</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 4 ════════════════ -->
+<section class="page" id="m4" data-title="Module 4 · The Classification Layer" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 4</div>
+  <h1>Light Up the Classification Layer</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: rollup-powered questions — product family → category/modality, device class → FDA risk, complaint type → grouping — with zero writes to your warehouse</span></div>
+
+  <p>The classification seeds (product family → category + modality; device class → FDA risk class &amp; description per 21 CFR 860; complaint type → malfunction/injury/use-error grouping) are <b>already committed in the repo</b> as CSVs (<code>reference/terminology/product_category.csv</code>, <code>device_class.csv</code>, <code>complaint_type.csv</code>) — nothing to load into your warehouse. Ana loads the CSV into her Python sandbox and joins it to a read-only warehouse pull in memory (see <code>ontology/notes/terminology-join-pattern.md</code>), so the grouping logic works with <b>zero warehouse writes</b>. The shipped surfaces read <code>category</code> and <code>device_class</code> off the product, so they run with no seed dependency at all — the seeds add the <i>rollups</i> (product family → modality; class I/II/III → low/moderate/high risk; device_malfunction/software_error → malfunction grouping).</p>
+
+  <h2>4.1 · Prove the rollups work</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Using the ontology's classification layer, roll my product_family values up to modality (Imaging / Monitoring / Infusion / Surgical / In-vitro diagnostics / …), map my device_class values to FDA risk class (I→low, II→moderate, III→high) using the 21 CFR 860 seed, and group my complaint_type values into the malfunction / injury / use-error grouping, then show me complaint rate and serious-event rate by modality and risk class. Explain how you joined the seed CSVs without writing to the warehouse.</pre></div>
+  <div class="yousee"><b>You'll see:</b> raw product families, device classes, and complaint types resolved to meaningful modalities, FDA risk classes, and complaint groupings, with the federated join-in-sandbox pattern explained — and a reminder to analyze <i>groupings</i>, never free-text codes.</div>
+
+  <h2>4.2 · Bring in your licensed feed — optional</h2>
+  <p><b>You don't need this on day one</b> — the public category/modality, FDA-risk-class, and complaint-type groupings are already committed. Come back when you want <b>coded device nomenclature</b> beyond the public groupings. These are <b>licensed</b> (e.g. GMDN device terms, IQVIA/vendor market-share) — the repo ships the structure and join logic, and the data comes from <b>your own licensed feed</b>:</p>
+  <div class="prompt"><span class="tag">PROMPT — LICENSED FEED (STRUCTURAL ONLY)</span><button>Copy</button>
+<pre>We have a licensed nomenclature feed (e.g. GMDN device terms, or an IQVIA market-share dataset) in our warehouse at [table]. Per LICENSING.md, join it to the product/device by code so we get the grouped device concept (or market context) — keep the licensed data in our warehouse, commit only the join logic, and note the license + effective date in LICENSING.md. Open it as a PR.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the structural model light up with your licensed nomenclature — the modeling logic versioned in git, the licensed content staying in your warehouse, same governance motion as everything else.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> A modality, FDA-risk-class, and complaint-type-grouping rollup worked against your data with no warehouse writes</label>
+    <label><input type="checkbox"> You can explain the federated join-in-sandbox pattern in one sentence</label>
+    <label><input type="checkbox"> You know which classification ships public (category/modality, FDA risk class, complaint grouping) vs. licensed (GMDN, vendor market-share, from your feed)</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 5 ════════════════ -->
+<section class="page" id="m5" data-title="Module 5 · Ask Governed Questions" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 5</div>
+  <h1>Ask Governed Questions</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: the payoff — consistent, defensible answers routed through governed definitions, with the SQL shown</span></div>
+
+  <p>Run each of these against your validated warehouse. For every answer, note that Ana cites the governed surface, names the <b>basis</b> (capital vs. consumable revenue, active vs. decommissioned devices, per-1k-device denominator, MDR-reportability per 21 CFR 803, the period window), and shows the rendered SQL. The golden values below are pinned against the synthetic medtech warehouse (window 2024, reporting date 2024-12-31) in <code>validation/golden-queries.md</code> — your numbers will differ, but the <i>shape</i> and the invariants should hold.</p>
+
+  <h2>5.1 · Product revenue &amp; installed base (the commercial pair)</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What's our product revenue for 2024 (product_revenue.tql), and how many active devices are in the installed base as of the reporting date (installed_base.tql)? Tell me the basis — which categories are in revenue (capital / consumable / service), and that installed base counts active units as-of the reporting date, not every device ever shipped.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the governed surface return revenue ≈ <b>$7.65B</b> over an active installed base of <b>42,498</b> devices (window 2024, reporting date 2024-12-31). Ana names the basis (revenue across all categories over the order-date window; installed base = active units as-of the reporting date) instead of silently picking one.</div>
+
+  <h2>5.2 · Consumable attach rate (the pull-through headline)</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>What's our consumable attach rate for 2024 (attach_rate.tql)? Tell me the basis — consumable revenue ÷ active installed devices — and confirm you're dividing by the active device snapshot, not by sales lines or every unit ever shipped.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the governed surface return consumable revenue ÷ active installed devices — the synthetic portfolio pins attach ≈ <b>$78.3k</b> per active device. Ana names the basis (the razor/razor-blade pull-through KPI, active installed base in the denominator) instead of conflating it with raw consumable revenue.</div>
+
+  <h2>5.3 · Complaint rate &amp; MDR share (the post-market quality pair)</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Show me our post-market complaint rate for 2024 (complaint_rate.tql) — complaints per 1,000 active installed devices — and our MDR-reportable share (mdr_rate.tql). For complaint rate, confirm the per-1k-device denominator; for MDR rate, tell me the 21 CFR 803 reportability basis.</pre></div>
+  <div class="yousee"><b>You'll see:</b> complaint rate ≈ <b>941 per 1,000</b> active devices and an MDR-reportable share ≈ <b>0.0998</b> (per 21 CFR 803). Ana notes complaint rate is normalized on the active installed base (not a raw count) and that MDR reportability is a regulated determination, not an assumed flag.</div>
+  <div class="callout warn"><span class="label">Know the MDR reportability basis</span>
+    <p>The governed <code>mdr_rate</code> surface reports the share of received complaints flagged <code>is_mdr</code> — MDR-reportable per <b>21 CFR 803</b>. Reportability (and its 30-day timing) is a regulated determination made in your quality system, not a count you can assume. A rising MDR rate is an auditable safety/escalation signal. If your stakeholder means a different reportability scope, that's a different cut — Ana will say which one your question maps to. See <code>notes/governance-quality.md</code>.</p>
+  </div>
+
+  <h2>5.4 · Serious events &amp; complaint closure (the safety + timeliness pair)</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Show our serious-event rate for 2024 (serious_event_rate.tql) — serious complaints per 1,000 active devices — and our complaint closure cycle time (complaint_closure_days.tql): complaints received, how many remain open, and average days to close. Confirm closure time is an auditable 21 CFR 820.198 measure.</pre></div>
+  <div class="yousee"><b>You'll see:</b> serious-event rate ≈ <b>48.5 per 1,000</b> active devices (injury / death / serious deterioration) and average complaint closure ≈ <b>30.5 days</b> — with Ana flagging that complaint-handling timeliness is auditable under 21 CFR 820.198 and that serious events normalize on the same active installed base.</div>
+
+  <h2>5.5 · Service resolution &amp; device availability (the field-service + reliability pair)</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Show me our field-service resolution for 2024 (service_resolution.tql) — service orders, how many remain open, average days to close, and the first-time-fix rate — and our installed-base availability (device_availability.tql). Tell me which is the efficiency signal and which is the fleet-uptime signal.</pre></div>
+  <div class="yousee"><b>You'll see:</b> average service resolution ≈ <b>20.5 days</b> with a first-time-fix rate ≈ <b>0.6976</b>, and device availability ≈ <b>0.8483</b> (1 − devices with an open corrective order ÷ active installed base). Ana names the basis for each — resolution &amp; first-time-fix on orders opened in the window, availability as a point-in-time fleet-uptime proxy — and pairs them as the two reliability levers.</div>
+
+  <div class="callout"><span class="label">Why everyone gets the same number</span>
+    <p>Revenue, installed base, and complaint rate can each be computed several ways. The ontology pins one governed definition — revenue over the order-date window, installed base as the active as-of-reporting-date snapshot, complaint and serious-event rates per 1,000 active devices, with the decision recorded in <code>ontology/notes/</code> — so Commercial, Field Service, and Quality stop disagreeing about which number is "the" number.</p>
+  </div>
+
+  <h2>5.6 · When the answer isn't governed yet — watch the model grow</h2>
+  <p>Now ask something from your shortlist that the starter <b>doesn't</b> already cover — warranty-vs-billable service mix, attach by modality, an installed-base-aging cut, a region-level complaint-rate trend, distributor-vs-direct revenue split. This is the important beat: a starter pack is a head start, not the finished model.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Here's a question from our shortlist that isn't in the governed surfaces yet: [your question]. Explore my warehouse to answer it, show your work, and if the definition is one we'd want to reuse, propose it as a new governed surface — open a PR adding the .tql and a notes file recording the decision and the basis.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana explore only the <i>frontier</i> (not re-derive the whole warehouse), answer, and propose a <b>write-back</b> — a new metric committed to your repo with provenance. Review and merge it, and the next person who asks gets the governed answer for free. That's the malleable loop: the ontology you ship is the one you grow, and it gets more complete every time you use it.</div>
+  <div class="callout warn"><span class="label">You ratify; high-stakes definitions get review</span>
+    <p>Ana proposes; humans ratify via normal git review. Anything in <code>governance-quality.md</code> scope (FDA quality records, MDR reportability, account confidentiality, small-cell) or a core regulated surface (complaint rate, MDR rate, serious-event rate, closure time) should require review before merge (CODEOWNERS-style) — see <code>STANDARDS.md</code>. The point isn't to let an agent rewrite your model unsupervised; it's that discovered knowledge is <i>captured</i> instead of re-discovered next time.</p>
+  </div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Revenue/installed base, attach rate, complaint/MDR rate, serious events/closure, and service resolution/availability all answered through governed surfaces, SQL and basis shown</label>
+    <label><input type="checkbox"> You can point to the notes file explaining at least one metric's definition decision</label>
+    <label><input type="checkbox"> Ana proposed a write-back for a not-yet-governed question — and you saw it land as a PR</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 6 ════════════════ -->
+<section class="page" id="m6" data-title="Module 6 · Governance & Quality-Record Defaults" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 6</div>
+  <h1>Governance &amp; Quality-Record Defaults</h1>
+  <div class="page-meta"><span>⏱️ <b>15 min</b></span><span>🎯 Goal: see the FDA quality-record &amp; confidentiality behavior that's on by default — and verify it fires</span></div>
+
+  <p>Layer 4 makes compliance the default, not an add-on: <b>FDA quality-record handling</b> (complaints and MDRs are auditable records under 21 CFR 820 / 803 — counts and reportability timing must be reproducible and attributable), an <b>audit trail</b> on every governed answer, <b>account/customer confidentiality</b> (a named hospital's purchase history and complaint detail is commercially sensitive), and a <b>small-cell (&lt;11) suppression</b> rule so a thin account × product × complaint-type cut can't single out one customer. The behavior lives in <code>ontology/notes/governance-quality.md</code> and <code>config/org_context.md</code> — files you can read, review, and adapt.</p>
+
+  <h2>6.1 · Inventory your sensitive fields — day one</h2>
+  <p><code>governance-quality.md</code> §0 classifies the sensitive fields in the connected schema into a role — and the key distinction is that <b>using an identifier as a join key is not the same as outputting it</b>:</p>
+  <table>
+    <tr><th>Field</th><th>Role</th></tr>
+    <tr><td>account_id, device_id, complaint_id, product_id</td><td><b>Join key only</b> — allowed in <code>ON</code>/<code>WHERE</code>/<code>GROUP BY</code>; never an output column, chart, or log unless the persona is entitled</td></tr>
+    <tr><td>Account name, customer contact, device serial number</td><td><b>Confidential</b> — named-account purchase history and per-device detail are commercially sensitive; emit at the aggregated / entitled level, not row-by-row</td></tr>
+    <tr><td>Complaint narrative, MDR record, reportability decision</td><td><b>Regulated quality record</b> (21 CFR 820 / 803) — auditable; counts and timing reproducible, changes attributable; raw narrative gated to entitled quality personas</td></tr>
+    <tr><td>Sales rep / field-engineer identity</td><td><b>Minimum-necessary</b> — individual-performance cuts gated to entitled personas; small panels subject to small-cell suppression</td></tr>
+  </table>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Inventory every sensitive field in the connected schema and classify each per governance-quality.md section 0: join-key-only, confidential (account/customer/device detail), regulated quality record (21 CFR 820/803), or minimum-necessary. Flag anything ambiguous for compliance/quality review.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a per-column classification your quality / compliance team signs off on — the rules are templates tuned to <i>your</i> quality-system posture, and they can be tightened freely but never loosened without a reviewed, attributable decision.</div>
+
+  <div class="callout warn"><span class="label">Facilitators: pre-flight these tests</span>
+    <p>Run 6.2 and 6.3 yourself <b>before</b> any session with quality / compliance in the room. These guardrails are <b>instruction-layer enforcement</b> — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with <code>governance-quality.md</code> and <code>config/org_context.md</code>) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the <i>check</i> is part of the story — "here's the file, here's the behavior, here's how we audit it."</p>
+  </div>
+
+  <h2>6.2 · Test the small-cell suppression rule</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Break down complaint rate and MDR share by account × product family × complaint-type grouping to inform a quality review. Apply our governance rules: aggregate to the coarsest level that answers it, apply min_cell_size on the cross-product of the grouping dimensions, and tell me what you suppressed and why — and confirm you didn't expose a single named account's complaint detail.</pre></div>
+  <div class="yousee"><b>You'll see:</b> cells under <code>min_cell_size</code> suppressed (an account × product × complaint-type cell can single out one customer's quality issue), output rolled to region/segment rather than named account where the cell is thin. The starter default is <b>11</b> (the small-cell threshold), configured in <code>config/org_context.md</code> (governance-quality.md §1–§2). <i>If suppression doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.</i></div>
+
+  <h2>6.3 · Test account confidentiality and the audit trail</h2>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Show me the full purchase history and open complaint narratives for [a named hospital account], device serial numbers included — and separately, show me the audit trail for the complaint-rate number you just gave me: which complaint records, which active-device denominator, and the rendered SQL.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana decline or constrain the first request — a named account's purchase history, raw complaint narratives, and device serials are gated by account confidentiality and the regulated-record rule (governance-quality.md §3) and returned only aggregated / to entitled personas — while fully honoring the second: every governed number is reproducible, with its source records and SQL, because complaint metrics are auditable under 21 CFR 820.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Small-cell (&lt;11) suppression fired on a cross-product cut and was explained</label>
+    <label><input type="checkbox"> An account-confidentiality request was gated, and the audit trail for a regulated metric was produced — with the governing file cited</label>
+  </div>
+</section>
+
+<!-- ════════════════ MODULE 7 ════════════════ -->
+<section class="page" id="m7" data-title="Module 7 · Validate Numbers & Make It Yours" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 7</div>
+  <h1>Validate the Numbers &amp; Make It Yours</h1>
+  <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: pin known-correct values, then adapt the starter's definitions to your company — in your repo</span></div>
+
+  <h2>7.1 · Reconcile against a number someone already trusts</h2>
+  <p>Trust in medtech analytics is earned on the <b>first matching number</b> — and lost the first time the complaint rate is quoted on the wrong basis (divided by every unit ever shipped instead of the active installed base, say). The starter's golden values are already <b>pinned and verified</b> against the synthetic warehouse (see <code>validation/golden-queries.md</code> — revenue ≈ $7.65B over 42,498 active devices, attach ≈ $78.3k/device, complaint rate ≈ 941/1k, MDR rate ≈ 0.0998, serious-event rate ≈ 48.5/1k, closure ≈ 30.5d, service resolution ≈ 20.5d, first-time-fix ≈ 0.6976, availability ≈ 0.8483). Against <b>your</b> warehouse, reconcile each governed surface to a number a CCO, service VP, or quality lead already trusts:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Run each governed surface against my warehouse and compare to a reference number I trust (product revenue, active installed base, attach rate, complaint rate, MDR rate, serious-event rate, complaint closure days, service resolution, first-time-fix, device availability). For each, show the SQL and the basis, and flag any drift. Where we differ, explain whether it's data, definition, or basis (capital vs consumable revenue, active vs decommissioned devices, per-1k denominator, MDR reportability scope).</pre></div>
+  <div class="yousee"><b>You'll see:</b> accuracy checked, not asserted — and a triage of any mismatch into data vs. definition vs. basis. The decisive moment is the first time the complaint rate or attach lands exactly where the quality or commercial leader expected.</div>
+
+  <h2>7.2 · Assert the invariants</h2>
+  <p>Even before you have an external reference, some numbers must agree with each other. The golden queries assert these:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Check the cross-surface invariants from validation/golden-queries.md against my data: mdr_reportable <= complaints and serious_events <= complaints in the complaint surfaces; 0 <= mdr_rate <= 1, 0 <= first_time_fix_rate <= 1, 0 <= availability <= 1; devices_with_open_corrective <= active_devices in device_availability; open_orders <= service_orders in service_resolution; attach_rate == consumable_revenue / active_devices; the active_devices denominator is identical across complaint_rate, serious_event_rate, attach_rate, and installed_base. Report any that don't hold.</pre></div>
+  <div class="yousee"><b>You'll see:</b> internal consistency proven — if MDR-reportable exceeds total complaints, or a rate falls outside [0,1], or the active-device denominator drifts between surfaces, something is wrong <i>before</i> a stakeholder ever sees the number.</div>
+
+  <h2>7.3 · Customize a definition — the MDR-reportability field lesson</h2>
+  <p>Your company inevitably defines something differently — a revenue category boundary, what counts as the active installed base, an MDR-reportability scope. But the starter's <b>flagship field lesson</b> is one every medtech quality team hits, and it makes the perfect worked example because it's where a quality-system judgment and a dashboard number diverge:</p>
+  <div class="callout warn"><span class="label">MDR reportability — definition &amp; timing</span>
+    <p>The governed <code>mdr_rate</code> surface reports the share of received complaints flagged <code>is_mdr</code> — MDR-reportable per <b>21 CFR 803</b>. But "reportable" is a <b>regulated determination</b>, not a field you can assume: it turns on whether the event may have caused or contributed to a death or serious injury, or a malfunction that would be likely to do so on recurrence — and it carries a <b>30-day reporting clock</b> (5 days for events requiring remedial action to prevent unreasonable risk). A complaint can be logged but not yet adjudicated; counting <code>is_mdr</code> before adjudication, or off the wrong date (received vs. became-aware vs. decision), misstates both the rate and the reporting-timeliness picture. Conflating an unadjudicated complaint flag with a true MDR determination is the most common reportability error in medtech operator reporting. Documented in <code>notes/governance-quality.md</code> and <code>validation/golden-queries.md</code>. (The same shape applies to the <b>active-installed-base denominator</b> — dividing complaint rate by every unit ever shipped instead of the active as-of-date snapshot flatters quality.)</p>
+  </div>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Walk me through the MDR-reportability definition and timing in notes/governance-quality.md. Then check my warehouse: does mdr_rate.tql compute the share of received complaints flagged is_mdr per 21 CFR 803? Prove the gap — if I have an adjudication-status field and a became-aware date, approximate a "decided-MDR within the 30-day clock" rate and show how far it sits from the raw is_mdr share on my data. If our company determines or dates MDR reportability differently (a different awareness date, an adjudication gate, or a 5-day-vs-30-day split), add the governed surface in our repo, record the decision and the rejected default in a notes file, add a golden-query test pinning the value, and open a PR.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the most-confused metric in medtech operator reporting demonstrated on your own data and then made explicit — the reportability definition and timing confirmed in the surface, and any company-specific basis change landing as a reviewable PR <b>in your repo</b> with a pinned golden value. The template stays pristine upstream; your adaptations are yours.</div>
+
+  <h2>7.4 · Localize the vocabulary</h2>
+  <p><code>ontology/notes/glossary.md</code> holds the canonical medtech terms — product, capital vs. consumable vs. service, installed base, active vs. decommissioned device, attach rate, complaint, MDR-reportable, serious event, complaint closure, service resolution, first-time-fix, device availability, device class, modality — each with a <b>variance column</b> flagging where your company diverges (revenue-category boundary; active-installed-base as-of rule; MDR reportability scope/timing; corrective-vs-PM service classification).</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Walk the glossary's variance column for our portfolio. For each term that differs at our company — capital-vs-consumable boundary, active-installed-base as-of rule, MDR reportability scope/timing, what counts as a corrective service event, the attach denominator — propose the override in glossary.md, keeping the term → definition → resolves-via pattern, and open it as one PR.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the vocabulary localized in one reviewable pass — so "attach rate," "installed base," and "MDR-reportable" mean <i>your</i> company's thing, everywhere, from now on.</div>
+
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> Governed surfaces reconciled to a trusted reference; any drift triaged (data / definition / basis)</label>
+    <label><input type="checkbox"> The MDR-reportability definition/timing distinction (or active-installed-base denominator) demonstrated and made explicit on your data</label>
+    <label><input type="checkbox"> One definition is now yours — PR'd, noted, and pinned with a golden-query test</label>
+  </div>
+</section>
+
+<!-- ════════════════ WRAP-UP ════════════════ -->
+<section class="page" id="wrapup" data-title="Wrap-Up & Next Steps" data-group="Reference">
+  <div class="kicker">Wrap-Up</div>
+  <h1>Wrap-Up 🎉</h1>
+  <p>You went from an empty environment to governed medtech analytics — and, more importantly, to a model that <b>grows itself</b>:</p>
+  <ul>
+    <li><b>North Star set:</b> you named what the ontology is <i>for</i>, picked an archetype, and chose the questions that matter — before touching the schema</li>
+    <li><b>Connected:</b> ontology repo (live, git-backed) + warehouse (read-only) + your documents</li>
+    <li><b>Validated:</b> the model diffed against your actual schema, the product/device-snapshot/service-order/complaint grain settled (incl. active-vs-decommissioned and the per-1k-device denominator), fixed via PR</li>
+    <li><b>Classification live:</b> product family → category/modality, device class → FDA risk, complaint type → grouping rollups joining in-sandbox, zero warehouse writes</li>
+    <li><b>Governed answers:</b> revenue, installed base, attach, complaint &amp; MDR rate, serious events, closure, service resolution, availability — SQL and basis shown, decisions recorded</li>
+    <li><b>Compliant by default:</b> FDA quality-record handling (21 CFR 820 / 803), audit trail, account/customer confidentiality, &lt;11 small-cell suppression</li>
+    <li><b>Self-maintaining:</b> not-yet-governed questions answered on the frontier and proposed back as PRs — discovery paid once, then reused</li>
+    <li><b>Yours:</b> definitions adapted in your repo — including the MDR-reportability definition/timing — pinned with golden-query tests</li>
+  </ul>
+
+  <h2>Where to go from here</h2>
+  <ul>
+    <li><b>Operate it:</b> the <a href="../ontology-operations/index.html">Ontology Operations</a> workshop covers the production loop — git workflows, access control, accuracy testing, scaling across teams.</li>
+    <li><b>Understand the build:</b> <a href="../build-your-ontology/index.html">Build Your Ontology, End to End</a> teaches the from-scratch method the starter packages up.</li>
+    <li><b>Roll it out:</b> point your commercial, field-service, and quality teams at <a href="../self-service-analytics/index.html">Self-Service Analytics</a> — the ontology you just stood up is what makes their answers trustworthy.</li>
+    <li><b>Licensing:</b> before production, review <code>LICENSING.md</code> (coded device nomenclature and vendor market-share beyond the public groupings — GMDN, IQVIA, structural only, sourced from your licensed feed).</li>
+  </ul>
+</section>
+
+<div class="pager" id="pager"></div>
+<footer class="pagefoot">© TextQL · Workshop: MedTech Starter Pack · Example prompts are illustrative — adapt them to your own data. · <a href="mailto:jacob@textql.com?subject=TextQL%20Workshops%20feedback">Give feedback</a></footer>
+</div></main>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+<div id="lightbox" onclick="this.classList.remove('show')"><img src="" alt=""></div>
+
+<script>
+(function(){
+  const WS_KEY='textql-ws-medtech-starter';
+  const pages=[...document.querySelectorAll('section.page')];
+  const navlist=document.getElementById('navlist');
+  const pager=document.getElementById('pager');
+
+  // Build sidebar nav grouped by data-group
+  let group=null, num=0;
+  pages.forEach(p=>{
+    if(p.dataset.group!==group){
+      group=p.dataset.group;
+      const g=document.createElement('div');g.className='group-label';g.textContent=group;navlist.appendChild(g);
+    }
+    const a=document.createElement('a');a.className='nav-item';a.href='#/'+p.id;a.dataset.page=p.id;
+    a.innerHTML='<span class="num"><span>'+(num++)+'</span></span><span>'+p.dataset.title.replace(/^Module \d+ · /,'')+'</span>'+
+      (p.dataset.time?'<span class="time">'+p.dataset.time+'</span>':'');
+    navlist.appendChild(a);
+  });
+
+  function show(id){
+    let page=pages.find(p=>p.id===id)||pages[0];
+    pages.forEach(p=>p.classList.toggle('active',p===page));
+    navlist.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.dataset.page===page.id));
+    const i=pages.indexOf(page);
+    pager.innerHTML=
+      (i>0?'<a class="prev" href="#/'+pages[i-1].id+'"><span class="dir">← Previous</span><span class="ttl">'+pages[i-1].dataset.title+'</span></a>':'<span></span>')+
+      (i<pages.length-1?'<a class="next" href="#/'+pages[i+1].id+'"><span class="dir">Next →</span><span class="ttl">'+pages[i+1].dataset.title+'</span></a>':'');
+    window.scrollTo(0,0);
+    document.getElementById('sidebar').classList.remove('open');
+  }
+  const hashId=()=>location.hash.replace(/^#\/?/,'');
+  window.addEventListener('hashchange',()=>show(hashId()));
+  show(hashId());
+
+  // Copy buttons + toast
+  document.querySelectorAll('.prompt').forEach(box=>{
+    const btn=box.querySelector('button');
+    btn.addEventListener('click',()=>{
+      navigator.clipboard.writeText(box.querySelector('pre').textContent.trim()).then(()=>{
+        const t=document.getElementById('toast');
+        t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400);
+      });
+    });
+  });
+
+  // Screenshot lightbox
+  const lb=document.getElementById('lightbox');
+  document.querySelectorAll('figure.shot img').forEach(img=>{
+    img.addEventListener('click',()=>{lb.querySelector('img').src=img.src;lb.classList.add('show');});
+  });
+
+  // Checkpoint persistence + progress
+  let saved={};try{saved=JSON.parse(localStorage.getItem(WS_KEY)||'{}')}catch(e){}
+  const trackable=pages.filter(p=>p.querySelector('.checkpoint input'));
+  function refreshProgress(){
+    let done=0;
+    trackable.forEach(p=>{
+      const boxes=[...p.querySelectorAll('.checkpoint input')];
+      const allDone=boxes.length&&boxes.every(b=>b.checked);
+      const link=navlist.querySelector('a[data-page="'+p.id+'"]');
+      link.classList.toggle('done',allDone);
+      if(allDone){link.querySelector('.num').innerHTML='✓';done++;}
+      else{link.querySelector('.num').innerHTML='<span>'+pages.indexOf(p)+'</span>';}
+    });
+    const pct=trackable.length?Math.round(100*done/trackable.length):0;
+    document.getElementById('pfill').style.width=pct+'%';
+    document.getElementById('ppct').textContent=pct+'% complete';
+  }
+  document.querySelectorAll('.checkpoint input[type=checkbox]').forEach((cb,i)=>{
+    cb.checked=!!saved[i];
+    cb.closest('label').classList.toggle('checked',cb.checked);
+    cb.addEventListener('change',()=>{
+      saved[i]=cb.checked;
+      cb.closest('label').classList.toggle('checked',cb.checked);
+      try{localStorage.setItem(WS_KEY,JSON.stringify(saved))}catch(e){}
+      refreshProgress();
+    });
+  });
+  refreshProgress();
+})();
+</script>
+
+<script>
+/* TextQL workshops analytics — PostHog via first-party proxy */
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once identify alias set_config reset opt_in_capturing opt_out_capturing".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init('phc_cmTpctVWkmjZZDI0vGNMD5wHY3ywg9FdQCA48kdfEp2',{api_host:'https://hermes.textql.com',persistence:'localStorage'});
+(function(){
+  var segs=location.pathname.split('/').filter(function(x){return x&&x!=='index.html'});
+  var ws=segs.length>1?segs[segs.length-1]:'catalog';
+  if(ws==='workshops')ws='catalog';
+  function page(){return location.hash.replace(/^#\/?/,'')||'welcome'}
+  function cap(ev,props){props=props||{};props.workshop=ws;props.page=page();props.site='workshops';try{posthog.capture(ev,props)}catch(e){}}
+  cap('workshop_page_view');
+  window.addEventListener('hashchange',function(){cap('workshop_page_view')});
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('.prompt button');
+    if(b){cap('workshop_prompt_copied');return}
+    var c=e.target.closest&&e.target.closest('a.card');
+    if(c&&c.getAttribute('href')&&c.getAttribute('href')!=='#'){cap('workshop_card_clicked',{target_workshop:c.getAttribute('href').split('/')[0]})}
+  });
+  document.addEventListener('change',function(e){
+    if(!(e.target.matches&&e.target.matches('.checkpoint input')))return;
+    var cp=e.target.closest('.checkpoint');
+    var boxes=cp.querySelectorAll('input[type=checkbox]');
+    var all=true;for(var i=0;i<boxes.length;i++)if(!boxes[i].checked)all=false;
+    if(all)cap('workshop_checkpoint_completed');
+    var pages=document.querySelectorAll('section.page');
+    var withCp=0,done=0;
+    pages.forEach(function(p){var bx=p.querySelectorAll('.checkpoint input');if(bx.length){withCp++;var ok=true;bx.forEach(function(b){if(!b.checked)ok=false});if(ok)done++}});
+    if(withCp&&done===withCp)cap('workshop_completed');
+  });
+})();
+</script>
+</body>
+</html>
