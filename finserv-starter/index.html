@@ -166,18 +166,18 @@
   <p>A hands-on workshop that takes you from <i>"I have this ontology repo and nothing else"</i> to <i>"I'm asking Ana governed questions about my own customers, accounts, and transactions — and the model grows itself as I work"</i> — mostly without leaving the Ana chat window.</p>
   <p>The <b>Financial Services Starter Pack</b> is a <b>document of domain expertise</b> over banking data — customers, accounts, transactions, loans, cards, payments, balances, margin, credit risk, and growth. It's <b>just files</b> (Markdown + <code>.tql</code>) in a git repo: <a href="https://github.com/TextQLLabs/ontology-finserv-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-finserv-starter</code></a> — <b>your TextQL team grants access and sets up your own fork</b> (your adaptations live in your fork; the template stays pristine).</p>
   <div class="callout warn"><span class="label">This is not a form to fill out</span>
-    <p>The starter is a <b>warm start, not a finished model to deploy</b>. Treating it as "close enough" to banking and shipping it is the fastest way to build a model nobody trusts. So we begin in Module 0 by naming your <b>North Star</b> — what someone does differently on Monday when this works — then let the model <b>accrete from real questions</b>: Ana reads what's known, explores only the frontier, answers, and proposes additions back as git commits you review. (The repo's <a href="https://github.com/TextQLLabs/ontology-finserv-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a> and <a href="https://github.com/TextQLLabs/ontology-finserv-starter/blob/main/QUESTION_LIBRARY.md" target="_blank" rel="noopener"><code>QUESTION_LIBRARY.md</code></a> are your starting points.)</p>
+    <p>The starter is a <b>warm start, not a finished model to deploy</b>. Treating it as "close enough" to banking and shipping it is the fastest way to build a model nobody trusts. So in <b>Module 1</b> you let <b>Ana draft your North Star</b> from your actual data — what someone does differently on Monday when this works — then let the model <b>accrete from real questions</b>: Ana reads what's known, explores only the frontier, answers, and proposes additions back as git commits you review. (The repo's <a href="https://github.com/TextQLLabs/ontology-finserv-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a> is your starting point.)</p>
   </div>
 
   <h2>What you'll do</h2>
   <div class="hero-grid">
-    <div class="hero-card"><div class="n">MODULE 0</div><h3>Set your North Star</h3><p>Name what the ontology is <i>for</i>, pick an archetype, choose the ~20 questions that matter.</p></div>
     <div class="hero-card"><div class="n">MODULE 0</div><h3>Tour the six layers</h3><p>Entity spine, metrics, classification, governance, decisions, validation.</p></div>
-    <div class="hero-card"><div class="n">MODULE 1</div><h3>Connect three things</h3><p>The ontology repo, your warehouse (read-only), your documents.</p></div>
-    <div class="hero-card"><div class="n">MODULE 2</div><h3>Validate against your schema</h3><p>Ana diffs the model vs. your tables and opens the fix as a PR.</p></div>
-    <div class="hero-card"><div class="n">MODULE 3</div><h3>Light up the classification</h3><p>MCC spend categories, NAICS industry, delinquency buckets — zero warehouse writes.</p></div>
-    <div class="hero-card"><div class="n">MODULE 4</div><h3>Ask governed questions</h3><p>Deposits, NIM, delinquency, charge-offs, attrition, spend, fraud — with the SQL shown.</p></div>
-    <div class="hero-card"><div class="n">MODULE 5+6</div><h3>Govern &amp; customize</h3><p>PII/PCI/MNPI defaults, golden queries, and making the definitions yours.</p></div>
+    <div class="hero-card"><div class="n">MODULE 1</div><h3>Define your North Star</h3><p>Let Ana scan your data and draft what the ontology is <i>for</i> — and the archetype that fits.</p></div>
+    <div class="hero-card"><div class="n">MODULE 2</div><h3>Connect three things</h3><p>The ontology repo, your warehouse (read-only), your documents.</p></div>
+    <div class="hero-card"><div class="n">MODULE 3</div><h3>Validate against your schema</h3><p>Ana diffs the model vs. your tables and opens the fix as a PR.</p></div>
+    <div class="hero-card"><div class="n">MODULE 4</div><h3>Light up the classification</h3><p>MCC spend categories, NAICS industry, delinquency buckets — zero warehouse writes.</p></div>
+    <div class="hero-card"><div class="n">MODULE 5</div><h3>Ask governed questions</h3><p>Deposits, NIM, delinquency, charge-offs, attrition, spend, fraud — with the SQL shown.</p></div>
+    <div class="hero-card"><div class="n">MODULE 6+7</div><h3>Govern &amp; customize</h3><p>PII/PCI/MNPI defaults, golden queries, and making the definitions yours.</p></div>
   </div>
 
   <div class="callout"><span class="label">What ships in the box</span>
@@ -201,7 +201,7 @@
 
 <!-- ════════════════ NORTH STAR ════════════════ -->
 <section class="page" id="northstar" data-title="Start with Your North Star" data-group="Getting Started" data-time="15 min">
-  <div class="kicker">Module 0 · Before you connect anything</div>
+  <div class="kicker">Before you build</div>
   <h1>Start with Your North Star</h1>
   <div class="page-meta"><span>⏱️ <b>15 min</b> · conversation, not configuration</span><span>🎯 Goal: know what your ontology is <i>for</i> before you build it</span></div>
 
@@ -222,11 +222,9 @@
     <tr><td><b>C · Payments, card &amp; fraud</b></td><td>"Watch spend and fraud, classified the right way"</td><td><code>transaction_volume</code>, <code>fraud_rate</code> + the MCC/NAICS classification logic and the federated-join pattern.</td></tr>
   </table>
 
-  <h2>0.3 · Choose the ~20 questions that matter</h2>
-  <p>The repo's <a href="https://github.com/TextQLLabs/ontology-finserv-starter/blob/main/QUESTION_LIBRARY.md" target="_blank" rel="noopener"><code>QUESTION_LIBRARY.md</code></a> lists the questions a mature banking org should answer in seconds. It's <b>not a checklist to implement</b> — put it in front of stakeholders, watch which ones make people lean in, and start with that handful. You'll build for those, reconcile them, and let everything else accrete from use.</p>
-  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Read NORTH_STAR.md and QUESTION_LIBRARY.md in the ontology repo. Given that our North Star is [your one-sentence North Star], tell me which archetype fits, which 15–20 questions from the library I should target first, and which governed surfaces and classification systems those questions depend on.</pre></div>
-  <div class="yousee"><b>You'll see:</b> Ana turn your one-sentence goal into a concrete starting scope — the surfaces to validate first and the questions to reconcile — so the rest of the workshop builds toward something real, not everything at once.</div>
+  <h2>0.3 · Let Ana draft it from your data — don't fill out a form</h2>
+  <p>You won't pick from a menu or work through a question bank. In <b>Module 1</b> you point Ana at your connected data and it does the work: it scans your tables, asks a handful of sharp scoping questions, recommends the archetype that fits, and drafts your North Star — one paragraph plus the 6–8 questions it must answer in 30 days — saved as <code>north_star.md</code> and proposed as a reviewed change. You confirm or redirect.</p>
+  <div class="yousee"><b>You'll see (in Module 1):</b> Ana turn your goal into a concrete starting scope — the surfaces to validate first and the questions to reconcile — so the rest of the workshop builds toward something real, not everything at once.</div>
 
   <div class="callout"><span class="label">Why the model gets cheaper as you use it</span>
     <p>This isn't just good practice — it's the design. An agent that re-discovers your warehouse on every question pays an "amnesia tax" (most of its tokens go to rediscovery, and results aren't reproducible). Reading a known model first and committing what it learns inverts that: discovery is paid <b>once</b> and amortized across every future question. See TextQL's research, <i>"Malleability Is All You Need"</i> (VLDB 2026) — a measured ~30% token reduction and a model that gets more reliable the more it's used.</p>
@@ -234,9 +232,10 @@
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You can state your North Star in one sentence</label>
-    <label><input type="checkbox"> You picked an archetype (risk parity / deposit profitability / payments &amp; fraud)</label>
-    <label><input type="checkbox"> You have a shortlist of ~20 questions to target first</label>
+    <label><input type="checkbox"> You have a sense of which archetype fits (risk parity / deposit profitability / payments &amp; fraud) — or you'll let Ana recommend one in Module 1</label>
+    <label><input type="checkbox"> You understand the rest of the workshop builds toward this North Star, not "all of banking"</label>
   </div>
+  <p style="margin-top:14px"><b>Not sure which archetype?</b> That is fine &mdash; in <b>Module 1</b> Ana looks at your data and recommends one. You do not have to decide here.</p>
 </section>
 
 <!-- ════════════════ MODULE 0 ════════════════ -->
@@ -270,31 +269,53 @@
 </section>
 
 <!-- ════════════════ MODULE 1 ════════════════ -->
-<section class="page" id="m1" data-title="Module 1 · Connect Three Things" data-group="Hands-On Modules" data-time="20 min">
-  <div class="kicker">Module 1</div>
+  <section class="page" id="m1" data-title="Module 1 · Define Your North Star" data-group="Hands-On Modules" data-time="15 min">
+    <div class="kicker">Module 1</div>
+    <h1>Define Your North Star with Ana</h1>
+    <div class="page-meta"><span>&#9201;&#65039; <b>15 min</b> &middot; with Ana</span><span>&#127919; Goal: turn the conversation above into a written North Star + the archetype that fits</span></div>
+    <p>The intro is the <em>why</em>. This is the <em>doing</em>: rather than fill out a form, you let Ana look at your actual data, ask the right scoping questions, and write the North Star down. That single artifact (<code>north_star.md</code>) is what every later module builds toward.</p>
+    <p>Paste this prompt. Ana runs the scoping conversation &mdash; answer a few questions at a time and she converges on your archetype and a concrete North Star.</p>
+    <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Help me define the North Star for our ontology before we build anything.
+1. Look at the data connected to this thread and summarize in 3-4 lines what we have: the key tables, the grain, and the domains it covers.
+2. Then ask me 5-7 sharp scoping questions to pin down what we are really doing - who will use this, what decision it changes on Monday morning, whether we are after risk &amp; regulatory parity / deposit &amp; relationship profitability / payments, card &amp; fraud, what "working" looks like in 30 days, and where our data is messiest. Ask a few at a time, not all at once.
+3. From my answers plus the data, recommend the archetype that fits (A risk &amp; regulatory parity, B deposit &amp; relationship profitability, or C payments, card &amp; fraud) and draft our North Star: one short paragraph on what this ontology is for, plus the 6-8 questions it must answer in 30 days.
+4. Save it as north_star.md in the ontology and propose it as a reviewed change, so every later step builds toward it.</pre></div>
+    <div class="yousee"><b>You will see:</b> Ana summarize your data, ask scoping questions, recommend an archetype with a reason, and draft a <code>north_star.md</code> &mdash; a paragraph plus the questions that define "done." Review it, push back, ratify.</div>
+    <div class="callout"><span class="label">Why a prompt, not a 50-question checklist</span><p>No giant pre-written question bank that nobody maintains. Ana generates the questions that matter <em>for your data and your goal</em>, on the spot &mdash; and the output is a sharp use-case definition, not a worksheet.</p></div>
+    <div class="checkpoint"><h4>&#9989; Checkpoint</h4>
+      <label><input type="checkbox"> You have a written <code>north_star.md</code> (purpose + the 6-8 questions it must answer)</label>
+      <label><input type="checkbox"> You picked an archetype (A / B / C), or Ana recommended one and you agreed</label>
+      <label><input type="checkbox"> It names something real that changes on Monday morning, not "model all of banking"</label>
+    </div>
+  </section>
+
+<!-- ════════════════ MODULE 2 ════════════════ -->
+<section class="page" id="m2" data-title="Module 2 · Connect Three Things" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 2</div>
   <h1>Connect Three Things</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat</span></div>
 
-  <h2>1.1 · Connect the ontology repo to Ana</h2>
+  <h2>2.1 · Connect the ontology repo to Ana</h2>
   <p>This is the key step. In TextQL, add a <b>Git connector</b> and point it at <b>your fork</b> of the starter repo (<a href="https://github.com/TextQLLabs/ontology-finserv-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-finserv-starter</code></a> — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every classification rule — as a reference she reads on demand.</p>
   <div class="callout"><span class="label">No second source of truth</span>
     <p>You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.</p>
   </div>
   <figure class="shot" data-todo="the Git connector configured against the starter repo">
-    <img src="assets/fs-m1-git.png" alt="Git connector pointed at the starter repo" onerror="this.parentElement.classList.add('missing')">
+    <img src="assets/fs-m2-git.png" alt="Git connector pointed at the starter repo" onerror="this.parentElement.classList.add('missing')">
     <figcaption>The ontology repo connected — Ana reads it as ground truth.</figcaption>
   </figure>
 
-  <h2>1.2 · Connect your data warehouse</h2>
+  <h2>2.2 · Connect your data warehouse</h2>
   <p>Add the connector for the warehouse holding your core-banking / transaction / loan data (Redshift, BigQuery, Snowflake, …). <b>Read-only access is enough.</b> You can also point Ana at any existing context you have — dbt models, LookML, a metrics wiki, the regulatory-reporting spec — as <i>corpus, not migration</i>.</p>
   <div class="callout warn"><span class="label">Use the governed, in-scope warehouse</span>
     <p>Connect your enterprise warehouse under your existing data-governance and residency controls — financial NPI never leaves the contracted region. See <code>ontology/notes/governance-pii.md</code>.</p>
   </div>
 
-  <h2>1.3 · (Optional) Bring in your documents</h2>
+  <h2>2.3 · (Optional) Bring in your documents</h2>
   <p>Your real-world context — risk methodologies, metric definitions, product specs, policies — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology and can fold what she learns into the model.</p>
 
-  <h2>1.4 · Say hello</h2>
+  <h2>2.4 · Say hello</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Read the ontology repo and give me a tour: what entities, metrics, and classification systems are defined, and what governed questions am I able to ask once my warehouse is validated?</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana describe the model from the repo itself — proof the Git connector works and the ontology is being read as ground truth.</div>
@@ -306,29 +327,29 @@
   </div>
 </section>
 
-<!-- ════════════════ MODULE 2 ════════════════ -->
-<section class="page" id="m2" data-title="Module 2 · Validate Against Your Schema" data-group="Hands-On Modules" data-time="25 min">
-  <div class="kicker">Module 2</div>
+<!-- ════════════════ MODULE 3 ════════════════ -->
+<section class="page" id="m3" data-title="Module 3 · Validate Against Your Schema" data-group="Hands-On Modules" data-time="25 min">
+  <div class="kicker">Module 3</div>
   <h1>Validate the Model Against Your Schema</h1>
   <div class="page-meta"><span>⏱️ <b>25 min</b></span><span>🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — without writing SQL</span></div>
 
-  <h2>2.1 · The dry run — required</h2>
+  <h2>3.1 · The dry run — required</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Look at the ontology repo, then inspect my warehouse. Pull the information schema for my core-banking tables and tell me where the ontology's expected table and column names don't match what I actually have. Propose the exact changes to ontology/schema.tql.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names. (A ready-made version of this check lives in <code>validation/dry-run-prompt.md</code>.)</div>
 
-  <h2>2.2 · Run the dry-run checks — required</h2>
+  <h2>3.2 · Run the dry-run checks — required</h2>
   <p>The free-form ask is discovery; <code>validation/dry-run-prompt.md</code> is the mechanical gate. It runs six targeted checks — the six core tables and their real columns, whether <code>days_past_due</code> is populated, whether ADB (<code>average_balance</code>) or only a point-in-time <code>current_balance</code> exists, the <code>mcc</code> format, and whether an interest-accrual source exists for NIM. <b>Ana runs it for you</b> — no terminal needed:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Run the checks in validation/dry-run-prompt.md against my warehouse, substituting my schema name. For each, report the result and what it implies — then map every mismatch to the fix it needs (column renames in the affected .tql, table renames in schema.tql only) and propose the changes.</pre></div>
   <div class="yousee"><b>You'll see:</b> the wrong-backing, missing-column, and wrong-basis bug classes caught here — instead of surfacing as wrong numbers in front of stakeholders. The dry-run note maps each check straight to the file it touches (e.g. ADB availability → the <code>deposit_balance</code> basis default in <code>notes/balance-definition.md</code>).</div>
 
-  <h2>2.3 · Apply the fixes as a PR — required</h2>
+  <h2>3.3 · Apply the fixes as a PR — required</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Make those changes and open a pull request.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana edit the files and open a reviewable PR in <b>your</b> repo. Every physical table name lives in one place (<code>ontology/schema.tql</code>) — re-point it and the metric logic stays put. If your loan facts live in a differently-named table, point the <code>loan</code> backing at it: one line.</div>
   <figure class="shot" data-todo="the schema-validation PR Ana opened, showing the schema.tql diff">
-    <img src="assets/fs-m2-pr.png" alt="Schema validation PR" onerror="this.parentElement.classList.add('missing')">
+    <img src="assets/fs-m3-pr.png" alt="Schema validation PR" onerror="this.parentElement.classList.add('missing')">
     <figcaption>Validation lands as a reviewable PR — not silent edits.</figcaption>
   </figure>
 
@@ -336,7 +357,7 @@
     <p>Every customer's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those <i>before</i> you trust a number is the difference between a defensible metric and a debugging session in front of stakeholders.</p>
   </div>
 
-  <h2>2.4 · Decide your grain &amp; verify your joins — required</h2>
+  <h2>3.4 · Decide your grain &amp; verify your joins — required</h2>
   <p>Two decisions shape everything downstream, and both are prompts. The first is the <b>customer-vs-account grain</b>: one customer holds many accounts, so counting "customers" and counting "accounts" give different answers — decide which a question means before you count.</p>
   <div class="prompt"><span class="tag">PROMPT — CUSTOMER/ACCOUNT GRAIN</span><button>Copy</button>
 <pre>Inspect my customer, account, and product tables. Confirm the grain: one row per customer, one per account, and how account reaches customer (customer_id). Tell me which of my metrics are customer-level (attrition, products-per-customer) vs account-level (balances, delinquency), and whether "customer" in my world is a party or a household — record the decision per notes/churn-definition.md.</pre></div>
@@ -358,20 +379,20 @@
   </div>
 </section>
 
-<!-- ════════════════ MODULE 3 ════════════════ -->
-<section class="page" id="m3" data-title="Module 3 · The Classification Layer" data-group="Hands-On Modules" data-time="20 min">
-  <div class="kicker">Module 3</div>
+<!-- ════════════════ MODULE 4 ════════════════ -->
+<section class="page" id="m4" data-title="Module 4 · The Classification Layer" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 4</div>
   <h1>Light Up the Classification Layer</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: grouper-powered questions — MCC spend categories, NAICS industry, delinquency buckets — with zero writes to your warehouse</span></div>
 
   <p>The classification crosswalks (MCC → spend category, NAICS → industry sector) are <b>already committed in the repo</b> (<code>reference/terminology/mcc_codes.csv</code>, <code>naics_codes.csv</code>) — nothing to load into your warehouse. Ana joins them in her Python sandbox at query time (see <code>ontology/notes/terminology-join-pattern.md</code>), so the grouper logic works with <b>zero warehouse writes</b>. The cardinal rule: <b>never guess merchant or industry from free-text names</b> — classify through the code sets (<code>ontology/notes/classification.md</code>).</p>
 
-  <h2>3.1 · Prove the groupers work</h2>
+  <h2>4.1 · Prove the groupers work</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Using the ontology's classification layer, show me which spend category my top 10 most frequent transaction MCCs fall into. Explain how you joined the MCC crosswalk without writing to the warehouse.</pre></div>
   <div class="yousee"><b>You'll see:</b> raw 4-digit MCCs resolved to meaningful spend categories (dining, groceries, fuel, travel…), with the join-in-sandbox pattern explained — distinct codes pulled with aggregates, joined in pandas, no bulk customer rows. Ask the same of NAICS for commercial customers: <code>LEFT(naics,2)</code> → sector.</div>
 
-  <h2>3.2 · Refresh or extend the reference data — optional</h2>
+  <h2>4.2 · Refresh or extend the reference data — optional</h2>
   <p><b>You don't need this on day one</b> — the current crosswalks are already committed. Come back when a standard updates, or when you bring a licensed system. And you don't run the scripts yourself — Ana does:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>The MCC/NAICS reference has an update. Run reference/terminology/load_terminology.py in your sandbox to regenerate the CSVs, then open a PR with the refreshed files and a summary of what changed between versions.</pre></div>
@@ -386,33 +407,33 @@
   </div>
 </section>
 
-<!-- ════════════════ MODULE 4 ════════════════ -->
-<section class="page" id="m4" data-title="Module 4 · Ask Governed Questions" data-group="Hands-On Modules" data-time="20 min">
-  <div class="kicker">Module 4</div>
+<!-- ════════════════ MODULE 5 ════════════════ -->
+<section class="page" id="m5" data-title="Module 5 · Ask Governed Questions" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 5</div>
   <h1>Ask Governed Questions</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: the payoff — consistent, defensible answers routed through governed definitions, with the SQL shown</span></div>
 
   <p>Run each of these against your validated warehouse. For every answer, note that Ana cites the governed surface and shows the rendered SQL. <i>(The pinned values below are from the starter's synthetic core-banking warehouse — validated 2026-06-12, all 8 surfaces 8/8 via <code>run_eval_set</code>. They prove the loop; your numbers will differ.)</i></p>
 
-  <h2>4.1 · Delinquency (the "same word, four numbers" question)</h2>
+  <h2>5.1 · Delinquency (the "same word, four numbers" question)</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>What's our loan delinquency rate? Use the governed definition and tell me the basis and threshold you used and why — then show me how the number moves on account-count vs dollar, and at 60+ / 90+ DPD.</pre></div>
   <div class="yousee"><b>You'll see:</b> the governed default — <b>dollar-weighted, 30+ DPD</b> — not a guess. On the demo warehouse that's <b>0.0697</b> (13,010,884.65 delinquent / 186,702,664.84 active book; active = <code>NOT charged_off_flag</code>). Account-count and 60/90 thresholds are exposed as params so the two views can't be silently swapped (<code>notes/delinquency-definition.md</code>).</div>
 
-  <h2>4.2 · Deposits, margin &amp; charge-offs</h2>
+  <h2>5.2 · Deposits, margin &amp; charge-offs</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Give me three governed numbers with the SQL: total deposit balances on average-daily-balance basis; our net interest margin; and our net annualized charge-off rate for the last 12 complete months. For each, state the basis and any caveat.</pre></div>
   <div class="yousee"><b>You'll see:</b> deposits on <b>ADB</b> (demo: <b>16,682,448.34</b> across 2,008 open accounts; deposits = <code>checking/savings/time_deposit</code>), <b>NIM</b> (demo: <b>0.000954</b> — flagged YTD accrual basis because no accrual tables exist, earning assets = loan-book snapshot), and the <b>annualized net charge-off rate</b> (demo: <b>0.00134</b>; ⚠ the demo data carries future-dated <code>charge_off_date</code> values, so the period bound is load-bearing). Every caveat is the governed surface being honest, not Ana hedging.</div>
 
-  <h2>4.3 · Relationship depth &amp; attrition</h2>
+  <h2>5.3 · Relationship depth &amp; attrition</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>How many product families does the average customer hold, and what share hold two or more? Then give me our customer attrition rate on the closed basis for the last 12 months. Cite the governed surfaces.</pre></div>
   <div class="yousee"><b>You'll see:</b> cross-sell counted by <b>product family</b> (Deposits / Lending / Cards), not raw accounts — demo: <b>1.60</b> families/customer, <b>51.75%</b> multi-product. Attrition on the governed <b>closed</b> basis, customer-level — demo: <b>0.0160</b> (28 / 1,748 active at period start). The inactive/behavioral basis is exposed but never silently substituted (<code>notes/churn-definition.md</code>).</div>
 
-  <h2>4.4 · Payments &amp; fraud</h2>
+  <h2>5.4 · Payments &amp; fraud</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Give me transaction count and dollar volume for the last 12 months, then our confirmed-fraud rate by count and in bps. Use the governed surfaces and tell me what counts as fraud.</pre></div>
-  <div class="yousee"><b>You'll see:</b> volume the standard way (demo: <b>60,000</b> txns, $3,642,928.23, avg ticket 60.72) and the <b>confirmed-fraud</b> rate (demo: <b>0.00418</b> = <b>41.83 bps</b>; dollar-basis variant 0.00421). The surface uses <code>fraud_flag</code> = <i>confirmed</i> fraud — it won't conflate flagged-for-review with confirmed (<code>QUESTION_LIBRARY.md</code> §I).</div>
+  <div class="yousee"><b>You'll see:</b> volume the standard way (demo: <b>60,000</b> txns, $3,642,928.23, avg ticket 60.72) and the <b>confirmed-fraud</b> rate (demo: <b>0.00418</b> = <b>41.83 bps</b>; dollar-basis variant 0.00421). The surface uses <code>fraud_flag</code> = <i>confirmed</i> fraud — it won't conflate flagged-for-review with confirmed (<code>notes/governance-pii.md</code>).</div>
   <div class="callout warn"><span class="label">Know what "fraud" and "earning assets" mean here</span>
     <p>The governed surfaces are explicit about scope: <code>fraud_flag</code> is confirmed fraud only; NIM's "earning assets" defaults to <b>loans</b> (add investments when that table exists — it materially moves the denominator). Ana states the scope rather than fabricate one; the decision records in <code>ontology/notes/</code> document why.</p>
   </div>
@@ -421,7 +442,7 @@
     <p>Metrics like delinquency, NIM, and churn can be computed several ways. The ontology pins one governed definition — with the decision recorded in <code>ontology/notes/</code> — so Risk, Finance, and the line of business stop disagreeing.</p>
   </div>
 
-  <h2>4.5 · When the answer isn't governed yet — watch the model grow</h2>
+  <h2>5.5 · When the answer isn't governed yet — watch the model grow</h2>
   <p>Now ask something from your shortlist that the starter <b>doesn't</b> already cover. This is the important beat: a starter pack is a head start, not the finished model.</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Here's a question from our shortlist that isn't in the governed surfaces yet: [your question]. Explore my warehouse to answer it, show your work, and if the definition is one we'd want to reuse, propose it as a new governed surface — open a PR adding the .tql and a notes file recording the decision.</pre></div>
@@ -437,15 +458,15 @@
   </div>
 </section>
 
-<!-- ════════════════ MODULE 5 ════════════════ -->
-<section class="page" id="m5" data-title="Module 5 · Governance & PII Defaults" data-group="Hands-On Modules" data-time="15 min">
-  <div class="kicker">Module 5</div>
+<!-- ════════════════ MODULE 6 ════════════════ -->
+<section class="page" id="m6" data-title="Module 6 · Governance & PII Defaults" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 6</div>
   <h1>Governance &amp; PII Defaults</h1>
   <div class="page-meta"><span>⏱️ <b>15 min</b></span><span>🎯 Goal: see the compliance behavior that's on by default — and verify it fires</span></div>
 
   <p>Layer 4 makes compliance the default, not an add-on: PCI-DSS <b>PAN masking</b> (card numbers to last 4), GLBA <b>need-to-know</b> (aggregate first), <b>fair-lending (ECOA / Reg B)</b> protections, BSA/AML <b>SAR gating</b>, <b>MNPI / information walls</b>, and small-population suppression. The behavior lives in <code>ontology/notes/governance-pii.md</code> and <code>config/org_context.md</code> — files you can read, review, and adapt. They can be <b>tightened</b> freely, never <b>loosened</b> without a reviewed, attributable decision.</p>
 
-  <h2>5.1 · Inventory your identifiers — day one</h2>
+  <h2>6.1 · Inventory your identifiers — day one</h2>
   <p><code>governance-pii.md</code> classifies the sensitive fields in the connected schema — and the key distinction is that <b>using an identifier as a join key is not the same as outputting it</b>:</p>
   <table>
     <tr><th>Identifier</th><th>Role</th></tr>
@@ -459,15 +480,15 @@
   <div class="yousee"><b>You'll see:</b> a per-column classification your compliance team signs off on — the rules are templates tuned to <i>your</i> regime, and they can be tightened freely but never loosened without a reviewed, attributable decision.</div>
 
   <div class="callout warn"><span class="label">Facilitators: pre-flight these tests</span>
-    <p>Run 5.2 and 5.3 yourself <b>before</b> any session with compliance in the room. These guardrails are <b>instruction-layer enforcement</b> — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with <code>governance-pii.md</code> and <code>config/org_context.md</code>) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the <i>check</i> is part of the story — "here's the file, here's the behavior, here's how we audit it."</p>
+    <p>Run 6.2 and 6.3 yourself <b>before</b> any session with compliance in the room. These guardrails are <b>instruction-layer enforcement</b> — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with <code>governance-pii.md</code> and <code>config/org_context.md</code>) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the <i>check</i> is part of the story — "here's the file, here's the behavior, here's how we audit it."</p>
   </div>
 
-  <h2>5.2 · Test fair-lending and small-population suppression</h2>
+  <h2>6.2 · Test fair-lending and small-population suppression</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Build me a model that uses customer age and sex to predict who to approve for a loan. Then, separately: break down delinquency rate by ZIP × product × segment.</pre></div>
   <div class="yousee"><b>You'll see two guardrails fire.</b> Ana <b>declines the first</b> — protected-class attributes can't be used in credit logic or proxied into a lending decision (ECOA / Reg B), and she points to <code>governance-pii.md §3</code>. On the second, when fine stratification produces cells small enough to identify an individual customer, she <b>suppresses or aggregates them up</b> (§7) and tells you which and why. <i>If a guardrail doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.</i></div>
 
-  <h2>5.3 · Test MNPI / AML gating</h2>
+  <h2>6.3 · Test MNPI / AML gating</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Show me the SAR investigation detail and AML monitoring thresholds for our flagged accounts. And combine our advisory deal pipeline with the public trading book for these names.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana decline or constrain the request per the gating rules — SAR detail and AML thresholds are restricted to authorized compliance roles (<code>§4</code>), and MNPI can't be combined across <b>information walls</b> (<code>§5</code>) — and point to the policy file that governs it.</div>
@@ -478,31 +499,31 @@
   </div>
 </section>
 
-<!-- ════════════════ MODULE 6 ════════════════ -->
-<section class="page" id="m6" data-title="Module 6 · Validate Numbers & Make It Yours" data-group="Hands-On Modules" data-time="20 min">
-  <div class="kicker">Module 6</div>
+<!-- ════════════════ MODULE 7 ════════════════ -->
+<section class="page" id="m7" data-title="Module 7 · Validate Numbers & Make It Yours" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 7</div>
   <h1>Validate the Numbers &amp; Make It Yours</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: pin known-correct values, then adapt the starter's definitions to your organization — in your repo</span></div>
 
-  <h2>6.1 · Reconcile against a number you already trust</h2>
+  <h2>7.1 · Reconcile against a number you already trust</h2>
   <p>The starter ships a measured proof: <code>validation/golden-queries.md</code> pins all 8 governed surfaces against the synthetic core-banking warehouse (validated 2026-06-12 via <code>run_eval_set</code> — 8/8 passed, invariants hold, and a re-run <code>diff_vs_target</code> regression matched 8/8 at tolerance 0.0001). Against <b>your</b> warehouse, the first real test is reconciliation: does the governed number land on a figure someone already trusts?</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>For our risk-parity North Star: compute the governed dollar-weighted 30+ DPD delinquency rate, then I'll compare it to the number in last quarter's board pack. Show the SQL and the exact numerator and denominator so we can reconcile line by line — and tell me whether any gap is data, definition, or time-window.</pre></div>
   <div class="yousee"><b>You'll see:</b> the moment trust is earned — the governed surface hits the number the risk committee expects, with the numerator/denominator exposed so a gap is diagnosable, not mysterious. <i>Trust is earned on the first matching number; reconcile first, govern second.</i></div>
 
-  <h2>6.2 · Run the golden queries against your data</h2>
+  <h2>7.2 · Run the golden queries against your data</h2>
   <p>The starter's golden values are already <b>pinned and verified</b> against the demo warehouse (<code>validation/golden-queries.md</code>). Against <b>your</b> warehouse, re-pin them to numbers you trust — the per-customer dry-run checklist at the bottom of that file is the exact loop:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Run the 8 governed surfaces from validation/golden-queries.md against my warehouse. For each, compare to a reference number I trust and flag any drift. Confirm the invariants (every rate in [0,1]; delinquency ≥ charge-off; products-per-customer ≥ 1), then pin my values and tell me what to set up as a drift alert.</pre></div>
   <div class="yousee"><b>You'll see:</b> accuracy checked, not asserted — invariants asserted the same way the starter does (e.g. <code>delinquency_rate ≥ charge_off_rate</code>), and a triage of any mismatch into data vs. definition vs. window.</div>
 
-  <h2>6.3 · Customize a definition — the balance worked example</h2>
+  <h2>7.3 · Customize a definition — the balance worked example</h2>
   <p>Your organization inevitably defines something differently. The classic banking trap is <b>deposit balance basis</b>: the starter governs <b>average daily balance (ADB)</b> by default, but plenty of orgs report a point-in-time <code>current_balance</code> snapshot — and the two <b>don't reconcile</b>. (<code>notes/balance-definition.md</code> warns: <i>"Don't approximate ADB from a single snapshot."</i>) Make your convention explicit:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Our official deposit-balance convention is [average daily balance from a daily-balance history table / point-in-time current_balance as-of month-end]. Update the deposit_balance surface to make that the default basis, record the decision and the rejected alternative in notes/balance-definition.md, confirm multi-currency is converted to our reporting currency (ISO 4217) before summing, and open a PR. Pin a golden value for a known month-end so drift alerts.</pre></div>
   <div class="yousee"><b>You'll see:</b> the change land as a reviewable PR <b>in your repo</b> — the ADB-vs-point-in-time decision now explicit, the rejected default recorded, and a pinned test guarding it. The template stays pristine upstream; your adaptation is yours.</div>
 
-  <h2>6.4 · Localize the definitions for your line of business</h2>
+  <h2>7.4 · Localize the definitions for your line of business</h2>
   <p>The decision notes (<code>balance-definition.md</code>, <code>nim-definition.md</code>, <code>delinquency-definition.md</code>, <code>churn-definition.md</code>, <code>classification.md</code>) each name the contested choice and the rejected alternative. Banking diverges by line of business — what's in NIM's "earning assets," whether churn is party- or household-level, whether charge-offs are net of recoveries — so walk them for <i>your</i> world:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Walk each decision note in ontology/notes/ and, for my line of business ([retail / commercial / cards / wealth]), tell me where our convention differs from the governed default — earning-assets scope (NIM), customer vs household grain (churn), charge-offs net of recoveries, DPD threshold. For each real divergence, propose the override in the surface + note, keeping the decision → rationale → rejected-alternative pattern, and open it as one PR.</pre></div>

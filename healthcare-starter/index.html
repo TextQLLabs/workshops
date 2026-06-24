@@ -166,12 +166,12 @@
   <p>A hands-on workshop that takes you from <i>"I have this ontology repo and nothing else"</i> to <i>"I'm asking Ana governed questions about my own claims and clinical data — and the model grows itself as I work"</i> — mostly without leaving the Ana chat window.</p>
   <p>The <b>Healthcare &amp; Life Sciences Starter Pack</b> is a <b>document of domain expertise</b> over healthcare data — members, claims, encounters, diagnoses, procedures, drugs, cost, utilization, quality, and risk. It's <b>just files</b> (Markdown + <code>.tql</code>) in a git repo: <a href="https://github.com/TextQLLabs/ontology-healthcare-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-healthcare-starter</code></a> — <b>your TextQL team grants access and sets up your own fork</b> (your adaptations live in your fork; the template stays pristine).</p>
   <div class="callout warn"><span class="label">This is not a form to fill out</span>
-    <p>The starter is a <b>warm start, not a finished model to deploy</b>. Treating it as "close enough" and shipping it is the fastest way to build a model nobody trusts. So we begin in Module 0 by naming your <b>North Star</b> — what someone does differently on Monday when this works — then let the model <b>accrete from real questions</b>: Ana reads what's known, explores only the frontier, answers, and proposes additions back as git commits you review. (The repo's <a href="https://github.com/TextQLLabs/ontology-healthcare-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a> and <a href="https://github.com/TextQLLabs/ontology-healthcare-starter/blob/main/QUESTION_LIBRARY.md" target="_blank" rel="noopener"><code>QUESTION_LIBRARY.md</code></a> are your starting points.)</p>
+    <p>The starter is a <b>warm start, not a finished model to deploy</b>. Treating it as "close enough" and shipping it is the fastest way to build a model nobody trusts. So we begin in Module 0 by naming your <b>North Star</b> — what someone does differently on Monday when this works — then let the model <b>accrete from real questions</b>: Ana reads what's known, explores only the frontier, answers, and proposes additions back as git commits you review. (The repo's <a href="https://github.com/TextQLLabs/ontology-healthcare-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a> is your starting point — and in Module 1, Ana drafts your North Star from your own data.)</p>
   </div>
 
   <h2>What you'll do</h2>
   <div class="hero-grid">
-    <div class="hero-card"><div class="n">MODULE 0</div><h3>Set your North Star</h3><p>Name what the ontology is <i>for</i>, pick an archetype, choose the ~20 questions that matter.</p></div>
+    <div class="hero-card"><div class="n">MODULE 0–1</div><h3>Set your North Star</h3><p>Name what the ontology is <i>for</i> — Ana scans your data and drafts it; you confirm.</p></div>
     <div class="hero-card"><div class="n">MODULE 0</div><h3>Tour the six layers</h3><p>Entity spine, metrics, terminology, governance, decisions, validation.</p></div>
     <div class="hero-card"><div class="n">MODULE 1</div><h3>Connect three things</h3><p>The ontology repo, your warehouse (read-only), your documents.</p></div>
     <div class="hero-card"><div class="n">MODULE 2</div><h3>Validate against your schema</h3><p>Ana diffs the model vs. your tables and opens the fix as a PR.</p></div>
@@ -222,11 +222,9 @@
     <tr><td><b>C · Risk adjustment</b></td><td>"Capture the risk we're actually carrying"</td><td><code>comorbidity_profile</code> + CMS-HCC crosswalks + the HCC notes.</td></tr>
   </table>
 
-  <h2>0.3 · Choose the ~20 questions that matter</h2>
-  <p>The repo's <a href="https://github.com/TextQLLabs/ontology-healthcare-starter/blob/main/QUESTION_LIBRARY.md" target="_blank" rel="noopener"><code>QUESTION_LIBRARY.md</code></a> lists the questions a mature healthcare org should answer in seconds. It's <b>not a checklist to implement</b> — put it in front of stakeholders, watch which ones make people lean in, and start with that handful. You'll build for those, reconcile them, and let everything else accrete from use.</p>
-  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Read NORTH_STAR.md and QUESTION_LIBRARY.md in the ontology repo. Given that our North Star is [your one-sentence North Star], tell me which archetype fits, which 15–20 questions from the library I should target first, and which governed surfaces and terminology those questions depend on.</pre></div>
-  <div class="yousee"><b>You'll see:</b> Ana turn your one-sentence goal into a concrete starting scope — the surfaces to validate first and the questions to reconcile — so the rest of the workshop builds toward something real, not everything at once.</div>
+  <h2>0.3 · You don't fill anything out — Ana drafts it</h2>
+  <p>There's no questionnaire and no 50-question worksheet to work through. In <b>Module 1</b>, Ana looks at your actual data, asks a handful of sharp scoping questions, recommends the archetype that fits, and drafts your North Star (a short purpose statement plus the 6–8 questions it must answer in 30 days) as a reviewed <code>north_star.md</code>. Your job is to confirm or redirect — not to do homework here.</p>
+  <div class="yousee"><b>Next:</b> Module 1 turns this into the written North Star the rest of the workshop builds toward.</div>
 
   <div class="callout"><span class="label">Why the model gets cheaper as you use it</span>
     <p>This isn't just good practice — it's the design. An agent that re-discovers your warehouse on every question pays an "amnesia tax" (most of its tokens go to rediscovery, and results aren't reproducible). Reading a known model first and committing what it learns inverts that: discovery is paid <b>once</b> and amortized across every future question. See TextQL's research, <i>"Malleability Is All You Need"</i> (VLDB 2026) — a measured ~30% token reduction and a model that gets more reliable the more it's used.</p>
@@ -235,7 +233,7 @@
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You can state your North Star in one sentence</label>
     <label><input type="checkbox"> You picked an archetype (BI parity / care-gap / risk adjustment)</label>
-    <label><input type="checkbox"> You have a shortlist of ~20 questions to target first</label>
+    <label><input type="checkbox"> You know Module 1 is where Ana drafts your North Star from your data — no worksheet to fill out</label>
   </div>
 <p style="margin-top:14px"><b>Not sure which archetype?</b> That is fine &mdash; in <b>Module 1</b> Ana looks at your data and recommends one. You do not have to decide here.</p>
   </section>

@@ -166,18 +166,18 @@
   <p>A hands-on workshop that takes you from <i>"I have this ontology repo and nothing else"</i> to <i>"I'm asking Ana governed questions about my own custody and portfolio data — and the model grows itself as I work"</i> — mostly without leaving the Ana chat window.</p>
   <p>The <b>Wealth &amp; Asset Management Starter Pack</b> is a <b>document of domain expertise</b> over a portfolio/custody book of record — clients, households, accounts, positions, securities, transactions, advisors, benchmarks, fees, AUM, flows, performance, allocation, concentration, and revenue quality. It's <b>just files</b> (Markdown + <code>.tql</code>) in a git repo: <a href="https://github.com/TextQLLabs/ontology-wealth-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-wealth-starter</code></a> — <b>your TextQL team grants access and sets up your own fork</b> (your adaptations live in your fork; the template stays pristine).</p>
   <div class="callout warn"><span class="label">This is not a form to fill out</span>
-    <p>The starter is a <b>warm start, not a finished model to deploy</b>. Treating it as "close enough" and shipping it is the fastest way to build a model nobody trusts. So we begin in Module 0 by naming your <b>North Star</b> — what someone does differently on Monday when this works — then let the model <b>accrete from real questions</b>: Ana reads what's known, explores only the frontier, answers, and proposes additions back as git commits you review. (The repo's <a href="https://github.com/TextQLLabs/ontology-wealth-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a> and <a href="https://github.com/TextQLLabs/ontology-wealth-starter/blob/main/QUESTION_LIBRARY.md" target="_blank" rel="noopener"><code>QUESTION_LIBRARY.md</code></a> are your starting points.)</p>
+    <p>The starter is a <b>warm start, not a finished model to deploy</b>. Treating it as "close enough" and shipping it is the fastest way to build a model nobody trusts. So we begin by naming your <b>North Star</b> — what someone does differently on Monday when this works — and in <b>Module 1</b> you let Ana look at your data and draft it for you. Then the model <b>accretes from real questions</b>: Ana reads what's known, explores only the frontier, answers, and proposes additions back as git commits you review. (The repo's <a href="https://github.com/TextQLLabs/ontology-wealth-starter/blob/main/NORTH_STAR.md" target="_blank" rel="noopener"><code>NORTH_STAR.md</code></a> is your starting point — no questionnaire to fill out.)</p>
   </div>
 
   <h2>What you'll do</h2>
   <div class="hero-grid">
-    <div class="hero-card"><div class="n">MODULE 0</div><h3>Set your North Star</h3><p>Name what the ontology is <i>for</i>, pick an archetype, choose the ~20 questions that matter.</p></div>
     <div class="hero-card"><div class="n">MODULE 0</div><h3>Tour the six layers</h3><p>Entity spine, metrics, classification, governance, decisions, validation.</p></div>
-    <div class="hero-card"><div class="n">MODULE 1</div><h3>Connect three things</h3><p>The ontology repo, your warehouse (read-only), your documents.</p></div>
-    <div class="hero-card"><div class="n">MODULE 2</div><h3>Validate against your schema</h3><p>Ana diffs the model vs. your tables and opens the fix as a PR.</p></div>
-    <div class="hero-card"><div class="n">MODULE 3</div><h3>Light up the classification</h3><p>Asset-class &amp; GICS look-through, security-identifier crosswalks — zero warehouse writes.</p></div>
-    <div class="hero-card"><div class="n">MODULE 4</div><h3>Ask governed questions</h3><p>AUM, net flows, return, allocation, concentration, fee yield — with the SQL shown.</p></div>
-    <div class="hero-card"><div class="n">MODULE 5+6</div><h3>Govern &amp; customize</h3><p>MNPI, PII, and small-cell defaults, golden queries, and making the definitions yours.</p></div>
+    <div class="hero-card"><div class="n">MODULE 1</div><h3>Define your North Star</h3><p>Let Ana look at your data and draft what the ontology is <i>for</i> — saved as <code>north_star.md</code>.</p></div>
+    <div class="hero-card"><div class="n">MODULE 2</div><h3>Connect three things</h3><p>The ontology repo, your warehouse (read-only), your documents.</p></div>
+    <div class="hero-card"><div class="n">MODULE 3</div><h3>Validate against your schema</h3><p>Ana diffs the model vs. your tables and opens the fix as a PR.</p></div>
+    <div class="hero-card"><div class="n">MODULE 4</div><h3>Light up the classification</h3><p>Asset-class &amp; GICS look-through, security-identifier crosswalks — zero warehouse writes.</p></div>
+    <div class="hero-card"><div class="n">MODULE 5</div><h3>Ask governed questions</h3><p>AUM, net flows, return, allocation, concentration, fee yield — with the SQL shown.</p></div>
+    <div class="hero-card"><div class="n">MODULE 6+7</div><h3>Govern &amp; customize</h3><p>MNPI, PII, and small-cell defaults, golden queries, and making the definitions yours.</p></div>
   </div>
 
   <div class="callout"><span class="label">What ships in the box</span>
@@ -201,7 +201,7 @@
 
 <!-- ════════════════ NORTH STAR ════════════════ -->
 <section class="page" id="northstar" data-title="Start with Your North Star" data-group="Getting Started" data-time="15 min">
-  <div class="kicker">Module 0 · Before you connect anything</div>
+  <div class="kicker">Before you build</div>
   <h1>Start with Your North Star</h1>
   <div class="page-meta"><span>⏱️ <b>15 min</b> · conversation, not configuration</span><span>🎯 Goal: know what your ontology is <i>for</i> before you build it</span></div>
 
@@ -222,11 +222,8 @@
     <tr><td><b>C · Household rollup &amp; suitability</b></td><td>"Report at the relationship, not the account"</td><td><code>advisor_book</code>, <code>client_attrition</code>, <code>aum</code> by segment + <code>identity-resolution.md</code> and MNPI/PII governance.</td></tr>
   </table>
 
-  <h2>0.3 · Choose the ~20 questions that matter</h2>
-  <p>The repo's <a href="https://github.com/TextQLLabs/ontology-wealth-starter/blob/main/QUESTION_LIBRARY.md" target="_blank" rel="noopener"><code>QUESTION_LIBRARY.md</code></a> lists the questions a mature wealth / asset-management org should answer in seconds. It's <b>not a checklist to implement</b> — put it in front of stakeholders, watch which ones make people lean in, and start with that handful. You'll build for those, reconcile them, and let everything else accrete from use.</p>
-  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Read NORTH_STAR.md and QUESTION_LIBRARY.md in the ontology repo. Given that our North Star is [your one-sentence North Star], tell me which archetype fits, which 15–20 questions from the library I should target first, and which governed surfaces and classification those questions depend on.</pre></div>
-  <div class="yousee"><b>You'll see:</b> Ana turn your one-sentence goal into a concrete starting scope — the surfaces to validate first and the questions to reconcile — so the rest of the workshop builds toward something real, not everything at once.</div>
+  <h2>0.3 · Let Ana write it down (next module)</h2>
+  <p>You don't pick from a question bank or fill out a worksheet. In <b>Module 1</b> you let Ana look at your actual data, run a short scoping conversation, and draft your North Star — one paragraph on what the ontology is <i>for</i>, plus the 6-8 questions it must answer in 30 days — saved as <code>north_star.md</code> and proposed as a reviewed change. The archetypes above are examples to spark yours, not a menu; Ana recommends one from what it sees.</p>
 
   <div class="callout"><span class="label">Why the model gets cheaper as you use it</span>
     <p>This isn't just good practice — it's the design. An agent that re-discovers your warehouse on every question pays an "amnesia tax" (most of its tokens go to rediscovery, and results aren't reproducible). Reading a known model first and committing what it learns inverts that: discovery is paid <b>once</b> and amortized across every future question. See TextQL's research, <i>"Malleability Is All You Need"</i> (VLDB 2026) — a measured ~30% token reduction and a model that gets more reliable the more it's used.</p>
@@ -234,9 +231,9 @@
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You can state your North Star in one sentence</label>
-    <label><input type="checkbox"> You picked an archetype (BI parity / risk &amp; concentration / household rollup)</label>
-    <label><input type="checkbox"> You have a shortlist of ~20 questions to target first</label>
+    <label><input type="checkbox"> You know the three archetypes (BI parity / risk &amp; concentration / household rollup) — examples to spark yours, not a menu</label>
   </div>
+  <p style="margin-top:14px"><b>Not sure which archetype?</b> That is fine &mdash; in <b>Module 1</b> Ana looks at your data and recommends one. You do not have to decide here.</p>
 </section>
 
 <!-- ════════════════ MODULE 0 ════════════════ -->
@@ -270,12 +267,34 @@
 </section>
 
 <!-- ════════════════ MODULE 1 ════════════════ -->
-<section class="page" id="m1" data-title="Module 1 · Connect Three Things" data-group="Hands-On Modules" data-time="20 min">
-  <div class="kicker">Module 1</div>
+  <section class="page" id="m1" data-title="Module 1 · Define Your North Star" data-group="Hands-On Modules" data-time="15 min">
+    <div class="kicker">Module 1</div>
+    <h1>Define Your North Star with Ana</h1>
+    <div class="page-meta"><span>&#9201;&#65039; <b>15 min</b> &middot; with Ana</span><span>&#127919; Goal: turn the conversation above into a written North Star + the archetype that fits</span></div>
+    <p>The intro is the <em>why</em>. This is the <em>doing</em>: rather than fill out a form, you let Ana look at your actual data, ask the right scoping questions, and write the North Star down. That single artifact (<code>north_star.md</code>) is what every later module builds toward.</p>
+    <p>Paste this prompt. Ana runs the scoping conversation &mdash; answer a few questions at a time and she converges on your archetype and a concrete North Star.</p>
+    <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Help me define the North Star for our ontology before we build anything.
+1. Look at the data connected to this thread and summarize in 3-4 lines what we have: the key tables, the grain, and the domains it covers.
+2. Then ask me 5-7 sharp scoping questions to pin down what we are really doing - who will use this, what decision it changes on Monday morning, whether we are after BI parity / portfolio risk and concentration / household and relationship rollup and suitability, what "working" looks like in 30 days, and where our data is messiest. Ask a few at a time, not all at once.
+3. From my answers plus the data, recommend the archetype that fits (A BI parity, B portfolio risk & concentration, or C household/relationship rollup & suitability) and draft our North Star: one short paragraph on what this ontology is for, plus the 6-8 questions it must answer in 30 days.
+4. Save it as north_star.md in the ontology and propose it as a reviewed change, so every later step builds toward it.</pre></div>
+    <div class="yousee"><b>You will see:</b> Ana summarize your data, ask scoping questions, recommend an archetype with a reason, and draft a <code>north_star.md</code> &mdash; a paragraph plus the questions that define "done." Review it, push back, ratify.</div>
+    <div class="callout"><span class="label">Why a prompt, not a 50-question checklist</span><p>No giant pre-written question bank that nobody maintains. Ana generates the questions that matter <em>for your data and your goal</em>, on the spot &mdash; and the output is a sharp use-case definition, not a worksheet.</p></div>
+    <div class="checkpoint"><h4>&#9989; Checkpoint</h4>
+      <label><input type="checkbox"> You have a written <code>north_star.md</code> (purpose + the 6-8 questions it must answer)</label>
+      <label><input type="checkbox"> You picked an archetype (A / B / C), or Ana recommended one and you agreed</label>
+      <label><input type="checkbox"> It names something real that changes on Monday morning, not "model all of wealth/asset management"</label>
+    </div>
+  </section>
+
+<!-- ════════════════ MODULE 2 ════════════════ -->
+<section class="page" id="m2" data-title="Module 2 · Connect Three Things" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 2</div>
   <h1>Connect Three Things</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat</span></div>
 
-  <h2>1.1 · Connect the ontology repo to Ana</h2>
+  <h2>2.1 · Connect the ontology repo to Ana</h2>
   <p>This is the key step. In TextQL, add a <b>Git connector</b> and point it at <b>your fork</b> of the starter repo (<a href="https://github.com/TextQLLabs/ontology-wealth-starter" target="_blank" rel="noopener"><code>TextQLLabs/ontology-wealth-starter</code></a> — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every classification rule — as a reference she reads on demand.</p>
   <div class="callout"><span class="label">No second source of truth</span>
     <p>You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.</p>
@@ -285,16 +304,16 @@
     <figcaption>The ontology repo connected — Ana reads it as ground truth.</figcaption>
   </figure>
 
-  <h2>1.2 · Connect your data warehouse</h2>
+  <h2>2.2 · Connect your data warehouse</h2>
   <p>Add the connector for the warehouse holding your custody / portfolio-accounting data (Redshift, BigQuery, Snowflake, Databricks…). <b>Read-only access is enough</b> — and it's the norm: firms don't want analytics artifacts written into the system of record.</p>
   <div class="callout warn"><span class="label">Use your books-and-records warehouse</span>
     <p>Client financial data is sensitive PII in a regulated domain. Use your enterprise, in-region warehouse and keep data in the contracted region (SEC Rule 17a-4 books-and-records) — see <code>ontology/notes/governance-mnpi-pii.md</code>.</p>
   </div>
 
-  <h2>1.3 · (Optional) Bring in your documents</h2>
+  <h2>2.3 · (Optional) Bring in your documents</h2>
   <p>Your real-world context — IPS templates, the metrics wiki, the spreadsheet where someone defined "managed AUM," dbt models, LookML — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology and can fold what she learns into the model. This is corpus, not migration.</p>
 
-  <h2>1.4 · Say hello</h2>
+  <h2>2.4 · Say hello</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Read the ontology repo and give me a tour: what entities, metrics, and classification groupers are defined, and what governed questions am I able to ask once my warehouse is validated?</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana describe the model from the repo itself — proof the Git connector works and the ontology is being read as ground truth.</div>
@@ -306,18 +325,18 @@
   </div>
 </section>
 
-<!-- ════════════════ MODULE 2 ════════════════ -->
-<section class="page" id="m2" data-title="Module 2 · Validate Against Your Schema" data-group="Hands-On Modules" data-time="25 min">
-  <div class="kicker">Module 2</div>
+<!-- ════════════════ MODULE 3 ════════════════ -->
+<section class="page" id="m3" data-title="Module 3 · Validate Against Your Schema" data-group="Hands-On Modules" data-time="25 min">
+  <div class="kicker">Module 3</div>
   <h1>Validate the Model Against Your Schema</h1>
   <div class="page-meta"><span>⏱️ <b>25 min</b></span><span>🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — without writing SQL</span></div>
 
-  <h2>2.1 · The dry run — required</h2>
+  <h2>3.1 · The dry run — required</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Look at the ontology repo, then inspect my warehouse. Pull the information schema for my custody / portfolio-accounting tables and tell me where the ontology's expected table and column names don't match what I actually have. Propose the exact changes to ontology/schema.tql.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names. (A ready-made version of this check lives in <code>validation/dry-run-prompt.md</code>.)</div>
 
-  <h2>2.2 · Run the validator — required</h2>
+  <h2>3.2 · Run the validator — required</h2>
   <p>The dry run is discovery; <code>validation/validate_tql.py</code> is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles. <b>Ana runs it for you</b> — no terminal needed:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Run validation/validate_tql.py from the ontology repo in your sandbox — static checks first, then the SQL check against my warehouse. Report every failure with the file it's in and the fix it needs, then apply the fixes (column renames in the affected .tql, table renames in schema.tql only) and re-run until clean.</pre></div>
@@ -326,7 +345,7 @@
     <p>The same gate runs locally: <code>python3 validation/validate_tql.py</code> (static — no warehouse needed) · <code>--check-sql</code> (paste the output into Ana: rows = missing columns) · <code>--dsn "&lt;dsn&gt;" --explain</code> (live column check + compile test).</p>
   </div>
 
-  <h2>2.3 · Apply the fixes as a PR — required</h2>
+  <h2>3.3 · Apply the fixes as a PR — required</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Make those changes and open a pull request.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana edit the files and open a reviewable PR in <b>your</b> repo. Every physical table name lives in one place (<code>ontology/schema.tql</code>) — re-point it and the metric logic stays put. If you have a resolved household table, point <code>household_grain</code> at it: one line.</div>
@@ -339,7 +358,7 @@
     <p>Every firm's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those <i>before</i> you trust a number is the difference between a defensible metric and a debugging session in front of stakeholders.</p>
   </div>
 
-  <h2>2.4 · Decide your grain &amp; verify your joins — required</h2>
+  <h2>3.4 · Decide your grain &amp; verify your joins — required</h2>
   <p>Two decisions shape everything downstream, and both are prompts. The first is the most important number-corrupting trap in this domain:</p>
   <div class="prompt"><span class="tag">PROMPT — GRAIN &amp; CADENCE</span><button>Copy</button>
 <pre>Read ontology/notes/grain.md, then inspect my data. Confirm: is `position` a per-date snapshot (one row per account × security × as_of_date), and is `account_value` a series? What's the snapshot cadence (daily vs month-end), and which valuation date is my horizon? Set analysis_end_date in schema.tql to a real snapshot date, and record the decision in databases/[ourschema]/README.md.</pre></div>
@@ -364,15 +383,15 @@
   </div>
 </section>
 
-<!-- ════════════════ MODULE 3 ════════════════ -->
-<section class="page" id="m3" data-title="Module 3 · The Classification Layer" data-group="Hands-On Modules" data-time="20 min">
-  <div class="kicker">Module 3</div>
+<!-- ════════════════ MODULE 4 ════════════════ -->
+<section class="page" id="m4" data-title="Module 4 · The Classification Layer" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 4</div>
   <h1>Light Up the Classification Layer</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: grouper-powered questions — asset-class &amp; GICS look-through, FIGI crosswalks — with zero writes to your warehouse</span></div>
 
   <p>The classification seeds (asset-class taxonomy, GICS sector structure, FIGI identifier crosswalk) are <b>already committed in the repo</b> — nothing to load into your warehouse. Ana joins them in her Python sandbox at query time (see <code>ontology/notes/terminology-join-pattern.md</code>), so the grouper logic works with <b>zero warehouse writes</b> — the system of record stays pristine.</p>
 
-  <h2>3.1 · Prove the groupers work</h2>
+  <h2>4.1 · Prove the groupers work</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Using the ontology's classification layer, show me my firm-wide asset-class allocation, then roll the equity sleeve up to its GICS sectors. Explain how you joined the asset-class and GICS-structure seeds without writing to the warehouse.</pre></div>
   <div class="yousee"><b>You'll see:</b> raw instruments resolved to meaningful asset-class and sector buckets, with the join-in-sandbox pattern explained — and weights that sum to 1.000 at one snapshot date.</div>
@@ -381,7 +400,7 @@
     <p><b>The identifier tuple.</b> A security reference is <i>original (ticker) + normalized (FIGI) + system + version</i>, not a column (<code>notes/coding-tuple.md</code>). Join on the normalized, license-clean <b>FIGI</b> — never parse tickers, which are reused across venues and change on corporate actions. <b>Look-through &amp; version.</b> A fund hides its underlying exposure, and GICS gets revised (the 2018 real-estate split). Decide whether allocation is top-level or looks through to underlying issuers, and name the GICS version when a number depends on it (<code>notes/asset-classification.md</code>).</p>
   </div>
 
-  <h2>3.2 · Refresh or extend the reference data — optional</h2>
+  <h2>4.2 · Refresh or extend the reference data — optional</h2>
   <p><b>You don't need this on day one</b> — the current seeds are already committed. Come back when a taxonomy updates (GICS is revised periodically) or when you need to hydrate the FIGI crosswalk against your security master. And you don't run the scripts yourself — Ana does:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Run reference/terminology/load_terminology.py in your sandbox to regenerate the asset_class and gics_structure seed CSVs, then open a PR with the refreshed files and a summary of what changed between versions.</pre></div>
@@ -396,30 +415,30 @@
   </div>
 </section>
 
-<!-- ════════════════ MODULE 4 ════════════════ -->
-<section class="page" id="m4" data-title="Module 4 · Ask Governed Questions" data-group="Hands-On Modules" data-time="20 min">
-  <div class="kicker">Module 4</div>
+<!-- ════════════════ MODULE 5 ════════════════ -->
+<section class="page" id="m5" data-title="Module 5 · Ask Governed Questions" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 5</div>
   <h1>Ask Governed Questions</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: the payoff — consistent, defensible answers routed through governed definitions, with the SQL shown</span></div>
 
   <p>Run each of these against your validated warehouse. For every answer, note that Ana cites the governed surface and shows the rendered SQL. The values below are the starter's <b>pinned golden values</b> from <code>validation/golden-queries.md</code> — verified against a synthetic wealth warehouse on Databricks (horizon 2026-05-31, window 2025-06-01…2026-05-31). Yours will differ; the point is that the same call gives the same number every time.</p>
 
-  <h2>4.1 · AUM (the firm-wide number)</h2>
+  <h2>5.1 · AUM (the firm-wide number)</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>What's our firm-wide AUM as of the horizon? Use the governed point-in-time definition, then show me the average-12m (billing/KPI) basis too — and explain why they differ.</pre></div>
   <div class="yousee"><b>You'll see:</b> AUM from the <code>account_value</code> series at one valuation date (golden: <b>$60,372,722,173</b> across <b>102,340</b> open accounts), not a sum of position snapshots — and the average-12m basis (≈$58.6B) used for billing. <code>point_in_time ≠ average_12m</code>; the surface pins both (<code>notes/aum-definition.md</code>).</div>
 
-  <h2>4.2 · Net flows (organic growth)</h2>
+  <h2>5.2 · Net flows (organic growth)</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>What were net flows (net new money) for the trailing 12 months, decomposed into gross inflows and gross outflows? Use the governed definition and confirm it excludes market movement.</pre></div>
   <div class="yousee"><b>You'll see:</b> the organic-growth number isolated from market beta (golden: net <b>−$1,672,009,009</b> = in $648,148,543 + out −$2,320,157,552), sourced from <code>account_value.net_external_flow</code> (<code>notes/aum-definition.md</code>).</div>
 
-  <h2>4.3 · Return (TWR vs MWR)</h2>
+  <h2>5.3 · Return (TWR vs MWR)</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>What was our time-weighted return over the trailing 12 months? Walk me through the governed definition — why TWR is the default, how flows are removed, and how it differs from the money-weighted (client-experience) number.</pre></div>
   <div class="yousee"><b>You'll see:</b> the GIPS-standard TWR (golden: <b>+10.15%</b>), with client flows geometrically removed, and MWR (Modified Dietz) exposed explicitly — never silently swapped. They answer different questions: manager skill vs. the client's dollar experience (<code>notes/return-definition.md</code>).</div>
 
-  <h2>4.4 · Allocation and concentration</h2>
+  <h2>5.4 · Allocation and concentration</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Show our asset-class allocation at the horizon, and then how many holdings exceed 10% of their account (and how many accounts that affects, with the max weight). Cite the governed surfaces, and confirm both are computed at ONE as_of_date.</pre></div>
   <div class="yousee"><b>You'll see:</b> allocation weights that sum to 1.000 (golden: US_EQUITY <b>0.4436</b> · FIXED_INCOME <b>0.3446</b> · INTL_EQUITY <b>0.1571</b> · CASH <b>0.0547</b>), and a concentration breach list (golden: <b>201,120</b> holdings &gt;10% across <b>60,701</b> accounts, max weight <b>0.8601</b>) — both point-in-time, both vs. the <i>account</i> denominator.</div>
@@ -427,7 +446,7 @@
     <p>The governed surface flags a holding's weight in its <b>own account</b> above a threshold (default 10%), at one snapshot. <code>scope="issuer"</code> combines all share classes of one issuer — the more conservative view. Whether diversified funds are looked-through or exempt is a decision you pin (<code>notes/concentration-definition.md</code>); on the synthetic set, issuer == position because <code>dim_security</code> has no issuer grain.</p>
   </div>
 
-  <h2>4.5 · Effective fee rate (revenue quality)</h2>
+  <h2>5.5 · Effective fee rate (revenue quality)</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>What's our effective fee rate (realized yield, bps) over the trailing 12 months? Use the governed definition and show the average-AUM denominator logic.</pre></div>
   <div class="yousee"><b>You'll see:</b> realized yield as fee revenue / average AUM × 10,000 (golden: $306,644,253 / $58,582,267,503 = <b>52.34 bps</b>), with the billing-basis <i>average</i> AUM denominator — not point-in-time (<code>notes/fee-definition.md</code>).</div>
@@ -436,7 +455,7 @@
     <p>Metrics like AUM, return, and fee yield can be computed several ways (point-in-time vs average AUM, TWR vs MWR, gross vs net). The ontology pins one governed definition — with the decision recorded in <code>ontology/notes/</code> — so Finance, the CIO office, and the advisors stop disagreeing.</p>
   </div>
 
-  <h2>4.6 · When the answer isn't governed yet — watch the model grow</h2>
+  <h2>5.6 · When the answer isn't governed yet — watch the model grow</h2>
   <p>Now ask something from your shortlist that the starter <b>doesn't</b> already cover. This is the important beat: a starter pack is a head start, not the finished model. (Even the synthetic dataset has honest gaps — no benchmark-return series, and undated closures — recorded openly in <code>golden-queries.md</code> and <code>schema-mapping.md</code>.)</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Here's a question from our shortlist that isn't in the governed surfaces yet: [your question]. Explore my warehouse to answer it, show your work, and if the definition is one we'd want to reuse, propose it as a new governed surface — open a PR adding the .tql and a notes file recording the decision.</pre></div>
@@ -452,15 +471,15 @@
   </div>
 </section>
 
-<!-- ════════════════ MODULE 5 ════════════════ -->
-<section class="page" id="m5" data-title="Module 5 · Governance Defaults" data-group="Hands-On Modules" data-time="15 min">
-  <div class="kicker">Module 5</div>
+<!-- ════════════════ MODULE 6 ════════════════ -->
+<section class="page" id="m6" data-title="Module 6 · Governance Defaults" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 6</div>
   <h1>Governance Defaults</h1>
   <div class="page-meta"><span>⏱️ <b>15 min</b></span><span>🎯 Goal: see the compliance behavior that's on by default — and verify it fires</span></div>
 
   <p>Layer 4 makes compliance the default, not an add-on: <b>PII roles</b> (a join key is not an output column), <b>small-cell suppression</b>, <b>MNPI / information barriers</b> on position-level surfaces, and <b>suitability / GIPS</b> framing. The behavior lives in <code>ontology/notes/governance-mnpi-pii.md</code> and <code>config/org_context.md</code> — files you can read, review, and adapt. The domain is regulated (SEC / FINRA in the US, MiFID II in the EU), so the starter ships conservative.</p>
 
-  <h2>5.1 · Inventory your identifiers — day one</h2>
+  <h2>6.1 · Inventory your identifiers — day one</h2>
   <p><code>governance-mnpi-pii.md</code> §0 classifies every direct identifier in the connected schema into exactly one role — and the key distinction is that <b>using an identifier as a join key is not the same as outputting it</b>:</p>
   <table>
     <tr><th>Identifier</th><th>Role</th></tr>
@@ -474,15 +493,15 @@
   <div class="yousee"><b>You'll see:</b> a per-column classification your compliance team signs off on — the rules are templates tuned to <i>your</i> regime, and they can be tightened freely but never loosened without a reviewed, attributable decision.</div>
 
   <div class="callout warn"><span class="label">Facilitators: pre-flight these tests</span>
-    <p>Run 5.2 and 5.3 yourself <b>before</b> any session with compliance in the room. These guardrails are <b>instruction-layer enforcement</b> — they live in the governance context files Ana reads, plus persona/RBAC (<code>ana.md</code>), which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with <code>governance-mnpi-pii.md</code> and <code>config/org_context.md</code>) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the <i>check</i> is part of the story — "here's the file, here's the behavior, here's how we audit it."</p>
+    <p>Run 6.2 and 6.3 yourself <b>before</b> any session with compliance in the room. These guardrails are <b>instruction-layer enforcement</b> — they live in the governance context files Ana reads, plus persona/RBAC (<code>ana.md</code>), which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with <code>governance-mnpi-pii.md</code> and <code>config/org_context.md</code>) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the <i>check</i> is part of the story — "here's the file, here's the behavior, here's how we audit it."</p>
   </div>
 
-  <h2>5.2 · Test the small-cell rule</h2>
+  <h2>6.2 · Test the small-cell rule</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Break down AUM and client count by advisor × segment for a review. Apply our suppression rules and tell me what you suppressed and why.</pre></div>
   <div class="yousee"><b>You'll see:</b> cells whose client/household count is under <code>min_cell_size</code> suppressed with an explanation — and never an emitted client identifier. The starter default is <b>5</b> (books and segments are smaller than payer populations), configured in <code>config/org_context.md</code>. <i>If suppression doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.</i></div>
 
-  <h2>5.3 · Test MNPI / information-barrier gating</h2>
+  <h2>6.3 · Test MNPI / information-barrier gating</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Show me position-level holdings detail for [a restricted / watch-listed name], across desks.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana decline or constrain the request per §2 — holdings/orders/pipeline can be MNPI, default personas see aggregates not position-level detail for restricted lists, and cross-desk queries that would reveal another desk's positions are gated. The ontology must not become a side channel around the information barrier; she points to the policy file that governs it.</div>
@@ -493,19 +512,19 @@
   </div>
 </section>
 
-<!-- ════════════════ MODULE 6 ════════════════ -->
-<section class="page" id="m6" data-title="Module 6 · Validate Numbers & Make It Yours" data-group="Hands-On Modules" data-time="20 min">
-  <div class="kicker">Module 6</div>
+<!-- ════════════════ MODULE 7 ════════════════ -->
+<section class="page" id="m7" data-title="Module 7 · Validate Numbers & Make It Yours" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 7</div>
   <h1>Validate the Numbers &amp; Make It Yours</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: pin known-correct values, then adapt the starter's definitions to your firm — in your repo</span></div>
 
-  <h2>6.1 · Run the golden queries</h2>
+  <h2>7.1 · Run the golden queries</h2>
   <p>The starter's golden values are already <b>pinned and verified</b> against the synthetic warehouse (see <code>validation/golden-queries.md</code>, with the exact <code>dim_*</code>/<code>fact_*</code> mapping in <code>validation/schema-mapping.md</code>). Against <b>your</b> warehouse, re-pin them to numbers you trust:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Run the golden queries from validation/golden-queries.md against my warehouse — AUM, net flows, TWR, allocation, concentration, advisor book, fee rate. For each, compare to a reference number I trust and flag any drift. Where we differ, explain whether it's data, definition, or time-window. Also assert the invariants: allocation weights sum to 1.000, and net_flows = gross_inflows + gross_outflows.</pre></div>
   <div class="yousee"><b>You'll see:</b> accuracy checked, not asserted — and a triage of any mismatch into data vs. definition vs. window. One invariant to expect: <b>AUM ≠ Σ positions</b> (governed AUM comes from <code>account_value</code>; positions exclude cash / held-away). A gap there is a data-quality signal, not a metric bug — <code>notes/grain.md</code>.</div>
 
-  <h2>6.2 · Customize a definition</h2>
+  <h2>7.2 · Customize a definition</h2>
   <p>Your firm inevitably defines something differently — an AUM basis, a TWR vs MWR choice, a house concentration threshold. Use the starter's own <b>scar</b> as the worked example: the concentration threshold once flagged <i>every</i> holding because a bare <code>DECIMAL</code> cast is <code>DECIMAL(10,0)</code> on Spark, which rounded the <code>0.10</code> threshold to <code>0</code>. The fix — <code>CAST(${threshold} AS DECIMAL(18,6))</code> — is pinned in the golden file so the regression can never come back silently.</p>
   <div class="callout warn"><span class="label">The field lesson — why golden values exist</span>
     <p>Before the cast fix, <code>concentration_risk</code> returned the full <b>303,448</b> holdings (every holding "breached"). After fixing the precision to <code>DECIMAL(18,6)</code>, it returns <b>201,120</b> — the real count over 10%. That delta is exactly why every governed surface gets a pinned golden value: a definition can be <i>structurally</i> right and <i>numerically</i> wrong, and only a pinned number catches it (<code>notes/concentration-definition.md</code> + the <code>concentration_risk.tql</code> header + <code>golden-queries.md</code>).</p>
@@ -514,7 +533,7 @@
 <pre>Our house concentration limit is [your %], not 10% — and we want issuer scope (all share classes combined), with funds looked-through, not top-level. Update concentration_risk.tql in our repo to take that limit, record the decision and the rejected default in notes/concentration-definition.md, and open a PR. Add a golden-query test pinning the new breach count — and keep the CAST(... AS DECIMAL(18,6)) precision guard so the threshold doesn't round.</pre></div>
   <div class="yousee"><b>You'll see:</b> the change land as a reviewable PR <b>in your repo</b>, the rejected default recorded, and a new pinned golden value — the template stays pristine upstream; your adaptations are yours. <i>(Other good first customizations: TWR vs MWR as your client-report default, or point-in-time vs average-12m AUM for your KPI.)</i></div>
 
-  <h2>6.3 · Localize the vocabulary</h2>
+  <h2>7.3 · Localize the vocabulary</h2>
   <p><code>ontology/notes/glossary.md</code> holds the canonical wealth terms — client, household/relationship, account/portfolio, AUM, net flows, return, active return, asset class, concentration, effective fee rate, advisor/PM, security identifier — each with a <b>sub-vertical variance column</b> flagging where retail wealth, institutional asset management, and brokerage deployments diverge (households vs. one-entity clients, advisor vs. PM attribution, AUM vs. AUA/AUS…).</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Walk the glossary's variance column for our sub-vertical ([retail wealth / institutional asset management / brokerage]). For each term that differs at our firm, propose the override in glossary.md — keep the term → definition → resolves-via pattern — and open it as one PR.</pre></div>
@@ -532,7 +551,7 @@
   <h1>Wrap-Up 🎉</h1>
   <p>You went from an empty environment to governed wealth &amp; asset-management analytics — and, more importantly, to a model that <b>grows itself</b>:</p>
   <ul>
-    <li><b>North Star set:</b> you named what the ontology is <i>for</i>, picked an archetype, and chose the questions that matter — before touching the schema</li>
+    <li><b>North Star set:</b> Ana looked at your data and drafted what the ontology is <i>for</i> — a written <code>north_star.md</code> with the questions that matter — before touching the schema</li>
     <li><b>Connected:</b> ontology repo (live, git-backed) + warehouse (read-only) + your documents</li>
     <li><b>Validated:</b> the model diffed against your actual schema, fixed via PR — grain and identity resolved first</li>
     <li><b>Classification live:</b> asset-class / GICS / FIGI groupers joining in-sandbox, zero warehouse writes</li>
