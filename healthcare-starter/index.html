@@ -201,7 +201,7 @@
 
 <!-- ════════════════ NORTH STAR ════════════════ -->
 <section class="page" id="northstar" data-title="Start with Your North Star" data-group="Getting Started" data-time="15 min">
-  <div class="kicker">Module 0 · Before you connect anything</div>
+  <div class="kicker">Before you build</div>
   <h1>Start with Your North Star</h1>
   <div class="page-meta"><span>⏱️ <b>15 min</b> · conversation, not configuration</span><span>🎯 Goal: know what your ontology is <i>for</i> before you build it</span></div>
 
@@ -237,7 +237,8 @@
     <label><input type="checkbox"> You picked an archetype (BI parity / care-gap / risk adjustment)</label>
     <label><input type="checkbox"> You have a shortlist of ~20 questions to target first</label>
   </div>
-</section>
+<p style="margin-top:14px"><b>Not sure which archetype?</b> That is fine &mdash; in <b>Module 1</b> Ana looks at your data and recommends one. You do not have to decide here.</p>
+  </section>
 
 <!-- ════════════════ MODULE 0 ════════════════ -->
 <section class="page" id="m0" data-title="Module 0 · The Six Layers" data-group="Getting Started" data-time="15 min">
@@ -269,9 +270,29 @@
   </div>
 </section>
 
+  <section class="page" id="m1" data-title="Module 1 · Define Your North Star" data-group="Hands-On Modules" data-time="15 min">
+    <div class="kicker">Module 1</div>
+    <h1>Define Your North Star with Ana</h1>
+    <div class="page-meta"><span>&#9201;&#65039; <b>15 min</b> &middot; with Ana</span><span>&#127919; Goal: turn the conversation above into a written North Star + the archetype that fits</span></div>
+    <p>The intro is the <em>why</em>. This is the <em>doing</em>: rather than fill out a form, you let Ana look at your actual data, ask the right scoping questions, and write the North Star down. That single artifact (<code>north_star.md</code>) is what every later module builds toward.</p>
+    <p>Paste this prompt. Ana runs the scoping conversation &mdash; answer a few questions at a time and she converges on your archetype and a concrete North Star.</p>
+    <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Help me define the North Star for our ontology before we build anything.
+1. Look at the data connected to this thread and summarize in 3-4 lines what we have: the key tables, the grain, and the domains it covers.
+2. Then ask me 5-7 sharp scoping questions to pin down what we are really doing - who will use this, what decision it changes on Monday morning, whether we are after BI parity / care-gap and quality / risk adjustment / operational queries, what "working" looks like in 30 days, and where our data is messiest. Ask a few at a time, not all at once.
+3. From my answers plus the data, recommend the archetype that fits (A BI parity, B care-gap/quality, or C risk adjustment) and draft our North Star: one short paragraph on what this ontology is for, plus the 6-8 questions it must answer in 30 days.
+4. Save it as north_star.md in the ontology and propose it as a reviewed change, so every later step builds toward it.</pre></div>
+    <div class="yousee"><b>You will see:</b> Ana summarize your data, ask scoping questions, recommend an archetype with a reason, and draft a <code>north_star.md</code> &mdash; a paragraph plus the questions that define "done." Review it, push back, ratify.</div>
+    <div class="callout"><span class="label">Why a prompt, not a 50-question checklist</span><p>No giant pre-written question bank that nobody maintains. Ana generates the questions that matter <em>for your data and your goal</em>, on the spot &mdash; and the output is a sharp use-case definition, not a worksheet.</p></div>
+    <div class="checkpoint"><h4>&#9989; Checkpoint</h4>
+      <label><input type="checkbox"> You have a written <code>north_star.md</code> (purpose + the 6-8 questions it must answer)</label>
+      <label><input type="checkbox"> You picked an archetype (A / B / C), or Ana recommended one and you agreed</label>
+      <label><input type="checkbox"> It names something real that changes on Monday morning, not "model all of healthcare"</label>
+    </div>
+  </section>
 <!-- ════════════════ MODULE 1 ════════════════ -->
-<section class="page" id="m1" data-title="Module 1 · Connect Three Things" data-group="Hands-On Modules" data-time="20 min">
-  <div class="kicker">Module 1</div>
+<section class="page" id="m2" data-title="Module 2 · Connect Three Things" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 2</div>
   <h1>Connect Three Things</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat</span></div>
 
@@ -307,8 +328,8 @@
 </section>
 
 <!-- ════════════════ MODULE 2 ════════════════ -->
-<section class="page" id="m2" data-title="Module 2 · Validate Against Your Schema" data-group="Hands-On Modules" data-time="25 min">
-  <div class="kicker">Module 2</div>
+<section class="page" id="m3" data-title="Module 3 · Validate Against Your Schema" data-group="Hands-On Modules" data-time="25 min">
+  <div class="kicker">Module 3</div>
   <h1>Validate the Model Against Your Schema</h1>
   <div class="page-meta"><span>⏱️ <b>25 min</b></span><span>🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — without writing SQL</span></div>
 
@@ -362,11 +383,15 @@
     <label><input type="checkbox"> The fixes landed as a PR you can review — not silent edits</label>
     <label><input type="checkbox"> You merged the PR (or know who reviews it)</label>
   </div>
-</section>
+<h3>Verify the pack&rsquo;s assumptions against your data</h3>
+    <p>This starter already handles the healthcare cases that break naive ontologies &mdash; claim adjustments and reversals, dual-eligible members, capitated and encounter data &mdash; but it assumes a representation. Confirm yours matches before you trust the numbers.</p>
+    <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Check how our data represents claim adjustments and reversals, dual-eligible members, and capitated / encounter data. Compare each to what the starter ontology assumes, flag any mismatch, and propose the exact fix.</pre></div>
+  </section>
 
 <!-- ════════════════ MODULE 3 ════════════════ -->
-<section class="page" id="m3" data-title="Module 3 · The Terminology Layer" data-group="Hands-On Modules" data-time="20 min">
-  <div class="kicker">Module 3</div>
+<section class="page" id="m4" data-title="Module 4 · The Terminology Layer" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 4</div>
   <h1>Light Up the Terminology Layer</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: grouper-powered questions — CCSR, HCC/RAF, chronic conditions — with zero writes to your warehouse</span></div>
 
@@ -393,8 +418,8 @@
 </section>
 
 <!-- ════════════════ MODULE 4 ════════════════ -->
-<section class="page" id="m4" data-title="Module 4 · Ask Governed Questions" data-group="Hands-On Modules" data-time="20 min">
-  <div class="kicker">Module 4</div>
+<section class="page" id="m5" data-title="Module 5 · Ask Governed Questions" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 5</div>
   <h1>Ask Governed Questions</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: the payoff — consistent, defensible answers routed through governed definitions, with the SQL shown</span></div>
 
@@ -442,8 +467,8 @@
 </section>
 
 <!-- ════════════════ MODULE 5 ════════════════ -->
-<section class="page" id="m5" data-title="Module 5 · Governance & PHI Defaults" data-group="Hands-On Modules" data-time="15 min">
-  <div class="kicker">Module 5</div>
+<section class="page" id="m6" data-title="Module 6 · Governance & PHI Defaults" data-group="Hands-On Modules" data-time="15 min">
+  <div class="kicker">Module 6</div>
   <h1>Governance &amp; PHI Defaults</h1>
   <div class="page-meta"><span>⏱️ <b>15 min</b></span><span>🎯 Goal: see the compliance behavior that's on by default — and verify it fires</span></div>
 
@@ -483,8 +508,8 @@
 </section>
 
 <!-- ════════════════ MODULE 6 ════════════════ -->
-<section class="page" id="m6" data-title="Module 6 · Validate Numbers & Make It Yours" data-group="Hands-On Modules" data-time="20 min">
-  <div class="kicker">Module 6</div>
+<section class="page" id="m7" data-title="Module 7 · Validate Numbers & Make It Yours" data-group="Hands-On Modules" data-time="20 min">
+  <div class="kicker">Module 7</div>
   <h1>Validate the Numbers &amp; Make It Yours</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: pin known-correct values, then adapt the starter's definitions to your organization — in your repo</span></div>
 
