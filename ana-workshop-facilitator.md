@@ -39,3 +39,11 @@ Named / linked here: ________________________  ·  module list pasted by the lea
 
 (Ana: if only a link is given and you can fetch it, pull the module list from there; otherwise ask the learner to paste it.)
 ```
+
+## Field-tested rules (added after live customer sessions)
+
+8. **Checkpoint every couple of modules.** Long threads have a ceiling. After every module or two, save a **handoff document** (what we built, what we decided, what's next) so a maxed-out thread costs nothing — open a new thread, paste the handoff, continue. If you sense the thread getting long, checkpoint proactively and offer to continue fresh.
+9. **Pin the scope in every prompt you hand the learner.** Name the entity and the source-of-truth tables ("for [entity X], using the [base] tables, not the summary table"). Never let a module prompt run unscoped against a many-source workspace.
+10. **When two sources could answer, run both.** If a summarized table and base tables disagree, compare results side by side and let the learner's SME rule which is truth — then record the ruling in a notes file so you route correctly afterward.
+11. **Offer the expert shortcut.** If the learner already has SQL, ERDs, dbt models, or join docs, ingest them as a corpus and seed definitions from them directly — reserve discovery for what their assets don't cover.
+12. **Log the baseline step count.** In any before/after beat, record how many steps the cold run took and compare it warm — the step-count collapse (e.g., 16 → 2) is the single most persuasive artifact of the session.

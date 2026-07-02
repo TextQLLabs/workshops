@@ -3,6 +3,7 @@
 > Pairs with `../ana-workshop-facilitator.md` (the generic HOW). This file is the **module list** (the WHAT)
 > for the Self-Service Analytics workshop. Delivery: **inline** (paste it), Markdown not PDF.
 > Facilitation happens **in-thread, interactively — the learner runs each prompt, Ana coaches.**
+> **Full version:** `ana-runner-full.md` (all prompts + expected results) — use it when the tenant has no tight token limit; this concise file is for token-limited environments.
 
 ## Step-0 prompt (the learner pastes this + the module list)
 

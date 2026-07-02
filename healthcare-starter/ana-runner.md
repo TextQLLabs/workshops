@@ -2,6 +2,7 @@
 
 > Pairs with `../ana-workshop-facilitator.md` (the generic HOW). Module list for the The Healthcare Starter Pack workshop.
 > Delivery: **inline** or give Ana the workshop URL — she fetches it. Facilitation: **in-thread, interactive.**
+> **Full version:** `ana-runner-full.md` (all prompts + expected results) — use it when the tenant has no tight token limit; this concise file is for token-limited environments.
 
 ## Step-0 prompt (paste this, or use the workshop URL)
 

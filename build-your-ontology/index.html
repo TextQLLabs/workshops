@@ -265,6 +265,17 @@
     <li>Flexibility ↔ accuracy is a per-metric dial: exact where it must be, flexible where exploration matters.</li>
   </ul>
 
+  <h3>The expert shortcut &mdash; seed from what you already know</h3>
+  <p>Discovery (Modules 2&ndash;5) is for when the knowledge doesn't exist yet. If your team <b>already has</b> the join logic, ERDs, dbt models, or canonical SQL &mdash; don't make Ana rediscover it. Feed it in as a corpus and let her formalize it:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Here are assets that already encode how our data joins and what our metrics mean: [attach or paste: ERD, canonical SQL queries, dbt models, join documentation]. Seed the ontology from these directly - sources, join paths, and metric definitions - instead of rediscovering them by exploration. Show me everything you extracted as a reviewable change, and flag anything ambiguous or conflicting rather than guessing.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Ana turn your existing SQL/ERD knowledge into governed ontology entries in one pass &mdash; discovery reserved for what your assets don't cover.</div>
+
+  <div class="callout"><span class="label">Two rules for a long, live session</span>
+    <p><b>1 &middot; Checkpoint every couple of modules.</b> Long threads have a ceiling. After every module or two, ask Ana: <i>&ldquo;Save a handoff document summarizing what we've built, what we decided, and what's next &mdash; so we can continue in a new thread.&rdquo;</i> If a thread ever maxes out, you lose nothing &mdash; open a new thread, paste the handoff, keep going.<br><br>
+    <b>2 &middot; Pin the scope in every prompt.</b> Name the <b>entity</b> you're analyzing and the <b>source-of-truth tables</b> in each prompt (&ldquo;&hellip;for [entity X], using the [base audit] tables, not the summary table&rdquo;). Without that, Ana may drift to a convenient summary table or query every source at once &mdash; and a plausible-looking answer from the wrong table is worse than no answer.</p>
+  </div>
+
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You can explain "just files" and why git-backed matters</label>
     <label><input type="checkbox"> You know the six folders of the repo shape and what goes in each</label>
@@ -283,14 +294,15 @@
   <p>Before you build anything, ask Ana a hard question with <b>no ontology attached</b> — just a raw connection. Note the answer, how long it took, and which definition it assumed.</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>[A hard, definition-sensitive question from your domain — e.g. "What's our 30-day readmission rate for the last complete quarter?" or "What was net revenue retention last quarter?"] Note which definition you used and show the SQL.</pre></div>
-  <div class="yousee"><b>You'll see:</b> a best-effort answer with an improvised definition. Write down: the number, the assumed definition, and the time it took. That's your baseline.</div>
+  <div class="yousee"><b>You'll see:</b> a best-effort answer with an improvised definition. Write down four things: the number, the assumed definition, <b>how many steps Ana took</b>, and the time it took. That's your baseline &mdash; <b>the step count is the headline</b>.</div>
 
   <div class="callout"><span class="label">At the end of each track</span>
-    <p>Ask the <b>same question</b> in a fresh session <b>with your ontology attached</b> and compare: the warm answer routes through your governed definition, is consistent, and shows the exact, audited SQL. It's the clearest way to see what the ontology buys you.</p>
+    <p>Ask the <b>same question</b> in a fresh session <b>with your ontology attached</b> and compare &mdash; <b>especially the step count</b>. A cold run that took 16 steps typically collapses to 2 (<i>read the ontology &rarr; execute</i>). That single number is the clearest proof of what the ontology buys you.</p>
   </div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You recorded a cold answer: number, assumed definition, and time taken</label>
+    <label><input type="checkbox"> You logged the <b>step count</b> &mdash; you'll compare it warm at the end of the track</label>
   </div>
 </section>
 
@@ -358,6 +370,10 @@
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Two teams define this metric differently (for example, a stricter vs. broader window, or a prorated vs. full-count denominator). Inspect the data, recommend one governed definition, author it as a .tql surface, and record the decision — and the rejected alternative — in a notes file. Keep the alternative available under a separate, clearly-named metric.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana identify the discrepancy, propose one definition, and produce a reviewable change. The rejected alternative stays available — renamed, not erased.</div>
+
+  <div class="callout warn"><span class="label">When two SOURCES disagree &mdash; not just two definitions</span>
+    <p>Sometimes the conflict is upstream: a summarized table and the base tables tell different stories about the same question. Don't let Ana pick on convenience &mdash; <b>run the question against both, compare the results side by side, and let the SME who owns the data rule</b> which is the source of truth. Then record the ruling &mdash; and the caveat about the losing source &mdash; in a notes file so it never gets re-litigated, and so Ana routes to the right table next time.</p>
+  </div>
 
   <div class="callout"><span class="label">Why this matters</span>
     <p>Every organization has a metric defined two ways. Governing it into one definition — with the decision recorded — is the moment the ontology stops being documentation and starts being the source of truth.</p>

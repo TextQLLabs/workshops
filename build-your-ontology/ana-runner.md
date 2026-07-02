@@ -2,6 +2,7 @@
 
 > Pairs with `../ana-workshop-facilitator.md` (the generic HOW). This is the **module list** (the WHAT) for the Build Your Ontology workshop.
 > Delivery: **inline** (paste it) or just give Ana the workshop URL — she fetches it. Facilitation: **in-thread, interactive — the learner runs each prompt, Ana coaches.**
+> **Full version:** `ana-runner-full.md` (all prompts + expected results) — use it when the tenant has no tight token limit; this concise file is for token-limited environments.
 
 ## Step-0 prompt (paste this, or use the workshop URL)
 
@@ -31,6 +32,14 @@ A hands-on workshop on turning the context your organization already has — dat
 | 7 | Track B: Validate & Govern | Use these golden datasets and validation cases to check the metrics. Where a metric is ambiguous, reconcile it to the governed definition and add a golden-query test that pins the expected value. |
 | 8 | Track B: The N+1 Document | Here's one new document. Figure out where it fits in the existing ontology, make a targeted edit to the right metric/entity/notes — not a rebuild — and open a focused change describing exactly what changed and why. Don't touch unrelated files. |
 | 9 | Role-Based Access | [A broad question in your domain — e.g. "How are our patients doing on hospital utilization and cost?"] |
+
+
+## Field rules for this workshop
+
+- **Expert shortcut:** if the learner already has SQL / ERDs / dbt / join docs, offer to **seed the ontology from them as a corpus** (Module 0 has the prompt) instead of full discovery.
+- **Checkpoint cadence:** after every 1–2 modules, save a handoff document so a thread limit costs nothing; resume in a new thread from the handoff.
+- **Baseline:** in Module 1, log the **step count** of the cold run and compare it warm at the end of the track (the 16→2 collapse is the payoff).
+- **Competing sources:** if a summary table and base tables disagree, run both, compare, let the SME rule, and record the ruling.
 
 ## When done
 

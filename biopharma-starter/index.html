@@ -269,6 +269,11 @@
     <label><input type="checkbox"> You know what ships in the box (public classification) vs. comes from your licensed Rx feed</label>
     <label><input type="checkbox"> You know this kit is commercial-only — RWE reuses the healthcare sibling; R&amp;D/CDISC is out of scope</label>
   </div>
+
+  <div class="callout"><span class="label">Two rules for a long, live session</span>
+    <p><b>1 &middot; Checkpoint every couple of modules.</b> Long threads have a ceiling. After every module or two, ask Ana: <i>&ldquo;Save a handoff document summarizing what we've built, what we decided, and what's next &mdash; so we can continue in a new thread.&rdquo;</i> If a thread ever maxes out, you lose nothing.<br><br>
+    <b>2 &middot; Pin the scope in every prompt.</b> Name the <b>entity</b> and the <b>source-of-truth tables</b> in each prompt (&ldquo;&hellip;for [entity X], using the [base] tables, not the summary table&rdquo;) &mdash; otherwise Ana may drift to a convenient summary table or query every source at once.</p>
+  </div>
 </section>
 
   <section class="page" id="m1" data-title="Module 1 · Define Your North Star" data-group="Hands-On Modules" data-time="15 min">
@@ -430,6 +435,7 @@
   <h1>Ask Governed Questions</h1>
   <div class="page-meta"><span>⏱️ <b>20 min</b></span><span>🎯 Goal: the payoff — consistent, defensible answers routed through governed definitions, with the SQL shown</span></div>
 
+  <div class="callout warn"><span class="label">Pin the scope</span><p>In every question below, name the <b>entity</b> and the <b>source-of-truth tables</b>. A plausible answer from the wrong (summary) table is worse than no answer &mdash; if two sources could answer, run both and let your SME rule which is truth.</p></div>
   <p>Run each of these against your validated warehouse. For every answer, note that Ana cites the governed surface, names the metric / basket / period / Rx vintage, and shows the rendered SQL. The pinned values below are from the starter's validated synthetic warehouse (<code>validation/golden-queries.md</code>, horizon 2024-12-31) — yours will differ, but the invariants always hold.</p>
 
   <h2>5.1 · Rx volume (TRx / NRx / NBRx)</h2>

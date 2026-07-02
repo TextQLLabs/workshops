@@ -3,6 +3,7 @@
 > A **gated** runner (v2). This workshop has steps you do in the **console/CLI**, so Ana inspects your
 > workspace state, **gates on each prerequisite**, hands you the setup action and **waits**, then re-checks
 > — and resumes if you step away. Pairs with `../ana-workshop-facilitator.md`. Delivery: inline / URL.
+> **Full version:** `ana-runner-full.md` (all prompts + expected results) — use it when the tenant has no tight token limit; this concise file is for token-limited environments.
 
 ## Step-0 prompt (paste this)
 

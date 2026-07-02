@@ -4,6 +4,7 @@
 > spans several days and has setup steps you do **in the console** (connect data, seed the ontology). So Ana
 > **gates on prerequisites**, hands you the out-of-thread action and **waits**, **re-inspects** state on
 > resume, and **persists progress** so a new thread picks up where you left off. Delivery: inline / URL.
+> **Full version:** `ana-runner-full.md` (all prompts + expected results) — use it when the tenant has no tight token limit; this concise file is for token-limited environments.
 
 ## Step-0 prompt (paste at the START of each session/day)
 
