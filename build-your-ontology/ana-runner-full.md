@@ -86,15 +86,33 @@ Using the schema and the docs we just drafted, propose the ontology: the core en
 
 **Prompt for the learner to run:**
 ```
+Take the query surface you just drafted and make it reusable rather than one-off: expose the metrics, dimensions, filters, and time window as typed parameters with approved options (label sets the caller picks from - the ontology owns the SQL). Document what each parameter expects in comments directly above it. If the entities or joins would be reused by other questions, split them into a reusable object module the surface imports. Show me the before/after.
+```
+
+> ✅ You'll see: the same metric, but now callers pick metrics/dimensions/filters from approved options instead of triggering a rewrite — one governed surface serving many questions. Joins live once, in a reusable module.
+
+> **Why this matters** — This is also the durable answer to "how do I stop Ana rediscovering our join paths": model joins as reusable fragments once, governed, and every later question routes through them. Reusable parameters are what make Module 5's "update without rebuilding" cheap.
+
+**Prompt for the learner to run:**
+```
 Save the docs, the metric definitions, and the .tql surfaces into the ontology so they persist and are reusable across sessions.
 ```
 
 > ✅ You'll see: the ontology files written to the repo — the basis for everything that follows.
 
+**Prompt for the learner to run:**
+```
+Add a short routing README to the ontology folder you just wrote: what lives here, when to use it, and which files are canonical. Use searchable filenames and headings, and deliberately include the phrases people will actually ask for (the metric names, their synonyms, the team and role names). Link it from the ontology's top-level entry point so the path is broad to narrow: entry point -> overview -> this folder -> the file.
+```
+
+> ✅ You'll see: a small README whose prose repeats the likely search terms on purpose — exact-match search is often the fastest retrieval path for a future agent.
+
 **Checkpoint before moving on:**
 - [ ] You read the rendered SQL before executing it
 - [ ] Every metric got a stable alias
 - [ ] The docs and .tql surfaces are saved to the ontology repo
+- [ ] Your surface exposes typed parameters (metrics / dimensions / filters / window) — not one hard-coded answer
+- [ ] A routing README exists, with the search terms a future chat would use
 
 ## Module 4 · Track A: Explore & Reconcile
 *🎯 Goal: see the model (not just the answer) — then turn "defined three ways" into one governed definition*
@@ -132,6 +150,8 @@ Update the ontology: add a new variant of an existing metric and break a metric 
 
 > ✅ You'll see: the warm answer route through your governed definition — consistent, with the exact audited SQL — instead of an improvised one.
 
+> **Make the ontology learn from usage — not just from events** — Schema renames and new metrics are event -driven updates. The other half is usage-driven : a recurring playbook that mines real activity — repeated questions, manual SQL, failed ontology lookups, mid-thread corrections — and proposes small reviewable patches. Ana drafts; a named owner approves; the learning is routed back into the routing READMEs; unresolved gaps become work items, not buried chat history. Build it in the Automation workshop , and see Ontology Operations Module 4 for the full operating loop.
+
 **Checkpoint before moving on:**
 - [ ] You saw the diff before it was applied, and the change went to review
 - [ ] A renamed column was handled by one edit in schema.tql
@@ -146,6 +166,8 @@ Read these documents — SOPs, a metrics document, data dictionaries, process-fl
 ```
 
 > ✅ You'll see: Ana fuse the mixed inputs into one coherent model, narrating where each piece went — entity, metric, note, or access rule.
+
+> **The ontology is more than text and .tql** — Anything that helps a future agent or human understand, generate, or verify work belongs in the repo: entity/lineage diagrams , stylesheets for branded report output, spreadsheet or slide generators for recurring deliverables — with example outputs stored next to the generator and searchable filenames ( finance-revenue-lineage.png , not diagram-final.png ).
 
 **Checkpoint before moving on:**
 - [ ] Your input pile had at least 4 input types (docs, metrics, diagrams, transcripts…)
@@ -215,6 +237,8 @@ Expose these metrics as a stable surface callable from BI or via API/MCP, and de
 ```
 
 > ✅ You'll see: Ana declines and redirects — the data exists and the governed surface exists, but this role isn't scoped to it. The access control lives in the context: auditable, version-controlled, reviewable like any other file.
+
+> **The one rule** — Route, don't redefine. An identity folder's README says "start with ../../domains/finance/revenue " — it never redefines revenue locally. One governed definition, many doors into it. (This is the same principle as the Context Stack's "one EDM, many personas.")
 
 **Checkpoint before moving on:**
 - [ ] The same question produced two correctly-different answers across personas

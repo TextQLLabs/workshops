@@ -156,6 +156,8 @@ Add this document to the org context library: [attach or name it]. Summarize wha
 
 > **Note** — Reviewer notifications (patch submitted/approved/denied) are configurable under Settings → Notifications → Ontology — set them up now if you're a reviewer, or this loop silently stalls.
 
+> **Write for the search box** — Future threads find org context by searching , not browsing. So: searchable headings and filenames, a short README in each folder saying what lives there and which files are canonical, and — deliberately — the phrases people will actually ask for repeated in the prose (metric names, synonyms, team and role names). Exact-match search is often a future agent's fastest retrieval path.
+
 **Checkpoint before moving on:**
 - [ ] A definition patch, a glossary patch, and a document addition are proposed (not directly applied)
 - [ ] You watched a patch go through review — approved or declined-with-reason
@@ -171,11 +173,19 @@ Create behaviors/[program_manager]/org_context.md and behaviors/[analyst]/org_co
 
 > ✅ You'll see: Two pending patches in Reviews — the personas exist only after approval, like any role-layer change.
 
+**Prompt for the learner to run:**
+```
+Add a routing header to the top of each persona file: (1) Search terms - the phrases this role actually uses, including synonyms; (2) Audience - who this persona serves and who reviews it; (3) Start with - links to the canonical org definitions this role uses most; (4) one line stating what this file does NOT do. For example: "Do not redefine [core metric] here - this file routes [role] questions to the canonical org definition."
+```
+
+> **Route, don't redefine** — A persona file routes a role's questions to the one governed definition — it never copies or redefines it. The moment a metric is restated inside a persona, you have a fork waiting to disagree. Scope, voice, and vocabulary live here; truth lives at the org layer .
+
 **Checkpoint before moving on:**
 - [ ] Both persona files exist with all four sections, submitted as reviewed patches
 - [ ] The restricted persona's clarification menu draws only from its allowlist
 - [ ] Its hard-limits section declines with a redirect and without enumerating what's hidden
 - [ ] The analyst persona flags ad-hoc work and never treats breadth as an access bypass
+- [ ] Each persona file opens with a routing header (search terms · audience · start-with links · what it does NOT do)
 
 ## Module 5 · The Same-Question Test
 
@@ -215,9 +225,17 @@ Show me the [unit-cost breakdown by provider contract / financial detail] for la
 
 ## Module 7 · Operate the Stack
 
+**Prompt for the learner to run:**
+```
+Create a playbook "Weekly Context Gap Review" that runs Monday mornings: review the last 14 days of usage - repeated questions, mid-thread corrections, failed context lookups, and questions users rephrased until they worked. Group them by business concept, flag concepts hit by multiple users or roles, and propose small reviewable patches: a persona-file addition, an org glossary entry, or a routing-README update. Draft the patches for review - do not apply them - and list unresolved gaps as work items with suggested owners.
+```
+
+> ✅ You'll see: a standing loop where Ana drafts, named owners approve, learnings land back in the routing docs — and context gaps become tracked work items instead of buried chat history. (Same pattern as Ontology Operations Module 4.)
+
 **Checkpoint before moving on:**
 - [ ] Persona changes route through review, with domain owners on scope changes, and the probe suite runs after every patch
 - [ ] You applied the new-vs-extend rule to a real pending request
 - [ ] Every audit-table row has a live answer in your setup
 - [ ] The quarterly review is calendared with named owners — and the failure-modes table is in your team's runbook
+- [ ] The weekly usage-driven gap review playbook exists — Ana drafts, owners approve, gaps become work items
 

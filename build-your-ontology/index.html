@@ -342,15 +342,34 @@
 <pre>Using the schema and the docs we just drafted, propose the ontology: the core entities, the metrics to govern, and the dimensions. Draft the first query-surface .tql, give every metric a stable alias, and render the SQL before executing.</pre></div>
   <div class="yousee"><b>You'll see:</b> generated <code>.tql</code> and the exact, inspectable SQL. Run it to get the answer.</div>
 
-  <h2>3.2 · Save it to the ontology</h2>
+  <h2>3.2 · Make it reusable, not one-off</h2>
+  <p><b>The rule of thumb:</b> if two users could ask the same business question with <em>different filters, groupings, time windows, or output columns</em>, the surface should expose those choices as <b>typed parameters</b> — not hard-code one answer. A rigid one-off query answers today's question; a parameterized surface answers the next hundred.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Take the query surface you just drafted and make it reusable rather than one-off: expose the metrics, dimensions, filters, and time window as typed parameters with approved options (label sets the caller picks from - the ontology owns the SQL). Document what each parameter expects in comments directly above it. If the entities or joins would be reused by other questions, split them into a reusable object module the surface imports. Show me the before/after.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the same metric, but now callers pick metrics/dimensions/filters from approved options instead of triggering a rewrite — one governed surface serving many questions. Joins live once, in a reusable module.</div>
+  <div class="callout"><span class="label">Why this matters</span>
+    <p>This is also the durable answer to "how do I stop Ana rediscovering our join paths": model joins as <b>reusable fragments</b> once, governed, and every later question routes through them. Reusable parameters are what make Module 5's "update without rebuilding" cheap.</p>
+  </div>
+
+  <h2>3.3 · Save it to the ontology</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Save the docs, the metric definitions, and the .tql surfaces into the ontology so they persist and are reusable across sessions.</pre></div>
   <div class="yousee"><b>You'll see:</b> the ontology files written to the repo — the basis for everything that follows.</div>
+
+  <h2>3.4 · Make it findable — for the next chat</h2>
+  <p>Discoverability is part of the deliverable, not cleanup. A future thread won't know your filenames — it will <em>search</em>. Optimize for that:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Add a short routing README to the ontology folder you just wrote: what lives here, when to use it, and which files are canonical. Use searchable filenames and headings, and deliberately include the phrases people will actually ask for (the metric names, their synonyms, the team and role names). Link it from the ontology's top-level entry point so the path is broad to narrow: entry point -> overview -> this folder -> the file.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a small README whose prose repeats the likely search terms on purpose — exact-match search is often the fastest retrieval path for a future agent.</div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You read the rendered SQL before executing it</label>
     <label><input type="checkbox"> Every metric got a stable alias</label>
     <label><input type="checkbox"> The docs and .tql surfaces are saved to the ontology repo</label>
+  
+    <label><input type="checkbox"> Your surface exposes typed parameters (metrics / dimensions / filters / window) — not one hard-coded answer</label>
+  
+    <label><input type="checkbox"> A routing README exists, with the search terms a future chat would use</label>
   </div>
 </section>
 
@@ -403,6 +422,10 @@
 <pre>[Your Module 1 baseline question, exactly as you asked it cold.] Note which definition you used and show the SQL.</pre></div>
   <div class="yousee"><b>You'll see:</b> the warm answer route through your governed definition — consistent, with the exact audited SQL — instead of an improvised one.</div>
 
+  <div class="callout"><span class="label">Make the ontology learn from usage — not just from events</span>
+    <p>Schema renames and new metrics are <em>event</em>-driven updates. The other half is <b>usage-driven</b>: a recurring playbook that mines real activity — repeated questions, manual SQL, failed ontology lookups, mid-thread corrections — and proposes small reviewable patches. Ana drafts; a named owner approves; the learning is routed back into the routing READMEs; unresolved gaps become work items, not buried chat history. Build it in the <a href="../automation/index.html">Automation workshop</a>, and see <a href="../ontology-operations/index.html">Ontology Operations</a> Module 4 for the full operating loop.</p>
+  </div>
+
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You saw the diff before it was applied, and the change went to review</label>
     <label><input type="checkbox"> A renamed column was handled by one edit in schema.tql</label>
@@ -425,6 +448,10 @@
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Read these documents — SOPs, a metrics document, data dictionaries, process-flow diagrams, and call transcripts. Propose an ontology: the core entities, the metrics worth governing, and the dimensions. Explain where each input lands — which became an entity, a metric, a note, or an access rule — then draft the files.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana fuse the mixed inputs into <b>one</b> coherent model, narrating where each piece went — entity, metric, note, or access rule.</div>
+
+  <div class="callout"><span class="label">The ontology is more than text and .tql</span>
+    <p>Anything that helps a future agent or human understand, generate, or verify work belongs in the repo: <b>entity/lineage diagrams</b>, <b>stylesheets</b> for branded report output, <b>spreadsheet or slide generators</b> for recurring deliverables — with example outputs stored next to the generator and searchable filenames (<code>finance-revenue-lineage.png</code>, not <code>diagram-final.png</code>).</p>
+  </div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Your input pile had at least 4 input types (docs, metrics, diagrams, transcripts…)</label>
@@ -515,6 +542,12 @@
     <tr><td>How many can we have?</td><td>As many as you need — one per team, use case, or compliance boundary.</td></tr>
     <tr><td>What stops someone switching personas?</td><td>Context is provisioned at the org/session level by an admin — tied to your identity provider's groups via SSO/SCIM.</td></tr>
   </table>
+
+  <h2>9.3 · Identity folders — routing, not duplication</h2>
+  <p>Access controls decide <em>what a role can see</em>. A second, complementary structure decides <em>where a role's questions land</em>: <b>identity folders</b> — <code>teams/finance</code>, <code>roles/account-executive</code>, <code>people/jane-doe</code>, <code>customers/acme</code>. Each holds a short README naming the audience, the recurring questions, and <b>links to the canonical shared definitions</b> — never copies of them.</p>
+  <div class="callout warn"><span class="label">The one rule</span>
+    <p><b>Route, don't redefine.</b> An identity folder's README says "start with <code>../../domains/finance/revenue</code>" — it never redefines revenue locally. One governed definition, many doors into it. (This is the same principle as the Context Stack's "one EDM, many personas.")</p>
+  </div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> The same question produced two correctly-different answers across personas</label>

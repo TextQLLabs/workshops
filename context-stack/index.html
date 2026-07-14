@@ -202,6 +202,8 @@
 <p>For any "I want Ana to..." request, the layer is determined by <b>who should be affected</b>:</p>
 <table><tr><th>"I want Ana to..."</th><th>Layer</th><th>Why</th></tr><tr><td>...give me shorter answers</td><td>Personal</td><td>Your taste, nobody else's</td></tr><tr><td>...know that when I say "my book" I mean accounts where I'm the CSM</td><td>Personal</td><td>Your shorthand</td></tr><tr><td>...run my Monday prep when I ask</td><td>Personal</td><td>Your workflow</td></tr><tr><td>...use our fiscal calendar for everyone</td><td>Org</td><td>Company-wide truth</td></tr><tr><td>...define "active member" the official way</td><td>Org</td><td>Two people asking must get the same answer</td></tr><tr><td>...never show SQL to the operations team</td><td>Role</td><td>A team's response style</td></tr><tr><td>...keep [clinical/care] data away from the program-management persona</td><td>Role</td><td>A persona's data scope</td></tr><tr><td>...decline off-scope requests politely and redirect</td><td>Role</td><td>A persona's hard limits</td></tr><tr><td>...know that the staging tables in [warehouse] are unreliable</td><td>Org (or connector-scoped)</td><td>Everyone querying that source needs it</td></tr></table>
 <p><b>The misrouting that matters most:</b> a team definition saved into personal context. It <i>works</i> — for that one person — and now the truth is forked: their answers silently disagree with everyone else's. Module 2 ends with the hygiene rule for exactly this.</p>
+  <p><b>The layers generalize.</b> Roles and people are two axes of the same idea — <em>identity-based structure</em>. As you scale, the same pattern serves <code>teams/</code>, <code>customers/</code>, and <code>business-units/</code>: a folder per identity that <b>routes</b> its questions to the shared, governed definitions. One truth, many doors.</p>
+
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You can name the three layers and what kind of knowledge belongs in each</label>
     <label><input type="checkbox"> You can state the governance distinction in one sentence: personal is immediate, org/role is reviewed</label>
@@ -354,6 +356,10 @@ Each persona is behaviors/&lt;persona&gt;/org_context.md with four sections: 1. 
 <h2>3.5 · The review loop, from the reviewer's side</h2>
 <p>If you hold review rights, open the pending patches (the Reviews surface in the Ontology/context area) and apply the three-question bar from the <a href="../admin-governance/index.html"><b>Admin &amp; Governance</b></a> workshop: Correct? Conflicting with an existing definition? Scoped right (org-wide truth vs one team's shorthand)? Approve, or decline <b>with a reason</b> — declines without reasons teach proposers to stop proposing.</p>
 <div class="callout">Reviewer notifications (patch submitted/approved/denied) are configurable under Settings → Notifications → Ontology — set them up now if you're a reviewer, or this loop silently stalls.</div>
+  <div class="callout"><span class="label">Write for the search box</span>
+    <p>Future threads find org context by <b>searching</b>, not browsing. So: searchable headings and filenames, a short README in each folder saying what lives there and which files are canonical, and — deliberately — the phrases people will actually ask for repeated in the prose (metric names, synonyms, team and role names). Exact-match search is often a future agent's fastest retrieval path.</p>
+  </div>
+
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> A definition patch, a glossary patch, and a document addition are proposed (not directly applied)</label>
     <label><input type="checkbox"> You watched a patch go through review — approved or declined-with-reason</label>
@@ -453,11 +459,21 @@ would produce materially different answers.
     <img src="assets/ctx-m3-persona.png" alt="A persona is a readable, reviewable file." onerror="this.parentElement.classList.add('missing')">
     <figcaption>A persona is a readable, reviewable file.</figcaption>
   </figure>
+  <h2>4.4 · Give every persona file a routing header</h2>
+  <p>Beyond the four behavior sections, open each persona file with a short <b>routing header</b> so future chats (and new admins) can find and use it:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Add a routing header to the top of each persona file: (1) Search terms - the phrases this role actually uses, including synonyms; (2) Audience - who this persona serves and who reviews it; (3) Start with - links to the canonical org definitions this role uses most; (4) one line stating what this file does NOT do. For example: "Do not redefine [core metric] here - this file routes [role] questions to the canonical org definition."</pre></div>
+  <div class="callout warn"><span class="label">Route, don't redefine</span>
+    <p>A persona file <b>routes</b> a role's questions to the one governed definition — it never copies or redefines it. The moment a metric is restated inside a persona, you have a fork waiting to disagree. Scope, voice, and vocabulary live here; <em>truth lives at the org layer</em>.</p>
+  </div>
+
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Both persona files exist with all four sections, submitted as reviewed patches</label>
     <label><input type="checkbox"> The restricted persona's clarification menu draws only from its allowlist</label>
     <label><input type="checkbox"> Its hard-limits section declines with a redirect and without enumerating what's hidden</label>
     <label><input type="checkbox"> The analyst persona flags ad-hoc work and never treats breadth as an access bypass</label>
+  
+    <label><input type="checkbox"> Each persona file opens with a routing header (search terms · audience · start-with links · what it does NOT do)</label>
   </div>
 </section>
 
@@ -557,11 +573,19 @@ would produce materially different answers.
 <h2>🎓 You're done</h2>
 <p>You can route any behavior request to its layer, build personal context that persists, curate org truth through review, author personas from the four-section anatomy, prove them with the same-question test, provision them through identity fail-closed, and operate the whole stack with the governance it deserves.</p>
 <p><b>The one-sentence takeaway:</b> <i>personal is immediate, org and role are governed</i> — and behavioral context is the semantic layer of RBAC: auditable files, not configuration drift.</p>
+  <h2>7.6 · The usage-driven gap review</h2>
+  <p>The quarterly review catches drift; a <b>recurring usage review</b> catches gaps while they're small. Mine real activity for the personas' blind spots:</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Create a playbook "Weekly Context Gap Review" that runs Monday mornings: review the last 14 days of usage - repeated questions, mid-thread corrections, failed context lookups, and questions users rephrased until they worked. Group them by business concept, flag concepts hit by multiple users or roles, and propose small reviewable patches: a persona-file addition, an org glossary entry, or a routing-README update. Draft the patches for review - do not apply them - and list unresolved gaps as work items with suggested owners.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a standing loop where Ana drafts, named owners approve, learnings land back in the routing docs — and context gaps become tracked work items instead of buried chat history. (Same pattern as <a href="../ontology-operations/index.html">Ontology Operations</a> Module 4.)</div>
+
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Persona changes route through review, with domain owners on scope changes, and the probe suite runs after every patch</label>
     <label><input type="checkbox"> You applied the new-vs-extend rule to a real pending request</label>
     <label><input type="checkbox"> Every audit-table row has a live answer in your setup</label>
     <label><input type="checkbox"> The quarterly review is calendared with named owners — and the failure-modes table is in your team's runbook</label>
+  
+    <label><input type="checkbox"> The weekly usage-driven gap review playbook exists — Ana drafts, owners approve, gaps become work items</label>
   </div>
 </section>
 
