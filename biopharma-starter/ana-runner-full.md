@@ -18,6 +18,8 @@ wait and coach me on my result. Start with what you see, then Module 0.
 ## Module 0 · The Six Layers
 *🎯 Goal: know what's in the box and where everything lives*
 
+### The six layers
+
 > **Standards alignment** — STANDARDS.md maps the model to the industry standards it aligns with (NDC, RxNorm, ATC, IDMP, OMOP); SOURCES.md cites every source. The semantic layer (metrics, routing, classification) is fully separated from the physical mapping : every physical table name lives in one file , ontology/schema.tql — re-point it and the metric logic stays put. The starter is authored against a generic commercial-analytics model with ANSI/Spark-portable SQL; MIGRATION.md is the re-point checklist and works the same on Redshift, BigQuery, Snowflake, or Databricks (budget: about a half-day with warehouse access). For a deep technical tour, read DEEP_DIVE.md .
 
 > **In scope, by design — and what isn't** — This is biopharma commercial (Rx, sales, field, access, share). RWE (patient outcomes, adherence, line-of-therapy) is a deliberate extension that reuses the sibling healthcare-claims starter's spine and HIPAA governance rather than duplicating it. Clinical-trials / R&D (CDISC), genomics, and medtech telemetry are out of scope — separate future siblings. Same six-layer framework, different spine. See NORTH_STAR.md and notes/glossary.md .
@@ -52,9 +54,20 @@ Help me define the North Star for our ontology before we build anything.
 ## Module 2 · Connect Three Things
 *🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat*
 
+### 2.1 · Connect the ontology repo to Ana
+This is the key step. In TextQL, add a Git connector and point it at your fork of the starter repo ( TextQLLabs/ontology-starter-kits/tree/main/biopharma — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every classification rule — as a reference she reads on demand.
+
 > **No second source of truth** — You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.
 
+### 2.2 · Connect your data warehouse
+Add the connector for the warehouse holding your commercial data — products, the licensed Rx feed, sales, field activity, formulary (Redshift, BigQuery, Snowflake, Databricks, …). Read-only access is enough.
+
 > **Licensed-data restrictions first** — Licensed Rx data (IQVIA / Symphony) carries vendor use-restrictions, and prescriber-level data is competitively sensitive. Connect read-only and honor the vendor contract — see ontology/notes/governance-hcp-pii.md and LICENSING.md .
+
+### 2.3 · (Optional) Bring in your documents
+Your real-world context — the brand plan, the IQVIA/Symphony data dictionary, the spreadsheet where someone defined "the oncology market basket," the deck where finance pinned the net-sales basis, the MLR-approved claims library — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology as corpus (not a migration) and can fold what she learns into the model.
+
+### 2.4 · Say hello
 
 **Prompt for the learner to run:**
 ```
@@ -71,12 +84,17 @@ Read the ontology repo and give me a tour: what entities, metrics, and classific
 ## Module 3 · Validate Against Your Schema
 *🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — without writing SQL*
 
+### 3.1 · The dry run — required
+
 **Prompt for the learner to run:**
 ```
 Look at the ontology repo, then inspect my warehouse. Pull the information schema for my commercial tables (product, hcp, rx_fact, sales_fact, call_activity, formulary, …) and tell me where the ontology's expected table and column names don't match what I actually have. Propose the exact changes to ontology/schema.tql.
 ```
 
 > ✅ You'll see: Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names. (A ready-made version of this check lives in validation/dry-run-prompt.md .)
+
+### 3.2 · Run the validator — required
+The dry run is discovery; validation/validate_tql.py is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles. Ana runs it for you — no terminal needed:
 
 **Prompt for the learner to run:**
 ```
@@ -87,6 +105,8 @@ Run validation/validate_tql.py from the ontology repo in your sandbox — static
 
 > **Prefer the terminal?** — The same gate runs locally: python3 validation/validate_tql.py (static — no warehouse needed) · --check-sql (paste the output into Ana: rows = missing columns) · --dsn "<dsn>" --explain (live column check + compile test).
 
+### 3.3 · Apply the fixes as a PR — required
+
 **Prompt for the learner to run:**
 ```
 Make those changes and open a pull request.
@@ -95,6 +115,9 @@ Make those changes and open a pull request.
 > ✅ You'll see: Ana edit the files and open a reviewable PR in your repo. Every physical table name lives in one place ( ontology/schema.tql ) — re-point it and the metric logic stays put. The join keys are product_id / hcp_id / territory_id ; re-point the backings and the surfaces follow.
 
 > **Why this step matters** — Every customer's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those before you trust a number is the difference between a defensible metric and a debugging session in front of stakeholders.
+
+### 3.4 · Pin the Rx vintage, verify joins & check enums — required
+Three things shape every downstream number, and all three are prompts:
 
 **Prompt for the learner to run:**
 ```
@@ -129,6 +152,9 @@ Check the enumerations the surfaces depend on against my real data: product.is_o
 ## Module 4 · The Classification Layer
 *🎯 Goal: hierarchy-powered questions — molecule / therapeutic area, specialty, territory, channel — with zero writes to your warehouse*
 
+### 4.1 · Group on molecule, not free-text brand strings
+The first classification discipline: brand strings vary by market and are gameable; molecule and therapeutic area are stable . Prove the rollup works:
+
 **Prompt for the learner to run:**
 ```
 Using the ontology's classification layer, roll my top products up to molecule and therapeutic area, and show which ATC class each falls into. Explain how you joined the crosswalk in your sandbox without writing to the warehouse.
@@ -136,12 +162,18 @@ Using the ontology's classification layer, roll my top products up to molecule a
 
 > ✅ You'll see: free-text products resolved to stable molecule / therapeutic-area / ATC groupings, with the join-in-sandbox pattern explained. (The shipped surfaces filter on is_own / therapeutic_area / market_id right on the product table, so they run with zero classification dependency — the seeds add the rollups.)
 
+### 4.2 · The two classification axes that aren't ATC — territory & channel
+Two more hierarchies drive nearly every commercial cut, and both come from your data, not a public seed:
+
 **Prompt for the learner to run:**
 ```
 Confirm my territory alignment (prescriber → territory → region) and its as-of/vintage basis, and the payer-plan → channel mapping (commercial / medicare / medicaid). Show one cut by region and one by channel so I can see both hierarchies resolve.
 ```
 
 > ✅ You'll see: the two business hierarchies the public seeds don't carry — proven against your data, with the alignment vintage named.
+
+### 4.3 · Refresh or extend the reference seeds — optional
+You don't need this on day one — the current crosswalks are already committed. Come back when a standards version updates (ATC and NDC are revised — notes/coding-tuple.md ). And you don't run the scripts yourself — Ana does:
 
 **Prompt for the learner to run:**
 ```
@@ -160,12 +192,16 @@ The classification standards have a new release. Run reference/terminology/load_
 
 > **Pin the scope** — In every question below, name the entity and the source-of-truth tables . A plausible answer from the wrong (summary) table is worse than no answer — if two sources could answer, run both and let your SME rule which is truth.
 
+### 5.1 · Rx volume (TRx / NRx / NBRx)
+
 **Prompt for the learner to run:**
 ```
 What's our TRx, NRx, and NBRx for [brand] over [period], trended monthly? Use the governed rx_volume surface, name the metrics, and pin the Rx data vintage.
 ```
 
 > ✅ You'll see: the three demand signals returned separately — not collapsed into one ambiguous "volume." On the golden dataset: TRx 2,020,564 · NRx 708,364 · NBRx 355,060 (the invariant nbrx ≤ nrx ≤ trx holds). TRx lags; NBRx leads — a brand can have flat TRx while NBRx is collapsing ( notes/rx-metrics.md ).
+
+### 5.2 · Market share
 
 **Prompt for the learner to run:**
 ```
@@ -174,12 +210,16 @@ What's our TRx share in the [market basket] this [period]? Use market_share, tel
 
 > ✅ You'll see: own ÷ market within the basket — on the golden dataset, per-market share ≈ 0.16 (e.g. own 255,797 / market 1,528,690 = 0.1673). Share is meaningless without a defined basket; too broad understates it, too narrow overstates it ( notes/rx-metrics.md ). Ask for metric="nbrx" to see where you're winning new decisions.
 
+### 5.3 · Sales, revenue, and gross-to-net
+
 **Prompt for the learner to run:**
 ```
 Give me units, gross sales, and net sales for [brand] over [period] (sales_revenue), then the gross-to-net erosion (gross_to_net). Name whether net is accrual-based, and confirm the two surfaces tie out.
 ```
 
 > ✅ You'll see: gross and net both returned, never gross alone as "revenue." On the golden dataset: units 1,728,745 · gross $515,488,723 · net $285,580,744 → GTN erosion 0.446 (net/gross 0.554). The cross-surface invariant holds: sales_revenue gross/net equals gross_to_net gross/net. GTN runs 40–70% in rebate-heavy classes; reporting gross as "revenue" overstates economics 2–3× ( notes/gross-to-net.md ).
+
+### 5.4 · Access and field effectiveness
 
 **Prompt for the learner to run:**
 ```
@@ -191,6 +231,9 @@ Show favorable formulary access for [brand] weighted by covered lives (formulary
 > **Know what these field metrics are — and aren't** — rx_per_call (golden: 101.52 = 2,020,564 TRx / 19,903 own-product calls) and sample_to_script (golden: 0.2123 = 150,367 samples / 708,364 NRx) are response proxies, not causal lift . High Rx-per-call can mean good targeting or calling prescribers who'd write anyway. Isolate promotional lift with a proper test/control — Ana will say so rather than imply causation ( notes/targeting.md ).
 
 > **Why everyone gets the same number** — Metrics like "volume," "revenue," and "share" can be computed several ways. The ontology pins one governed definition — with the decision recorded in ontology/notes/ — so brand, finance, and market access stop disagreeing.
+
+### 5.5 · When the answer isn't governed yet — watch the model grow
+Now ask something from your shortlist that the starter doesn't already cover. This is the important beat: a starter pack is a head start, not the finished model.
 
 **Prompt for the learner to run:**
 ```
@@ -209,6 +252,9 @@ Here's a question from our shortlist that isn't in the governed surfaces yet: [y
 ## Module 6 · Governance Defaults
 *🎯 Goal: see the compliance behavior that's on by default — and verify it fires*
 
+### 6.1 · Inventory your identifiers — day one
+governance-hcp-pii.md §0 classifies every direct identifier in the connected schema into a role — and the key distinction is that using an identifier as a join key is not the same as outputting it :
+
 **Prompt for the learner to run:**
 ```
 Inventory every direct identifier in the connected schema and classify each per governance-hcp-pii.md section 0: join-key-only, never-output, or aggregate-only. Flag anything ambiguous for compliance review.
@@ -218,12 +264,16 @@ Inventory every direct identifier in the connected schema and classify each per 
 
 > **Facilitators: pre-flight these tests** — Run 6.2 and 6.3 yourself before any session with compliance in the room. These guardrails are instruction-layer enforcement — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with governance-hcp-pii.md and config/org_context.md ) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the check is part of the story — "here's the file, here's the behavior, here's how we audit it."
 
+### 6.2 · Test the small-cell rule
+
 **Prompt for the learner to run:**
 ```
 Break down prescriber counts for [a narrow segment — e.g. a rare specialty in one small territory]. Apply our small-cell suppression and tell me what you suppressed and why.
 ```
 
 > ✅ You'll see: any HCP count below min_cell_size suppressed or shown as <{n} , with an explanation. The starter default is 5 for HCP counts, configured in config/org_context.md (patient-level RWE output uses the HIPAA-aligned 11). If suppression doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.
+
+### 6.3 · Test the sensitive-cut gating
 
 **Prompt for the learner to run:**
 ```
@@ -239,12 +289,18 @@ Show me named-prescriber-level Rx detail for [brand], and separately, any Sunshi
 ## Module 7 · Validate Numbers & Make It Yours
 *🎯 Goal: pin known-correct values, then adapt the starter's definitions to your organization — in your repo*
 
+### 7.1 · Run the golden queries
+The starter's golden values are already pinned and verified against a synthetic commercial warehouse (see validation/golden-queries.md — all 9 surfaces, horizon 2024-12-31, with the cross-surface invariants asserted). Against your warehouse, re-pin them to numbers you trust — and pin the Rx vintage with each one:
+
 **Prompt for the learner to run:**
 ```
 Run the golden queries from validation/golden-queries.md against my warehouse. For each surface, compare to a reference number I trust and flag any drift, and assert the invariants (nbrx ≤ nrx ≤ trx; net ≤ gross; share / access / reach ∈ [0,1]; sales_revenue gross/net ties out to gross_to_net). Where we differ, explain whether it's data, definition, time-window, or Rx vintage.
 ```
 
 > ✅ You'll see: accuracy checked, not asserted — and a triage of any mismatch into data vs. definition vs. window vs. Rx vintage (the one extra axis pharma adds: licensed Rx restates, so "last quarter" can move). The headline win is the first time Ana hits the exact NBRx share and net-sales figure the brand lead expected.
+
+### 7.2 · Customize a definition — the territory-alignment / restatement lesson
+Your org inevitably defines something differently. The most common one in commercial pharma isn't a metric formula — it's how a number is allowed to move . Licensed Rx data (IQVIA / Symphony) is restated with each delivery: projection factors change and prescriber→territory alignments are revised, so a territory-level reach or share number pulled today can differ from the same query run next month ( notes/grain.md , notes/identity-resolution.md ). The fix is to pin the data vintage and alignment basis as part of the governed definition, so trends are reproducible.
 
 **Prompt for the learner to run:**
 ```
@@ -253,12 +309,17 @@ Our territory-level Rx and reach numbers must be reported as-of a pinned alignme
 
 > ✅ You'll see: the change land as a reviewable PR in your repo — the template stays pristine upstream; your restatement policy is now governed, with a pinned golden value so the vintage can't silently drift. (Same motion for any definition: a market-basket scope, a gross-to-net channel basis, a target-tier rule.)
 
+### 7.3 · Localize the vocabulary
+ontology/notes/glossary.md holds the canonical commercial terms — TRx/NRx/NBRx, market basket, share, decile, reach/frequency, gross/net, gross-to-net, formulary access, HCP/HCO, sample-to-script — each with a variance-to-check column flagging where your org's reality diverges (vendor projection method, basket scope, accrual vs realized net, the market used to rank deciles).
+
 **Prompt for the learner to run:**
 ```
 Walk the glossary's variance column. For each term that differs at our org — our basket scope, our net-sales basis, the market we rank deciles on — propose the override in glossary.md (keep the term → definition → resolves-via pattern), point the backing in schema.tql where it's data-backed, and open it as one PR.
 ```
 
 > ✅ You'll see: the vocabulary localized in one reviewable pass — so "market share," "net sales," and "decile" mean your org's thing, everywhere, from now on.
+
+> **Two habits as you make it yours** — 1 · Write for the search box. As you extend the kit, keep a short README per folder and repeat the phrases your teams actually use (metric names, synonyms, team names) in the prose — future threads find context by search , not browsing. 2 · Let usage drive the roadmap. Stand up a weekly gap-review playbook: mine repeated questions, manual SQL, and mid-thread corrections; have Ana draft small reviewable patches; a named owner approves. The kit is the seed — usage is what grows it. (See Ontology Operations Module 4.)
 
 **Checkpoint before moving on:**
 - [ ] Golden queries ran; any drift was triaged (data / definition / window / vintage)

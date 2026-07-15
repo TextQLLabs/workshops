@@ -18,9 +18,20 @@ Start by telling me what you see.
 
 ## Module 0 · Before You Connect
 
+### 0.1 · Know your options
+
 > **Note** — Starting a POC? Upload a file today, connect the warehouse when ready for production. Don't block a pilot on firewall tickets.
 
+### 0.2 · The Connectors page
+
 > **Where to click** — Connectors (left sidebar) — add connectors, preview synced tables, resync after schema drift, manage API accesses (API tab)
+
+### 0.3 · Decision 1 — service account, not personal credentials
+
+### 0.4 · Decision 2 — scope: what should Ana see?
+
+### 0.5 · Decision 3 — who in TextQL gets this connector?
+Public vs private is one dropdown at creation but a migration after users build on it. Production warehouses with sensitive data usually start private and get role-scoped.
 
 **Prompt for the learner to run:**
 ```
@@ -37,7 +48,20 @@ List the connectors that already exist in this org with their types and visibili
 
 ## Module 1 · Network & Credentials
 
+### 1.1 · The IP allowlist
+For SaaS deployments, TextQL connects from two fixed IPs. Whitelist both:
+
 > **Note** — VPC, on-prem, single-tenant: this does not apply to you — confirm network requirements with your TextQL representative. BigQuery also needs no IP whitelisting (OAuth/service account over Google's API).
+
+### 1.2 · Provider-specific firewall steps
+AWS (RDS, Aurora, Redshift): RDS Console → database → Connectivity & Security → VPC security group → Inbound rules → Edit. Two rules per engine port, one per IP ( /32 ):
+
+### 1.3 · Verify the path before you blame the credential
+A timeout is almost always network (firewall, wrong host/port, private subnet); an authentication error is the credential. Fix in that order. No public endpoint at all → Module 3 .
+
+### 1.4 · The credential patterns you'll meet
+
+### 1.5 · Gather your details
 
 **Checkpoint before moving on:**
 - [ ] Both TextQL IPs whitelisted (or VPC rules confirmed instead)
@@ -46,6 +70,9 @@ List the connectors that already exist in this org with their types and visibili
 - [ ] Six connection details gathered, secret vaulted
 
 ## Module 2 · Warehouse Connectors
+
+### 2.1 · Snowflake
+Auth: key-pair only for new connectors (Snowflake deprecates single-factor passwords for service users by Oct 2026; TextQL connects as a service user).
 
 **Prompt for the learner to run:**
 ```
@@ -58,9 +85,23 @@ Generate a 2048-bit RSA key pair for Snowflake key-pair auth in your sandbox: an
 
 > **Note** — The Role field is your governance lever: create a TEXTQL_ROLE with explicit SELECT grants rather than reusing a broad human role. Upgrade path: per-member OAuth (Admin workshop, Module 3).
 
+### 2.2 · BigQuery
+Prepare: GCP Console → IAM → Service Accounts: create textql-connector@... with exactly BigQuery Data Viewer + BigQuery Job User ; download a JSON key.
+
 > **Note** — Test behavior: with a Dataset ID the test verifies that dataset; without one it checks the account can list datasets in the project — a key that reads one dataset but can't list will "fail" unscoped while being perfectly usable scoped. Scope it.
 
+### 2.3 · Redshift
+Password path: Host (cluster endpoint), Port 5439, User, Password, Database, Schema, Dialect (Redshift native vs Postgres-compatible).
+
+### 2.4 · Databricks
+Prepare: SQL Warehouses → create/reuse → start it → Connection details → copy Server hostname and HTTP path . Generate a PAT (User Settings → Access tokens) — prefer a service principal's token; set a tracked expiration.
+
 > **Note** — The classic gotcha: a stopped SQL warehouse . The test may pass after a slow warm-up, then morning queries crawl. Set auto-stop sensibly; warn users about first-query warm-up.
+
+### 2.5 · PostgreSQL (and the password family)
+Host, Port 5432, Username, Password, Database, Schema — readable from postgresql://user:pass@host:5432/db . Same pattern: MySQL, Aurora, Supabase. Create a read-only user first:
+
+### 2.6 · After any connector: the first sync
 
 **Prompt for the learner to run:**
 ```
@@ -68,6 +109,8 @@ Pull the information schema for this connector. List the tables you can see with
 ```
 
 > ✅ You'll see: What Ana actually sees — the credential's view, not yours. "Tables don't match the warehouse" is grants, not bugs: compare the service identity's grants to your own.
+
+### Troubleshooting
 
 **Checkpoint before moving on:**
 - [ ] Warehouse connector created with a dedicated service identity and least-privilege grants
@@ -77,7 +120,16 @@ Pull the information schema for this connector. List the tables you can see with
 
 ## Module 3 · Private Networks
 
+### 3.1 · When a tunnel is the right answer
+
+### 3.2 · Prepare the bastion
+
+### 3.3 · Fill the form
+In the PostgreSQL connector form, check Connect via SSH tunnel (bastion host) :
+
 > **Note** — In the main connection fields: Host URL and Port are the database's private address — the one reachable from the bastion . Putting a public-looking endpoint there is the most common mistake.
+
+### 3.4 · Diagnose failures in order
 
 **Checkpoint before moving on:**
 - [ ] Bastion has a dedicated TextQL OS user and inbound SSH from both TextQL IPs
@@ -89,6 +141,9 @@ Pull the information schema for this connector. List the tables you can see with
 
 > **Note** — Both BI integrations also have an org-level Capabilities toggle ( Admin & Governance workshop , Module 4). Connector type missing? Look there first.
 
+### 4.2 · Tableau
+Prepare: generate a Personal Access Token ; note PAT name (ID) and value. Decompose your URL — from https://10ax.online.tableau.com/#/site/textqldev/home : Server = https://10ax.online.tableau.com , Site = textqldev (after site/ ).
+
 > **Note** — The step people miss: creating the connector connects the server ; Ana sees nothing until you build a collection.
 
 > **Where to click** — Connectors → your Tableau connector → New collection → project → workbook → select views (and linkable published datasources)
@@ -99,6 +154,9 @@ What dashboards and views do you have access to from this Tableau connector? Sum
 ```
 
 > ✅ You'll see: Exactly the views in your collection — and only those.
+
+### 4.3 · Power BI
+The most setup-intensive connector: Azure AD app registration (service principal). Needs Azure portal access, Power BI workspace admin, Pro/Premium license.
 
 **Prompt for the learner to run:**
 ```
@@ -115,10 +173,16 @@ What Power BI workspaces and datasets can you see through this connector? Summar
 
 ## Module 5 · Files, Drive & APIs
 
+### 5.1 · File uploads — zero setup
+Attach a CSV/Excel in a thread (the "+" button) and ask away. Right for: POCs, one-offs, data not in any warehouse. Know: 1M rows / 100 cols default; can be disabled org-wide (Capabilities); a file lives with its thread — not a governed source. A recurring file is your signal to connect the system it came from.
+
 **Prompt for the learner to run:**
 ```
 Profile this file: columns, types, null rates, and anything that looks like a data quality problem. Then suggest three questions worth asking it.
 ```
+
+### 5.2 · Google Drive & Sheets — the service account pattern
+Part 1 — GCP Console: create/reuse a project → enable Google Drive API and Google Sheets API → create a service account → download a JSON key .
 
 **Prompt for the learner to run:**
 ```
@@ -126,6 +190,8 @@ Open the Google Sheet "[name]" and read me the first 10 rows of the first tab.
 ```
 
 > ✅ You'll see: The sheet contents — or a failure that is, 90% of the time, Part 2: the sheet isn't shared with the service account email.
+
+### 5.3 · External API connectors
 
 > **Where to click** — Connectors → API tab → + New API Access
 
@@ -141,6 +207,9 @@ Using the [name] API access, make a simple authenticated request (e.g., fetch my
 - [ ] You know the domain-whitelisting perimeter and who approves additions
 
 ## Module 6 · Validate & Operate
+
+### 6.1 · The five-question smoke test
+Run in a fresh chat against every new connector before announcing it:
 
 **Prompt for the learner to run:**
 ```
@@ -169,17 +238,29 @@ Run a realistic analytical query for this source: [a join + aggregation typical 
 
 > ✅ You'll see: Pass/fail on each. #1 catches grant gaps, #4 catches accidentally read-write connectors, #5 catches the stopped-warehouse / timeout class before a user does.
 
+### 6.2 · Schema drift and resync
+Warehouses evolve; the schema snapshot doesn't follow automatically. Connectors → connector → Resync after tables are added/renamed/dropped. Habit: wire resync into your dbt/ETL release checklist. "Ana doesn't see the new table" → resync is triage step 1 (and check the Postgres default-privileges grant, Module 2.5).
+
+### 6.3 · Credential rotation
+
 > **Note** — Always rerun the smoke test immediately after rotation — a typo'd key otherwise fails at a user's next query.
+
+### 6.4 · Monitor the fleet
 
 **Prompt for the learner to run:**
 ```
 For each connector in this org, when was it last successfully used in a thread? Flag any unused for 60+ days as decommission candidates.
 ```
 
+### 6.5 · Decommission without breakage
+
 **Prompt for the learner to run:**
 ```
 Which dashboards, playbooks, and recent threads depend on the [name] connector? I'm planning to decommission it.
 ```
+
+### You're done
+Your data layer is connected with dedicated service identities, least-privilege scopes, a cleared network path, validated behavior, and operating habits for rotation, drift, and decommission.
 
 **Checkpoint before moving on:**
 - [ ] Every connector created in this workshop passed the five-question smoke test

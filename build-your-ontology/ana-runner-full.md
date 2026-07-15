@@ -18,7 +18,27 @@ wait and coach me on my result. Start with what you see, then Module 0.
 ## Module 0 · Concepts & The Method
 *🎯 Goal: know what an ontology is here, the principles that make it work, and the field + research case for it*
 
+### What an ontology is here
+An ontology is the mapping between your technical assets (tables, catalogs, documents) and your business (metrics, workflows, terminology). In TextQL it's just files — Markdown for human context and .tql for a typed, SQL-rendering semantic layer — kept in a git-backed repository with review, versioning, and access control. Ana reads it, renders inspectable warehouse SQL from it, and helps you extend it.
+
+### The principles
+
+### Why this approach wins — field lessons
+Most data leaders you'll build with have spent months on a clean semantic layer in Looker, Omni, Collibra, or Palantir — and they're rightly proud of it. The rigid-tool trap: those tools force big design decisions upfront, before anyone has seen a single real question from a real analyst. So the model captures what seemed important at modeling time and drifts from what actually turns out to matter. Our approach inverts that.
+
 > **The cardinal rule** — Do not hand a skeptic a form to fill out. Templates, question libraries, and "North Star archetypes" exist to signal expertise (you've solved this in their domain) and to force the right conversation — not as a schema to deploy. Naming domain-specific failure modes ("here's where naive implementations break") earns your opinions. Then bias hard toward action : the answer to "where do we start?" is "let me show you." Establish the North Star → feed existing context → start asking real questions → review & ratify what Ana proposes. The model improves every cycle.
+
+### The research behind it
+This isn't just philosophy — it's measured. TextQL's paper "Malleability Is All You Need: A Self-Maintaining Semantic Layer for Data Agents" (Baumstark, Tomitsuka, Ma — VLDB 2026 / NOVAS) names the "amnesia tax" : a stateless agent that re-explores the warehouse on every question spends 92–94% of its tokens rediscovering the same tables, joins, and filters. Cost scales with task count, not novelty ; identical questions resolve to divergent SQL (non-reproducible); long contexts rot (latency and failure rates climb with depth); and naive memory is non-portable across engines.
+
+### The repository shape
+
+### Where each input lands
+
+### How you know it's right
+
+### The expert shortcut — seed from what you already know
+Discovery (Modules 2–5) is for when the knowledge doesn't exist yet. If your team already has the join logic, ERDs, dbt models, or canonical SQL — don't make Ana rediscover it. Feed it in as a corpus and let her formalize it:
 
 **Prompt for the learner to run:**
 ```
@@ -55,12 +75,17 @@ Here are assets that already encode how our data joins and what our metrics mean
 ## Module 2 · Track A: Discover & Draft
 *🎯 Goal: start from what's actually there — and let Ana draft the documentation you don't have*
 
+### 2.1 · Discover the schema
+
 **Prompt for the learner to run:**
 ```
 Connect to the data source and pull the information schema first. List the tables and key columns, and map how the core entities relate (the join keys). Don't run heavy scans yet.
 ```
 
 > ✅ You'll see: Ana return a schema map — tables, keys, relationships — without guessing.
+
+### 2.2 · Draft the documentation from the data
+You don't need a glossary to start — Ana drafts one.
 
 **Prompt for the learner to run:**
 ```
@@ -77,12 +102,17 @@ Profile a couple of the core tables (sampled — no full scans) and draft a data
 ## Module 3 · Track A: First Governed Metric
 *🎯 Goal: a first .tql query surface, rendered to inspectable SQL, saved durably to the ontology*
 
+### 3.1 · Draft the ontology + a first metric
+
 **Prompt for the learner to run:**
 ```
 Using the schema and the docs we just drafted, propose the ontology: the core entities, the metrics to govern, and the dimensions. Draft the first query-surface .tql, give every metric a stable alias, and render the SQL before executing.
 ```
 
 > ✅ You'll see: generated .tql and the exact, inspectable SQL. Run it to get the answer.
+
+### 3.2 · Make it reusable, not one-off
+The rule of thumb: if two users could ask the same business question with different filters, groupings, time windows, or output columns , the surface should expose those choices as typed parameters — not hard-code one answer. A rigid one-off query answers today's question; a parameterized surface answers the next hundred.
 
 **Prompt for the learner to run:**
 ```
@@ -93,12 +123,17 @@ Take the query surface you just drafted and make it reusable rather than one-off
 
 > **Why this matters** — This is also the durable answer to "how do I stop Ana rediscovering our join paths": model joins as reusable fragments once, governed, and every later question routes through them. Reusable parameters are what make Module 5's "update without rebuilding" cheap.
 
+### 3.3 · Save it to the ontology
+
 **Prompt for the learner to run:**
 ```
 Save the docs, the metric definitions, and the .tql surfaces into the ontology so they persist and are reusable across sessions.
 ```
 
 > ✅ You'll see: the ontology files written to the repo — the basis for everything that follows.
+
+### 3.4 · Make it findable — for the next chat
+Discoverability is part of the deliverable, not cleanup. A future thread won't know your filenames — it will search . Optimize for that:
 
 **Prompt for the learner to run:**
 ```
@@ -116,6 +151,11 @@ Add a short routing README to the ontology folder you just wrote: what lives her
 
 ## Module 4 · Track A: Explore & Reconcile
 *🎯 Goal: see the model (not just the answer) — then turn "defined three ways" into one governed definition*
+
+### 4.1 · Explore what you built
+Do: open the ontology graph and browse the file tree and a notes/*.md . Walk entities → metrics → lineage. This is your living model — readable files plus a graph, versioned and reviewable.
+
+### 4.2 · Reconcile a conflicting metric — the key moment
 
 **Prompt for the learner to run:**
 ```
@@ -143,6 +183,9 @@ Update the ontology: add a new variant of an existing metric and break a metric 
 
 > ✅ You'll see: small, targeted edits and a clean diff — not a rebuild. The schema rename touches schema.tql once; everything downstream follows.
 
+### Close the loop
+Now re-ask your Module 1 baseline question in a fresh session with the ontology attached. Compare: governed definition, consistent answer, exact audited SQL.
+
 **Prompt for the learner to run:**
 ```
 [Your Module 1 baseline question, exactly as you asked it cold.] Note which definition you used and show the SQL.
@@ -159,6 +202,11 @@ Update the ontology: add a new variant of an existing metric and break a metric 
 
 ## Module 6 · Track B: Build from Documents
 *🎯 Goal: fuse messy, mixed-format inputs into one coherent, governed model*
+
+### 6.1 · Gather the pile
+Do: look at the input set (the companion repo 's example-scenario/ is a complete illustrative set — a member-services contact center, in every input type). For your own documents, see the Datasets & Document Sources reference for upload, Drive, SharePoint, object storage, and git options.
+
+### 6.2 · Build the ontology from it
 
 **Prompt for the learner to run:**
 ```
@@ -177,12 +225,16 @@ Read these documents — SOPs, a metrics document, data dictionaries, process-fl
 ## Module 7 · Track B: Validate & Govern
 *🎯 Goal: accuracy checked (not asserted), and governance expressed in the model itself*
 
+### 7.1 · Validate with golden datasets
+
 **Prompt for the learner to run:**
 ```
 Use these golden datasets and validation cases to check the metrics. Where a metric is ambiguous, reconcile it to the governed definition and add a golden-query test that pins the expected value.
 ```
 
 > ✅ You'll see: accuracy checked against known-correct outputs — and a pinned test that will alert on drift.
+
+### 7.2 · Govern with access policies
 
 **Prompt for the learner to run:**
 ```
@@ -198,12 +250,16 @@ Apply these access policies to the ontology: restrict sensitive surfaces to the 
 ## Module 8 · Track B: The N+1 Document
 *🎯 Goal: answer the question every team asks — "we built from N documents; what happens when one more arrives?"*
 
+### 8.1 · Add the next document
+
 **Prompt for the learner to run:**
 ```
 Here's one new document. Figure out where it fits in the existing ontology, make a targeted edit to the right metric/entity/notes — not a rebuild — and open a focused change describing exactly what changed and why. Don't touch unrelated files.
 ```
 
 > ✅ You'll see: the new document slot in via a small, reviewable change. The model evolves continuously; every change is diff-able and auditable.
+
+### 8.2 · Consume & maintain
 
 **Prompt for the learner to run:**
 ```
@@ -224,6 +280,9 @@ Expose these metrics as a stable surface callable from BI or via API/MCP, and de
 ## Module 9 · Role-Based Access
 *🎯 Goal: serve multiple teams from one governed model — each with its own data scope and response style*
 
+### 9.1 · Same question, two personas
+Open the ontology with each behavioral context attached and ask the same broad question :
+
 **Prompt for the learner to run:**
 ```
 [A broad question in your domain — e.g. "How are our patients doing on hospital utilization and cost?"]
@@ -231,12 +290,19 @@ Expose these metrics as a stable surface callable from BI or via API/MCP, and de
 
 > ✅ You'll see: Program Manager: Ana asks to clarify with a menu of allowed options only, then answers in plain language — no SQL, summary first. Analyst: Ana states her assumptions, proceeds, shows the SQL with a clause-by-clause explanation, and flags inference vs. governed surface.
 
+### 9.2 · The strong moment — an off-scope request
+
 **Prompt for the learner to run:**
 ```
 [As the restricted persona, ask for something outside that role's scope — a domain they aren't provisioned for.]
 ```
 
 > ✅ You'll see: Ana declines and redirects — the data exists and the governed surface exists, but this role isn't scoped to it. The access control lives in the context: auditable, version-controlled, reviewable like any other file.
+
+### Common questions
+
+### 9.3 · Identity folders — routing, not duplication
+Access controls decide what a role can see . A second, complementary structure decides where a role's questions land : identity folders — teams/finance , roles/account-executive , people/jane-doe , customers/acme . Each holds a short README naming the audience, the recurring questions, and links to the canonical shared definitions — never copies of them.
 
 > **The one rule** — Route, don't redefine. An identity folder's README says "start with ../../domains/finance/revenue " — it never redefines revenue locally. One governed definition, many doors into it. (This is the same principle as the Context Stack's "one EDM, many personas.")
 

@@ -244,6 +244,10 @@
     <img src="assets/oo-m1-git.png" alt="The ontology repo, synced over git." onerror="this.parentElement.classList.add('missing')">
     <figcaption>The ontology repo, synced over git.</figcaption>
   </figure>
+  <div class="callout"><span class="label">Routing hygiene — part of every merge</span>
+    <p>Every change that adds or moves a file should also touch the <b>routing docs</b>: the folder README (what lives here, which files are canonical) and — deliberately — the search phrases a future thread would use, repeated in prose. Discoverability is part of the deliverable; a definition nobody can find might as well not exist.</p>
+  </div>
+
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You know which path each contributor type uses, and stopped wrong-path traffic</label>
     <label><input type="checkbox"> Git sync connected (or deliberately not), with one review gate, not two</label>

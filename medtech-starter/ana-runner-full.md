@@ -18,6 +18,8 @@ wait and coach me on my result. Start with what you see, then Module 0.
 ## Module 0 · The Six Layers
 *🎯 Goal: know what's in the box and where everything lives*
 
+### The six layers
+
 > **Standards alignment** — STANDARDS.md maps the model to the conventions it aligns with (FDA device risk class per 21 CFR 860, MDR reportability per 21 CFR 803, complaint handling per 21 CFR 820.198, GMDN nomenclature structurally). The semantic layer (metrics, routing, classification) is fully separated from the physical mapping : every physical table name lives in one file , ontology/schema.tql — re-point it and the metric logic stays put. The starter is authored against a generic catalog / installed-base / service / complaint model (SAP or other ERP, Salesforce CRM, ServiceMax field service, TrackWise/Veeva QMS-shaped) with ANSI/Spark-portable SQL; MIGRATION.md is the 8-step re-point checklist and works the same on Redshift, BigQuery, Snowflake, or Databricks (budget: about a half-day with warehouse access). For a deep technical tour, read DEEP_DIVE.md .
 
 > **Two rules for a long, live session** — 1 · Checkpoint every couple of modules. Long threads have a ceiling. After every module or two, ask Ana: “Save a handoff document summarizing what we've built, what we decided, and what's next — so we can continue in a new thread.” If a thread ever maxes out, you lose nothing. 2 · Pin the scope in every prompt. Name the entity and the source-of-truth tables in each prompt (“…for [entity X], using the [base] tables, not the summary table”) — otherwise Ana may drift to a convenient summary table or query every source at once.
@@ -50,9 +52,20 @@ Help me define the North Star for our ontology before we build anything.
 ## Module 2 · Connect Three Things
 *🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat*
 
+### 2.1 · Connect the ontology repo to Ana
+This is the key step. In TextQL, add a Git connector and point it at your fork of the starter repo ( TextQLLabs/ontology-starter-kits/tree/main/medtech — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every classification rule — as a reference she reads on demand.
+
 > **No second source of truth** — You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.
 
+### 2.2 · Connect your data warehouse
+Add the connector for the warehouse holding your product, installed-base, service, and complaint data (Redshift, BigQuery, Snowflake, Databricks, …) — typically sourced from your ERP (SAP) and CRM (Salesforce) for sales + installed base, your field-service system (ServiceMax), and your post-market quality system (TrackWise/Veeva QMS). Read-only access is enough.
+
 > **Use your governed, contracted warehouse** — Post-market complaint and MDR data are FDA-regulated quality records (21 CFR 820 / 803) — auditable, with reportability timing that matters. Connect the enterprise warehouse that's already in scope for your quality-system, data-residency, and audit obligations — see ontology/notes/governance-quality.md .
+
+### 2.3 · (Optional) Bring in your documents
+Your real-world context — the commercial reporting workbook, the complaint-handling / MDR decision SOP, dbt models, the spreadsheet where someone defined "attach rate" — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology as corpus, not migration , and can fold what she learns into the model.
+
+### 2.4 · Say hello
 
 **Prompt for the learner to run:**
 ```
@@ -69,12 +82,17 @@ Read the ontology repo and give me a tour: what entities, metrics, and classific
 ## Module 3 · Validate Against Your Schema
 *🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — and settle the grain — without writing SQL*
 
+### 3.1 · The dry run — required
+
 **Prompt for the learner to run:**
 ```
 Look at the ontology repo, then inspect my warehouse. Run validation/dry-run-prompt.md against my schema: pull the information schema for my product, account, sales_txn, device, service_order, and complaint tables and tell me where the ontology's expected table and column names don't match what I actually have — including whether product carries category ('capital'/'consumable'/'service') and device_class, whether device carries status ('active'/'decommissioned') and install_date, whether service_order carries is_corrective and first_visit_resolved, and whether complaint carries is_mdr and is_serious flags. Propose the exact changes to ontology/schema.tql.
 ```
 
 > ✅ You'll see: Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names, and the all-important category, device-status, service-flag, and complaint-flag questions. (The ready-made version lives in validation/dry-run-prompt.md .)
+
+### 3.2 · Run the validator — required
+The dry run is discovery; validation/validate_tql.py is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles. Ana runs it for you — no terminal needed:
 
 **Prompt for the learner to run:**
 ```
@@ -85,6 +103,8 @@ Run validation/validate_tql.py from the ontology repo in your sandbox — static
 
 > **Prefer the terminal?** — The same gate runs locally: python3 validation/validate_tql.py (static — no warehouse needed) · --check-sql (paste the output into Ana: rows = missing columns) · --dsn "<dsn>" --explain (live column check + compile test).
 
+### 3.3 · Apply the fixes as a PR — required
+
 **Prompt for the learner to run:**
 ```
 Make those changes and open a pull request.
@@ -93,6 +113,9 @@ Make those changes and open a pull request.
 > ✅ You'll see: Ana edit the files and open a reviewable PR in your repo. Every physical table name lives in one place ( ontology/schema.tql ) — re-point it and the metric logic stays put. The join keys the surfaces rely on are product_id , account_id , and device_id .
 
 > **Why this step matters** — Every medtech company's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those before you trust a number is the difference between a defensible attach rate and a debugging session in front of the CCO.
+
+### 3.4 · Decide your grain & verify your joins — required
+Medtech data fans out across several grains — product (SKU) vs. device (installed unit) vs. service order vs. complaint — and joining across them carelessly multiplies counts. Three decisions dominate this module, and all are prompts: which fact answers which question, whether device is an active-vs-decommissioned snapshot counted as of the reporting date (the denominator behind attach, complaint, and availability rates), and how the per-1k-device rates use the active installed base — not the order line — as the denominator.
 
 **Prompt for the learner to run:**
 ```
@@ -127,12 +150,17 @@ Find the dataset-specific literals the surfaces hard-code — the category enums
 ## Module 4 · The Classification Layer
 *🎯 Goal: rollup-powered questions — product family → category/modality, device class → FDA risk, complaint type → grouping — with zero writes to your warehouse*
 
+### 4.1 · Prove the rollups work
+
 **Prompt for the learner to run:**
 ```
 Using the ontology's classification layer, roll my product_family values up to modality (Imaging / Monitoring / Infusion / Surgical / In-vitro diagnostics / …), map my device_class values to FDA risk class (I→low, II→moderate, III→high) using the 21 CFR 860 seed, and group my complaint_type values into the malfunction / injury / use-error grouping, then show me complaint rate and serious-event rate by modality and risk class. Explain how you joined the seed CSVs without writing to the warehouse.
 ```
 
 > ✅ You'll see: raw product families, device classes, and complaint types resolved to meaningful modalities, FDA risk classes, and complaint groupings, with the federated join-in-sandbox pattern explained — and a reminder to analyze groupings , never free-text codes.
+
+### 4.2 · Bring in your licensed feed — optional
+You don't need this on day one — the public category/modality, FDA-risk-class, and complaint-type groupings are already committed. Come back when you want coded device nomenclature beyond the public groupings. These are licensed (e.g. GMDN device terms, IQVIA/vendor market-share) — the repo ships the structure and join logic, and the data comes from your own licensed feed :
 
 **Prompt for the learner to run:**
 ```
@@ -151,6 +179,8 @@ We have a licensed nomenclature feed (e.g. GMDN device terms, or an IQVIA market
 
 > **Pin the scope** — In every question below, name the entity and the source-of-truth tables . A plausible answer from the wrong (summary) table is worse than no answer — if two sources could answer, run both and let your SME rule which is truth.
 
+### 5.1 · Product revenue & installed base (the commercial pair)
+
 **Prompt for the learner to run:**
 ```
 What's our product revenue for 2024 (product_revenue.tql), and how many active devices are in the installed base as of the reporting date (installed_base.tql)? Tell me the basis — which categories are in revenue (capital / consumable / service), and that installed base counts active units as-of the reporting date, not every device ever shipped.
@@ -158,12 +188,16 @@ What's our product revenue for 2024 (product_revenue.tql), and how many active d
 
 > ✅ You'll see: the governed surface return revenue ≈ $7.65B over an active installed base of 42,498 devices (window 2024, reporting date 2024-12-31). Ana names the basis (revenue across all categories over the order-date window; installed base = active units as-of the reporting date) instead of silently picking one.
 
+### 5.2 · Consumable attach rate (the pull-through headline)
+
 **Prompt for the learner to run:**
 ```
 What's our consumable attach rate for 2024 (attach_rate.tql)? Tell me the basis — consumable revenue ÷ active installed devices — and confirm you're dividing by the active device snapshot, not by sales lines or every unit ever shipped.
 ```
 
 > ✅ You'll see: the governed surface return consumable revenue ÷ active installed devices — the synthetic portfolio pins attach ≈ $78.3k per active device. Ana names the basis (the razor/razor-blade pull-through KPI, active installed base in the denominator) instead of conflating it with raw consumable revenue.
+
+### 5.3 · Complaint rate & MDR share (the post-market quality pair)
 
 **Prompt for the learner to run:**
 ```
@@ -174,12 +208,16 @@ Show me our post-market complaint rate for 2024 (complaint_rate.tql) — complai
 
 > **Know the MDR reportability basis** — The governed mdr_rate surface reports the share of received complaints flagged is_mdr — MDR-reportable per 21 CFR 803 . Reportability (and its 30-day timing) is a regulated determination made in your quality system, not a count you can assume. A rising MDR rate is an auditable safety/escalation signal. If your stakeholder means a different reportability scope, that's a different cut — Ana will say which one your question maps to. See notes/governance-quality.md .
 
+### 5.4 · Serious events & complaint closure (the safety + timeliness pair)
+
 **Prompt for the learner to run:**
 ```
 Show our serious-event rate for 2024 (serious_event_rate.tql) — serious complaints per 1,000 active devices — and our complaint closure cycle time (complaint_closure_days.tql): complaints received, how many remain open, and average days to close. Confirm closure time is an auditable 21 CFR 820.198 measure.
 ```
 
 > ✅ You'll see: serious-event rate ≈ 48.5 per 1,000 active devices (injury / death / serious deterioration) and average complaint closure ≈ 30.5 days — with Ana flagging that complaint-handling timeliness is auditable under 21 CFR 820.198 and that serious events normalize on the same active installed base.
+
+### 5.5 · Service resolution & device availability (the field-service + reliability pair)
 
 **Prompt for the learner to run:**
 ```
@@ -189,6 +227,9 @@ Show me our field-service resolution for 2024 (service_resolution.tql) — servi
 > ✅ You'll see: average service resolution ≈ 20.5 days with a first-time-fix rate ≈ 0.6976 , and device availability ≈ 0.8483 (1 − devices with an open corrective order ÷ active installed base). Ana names the basis for each — resolution & first-time-fix on orders opened in the window, availability as a point-in-time fleet-uptime proxy — and pairs them as the two reliability levers.
 
 > **Why everyone gets the same number** — Revenue, installed base, and complaint rate can each be computed several ways. The ontology pins one governed definition — revenue over the order-date window, installed base as the active as-of-reporting-date snapshot, complaint and serious-event rates per 1,000 active devices, with the decision recorded in ontology/notes/ — so Commercial, Field Service, and Quality stop disagreeing about which number is "the" number.
+
+### 5.6 · When the answer isn't governed yet — watch the model grow
+Now ask something from your shortlist that the starter doesn't already cover — warranty-vs-billable service mix, attach by modality, an installed-base-aging cut, a region-level complaint-rate trend, distributor-vs-direct revenue split. This is the important beat: a starter pack is a head start, not the finished model.
 
 **Prompt for the learner to run:**
 ```
@@ -207,6 +248,9 @@ Here's a question from our shortlist that isn't in the governed surfaces yet: [y
 ## Module 6 · Governance & Quality-Record Defaults
 *🎯 Goal: see the FDA quality-record & confidentiality behavior that's on by default — and verify it fires*
 
+### 6.1 · Inventory your sensitive fields — day one
+governance-quality.md §0 classifies the sensitive fields in the connected schema into a role — and the key distinction is that using an identifier as a join key is not the same as outputting it :
+
 **Prompt for the learner to run:**
 ```
 Inventory every sensitive field in the connected schema and classify each per governance-quality.md section 0: join-key-only, confidential (account/customer/device detail), regulated quality record (21 CFR 820/803), or minimum-necessary. Flag anything ambiguous for compliance/quality review.
@@ -216,12 +260,16 @@ Inventory every sensitive field in the connected schema and classify each per go
 
 > **Facilitators: pre-flight these tests** — Run 6.2 and 6.3 yourself before any session with quality / compliance in the room. These guardrails are instruction-layer enforcement — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with governance-quality.md and config/org_context.md ) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the check is part of the story — "here's the file, here's the behavior, here's how we audit it."
 
+### 6.2 · Test the small-cell suppression rule
+
 **Prompt for the learner to run:**
 ```
 Break down complaint rate and MDR share by account × product family × complaint-type grouping to inform a quality review. Apply our governance rules: aggregate to the coarsest level that answers it, apply min_cell_size on the cross-product of the grouping dimensions, and tell me what you suppressed and why — and confirm you didn't expose a single named account's complaint detail.
 ```
 
 > ✅ You'll see: cells under min_cell_size suppressed (an account × product × complaint-type cell can single out one customer's quality issue), output rolled to region/segment rather than named account where the cell is thin. The starter default is 11 (the small-cell threshold), configured in config/org_context.md (governance-quality.md §1–§2). If suppression doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.
+
+### 6.3 · Test account confidentiality and the audit trail
 
 **Prompt for the learner to run:**
 ```
@@ -237,6 +285,9 @@ Show me the full purchase history and open complaint narratives for [a named hos
 ## Module 7 · Validate Numbers & Make It Yours
 *🎯 Goal: pin known-correct values, then adapt the starter's definitions to your company — in your repo*
 
+### 7.1 · Reconcile against a number someone already trusts
+Trust in medtech analytics is earned on the first matching number — and lost the first time the complaint rate is quoted on the wrong basis (divided by every unit ever shipped instead of the active installed base, say). The starter's golden values are already pinned and verified against the synthetic warehouse (see validation/golden-queries.md — revenue ≈ $7.65B over 42,498 active devices, attach ≈ $78.3k/device, complaint rate ≈ 941/1k, MDR rate ≈ 0.0998, serious-event rate ≈ 48.5/1k, closure ≈ 30.5d, service resolution ≈ 20.5d, first-time-fix ≈ 0.6976, availability ≈ 0.8483). Against your warehouse, reconcile each governed surface to a number a CCO, service VP, or quality lead already trusts:
+
 **Prompt for the learner to run:**
 ```
 Run each governed surface against my warehouse and compare to a reference number I trust (product revenue, active installed base, attach rate, complaint rate, MDR rate, serious-event rate, complaint closure days, service resolution, first-time-fix, device availability). For each, show the SQL and the basis, and flag any drift. Where we differ, explain whether it's data, definition, or basis (capital vs consumable revenue, active vs decommissioned devices, per-1k denominator, MDR reportability scope).
@@ -244,12 +295,18 @@ Run each governed surface against my warehouse and compare to a reference number
 
 > ✅ You'll see: accuracy checked, not asserted — and a triage of any mismatch into data vs. definition vs. basis. The decisive moment is the first time the complaint rate or attach lands exactly where the quality or commercial leader expected.
 
+### 7.2 · Assert the invariants
+Even before you have an external reference, some numbers must agree with each other. The golden queries assert these:
+
 **Prompt for the learner to run:**
 ```
 Check the cross-surface invariants from validation/golden-queries.md against my data: mdr_reportable <= complaints and serious_events <= complaints in the complaint surfaces; 0 <= mdr_rate <= 1, 0 <= first_time_fix_rate <= 1, 0 <= availability <= 1; devices_with_open_corrective <= active_devices in device_availability; open_orders <= service_orders in service_resolution; attach_rate == consumable_revenue / active_devices; the active_devices denominator is identical across complaint_rate, serious_event_rate, attach_rate, and installed_base. Report any that don't hold.
 ```
 
 > ✅ You'll see: internal consistency proven — if MDR-reportable exceeds total complaints, or a rate falls outside [0,1], or the active-device denominator drifts between surfaces, something is wrong before a stakeholder ever sees the number.
+
+### 7.3 · Customize a definition — the MDR-reportability field lesson
+Your company inevitably defines something differently — a revenue category boundary, what counts as the active installed base, an MDR-reportability scope. But the starter's flagship field lesson is one every medtech quality team hits, and it makes the perfect worked example because it's where a quality-system judgment and a dashboard number diverge:
 
 > **MDR reportability — definition & timing** — The governed mdr_rate surface reports the share of received complaints flagged is_mdr — MDR-reportable per 21 CFR 803 . But "reportable" is a regulated determination , not a field you can assume: it turns on whether the event may have caused or contributed to a death or serious injury, or a malfunction that would be likely to do so on recurrence — and it carries a 30-day reporting clock (5 days for events requiring remedial action to prevent unreasonable risk). A complaint can be logged but not yet adjudicated; counting is_mdr before adjudication, or off the wrong date (received vs. became-aware vs. decision), misstates both the rate and the reporting-timeliness picture. Conflating an unadjudicated complaint flag with a true MDR determination is the most common reportability error in medtech operator reporting. Documented in notes/governance-quality.md and validation/golden-queries.md . (The same shape applies to the active-installed-base denominator — dividing complaint rate by every unit ever shipped instead of the active as-of-date snapshot flatters quality.)
 
@@ -260,12 +317,17 @@ Walk me through the MDR-reportability definition and timing in notes/governance-
 
 > ✅ You'll see: the most-confused metric in medtech operator reporting demonstrated on your own data and then made explicit — the reportability definition and timing confirmed in the surface, and any company-specific basis change landing as a reviewable PR in your repo with a pinned golden value. The template stays pristine upstream; your adaptations are yours.
 
+### 7.4 · Localize the vocabulary
+ontology/notes/glossary.md holds the canonical medtech terms — product, capital vs. consumable vs. service, installed base, active vs. decommissioned device, attach rate, complaint, MDR-reportable, serious event, complaint closure, service resolution, first-time-fix, device availability, device class, modality — each with a variance column flagging where your company diverges (revenue-category boundary; active-installed-base as-of rule; MDR reportability scope/timing; corrective-vs-PM service classification).
+
 **Prompt for the learner to run:**
 ```
 Walk the glossary's variance column for our portfolio. For each term that differs at our company — capital-vs-consumable boundary, active-installed-base as-of rule, MDR reportability scope/timing, what counts as a corrective service event, the attach denominator — propose the override in glossary.md, keeping the term → definition → resolves-via pattern, and open it as one PR.
 ```
 
 > ✅ You'll see: the vocabulary localized in one reviewable pass — so "attach rate," "installed base," and "MDR-reportable" mean your company's thing, everywhere, from now on.
+
+> **Two habits as you make it yours** — 1 · Write for the search box. As you extend the kit, keep a short README per folder and repeat the phrases your teams actually use (metric names, synonyms, team names) in the prose — future threads find context by search , not browsing. 2 · Let usage drive the roadmap. Stand up a weekly gap-review playbook: mine repeated questions, manual SQL, and mid-thread corrections; have Ana draft small reviewable patches; a named owner approves. The kit is the seed — usage is what grows it. (See Ontology Operations Module 4.)
 
 **Checkpoint before moving on:**
 - [ ] Governed surfaces reconciled to a trusted reference; any drift triaged (data / definition / basis)

@@ -18,6 +18,8 @@ wait and coach me on my result. Start with what you see, then Module 0.
 ## Module 0 · The Six Layers
 *🎯 Goal: know what's in the box and where everything lives*
 
+### The six layers
+
 > **Standards alignment** — STANDARDS.md maps the model to the conventions it aligns with (CMS MS-DRG & GMLOS, NUBC/UB-04 dispositions, NPI, US Census geography). The semantic layer (metrics, routing, classification) is fully separated from the physical mapping : every physical table name lives in one file , ontology/schema.tql — re-point it and the metric logic stays put. The starter is authored against a generic encounter / census / OR / revenue-cycle model (Epic Clarity/Caboodle, Oracle Health/Cerner, MEDITECH-shaped) with ANSI/Spark-portable SQL; MIGRATION.md is the 8-step re-point checklist and works the same on Redshift, BigQuery, Snowflake, or Databricks (budget: about a half-day with warehouse access). For a deep technical tour, read DEEP_DIVE.md .
 
 > **Two rules for a long, live session** — 1 · Checkpoint every couple of modules. Long threads have a ceiling. After every module or two, ask Ana: “Save a handoff document summarizing what we've built, what we decided, and what's next — so we can continue in a new thread.” If a thread ever maxes out, you lose nothing. 2 · Pin the scope in every prompt. Name the entity and the source-of-truth tables in each prompt (“…for [entity X], using the [base] tables, not the summary table”) — otherwise Ana may drift to a convenient summary table or query every source at once.
@@ -50,9 +52,20 @@ Help me define the North Star for our ontology before we build anything.
 ## Module 2 · Connect Three Things
 *🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat*
 
+### 2.1 · Connect the ontology repo to Ana
+This is the key step. In TextQL, add a Git connector and point it at your fork of the starter repo ( TextQLLabs/ontology-starter-kits/tree/main/provider-ops — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every classification rule — as a reference she reads on demand.
+
 > **No second source of truth** — You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.
 
+### 2.2 · Connect your data warehouse
+Add the connector for the warehouse holding your encounter / census / OR / revenue-cycle data (Redshift, BigQuery, Snowflake, Databricks, …) — typically sourced from Epic (Clarity/Caboodle), Oracle Health/Cerner, or MEDITECH, plus the ADT / scheduling / OR / revenue-cycle feeds. Read-only access is enough.
+
 > **Use your governed, contracted warehouse** — Provider operations data is protected health information (PHI) under HIPAA — patient identifiers, MRNs, dates of birth. Connect the enterprise warehouse that's already in scope for your HIPAA, data-residency, and audit obligations — see ontology/notes/governance-phi.md .
+
+### 2.3 · (Optional) Bring in your documents
+Your real-world context — the operations reporting workbook, the LOS or readmission definition memo, dbt models, the spreadsheet where someone defined "occupancy" — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology as corpus, not migration , and can fold what she learns into the model.
+
+### 2.4 · Say hello
 
 **Prompt for the learner to run:**
 ```
@@ -69,12 +82,17 @@ Read the ontology repo and give me a tour: what entities, metrics, and classific
 ## Module 3 · Validate Against Your Schema
 *🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — and settle the grain — without writing SQL*
 
+### 3.1 · The dry run — required
+
 **Prompt for the learner to run:**
 ```
 Look at the ontology repo, then inspect my warehouse. Run validation/dry-run-prompt.md against my schema: pull the information schema for my encounter, patient, bed_census, or_case, appointment, and charge tables and tell me where the ontology's expected table and column names don't match what I actually have — including whether the encounter spine carries encounter_type (inpatient/ed/outpatient/observation), whether los_days is precomputed or must be derived, whether bed_census is a midnight snapshot, and whether the charge line carries denial_flag. Propose the exact changes to ontology/schema.tql.
 ```
 
 > ✅ You'll see: Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names, and the all-important encounter-type, LOS-derivation, and census-grain questions. (The ready-made version lives in validation/dry-run-prompt.md .)
+
+### 3.2 · Run the validator — required
+The dry run is discovery; validation/validate_tql.py is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles. Ana runs it for you — no terminal needed:
 
 **Prompt for the learner to run:**
 ```
@@ -85,6 +103,8 @@ Run validation/validate_tql.py from the ontology repo in your sandbox — static
 
 > **Prefer the terminal?** — The same gate runs locally: python3 validation/validate_tql.py (static — no warehouse needed) · --check-sql (paste the output into Ana: rows = missing columns) · --dsn "<dsn>" --explain (live column check + compile test).
 
+### 3.3 · Apply the fixes as a PR — required
+
 **Prompt for the learner to run:**
 ```
 Make those changes and open a pull request.
@@ -93,6 +113,9 @@ Make those changes and open a pull request.
 > ✅ You'll see: Ana edit the files and open a reviewable PR in your repo. Every physical table name lives in one place ( ontology/schema.tql ) — re-point it and the metric logic stays put. The join keys the surfaces rely on are patient_id , encounter_id , provider_id , facility_id , and department_id .
 
 > **Why this step matters** — Every health system's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those before you trust a number is the difference between a defensible ALOS and a debugging session in front of the COO.
+
+### 3.4 · Decide your grain & verify your joins — required
+Provider-ops data fans out across several grains — encounter vs. bed-census snapshot vs. charge line vs. OR case — and joining across them carelessly multiplies counts. Three decisions dominate this module, and all are prompts: which fact answers which question, whether bed_census is a point-in-time midnight snapshot summed to bed-days (not a row per patient), and how the encounter spine separates observation from inpatient (ED LOS, separately, needs admit/discharge timestamps because it's sub-day).
 
 **Prompt for the learner to run:**
 ```
@@ -127,12 +150,17 @@ Find the dataset-specific literals the surfaces hard-code — the encounter_type
 ## Module 4 · The Classification Layer
 *🎯 Goal: rollup-powered questions — DRG → MDC/weight, specialty → service line, disposition → grouping — with zero writes to your warehouse*
 
+### 4.1 · Prove the rollups work
+
 **Prompt for the learner to run:**
 ```
 Using the ontology's classification layer, roll my granular specialty/department values up to service line (Cardiovascular / Orthopedics / Neurosciences / …), group my discharge_disposition values into the UB-04 grouping (Home / Post-acute / Transfer / Mortality / …), and join my drg_code values to the CMS MS-DRG seed for MDC and relative weight, then show me discharges and average DRG weight by service line. Explain how you joined the seed CSVs without writing to the warehouse.
 ```
 
 > ✅ You'll see: raw specialty, disposition, and DRG codes resolved to meaningful service lines, disposition groupings, and MDC/weight, with the federated join-in-sandbox pattern explained — and a reminder to analyze groupings , never free-text codes.
+
+### 4.2 · Bring in your licensed feed — optional
+You don't need this on day one — the public DRG, service-line, and disposition groupings are already committed (and the ms_drg seed is a small illustrative slice; hydrate the full ~760-DRG current-fiscal-year CMS table before benchmarking CMI). Come back when you want full coded groupers beyond public DRG/disposition. These are licensed (e.g. CPT, SNOMED) — the repo ships the structure and join logic, and the data comes from your own licensed feed :
 
 **Prompt for the learner to run:**
 ```
@@ -151,6 +179,8 @@ We have a licensed coded-grouper feed (e.g. CPT / SNOMED) in our warehouse at [t
 
 > **Pin the scope** — In every question below, name the entity and the source-of-truth tables . A plausible answer from the wrong (summary) table is worse than no answer — if two sources could answer, run both and let your SME rule which is truth.
 
+### 5.1 · Length of stay & discharge volume (the throughput pair)
+
 **Prompt for the learner to run:**
 ```
 What's our average inpatient length of stay for 2024 (length_of_stay.tql), and how many inpatient discharges does that cover (discharge_volume.tql)? Tell me the basis — encounter type, whether observation is included, and whether deaths/transfers are in the denominator — and why.
@@ -158,12 +188,16 @@ What's our average inpatient length of stay for 2024 (length_of_stay.tql), and h
 
 > ✅ You'll see: the governed surface return ALOS ≈ 5.48 days over 78,572 inpatient discharges (window 2024). Ana names the basis (inpatient discharges only, observation excluded, discharged-in-window) instead of silently picking one.
 
+### 5.2 · Bed occupancy (the capacity headline)
+
 **Prompt for the learner to run:**
 ```
 What's our inpatient bed occupancy for 2024 (bed_occupancy.tql)? Tell me the basis — occupied bed-days ÷ available bed-days from the midnight census — and confirm you're summing the snapshot to bed-days, not counting census rows as patients.
 ```
 
 > ✅ You'll see: the governed surface return occupied bed-days ÷ available bed-days from the census — the synthetic portfolio pins occupancy ≈ 0.8356 . Ana names the basis (midnight census, bed-day weighted) instead of conflating it with a flow-weighted average.
+
+### 5.3 · ED throughput & OR utilization (the flow + surgical-capacity pair)
 
 **Prompt for the learner to run:**
 ```
@@ -174,6 +208,8 @@ Show me ED throughput for 2024 (ed_throughput.tql) — ED encounters, average ED
 
 > **Know the ED-LOS measurement basis** — The governed ed_throughput surface computes ED LOS as a timestamp difference ( admit_ts → discharge_ts , in hours) because it's sub-day — and the dialect differs by engine (Spark unix_timestamp vs. Redshift DATEDIFF(second,…) vs. BigQuery TIMESTAMP_DIFF ). If your warehouse only stores dates, ED LOS can't be computed honestly — Ana will say which it used. See notes/ed-throughput.md .
 
+### 5.4 · Case mix index & readmission (the acuity + quality pair)
+
 **Prompt for the learner to run:**
 ```
 Show our case mix index for 2024 (case_mix_index.tql) and our 30-day all-cause readmission rate (readmission_rate.tql). Tell me how CMI normalizes volume for acuity, and confirm the readmission definition — operational all-cause within 30 days, deaths excluded from the index — vs. the CMS risk-adjusted measure.
@@ -183,6 +219,8 @@ Show our case mix index for 2024 (case_mix_index.tql) and our 30-day all-cause r
 
 > **Operational vs. CMS readmission** — The governed readmission_rate is the operational all-cause 30-day count (index discharges followed by another inpatient admission for the same patient within 30 days, deaths excluded from the index). It is not the CMS risk-adjusted, condition-specific, planned-readmission-excluded measure used for payment. If your stakeholder means the CMS number, that's a different surface — Ana will say which one your question maps to. See notes/readmission-operational.md .
 
+### 5.5 · Denials & no-shows (the revenue-cycle + access pair)
+
 **Prompt for the learner to run:**
 ```
 Show me our revenue-cycle denial rate for 2024 (denial_rate.tql) and our appointment no-show rate (appointment_no_show_rate.tql), report them together, and tell me which is the clean-claim / cash signal and which is the access / clinic-capacity signal.
@@ -191,6 +229,9 @@ Show me our revenue-cycle denial rate for 2024 (denial_rate.tql) and our appoint
 > ✅ You'll see: denial rate ≈ 0.0903 (denied billed dollars ÷ total billed) and no-show rate ≈ 0.1211 (no-show appointments ÷ scheduled). Ana names the basis for each — denials on billed dollars over the post-date window, no-shows on scheduled appointments over the slot window — and pairs them as the two leakage levers.
 
 > **Why everyone gets the same number** — LOS, occupancy, and readmission can each be computed several ways. The ontology pins one governed definition — inpatient ALOS excluding observation, occupancy on the midnight-census bed-day basis, operational all-cause 30-day readmission, with the decision recorded in ontology/notes/ — so Capacity, Perioperative, Quality, and Revenue Cycle stop disagreeing about which number is "the" number.
+
+### 5.6 · When the answer isn't governed yet — watch the model grow
+Now ask something from your shortlist that the starter doesn't already cover — observed-to-expected LOS against the DRG GMLOS, a discharge-before-noon rate, ED boarding hours, surgical first-case on-time starts, a payer-mix cut of denials. This is the important beat: a starter pack is a head start, not the finished model.
 
 **Prompt for the learner to run:**
 ```
@@ -209,6 +250,9 @@ Here's a question from our shortlist that isn't in the governed surfaces yet: [y
 ## Module 6 · Governance & PHI Defaults
 *🎯 Goal: see the HIPAA / compliance behavior that's on by default — and verify it fires*
 
+### 6.1 · Inventory your identifiers — day one
+governance-phi.md §0 classifies every direct identifier in the connected schema into exactly one role — and the key distinction is that using an identifier as a join key is not the same as outputting it :
+
 **Prompt for the learner to run:**
 ```
 Inventory every direct identifier in the connected schema and classify each per governance-phi.md section 0: join-key-only, never-output, HIPAA-sensitive (age/ZIP3/date), or minimum-necessary. Flag anything ambiguous for compliance review.
@@ -218,12 +262,16 @@ Inventory every direct identifier in the connected schema and classify each per 
 
 > **Facilitators: pre-flight these tests** — Run 6.2 and 6.3 yourself before any session with compliance / privacy in the room. These guardrails are instruction-layer enforcement — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with governance-phi.md and config/org_context.md ) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the check is part of the story — "here's the file, here's the behavior, here's how we audit it."
 
+### 6.2 · Test the small-cell suppression rule
+
 **Prompt for the learner to run:**
 ```
 Break down readmission rate and ALOS by facility × service line × age band to inform a quality review. Apply our HIPAA rules: aggregate dates and geography to the coarsest level that answers it, apply min_cell_size on the cross-product of the grouping dimensions, and tell me what you suppressed and why — and confirm you emitted age bands, never raw DOB.
 ```
 
 > ✅ You'll see: cells under min_cell_size suppressed (a facility × service line × age-band cell can re-identify a patient), geography rolled to ZIP3/region rather than full address, age emitted as a band rather than DOB. The starter default is 11 (the HIPAA-aligned small-cell threshold), configured in config/org_context.md (governance-phi.md §1–§2). If suppression doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.
+
+### 6.3 · Test patient-PHI and facility/region gating
 
 **Prompt for the learner to run:**
 ```
@@ -239,6 +287,9 @@ Show me patient-level contact and encounter detail for our 30-day readmitted pat
 ## Module 7 · Validate Numbers & Make It Yours
 *🎯 Goal: pin known-correct values, then adapt the starter's definitions to your health system — in your repo*
 
+### 7.1 · Reconcile against a number someone already trusts
+Trust in provider-ops analytics is earned on the first matching number — and lost the first time ALOS is quoted on the wrong basis (observation folded into inpatient, say). The starter's golden values are already pinned and verified against the synthetic warehouse (see validation/golden-queries.md — ALOS ≈ 5.48d over 78,572 inpatient discharges, bed occupancy ≈ 0.8356, ED LOS ≈ 5.49h, LWBS ≈ 4.09%, OR utilization ≈ 0.7748, CMI ≈ 1.7427, 30-day readmission ≈ 0.0316, denial rate ≈ 0.0903, no-show rate ≈ 0.1211). Against your warehouse, reconcile each governed surface to a number a COO or service-line leader already trusts:
+
 **Prompt for the learner to run:**
 ```
 Run each governed surface against my warehouse and compare to a reference number I trust (ALOS, discharge volume, bed occupancy, ED LOS, LWBS, OR utilization, CMI, readmission, denial rate, no-show rate). For each, show the SQL and the basis, and flag any drift. Where we differ, explain whether it's data, definition, or basis (observation vs inpatient, midnight census vs flow, operational vs CMS readmission, billed vs paid).
@@ -246,12 +297,18 @@ Run each governed surface against my warehouse and compare to a reference number
 
 > ✅ You'll see: accuracy checked, not asserted — and a triage of any mismatch into data vs. definition vs. basis. The decisive moment is the first time ALOS or occupancy lands exactly where the operations leader expected.
 
+### 7.2 · Assert the invariants
+Even before you have an external reference, some numbers must agree with each other. The golden queries assert these:
+
 **Prompt for the learner to run:**
 ```
 Check the cross-surface invariants from validation/golden-queries.md against my data: occupied_bed_days <= available_bed_days in bed_occupancy; 0 <= bed_occupancy <= 1; readmission_rate, denial_rate, lwbs_rate and no_show_rate all between 0 and 1; readmission index discharges exclude disposition='expired'; total_patient_days == avg_los_days * discharges in length_of_stay; case_mix_index averages only inpatient discharges with a non-null drg_weight. Report any that don't hold.
 ```
 
 > ✅ You'll see: internal consistency proven — if occupied bed-days exceed available, or a rate falls outside [0,1], something is wrong before a stakeholder ever sees the number.
+
+### 7.3 · Customize a definition — the operational-vs-CMS readmission lesson
+Your health system inevitably defines something differently — an LOS boundary, what counts as a discharge, a readmission window. But the starter's flagship field lesson is one every operator hits, and it makes the perfect worked example because it's where the number on the operations dashboard and the number CMS pays on diverge:
 
 > **Operational vs. CMS risk-adjusted readmission** — The governed readmission_rate surface reports the operational all-cause 30-day rate: index inpatient discharges (deaths excluded) followed by another inpatient admission for the same patient within 30 days. That is not the same as the CMS risk-adjusted readmission measure — which is condition-specific (HF, AMI, pneumonia, …), risk-adjusted for patient comorbidity, and excludes planned readmissions , and which drives the Hospital Readmissions Reduction Program penalty. A unit can look fine on the operational all-cause number and still carry a CMS penalty on a condition cohort. Quoting the operational rate as if it were the CMS measure misreads the penalty risk; conflating the two is the most common readmission error in operator reporting. Documented in notes/readmission-operational.md and validation/golden-queries.md . (The same shape applies to the observation-vs-inpatient ALOS boundary — folding observation stays into inpatient ALOS flatters throughput.)
 
@@ -262,12 +319,17 @@ Walk me through the operational-vs-CMS readmission distinction in notes/readmiss
 
 > ✅ You'll see: the most-confused metric in operator reporting demonstrated on your own data and then made explicit — the operational-vs-CMS distinction confirmed in the surface, and any health-system-specific basis change landing as a reviewable PR in your repo with a pinned golden value. The template stays pristine upstream; your adaptations are yours.
 
+### 7.4 · Localize the vocabulary
+ontology/notes/glossary.md holds the canonical provider-ops terms — encounter, inpatient vs. observation, discharge, length of stay, bed occupancy, ED LOS, LWBS, OR utilization (block basis), case mix index, readmission (operational vs. CMS), denial, no-show, service line — each with a variance column flagging where your health system diverges (observation-vs-inpatient boundary; staffed vs. licensed beds; ED LOS arrival-to-departure vs. arrival-to-disposition; readmission-as-count vs. CMS measure).
+
 **Prompt for the learner to run:**
 ```
 Walk the glossary's variance column for our service line(s). For each term that differs at our health system — observation-vs-inpatient boundary, occupancy bed basis, ED LOS endpoints, readmission window, what counts as a discharge — propose the override in glossary.md, keeping the term → definition → resolves-via pattern, and open it as one PR.
 ```
 
 > ✅ You'll see: the vocabulary localized in one reviewable pass — so "length of stay," "occupancy," and "readmission" mean your health system's thing, everywhere, from now on.
+
+> **Two habits as you make it yours** — 1 · Write for the search box. As you extend the kit, keep a short README per folder and repeat the phrases your teams actually use (metric names, synonyms, team names) in the prose — future threads find context by search , not browsing. 2 · Let usage drive the roadmap. Stand up a weekly gap-review playbook: mine repeated questions, manual SQL, and mid-thread corrections; have Ana draft small reviewable patches; a named owner approves. The kit is the seed — usage is what grows it. (See Ontology Operations Module 4.)
 
 **Checkpoint before moving on:**
 - [ ] Governed surfaces reconciled to a trusted reference; any drift triaged (data / definition / basis)

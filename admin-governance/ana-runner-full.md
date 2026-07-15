@@ -18,7 +18,14 @@ Start by telling me what you see.
 
 ## Module 0 · The Admin Surface
 
+### 0.1 · Confirm you're an admin
+Open Settings from the left sidebar. As an admin you should see all of these sections; members see only a subset.
+
 > **Note** — If a section is missing, you don't have the admin role — get it assigned before continuing. Also confirm Observability appears in the left sidebar (admin-only; Module 5).
+
+### 0.2 · The two other admin surfaces
+
+### 0.3 · Take a baseline snapshot
 
 **Prompt for the learner to run:**
 ```
@@ -26,6 +33,8 @@ Give me an admin baseline of this organization: how many members and what roles 
 ```
 
 > ✅ You'll see: A configuration snapshot. Save it — it's your before picture, and writing it down is the first governance habit.
+
+### 0.4 · The mental model: four layers of control
 
 **Checkpoint before moving on:**
 - [ ] You can see all admin sections in Settings, plus Observability in the sidebar
@@ -37,13 +46,26 @@ Give me an admin baseline of this organization: how many members and what roles 
 
 > **Note** — Do this module in a staging org first if you have one. Identity changes affect everyone's login.
 
+### 1.1 · Why SSO first
+Until SSO is on, users sign in with magic links or Google — fine for a pilot, not for governance. SSO gives you central credential policy (MFA, session length), instant deprovisioning, and a single audit point. Supported: Okta, Microsoft Entra ID (Azure AD), Ping Identity — anything OIDC-compliant.
+
+### 1.2 · Configure OIDC
+
 > **Where to click** — Settings → Configuration tab → Authentication section → OIDC Settings
+
+### 1.3 · Verify SSO
+Incognito → login page → your Display Name appears → authenticate via IdP → land in the workspace. Then confirm the trail:
 
 > **Where to click** — Settings → Audit Log → filter Category = Authentication
 
 > ✅ You'll see: "Created OIDC provider" and your test "Logged in" events, with actor, timestamp, IP, and auth method.
 
+### 1.4 · Automate lifecycle with SCIM
+SSO controls how people sign in; SCIM controls who exists . With SCIM 2.0 connected, your IdP creates, updates, and deactivates TextQL users automatically — and can push groups.
+
 > **Where to click** — Settings → Configuration tab → SCIM Provisioning section → Create Token
+
+### 1.5 · Test the joiner / leaver loop
 
 **Prompt for the learner to run:**
 ```
@@ -51,6 +73,8 @@ From the audit log, list all member provisioning and deprovisioning events in th
 ```
 
 > ✅ You'll see: The lifecycle trail — and a flag on anyone bypassing the IdP, which after SCIM should be rare and deliberate.
+
+### Troubleshooting
 
 **Checkpoint before moving on:**
 - [ ] OIDC login works for a test account, and your admin session never lapsed
@@ -60,14 +84,24 @@ From the audit log, list all member provisioning and deprovisioning events in th
 
 ## Module 2 · Roles & Permissions
 
+### 2.1 · The model in one minute
+
 > **Where to click** — Settings → Roles → Manage Permissions . Assignment: Settings → Members → role dropdown. Changes apply immediately.
+
+### 2.2 · Read the defaults before changing them
+Do: open the member role's permissions and read what a default member actually gets:
 
 **Prompt for the learner to run:**
 ```
 Summarize the differences between the admin and member roles in this org as a table: resource, member access, admin access. Highlight anywhere the member role has write access.
 ```
 
+### 2.3 · Design a custom role
+The most-requested pattern from real support tickets: a viewer/analyst split and restricting who can publish connectors .
+
 > **Note** — Custom roles also scope which connectors, context files, and models the role can access — that's how "Finance sees the finance warehouse, Sales sees the CRM mirror" is done. Connector scoping: Module 3. Model scoping: Module 4.
+
+### 2.4 · Sharing semantics — the other half of access
 
 **Prompt for the learner to run:**
 ```
@@ -76,6 +110,11 @@ User [email] says they can't see [dashboard/playbook/thread name]. Walk the four
 
 > ✅ You'll see: A layer-by-layer diagnosis ending in one least-privilege change. Save this prompt — it answers most access tickets.
 
+### 2.5 · SCIM groups → roles
+If you completed Module 1: push groups from your IdP and map them to TextQL roles. New hire joins the data-analysts IdP group → lands in the right TextQL role on day one, no admin touch.
+
+### Troubleshooting
+
 **Checkpoint before moving on:**
 - [ ] You can recite the 4-permission pattern and both design implications
 - [ ] You read the member defaults and made a deliberate decision about Connector write
@@ -83,6 +122,8 @@ User [email] says they can't see [dashboard/playbook/thread name]. Walk the four
 - [ ] You can explain the feed inheritance rule and debug a private-dashboard access question
 
 ## Module 3 · Connector Governance
+
+### 3.1 · Inventory what exists
 
 > **Where to click** — Connectors (sidebar) — note each connector's type, creator, public/private, and read-only vs read-write mode
 
@@ -93,7 +134,12 @@ List every connector in this org with its type, visibility (public/private), and
 
 > ✅ You'll see: Your data attack surface in one table. Read-write connectors deserve explicit justification — Ana can run INSERT/UPDATE/DDL through them.
 
+### 3.2 · The credential decision
+
 > **Note** — Governance principle for shared accounts: the service account's warehouse role is your ceiling — grant the narrowest role that serves the use case, never a superuser. With per-member auth, the warehouse's own grants do the row-level work.
+
+### 3.3 · Scope connectors by role
+The recurring enterprise ask: Finance sees the finance warehouse; Sales sees the CRM mirror; neither sees the other. Custom roles (Module 2) scope which connectors a role can access. Combine with: private connectors , default connector by role , and keeping member Connector permission at read so the catalog stays admin-curated.
 
 **Prompt for the learner to run:**
 ```
@@ -102,12 +148,18 @@ What data sources do I have access to in this chat?
 
 > ✅ You'll see: Only the scoped connectors. If they see more, check in order: role connector list, connector visibility, second role assignment.
 
+### 3.4 · Guardrails on what queries can do
+
+### 3.5 · Credential lifecycle
+
 **Prompt for the learner to run:**
 ```
 Which dashboards and playbooks depend on the [name] connector? I'm planning to decommission it.
 ```
 
 > ✅ You'll see: The dependency list — migrate or archive these, announce, then delete in a maintenance window.
+
+### Troubleshooting
 
 **Checkpoint before moving on:**
 - [ ] Full connector inventory with mode and visibility; every read-write connector justified
@@ -117,7 +169,11 @@ Which dashboards and playbooks depend on the [name] connector? I'm planning to d
 
 ## Module 4 · Capabilities & Models
 
+### 4.1 · Tool access control
+
 > **Where to click** — Settings → Capabilities
+
+### 4.2 · Model governance
 
 > **Where to click** — Settings → Models — three tabs: Model Catalog, Role Access, Analytics
 
@@ -126,7 +182,12 @@ Which dashboards and playbooks depend on the [name] connector? I'm planning to d
 From model analytics: which models were used most in the last 30 days, by which roles, and what share of total ACU spend does each model represent? Does anything suggest the wrong default for a role?
 ```
 
+### 4.3 · Limits (Specs)
+
 > **Where to click** — Settings → Specs — read-only; changes go through TextQL support
+
+### 4.4 · Spend awareness
+Usage is metered in ACUs . Three lenses: the TextQL Usage connector (query your own usage in plain English), the Usage API ( https://app.textql.com/v1/billing , Bearer token from Settings → Developers → API Keys), and Model Analytics (4.2).
 
 **Prompt for the learner to run:**
 ```
@@ -143,11 +204,20 @@ Show ACU consumption by week for the last 8 weeks, broken down by user. Who are 
 
 ## Module 5 · Monitoring & Audit
 
+### 5.1 · The audit log
+
 > **Where to click** — Settings → Audit Log — filters: free-text + category + action + date range (Today / 7 / 30 / 90 days)
 
 > **Note** — Audit logs and product metrics can stream to Datadog, Splunk, Grafana, Prometheus, or S3 via OpenTelemetry (docs → Observability Export). If you run a SIEM, wire this — don't make the TextQL UI your only copy.
 
+### 5.2 · Observability — quality monitoring
+
 > **Where to click** — Observability (left sidebar, admin-only)
+
+### 5.3 · Spend monitoring
+Weekly review: total ACUs vs plan, top consumers, per-model split, anomalies (one user 10x-ing, a runaway playbook). Lenses from Module 4.4.
+
+### 5.4 · Automate the routine
 
 **Prompt for the learner to run:**
 ```
@@ -164,12 +234,20 @@ Create a playbook called "Admin Weekly Review" that runs every Monday at 8am: (1
 
 ## Module 6 · Governance Operations
 
+### 6.1 · Reviewing context & ontology patches
+When members teach the platform ("our definition of active user is..."), it lands as a patch — a PR-style proposed change to org context. Members propose; you (or designated owners) approve. Every change is versioned and revertible.
+
 > **Where to click** — Settings → Notifications → Ontology → enable Patch submitted (route to Slack if connected). Also watch Sync failures — a failed git sync means Ana reads stale context; treat as an incident.
+
+### 6.2 · Access requests
 
 **Prompt for the learner to run:**
 ```
 List private items with access requests pending for more than a week, with each item's owner — those are stuck queues I should nudge.
 ```
+
+### 6.3 · Onboarding & offboarding, end to end
+Onboarding (mostly automatic): IdP group → SCIM provisions → group mapping sets role → role scopes connectors, models, defaults. Manual steps: verify the role, send the self-service workshop .
 
 **Prompt for the learner to run:**
 ```
@@ -177,6 +255,12 @@ List private items with access requests pending for more than a week, with each 
 ```
 
 > ✅ You'll see: A complete asset inventory with a reassignment plan — run this for every departure, real or simulated.
+
+### 6.4 · Write the runbook
+Governance in one admin's head is a bus-factor of one. Use the Admin Runbook template on this workshop's Reference page : decision log, credential inventory and rotation schedule, patch review owners, on/offboarding checklists, escalation paths, and the weekly/monthly cadence. Fill it in now while Modules 1–5 are fresh.
+
+### You're done
+You now run identity through your IdP, authorization through least-privilege roles, data scope through governed connectors, behavior through capability and model controls — and you watch all of it through audit, observability, and spend monitoring, with the routine automated and the rest written down.
 
 **Checkpoint before moving on:**
 - [ ] Patch notifications route to designated reviewers; review bar applied at least once

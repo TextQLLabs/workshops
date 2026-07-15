@@ -17,7 +17,11 @@ wait and coach me on my result. Start with what you see, then Module 0.
 
 ## Module 0 · Your CRM, Mapped
 
+### 0.1 · The read-path decision
+
 > **Note** — The mature pattern: read from the mirror, write through the API . Either alone works for this workshop — write steps just need the API path.
+
+### 0.2 · Build your translation table
 
 **Prompt for the learner to run:**
 ```
@@ -25,6 +29,8 @@ Describe the CRM data you can see: what are the objects for companies/accounts, 
 ```
 
 > ✅ You'll see: Your CRM's actual shape. Write the mapping down — every later prompt uses the generic terms.
+
+### 0.3 · Sanity-check the numbers
 
 **Prompt for the learner to run:**
 ```
@@ -40,12 +46,16 @@ What is the total open pipeline right now — count and value by stage? I'll che
 
 ## Module 1 · Pipeline Questions
 
+### 1.1 · The state of the pipeline
+
 **Prompt for the learner to run:**
 ```
 Show open pipeline by stage: count, total value, and average deal size per stage. Then compare to 30 days ago — where did pipeline grow or shrink?
 ```
 
 > ✅ You'll see: The funnel and its movement — the 30-day comparison turns a status into a story.
+
+### 1.2 · What's moving — and what isn't
 
 **Prompt for the learner to run:**
 ```
@@ -54,6 +64,8 @@ Which deals changed stage in the last 14 days — list them with from→to, owne
 
 > ✅ You'll see: Momentum and stagnation side by side. The stagnant list feeds Module 4.
 
+### 1.3 · This quarter's reality
+
 **Prompt for the learner to run:**
 ```
 For deals with close dates this quarter: total value by stage, split by [owner/team]. Which deals carry the most value, and which of those have close dates in the next 2 weeks but are still in early stages?
@@ -61,12 +73,16 @@ For deals with close dates this quarter: total value by stage, split by [owner/t
 
 > ✅ You'll see: The forecast-call view — including the early-stage-but-closing-soon deals that always need scrubbing.
 
+### 1.4 · Win/loss patterns
+
 **Prompt for the learner to run:**
 ```
 For deals closed in the last 2 quarters: win rate by [segment/source/size band], average days-to-close for won vs lost, and at which stage lost deals most often died. Anything notable about what we win vs lose?
 ```
 
 > ✅ You'll see: Conversion patterns that usually surprise someone — the foundation for coaching and forecast realism.
+
+### 1.5 · My book (for individual sellers)
 
 **Prompt for the learner to run:**
 ```
@@ -83,12 +99,16 @@ For deals I own: rank by value, flag anything with no activity in 14+ days, anyt
 
 ## Module 2 · Account Research
 
+### 2.1 · The account dossier
+
 **Prompt for the learner to run:**
 ```
 Build a dossier on [account]: everything in our CRM (deals past and present, contacts, recent activities, notes), plus — using web search — recent news, leadership changes, and anything suggesting budget or priority shifts. End with three angles for our next conversation.
 ```
 
 > ✅ You'll see: Internal history fused with external context — the prompt to run before any first call with a known account.
+
+### 2.2 · Whitespace in your book
 
 **Prompt for the learner to run:**
 ```
@@ -97,12 +117,17 @@ Across my accounts: which have [product/tier] but not [other product]? Which loo
 
 > ✅ You'll see: The upsell map. With product usage in the warehouse alongside the CRM mirror, this is where the cross-source join earns its keep.
 
+### 2.3 · Signals worth acting on
+
 **Prompt for the learner to run:**
 ```
 For my open deals and target accounts, check for signals: web-search news (funding, leadership, layoffs, product launches) in the last 30 days, plus internal signals — new contacts added, usage spikes or drops [if available]. Which three accounts have the strongest reason for outreach this week?
 ```
 
 > ✅ You'll see: A prioritized outreach list with reasons attached.
+
+### 2.4 · Write-back: capture what you learned — optional
+If your CRM is connected via API (the write path):
 
 **Prompt for the learner to run:**
 ```
@@ -123,12 +148,16 @@ Add a note to [account] in the CRM summarizing this research: the three conversa
 
 > **Note** — Value scales with what's connected: calendar + meeting recordings (e.g., Grain) make this automatic; CRM-only still works with manual inputs.
 
+### 3.1 · Prep for today
+
 **Prompt for the learner to run:**
 ```
 Look at my calendar for [today/tomorrow]. For each external meeting: which account is it (match attendee domains to CRM accounts), what's the deal state, what happened in our last interactions, and — one web search each — anything new about the company? One prep card per meeting.
 ```
 
 > ✅ You'll see: Prep cards for the day. Attendee-domain-to-account matching makes this run without naming the accounts.
+
+### 3.2 · Deep prep for the big one
 
 **Prompt for the learner to run:**
 ```
@@ -137,12 +166,16 @@ Deep prep for my meeting with [account] on [date]: full deal history and stakeho
 
 > ✅ You'll see: A brief that would have taken an hour. The must-accomplish framing turns research into an agenda.
 
+### 3.3 · After the call: capture and act
+
 **Prompt for the learner to run:**
 ```
 From my [account] call today: summarize what was discussed, list commitments made (ours and theirs) with owners, flag any new stakeholders mentioned, and draft a follow-up email confirming next steps.
 ```
 
 > ✅ You'll see: The post-call package. Without recordings, paste raw notes and ask for the same structure. Pair with a CRM write-back note so the deal record stays current without anyone "doing hygiene."
+
+### 3.4 · The weekly retro
 
 **Prompt for the learner to run:**
 ```
@@ -159,12 +192,16 @@ Across my external meetings this week: which accounts did I touch, what commitme
 
 ## Module 4 · Hygiene & Coaching
 
+### 4.1 · The hygiene sweep
+
 **Prompt for the learner to run:**
 ```
 Audit all open deals for hygiene: missing or past close dates, missing amounts, missing [next step / champion fields], no activity in 21+ days, and stage older than [your stage-SLA]. Group by owner, worst first.
 ```
 
 > ✅ You'll see: The scrub list, pre-sorted for the pipeline review. This exact prompt becomes a scheduled playbook in Module 5.
+
+### 4.2 · Fix-forward, not blame
 
 **Prompt for the learner to run:**
 ```
@@ -173,12 +210,16 @@ For [owner]'s flagged deals: draft the specific update needed for each — a rea
 
 > ✅ You'll see: Hygiene converted to a 15-minute task with proposed answers, not homework.
 
+### 4.3 · Coaching from the data
+
 **Prompt for the learner to run:**
 ```
 Compare [rep] to team medians over the last 2 quarters: win rate, average deal size, days-in-stage by stage, activities per open deal, and where their lost deals die. What are their two biggest gaps, and what does the top performer do differently at exactly those points?
 ```
 
 > ✅ You'll see: A coaching card grounded in pattern, not anecdote — actionable rather than evaluative.
+
+### 4.4 · Make definitions permanent
 
 **Prompt for the learner to run:**
 ```
@@ -197,10 +238,14 @@ Save to the ontology: our official definitions — "open pipeline" means [stages
 
 > **Note** — Mechanics (3-preview rule, four-part prompts, delivery, editorial bars) live in the Automation Deep-Dive workshop — this module applies them to GTM.
 
+### 5.1 · The Monday morning playbook (per seller)
+
 **Prompt for the learner to run:**
 ```
 Create a playbook "My Book Monday" that runs Mondays at 7am: my open deals ranked by value; anything with no activity in 14+ days; past-due close dates; deals in [late stage] missing [key fields]; and my three most-urgent actions. Concise style. Email it to me.
 ```
+
+### 5.2 · The pipeline review pack (per team)
 
 **Prompt for the learner to run:**
 ```
@@ -209,6 +254,8 @@ Create a playbook "Pipeline Review Pack" that runs [Wednesday 7am, before the 9a
 
 > ✅ You'll see: The review meeting now starts with everyone having interrogated the same numbers in-thread.
 
+### 5.3 · The deal-watch agent
+
 **Prompt for the learner to run:**
 ```
 Create a feed agent "Deal Watch" that checks the pipeline every weekday at 8am and posts ONLY when: a deal over [$X] changes stage (either direction); a committed deal's close date slips; a deal over [$X] goes quiet for 14 days; or total pipeline moves more than [Y]% in a week. Include the deal, the change, and one sentence of why it matters. If nothing qualifies, stay silent.
@@ -216,10 +263,14 @@ Create a feed agent "Deal Watch" that checks the pipeline every weekday at 8am a
 
 > ✅ You'll see: The editorial bar does the work — a deal-watch agent that posts everything is notifications; one that posts rarely is intelligence.
 
+### 5.4 · The renewal/health watch (CS variant)
+
 **Prompt for the learner to run:**
 ```
 Create a feed agent "Renewal Radar" that runs weekly: accounts with renewals in the next 90 days, each scored on [usage trend, support volume, engagement recency]. Post only accounts that turned red or newly green. Relay to [#customer-success].
 ```
+
+### 5.5 · Close the loop
 
 **Checkpoint before moving on:**
 - [ ] Your Monday playbook is deployed (and 3-previewed)

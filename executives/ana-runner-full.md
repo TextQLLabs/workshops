@@ -17,6 +17,11 @@ wait and coach me on my result. Start with what you see, then Module 0.
 
 ## Module 0 · Orientation
 
+### 0.1 · What this is
+Ana is an analyst you talk to. She's connected to your company's actual systems — warehouse, CRM, finance — writes and runs the queries herself, and shows her work. You ask in plain English; the SQL happens underneath, inspectable any time.
+
+### 0.2 · The discovery prompt
+
 **Prompt for the learner to run:**
 ```
 What data can you see, and what are five questions I should ask it?
@@ -29,6 +34,8 @@ What data can you see, and what are five questions I should ask it?
 
 ## Module 1 · Ask Your Team's Questions
 
+### 1.1 · The number
+
 **Prompt for the learner to run:**
 ```
 Revenue this quarter versus plan?
@@ -36,12 +43,17 @@ Revenue this quarter versus plan?
 
 > ✅ You'll see: the number, the plan, the gap — in seconds, not in next Tuesday's deck.
 
+### 1.2 · The why
+The follow-up that normally costs a week of analyst time:
+
 **Prompt for the learner to run:**
 ```
 What's driving the miss?
 ```
 
 > ✅ You'll see: the gap decomposed — which segment, which product, volume or price — with the biggest contributor named. No new meeting was scheduled to produce this.
+
+### 1.3 · Decision support
 
 **Prompt for the learner to run:**
 ```
@@ -58,6 +70,9 @@ I'm deciding [whether to expand the EMEA team]. What should I look at first?
 
 ## Module 2 · Trust in Five Minutes
 
+### 2.1 · Show the work
+Take any answer from Module 1:
+
 **Prompt for the learner to run:**
 ```
 How did you calculate that?
@@ -65,12 +80,16 @@ How did you calculate that?
 
 > ✅ You'll see: the sources, the filters, the time window, the assumptions — in plain English. Underneath, the actual SQL is attached to the answer and inspectable by anyone you forward it to. Every number here carries its own audit trail.
 
+### 2.2 · Is that the official number?
+
 **Prompt for the learner to run:**
 ```
 Is that the same revenue definition Finance uses?
 ```
 
 > ✅ You'll see: whether the answer routed through your company's governed definition — the single, Finance-approved formula stored centrally — or was computed ad hoc. Governed numbers are the same for everyone who asks: you, your CFO, the board deck, the Monday report. That's the mechanism, not a promise.
+
+### 2.3 · The honest no
 
 **Prompt for the learner to run:**
 ```
@@ -85,12 +104,18 @@ What was our customer NPS in 2019?
 
 ## Module 3 · Your Morning Briefing
 
+### 3.1 · The daily digest
+Set this up yourself, or watch the facilitator do it — it's one prompt either way:
+
 **Prompt for the learner to run:**
 ```
 Every weekday at 7am, email me: revenue pace vs plan, yesterday's [bookings/signups], cash position, and anything unusual — flagged first. Five lines, then detail.
 ```
 
 > ✅ You'll see: a scheduled playbook created. Tomorrow at 7am it arrives; the morning after, too. The "anything unusual, flagged first" line means the days that matter read differently from the days that don't.
+
+### 3.2 · The exception watcher
+The digest reports daily; the watcher speaks only on exceptions:
 
 **Prompt for the learner to run:**
 ```
@@ -99,11 +124,16 @@ Watch [revenue pace, pipeline, cash] daily. Alert me only when something moves m
 
 > ✅ You'll see: a feed agent created. Most days it says nothing — that's the design. When it does speak, it's worth reading, which is the opposite of every dashboard email you currently delete.
 
+### 3.3 · Follow up where you are
+Briefings delivered to Slack or Teams (depending on your workspace configuration) can be interrogated right in the thread — reply "why?" to the morning number and the analysis continues there. Your inbox stops being a dead end.
+
 **Checkpoint before moving on:**
 - [ ] The 7am digest exists and you know what arrives tomorrow
 - [ ] The watcher is set with a threshold you chose — and you understand why silence is the feature
 
 ## Module 4 · The Board View
+
+### 4.1 · The prompt
 
 **Prompt for the learner to run:**
 ```
@@ -111,6 +141,9 @@ Board view: headline revenue vs plan, the 12-month trend chart, and three takeaw
 ```
 
 > ✅ You'll see: the number, the chart, three findings written as findings — ready for the deck or the email to the board chair. Behind it: governed definitions (Module 2), full audit trail, and the same figures everyone else in the company gets when they ask.
+
+### 4.2 · The executive sponsor ask
+This platform compounds through one mechanism: governed definitions — and deciding what gets governed is an executive call, not a technical one. So, the ask:
 
 **Checkpoint before moving on:**
 - [ ] The board view is in your hands, paste-ready

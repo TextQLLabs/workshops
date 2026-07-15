@@ -365,6 +365,12 @@ Globex,Mid-Market,Luis</pre>
     <img src="assets/au-m4-template.png" alt="One playbook, N entities: backing table columns become variables." onerror="this.parentElement.classList.add('missing')">
     <figcaption>One playbook, N entities: backing table columns become variables.</figcaption>
   </figure>
+  <h3>Worked template: the Weekly Ontology Gap Review</h3>
+  <p>The highest-leverage recurring playbook most teams never build: one that makes your <b>ontology learn from usage</b>. It mines real activity for missing semantics and drafts the fixes — a named owner just reviews.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Create a playbook "Weekly Ontology Gap Review" that runs Monday 9am: review the last 14 days of usage - repeated questions, manual SQL users wrote or copied, failed ontology lookups, and mid-thread corrections. Group them by business concept (not exact wording), flag concepts hit by multiple users or roles, and for each propose ONE small reviewable change: a new metric label or dimension in an existing surface, a glossary entry, or a routing-README update. Draft the patches for review - never apply them - and end with unresolved gaps as work items with suggested owners. Post the summary to [#channel].</pre></div>
+  <div class="yousee"><b>You'll see:</b> a standing loop — Ana drafts, owners approve, the ontology gets cheaper and sharper every week, and gaps become tracked work items instead of buried chat history.</div>
+
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> You built a backing table and referenced its columns with {{ }} in a playbook</label>
     <label><input type="checkbox"> You ran a batch on selected rows and found the results in one place</label>

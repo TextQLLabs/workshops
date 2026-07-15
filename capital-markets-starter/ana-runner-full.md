@@ -18,6 +18,8 @@ wait and coach me on my result. Start with what you see, then Module 0.
 ## Module 0 · The Six Layers
 *🎯 Goal: know what's in the box and where everything lives*
 
+### The six layers
+
 > **Standards alignment** — STANDARDS.md maps the model to the conventions it aligns with (ISO 4217 currencies, ISO 10383 MIC venue codes, the IG/HY rating-scale convention, a 252-day annualization basis). The semantic layer (metrics, routing, classification) is fully separated from the physical mapping : every physical table name lives in one file , ontology/schema.tql — re-point it and the metric logic stays put. The starter is authored against a generic execution / position / P&L / risk model (an execution/trade store, a position/risk system, a P&L/PAA store, and a counterparty/reference master) with ANSI/Spark-portable SQL; MIGRATION.md is the 8-step re-point checklist and works the same on Redshift, BigQuery, Snowflake, or Databricks (budget: about a half-day with warehouse access). For a deep technical tour, read DEEP_DIVE.md .
 
 > **Two rules for a long, live session** — 1 · Checkpoint every couple of modules. Long threads have a ceiling. After every module or two, ask Ana: “Save a handoff document summarizing what we've built, what we decided, and what's next — so we can continue in a new thread.” If a thread ever maxes out, you lose nothing. 2 · Pin the scope in every prompt. Name the entity and the source-of-truth tables in each prompt (“…for [entity X], using the [base] tables, not the summary table”) — otherwise Ana may drift to a convenient summary table or query every source at once.
@@ -50,9 +52,20 @@ Help me define the North Star for our ontology before we build anything.
 ## Module 2 · Connect Three Things
 *🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat*
 
+### 2.1 · Connect the ontology repo to Ana
+This is the key step. In TextQL, add a Git connector and point it at your fork of the starter repo ( TextQLLabs/ontology-starter-kits/tree/main/capital-markets — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every classification rule — as a reference she reads on demand.
+
 > **No second source of truth** — You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.
 
+### 2.2 · Connect your data warehouse
+Add the connector for the warehouse holding your trade / position / P&L / risk data (Redshift, BigQuery, Snowflake, Databricks, …) — typically sourced from your execution/trade store (OMS/EMS, FIX drop-copy), your position/risk system, your P&L/PAA store, and your counterparty/reference master. Read-only access is enough.
+
 > **Use your governed, contracted warehouse** — Trading data carries material non-public information (MNPI) and is subject to information barriers, trade-surveillance, and regulatory obligations. Connect the enterprise warehouse that's already in scope for your data-residency, supervisory, and audit obligations — see ontology/notes/governance-mnpi.md .
+
+### 2.3 · (Optional) Bring in your documents
+Your real-world context — the desk P&L reporting workbook, the VaR methodology memo, the limit policy, dbt models, the spreadsheet where someone defined "net exposure" — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology as corpus, not migration , and can fold what she learns into the model.
+
+### 2.4 · Say hello
 
 **Prompt for the learner to run:**
 ```
@@ -69,12 +82,17 @@ Read the ontology repo and give me a tour: what entities, metrics, and classific
 ## Module 3 · Validate Against Your Schema
 *🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — and settle the grain — without writing SQL*
 
+### 3.1 · The dry run — required
+
 **Prompt for the learner to run:**
 ```
 Look at the ontology repo, then inspect my warehouse. Run validation/dry-run-prompt.md against my schema: pull the information schema for my trade, position, pnl, risk, instrument, book, and counterparty tables and tell me where the ontology's expected table and column names don't match what I actually have — including whether trade carries notional (precomputed) or must derive it from quantity × price, whether position.market_value is SIGNED (+ long / − short), whether position is a point-in-time as_of_date snapshot, and whether risk carries var_95, var_limit, and dv01. Propose the exact changes to ontology/schema.tql.
 ```
 
 > ✅ You'll see: Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names, and the all-important signed-MV, notional-derivation, and snapshot-grain questions. (The ready-made version lives in validation/dry-run-prompt.md .)
+
+### 3.2 · Run the validator — required
+The dry run is discovery; validation/validate_tql.py is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles. Ana runs it for you — no terminal needed:
 
 **Prompt for the learner to run:**
 ```
@@ -85,6 +103,8 @@ Run validation/validate_tql.py from the ontology repo in your sandbox — static
 
 > **Prefer the terminal?** — The same gate runs locally: python3 validation/validate_tql.py (static — no warehouse needed) · --check-sql (paste the output into Ana: rows = missing columns) · --dsn "<dsn>" --explain (live column check + compile test).
 
+### 3.3 · Apply the fixes as a PR — required
+
 **Prompt for the learner to run:**
 ```
 Make those changes and open a pull request.
@@ -93,6 +113,9 @@ Make those changes and open a pull request.
 > ✅ You'll see: Ana edit the files and open a reviewable PR in your repo. Every physical table name lives in one place ( ontology/schema.tql ) — re-point it and the metric logic stays put. The join keys the surfaces rely on are instrument_id , book_id , and counterparty_id .
 
 > **Why this step matters** — Every markets shop's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain, an unsigned market_value. Finding those before you trust a number is the difference between a defensible net exposure and a debugging session in front of the CRO.
+
+### 3.4 · Decide your grain & verify your joins — required
+Markets data fans out across several grains — trade (execution) vs. position snapshot vs. P&L daily vs. risk daily — and joining across them carelessly multiplies counts. Three decisions dominate this module, and all are prompts: which fact answers which question, whether position is a point-in-time snapshot at as_of_date with a signed market_value (+ long / − short, so it's not additive over time ), and whether your headline exposure question is a snapshot-as-of or a window question.
 
 **Prompt for the learner to run:**
 ```
@@ -127,12 +150,17 @@ Find the dataset-specific literals the surfaces hard-code — the asset_class en
 ## Module 4 · The Classification Layer
 *🎯 Goal: rollup-powered questions — asset class → super-asset-class/desk, rating → IG/HY notch, venue → lit/dark/OTC — with zero writes to your warehouse*
 
+### 4.1 · Prove the rollups work
+
 **Prompt for the learner to run:**
 ```
 Using the ontology's classification layer, roll my instrument asset_class values up to super-asset-class (equities / fixed_income / macro) and desk grouping, classify my counterparty rating values into IG vs. HY grade with the numeric notch, and group my venue codes into lit / dark / OTC with MIC region, then show me trading notional and trade count by super-asset-class and by venue type. Explain how you joined the seed CSVs without writing to the warehouse.
 ```
 
 > ✅ You'll see: raw asset_class, rating, and venue codes resolved to meaningful super-asset-classes, IG/HY grades, and lit/dark/OTC venue types, with the federated join-in-sandbox pattern explained — and a reminder to analyze groupings , never raw codes.
+
+### 4.2 · Bring in your licensed feed — optional
+You don't need this on day one — the public asset-class, rating-scale, and venue groupings are already committed (and the cpty_rating seed is a generic public-scale convention; hydrate your authoritative agency mapping before reporting credit exposure externally). Come back when you want licensed market & reference data beyond the public conventions. These are licensed (Bloomberg / Refinitiv instrument reference, issuer hierarchies, agency rating feeds) — the repo ships the structure and join logic, and the data comes from your own licensed feed :
 
 **Prompt for the learner to run:**
 ```
@@ -151,12 +179,16 @@ We have a licensed reference-data feed (e.g. Bloomberg / Refinitiv issuer hierar
 
 > **Pin the scope** — In every question below, name the entity and the source-of-truth tables . A plausible answer from the wrong (summary) table is worse than no answer — if two sources could answer, run both and let your SME rule which is truth.
 
+### 5.1 · Trading volume & trading P&L (the flow + earnings pair)
+
 **Prompt for the learner to run:**
 ```
 What's our trading volume for 2024 (trading_volume.tql) — total notional and trade count — and our trading P&L over the same window (trading_pnl.tql), split into realized and unrealized? Tell me the basis — the trade window, and whether P&L is realized vs. unrealized — and why.
 ```
 
 > ✅ You'll see: the governed surface return notional ≈ $6.63T over 500,000 trades (window 2024) and trading P&L ≈ $3.63B (realized + unrealized). Ana names the basis (executed notional over the trade-date window; P&L split into realized/unrealized) instead of silently picking one.
+
+### 5.2 · Position value & gross/net exposure (the book-shape headline)
 
 **Prompt for the learner to run:**
 ```
@@ -167,6 +199,8 @@ What's our position value as of 2024-12-31 (position_value.tql) and our gross/ne
 
 > **Know the signed-MV / gross-vs-net basis** — The governed gross_net_exposure surface treats market_value as signed (+ long / − short): net = SUM(market_value) (directional bias) and gross = SUM(ABS(market_value)) (balance-sheet usage). If your warehouse stores MV unsigned with a separate side flag, net silently equals gross — reconstruct the sign first. See notes/gross-net-exposure.md .
 
+### 5.3 · VaR utilization & DV01 exposure (the market-risk pair)
+
 **Prompt for the learner to run:**
 ```
 Show me VaR limit utilization as of 2024-12-31 (var_utilization.tql) — VaR used, the approved limit, and utilization — and aggregate DV01 (dv01_exposure.tql). For VaR, confirm it's the 1-day 95% figure over its approved limit (>1.0 means breach); for DV01, tell me it's the dollar P&L impact of a 1bp parallel rate move.
@@ -175,6 +209,8 @@ Show me VaR limit utilization as of 2024-12-31 (var_utilization.tql) — VaR use
 > ✅ You'll see: VaR utilization ≈ 0.7449 (1-day 95% VaR ÷ approved limit; under 1.0, so within limit) and DV01 ≈ $5.79M (dollar P&L per 1bp parallel rate move, summed across books). Ana notes the VaR horizon (1-day, 95%) and which limit is the denominator.
 
 > **Know the VaR methodology & limit basis** — The governed var_utilization surface uses a 1-day 95% VaR over the approved book VaR limit as of the risk date; utilization > 1.0 is a breach. If your firm runs a different horizon or confidence (10-day, 99%) or a different limit basis (firm vs. desk), that changes the number — Ana will say which it used. See notes/var-utilization.md .
+
+### 5.4 · P&L volatility & position concentration (the stability + single-name pair)
 
 **Prompt for the learner to run:**
 ```
@@ -185,6 +221,8 @@ Show our daily P&L volatility for 2024 (pnl_volatility.tql) — the stddev of da
 
 > **Annualization & gross-basis concentration** — The governed pnl_volatility annualizes daily P&L stddev by × √252 (trading days); if your firm uses 250 or 260, the annualized figure shifts. And position_concentration uses gross ( ABS(market_value) ) — a large short is concentration risk too, so signing it would understate the single-name exposure. See notes/pnl-volatility.md and notes/position-concentration.md .
 
+### 5.5 · Counterparty exposure (the credit-concentration signal)
+
 **Prompt for the learner to run:**
 ```
 Show me our counterparty trading exposure for 2024 (counterparty_exposure.tql) — total notional traded, distinct counterparties, and the single-name concentration (the largest counterparty's notional and its share of the total). Tell me whether this is a window (traded over the period) or a snapshot question, and pair it with the credit-grade cut.
@@ -193,6 +231,9 @@ Show me our counterparty trading exposure for 2024 (counterparty_exposure.tql) �
 > ✅ You'll see: total notional traded with a top-counterparty share ≈ 0.349% of total notional (a low, well-diversified single-name share) over the 2024 trade window. Ana names the basis — counterparty exposure here is a traded-notional window question over the trade spine, distinct from a current settlement/credit snapshot — and pairs it with the IG/HY grade cut.
 
 > **Why everyone gets the same number** — Exposure, P&L, and VaR utilization can each be computed several ways. The ontology pins one governed definition — net = signed-MV sum, gross = ABS sum on a single snapshot; trading P&L split realized/unrealized over the window; VaR as 1-day 95% over the approved limit, with the decision recorded in ontology/notes/ — so the Trading, Risk, Finance, and Treasury desks stop disagreeing about which number is "the" number.
+
+### 5.6 · When the answer isn't governed yet — watch the model grow
+Now ask something from your shortlist that the starter doesn't already cover — a Sharpe-style return-on-VaR ratio, intraday VaR breaches, P&L attribution by asset class, a turnover (volume ÷ average gross position) measure, or a basis between booked and risk-system MV. This is the important beat: a starter pack is a head start, not the finished model.
 
 **Prompt for the learner to run:**
 ```
@@ -211,6 +252,9 @@ Here's a question from our shortlist that isn't in the governed surfaces yet: [y
 ## Module 6 · Governance & MNPI Defaults
 *🎯 Goal: see the MNPI / information-barrier behavior that's on by default — and verify it fires*
 
+### 6.1 · Inventory your identifiers — day one
+governance-mnpi.md §0 classifies every direct identifier in the connected schema into exactly one role — and the key distinction is that using an identifier as a join key is not the same as outputting it :
+
 **Prompt for the learner to run:**
 ```
 Inventory every direct identifier in the connected schema and classify each per governance-mnpi.md section 0: join-key-only, minimum-necessary, information-barrier-gated, or MNPI-never-output. Flag anything ambiguous for compliance / surveillance review.
@@ -220,12 +264,16 @@ Inventory every direct identifier in the connected schema and classify each per 
 
 > **Facilitators: pre-flight these tests** — Run 6.2 and 6.3 yourself before any session with compliance / surveillance in the room. These guardrails are instruction-layer enforcement — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with governance-mnpi.md and config/org_context.md ) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the check is part of the story — "here's the file, here's the behavior, here's how we audit it."
 
+### 6.2 · Test the small-cell suppression rule
+
 **Prompt for the learner to run:**
 ```
 Break down trading notional and counterparty exposure by counterparty × asset class × desk to inform a credit review. Apply our governance rules: apply min_cell_size on the cross-product of the grouping dimensions, suppress any single-counterparty cell small enough to re-identify the relationship, and tell me what you suppressed and why — and confirm you reported counterparty grade (IG/HY), never naming an individual small counterparty.
 ```
 
 > ✅ You'll see: cells under min_cell_size suppressed (a counterparty × asset-class × desk cell can re-identify a single trading relationship and leak MNPI), and counterparty reported by IG/HY grade rather than name where the cell is small. The starter default is 11 , configured in config/org_context.md (governance-mnpi.md §1–§2). If suppression doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.
+
+### 6.3 · Test information-barrier and limit gating
 
 **Prompt for the learner to run:**
 ```
@@ -241,6 +289,9 @@ Show me position and VaR detail for a desk I'm not assigned to (cross-wall), and
 ## Module 7 · Validate Numbers & Make It Yours
 *🎯 Goal: pin known-correct values, then adapt the starter's definitions to your markets business — in your repo*
 
+### 7.1 · Reconcile against a number someone already trusts
+Trust in markets analytics is earned on the first matching number — and lost the first time net exposure is quoted on the wrong basis (gross reported as net, say, because market_value wasn't signed). The starter's golden values are already pinned and verified against the synthetic warehouse (see validation/golden-queries.md — notional ≈ $6.63T over 500k trades, trading P&L ≈ $3.63B, net MV ≈ $20.58B / gross ≈ $101.77B, long ≈ $61.18B / short ≈ −$40.59B, VaR utilization ≈ 0.7449, DV01 ≈ $5.79M, top counterparty share ≈ 0.349%, daily P&L stddev ≈ $1.15M / annualized ≈ $18.27M, top instrument share ≈ 0.085%). Against your warehouse, reconcile each governed surface to a number a desk head or the CRO already trusts:
+
 **Prompt for the learner to run:**
 ```
 Run each governed surface against my warehouse and compare to a reference number I trust (trading volume, trading P&L, P&L volatility, position value, gross/net exposure, position concentration, VaR utilization, DV01, counterparty exposure). For each, show the SQL and the basis, and flag any drift. Where we differ, explain whether it's data, definition, or basis (signed vs. unsigned MV, gross vs. net, snapshot-as-of vs. window, VaR horizon/limit, realized vs. unrealized, 252 vs. 260 annualization).
@@ -248,12 +299,18 @@ Run each governed surface against my warehouse and compare to a reference number
 
 > ✅ You'll see: accuracy checked, not asserted — and a triage of any mismatch into data vs. definition vs. basis. The decisive moment is the first time net exposure or VaR utilization lands exactly where the risk officer expected.
 
+### 7.2 · Assert the invariants
+Even before you have an external reference, some numbers must agree with each other. The golden queries assert these:
+
 **Prompt for the learner to run:**
 ```
 Check the cross-surface invariants from validation/golden-queries.md against my data: in gross_net_exposure, long_mv + short_mv == net_mv and |long_mv| + |short_mv| == gross_mv and gross_mv >= ABS(net_mv); in position_value, net_market_value == SUM(market_value) and gross_market_value == SUM(ABS(market_value)) and gross >= ABS(net); var_utilization == SUM(var_95)/SUM(var_limit) and is non-negative; top_counterparty_share and top_instrument_share are between 0 and 1; annualized_pnl_vol == daily_pnl_stddev * SQRT(252); trading_pnl == realized_pnl + unrealized_pnl. Report any that don't hold.
 ```
 
 > ✅ You'll see: internal consistency proven — if gross is less than the absolute value of net, or a share falls outside [0,1], or realized + unrealized doesn't reconcile to trading P&L, something is wrong before a stakeholder ever sees the number.
+
+### 7.3 · Customize a definition — the VaR methodology / limit-basis lesson
+Your markets business inevitably defines something differently — a VaR horizon, a limit basis, an exposure convention. But the starter's flagship field lesson is one every risk shop hits, and it makes the perfect worked example because it's where the number on the desk's risk screen and the number the limit framework enforces diverge:
 
 > **VaR methodology & limit basis (or signed-MV gross-vs-net)** — The governed var_utilization surface reports a 1-day 95% VaR over the approved book VaR limit . That is not the same as a 10-day 99% regulatory VaR , nor a firm-level limit, nor an Expected Shortfall (ES) basis under FRTB — and the horizon scales the number (a 1-day figure ≈ a 10-day figure ÷ √10). A desk can look comfortable on the 1-day 95% utilization and still be tight against a 10-day 99% regulatory limit. Quoting the management number as if it were the regulatory one misreads the headroom; conflating the two is the most common VaR error in desk reporting. The same shape applies to the signed-MV gross-vs-net exposure convention — reporting gross as net (or failing to sign market_value ) flatters or destroys directional bias. Documented in notes/var-utilization.md / notes/gross-net-exposure.md and validation/golden-queries.md .
 
@@ -264,12 +321,17 @@ Walk me through the VaR methodology / limit-basis distinction in notes/var-utili
 
 > ✅ You'll see: the most-confused metric in desk reporting demonstrated on your own data and then made explicit — the management-vs-regulatory VaR distinction (or the signed-MV gross-vs-net convention) confirmed in the surface, and any business-specific basis change landing as a reviewable PR in your repo with a pinned golden value. The template stays pristine upstream; your adaptations are yours.
 
+### 7.4 · Localize the vocabulary
+ontology/notes/glossary.md holds the canonical capital-markets terms — trade/execution, notional, position, signed market value, long vs. short, gross vs. net exposure, trading P&L (realized vs. unrealized), P&L volatility, VaR (horizon & confidence), VaR limit, DV01, concentration (gross basis), counterparty exposure, super-asset-class — each with a variance column flagging where your business diverges (VaR horizon/confidence; limit basis firm-vs-desk; annualization 252-vs-260; gross-vs-net sign convention; notional definition).
+
 **Prompt for the learner to run:**
 ```
 Walk the glossary's variance column for our desk(s). For each term that differs at our business — VaR horizon/confidence, limit basis (firm vs. desk), annualization basis, gross-vs-net sign convention, what counts as notional — propose the override in glossary.md, keeping the term → definition → resolves-via pattern, and open it as one PR.
 ```
 
 > ✅ You'll see: the vocabulary localized in one reviewable pass — so "VaR utilization," "net exposure," and "P&L volatility" mean your business's thing, everywhere, from now on.
+
+> **Two habits as you make it yours** — 1 · Write for the search box. As you extend the kit, keep a short README per folder and repeat the phrases your teams actually use (metric names, synonyms, team names) in the prose — future threads find context by search , not browsing. 2 · Let usage drive the roadmap. Stand up a weekly gap-review playbook: mine repeated questions, manual SQL, and mid-thread corrections; have Ana draft small reviewable patches; a named owner approves. The kit is the seed — usage is what grows it. (See Ontology Operations Module 4.)
 
 **Checkpoint before moving on:**
 - [ ] Governed surfaces reconciled to a trusted reference; any drift triaged (data / definition / basis)

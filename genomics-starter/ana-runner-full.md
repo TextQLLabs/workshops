@@ -18,6 +18,8 @@ wait and coach me on my result. Start with what you see, then Module 0.
 ## Module 0 · The Six Layers
 *🎯 Goal: know what's in the box and where everything lives*
 
+### The six layers
+
 > **Standards alignment** — STANDARDS.md maps the model to the genomics standards it aligns with (GA4GH, VCF, HGVS, HGNC, ClinVar, Sequence Ontology); SOURCES.md cites every source. The semantic layer (metrics, classification) is fully separated from the physical mapping : every physical table name lives in one file , ontology/schema.tql — re-point it and the metric logic stays put. The starter is authored against a generic LIMS + secondary/tertiary-analysis model in ANSI/Spark-portable SQL; MIGRATION.md is the re-point checklist and works the same on Redshift, BigQuery, Snowflake, or Databricks (budget: about a half-day with warehouse access). For a deep technical tour, read DEEP_DIVE.md .
 
 > **Two rules for a long, live session** — 1 · Checkpoint every couple of modules. Long threads have a ceiling. After every module or two, ask Ana: “Save a handoff document summarizing what we've built, what we decided, and what's next — so we can continue in a new thread.” If a thread ever maxes out, you lose nothing. 2 · Pin the scope in every prompt. Name the entity and the source-of-truth tables in each prompt (“…for [entity X], using the [base] tables, not the summary table”) — otherwise Ana may drift to a convenient summary table or query every source at once.
@@ -50,9 +52,20 @@ Help me define the North Star for our ontology before we build anything.
 ## Module 2 · Connect Three Things
 *🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat*
 
+### 2.1 · Connect the ontology repo to Ana
+This is the key step. In TextQL, add a Git connector and point it at your fork of the starter repo ( TextQLLabs/ontology-starter-kits/tree/main/genomics — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every coding rule — as a reference she reads on demand.
+
 > **No second source of truth** — You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.
 
+### 2.2 · Connect your data warehouse
+Add the connector for the warehouse holding your genomics data — the LIMS / sequencing-ops / variant store (Databricks, Snowflake, BigQuery, Redshift, …). Read-only access is enough.
+
 > **Read-only, against the analytics copy** — CLIA/CAP pipelines are validated, controlled environments — analytics must never write to them, and genomic data must not be needlessly copied. Connect read-only to the analytics warehouse, not the production pipeline. See ontology/notes/governance-genomic-pii.md .
+
+### 2.3 · (Optional) Bring in your documents
+Your real-world context — pipeline configs, LIMS QC-threshold spreadsheets, the doc where someone defined "reportable," panel-design sheets — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology as corpus, not migration , and can fold what she learns into the model.
+
+### 2.4 · Say hello
 
 **Prompt for the learner to run:**
 ```
@@ -69,12 +82,17 @@ Read the ontology repo and give me a tour: what entities, metrics, and classific
 ## Module 3 · Validate Against Your Schema
 *🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — without writing SQL*
 
+### 3.1 · The dry run — required
+
 **Prompt for the learner to run:**
 ```
 Look at the ontology repo, then inspect my warehouse. Pull the information schema for my subject / sample / assay / qc_metric / variant tables and tell me where the ontology's expected table and column names don't match what I actually have. Propose the exact changes to ontology/schema.tql.
 ```
 
 > ✅ You'll see: Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names. (A ready-made version of this check lives in validation/dry-run-prompt.md — it also pulls the genome build, ClinVar version, QC/filter enums, and the data-extract date.)
+
+### 3.2 · Run the validator — required
+The dry run is discovery; validation/validate_tql.py is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles. Ana runs it for you — no terminal needed:
 
 **Prompt for the learner to run:**
 ```
@@ -85,6 +103,8 @@ Run validation/validate_tql.py from the ontology repo in your sandbox — static
 
 > **Prefer the terminal?** — The same gate runs locally: python3 validation/validate_tql.py (static — no warehouse needed) · --check-sql (paste the output into Ana: rows = missing columns) · --dsn "<dsn>" --explain (live column check + compile test).
 
+### 3.3 · Apply the fixes as a PR — required
+
 **Prompt for the learner to run:**
 ```
 Make those changes and open a pull request.
@@ -93,6 +113,9 @@ Make those changes and open a pull request.
 > ✅ You'll see: Ana edit the files and open a reviewable PR in your repo. Every physical table name lives in one place ( ontology/schema.tql ) — re-point it and the metric logic stays put. The surfaces reference logical ${name} backings, so most re-points are one file.
 
 > **Why this step matters** — Every lab's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those before you trust a number is the difference between a defensible metric and a debugging session in front of stakeholders.
+
+### 3.4 · Decide your grain & pin the genomic tuple — required
+Three decisions shape everything downstream, and each is a prompt:
 
 **Prompt for the learner to run:**
 ```
@@ -128,6 +151,8 @@ Find the dataset-specific literals the surfaces assume — sample.status values,
 ## Module 4 · The Classification Layer
 *🎯 Goal: grouper-powered questions — ClinVar tiers, Sequence-Ontology type, HGNC gene — with zero writes to your warehouse*
 
+### 4.1 · Prove the groupers work
+
 **Prompt for the learner to run:**
 ```
 Using the ontology's classification layer, show me the distribution of my PASS variants by ClinVar 5-tier clinical significance, and by Sequence-Ontology variant group (short vs. structural). Explain how you joined the seed crosswalk without writing to the warehouse.
@@ -136,6 +161,9 @@ Using the ontology's classification layer, show me the distribution of my PASS v
 > ✅ You'll see: raw variant attributes resolved to meaningful clinical categories (P / LP / VUS / LB / B and SNV / indel / CNV / SV), with the federated join-in-sandbox pattern explained.
 
 > **Group on the HGNC approved symbol — not an alias** — When you group "which genes carry the most pathogenic variants," group on the HGNC approved symbol via terminology.hgnc , never a legacy/alias symbol. Gene symbols get renamed, and aliases collide — a renamed symbol silently drops rows. This is the same coding-discipline lesson that bit the kit's own validation (Module 7).
+
+### 4.2 · Refresh or extend the reference data — optional
+You don't need this on day one — the committed seeds carry the classification structure. Come back when a standards release updates (ClinVar reclassifies continuously; HGNC and GENCODE release on their own cadence) or when you need the full variant-level ClinVar database. And you don't run the scripts yourself — Ana does:
 
 **Prompt for the learner to run:**
 ```
@@ -159,12 +187,16 @@ We need variant-level ClinVar significance, not just the 5-tier scheme. Fetch th
 
 > **Pin the scope** — In every question below, name the entity and the source-of-truth tables . A plausible answer from the wrong (summary) table is worse than no answer — if two sources could answer, run both and let your SME rule which is truth.
 
+### 5.1 · Variant yield (PASS-only)
+
 **Prompt for the learner to run:**
 ```
 What's our PASS variant yield per sequenced sample? Use the governed variant_yield surface, tell me the PASS filter you applied, and confirm the denominator is sequenced samples (so 0-variant samples count).
 ```
 
 > ✅ You'll see: variant_yield filter to filter = 'PASS' before counting anything — no-call/low-confidence records excluded. On the kit's synthetic warehouse: 254,775 PASS variants / 18,972 sequenced = 13.43 variants/sample . A shift in this number flags a pipeline, reference-build, or sample-quality change — not noise.
+
+### 5.2 · Diagnostic yield (pathogenic-variant rate)
 
 **Prompt for the learner to run:**
 ```
@@ -175,12 +207,16 @@ What's our diagnostic yield — the % of sequenced samples with at least one PAS
 
 > **Name the ClinVar version and genome build** — ClinVar reclassifies continuously — a VUS can become pathogenic. A pathogenic rate is only comparable within one classification vintage , so the governed surface expects the ClinVar version + date and the genome build as part of the citation ( notes/coding-tuple.md , notes/variant-analysis.md ). Ana will name them rather than report a bare rate.
 
+### 5.3 · QC pass rate & turnaround time (lab ops)
+
 **Prompt for the learner to run:**
 ```
 Show our QC pass rate for the last complete year, and our turnaround time (average and p90 days, collection → result) for samples resulted in that window. Use the governed qc_pass_rate and turnaround_time surfaces, and report p90 — not just the mean.
 ```
 
 > ✅ You'll see: qc_pass_rate at 17,552 / 20,000 = 0.8776 and turnaround_time at avg 20.06 days, p90 26 days on the synthetic warehouse. TAT is anchored on result_date over resulted samples only — in-flight samples have no result date and are excluded (or reported separately as backlog), or TAT is understated.
+
+### 5.4 · Coverage, call rate & assay mix
 
 **Prompt for the learner to run:**
 ```
@@ -190,6 +226,9 @@ Show coverage adequacy (% of samples meeting min_coverage=30), average genotype 
 > ✅ You'll see: coverage_adequacy at 18,243 / 20,000 = 0.9122 (avg 74.6x), call_rate avg 0.9491 , and assay_mix summing to 1.0 (panel 0.397 · WGS 0.206 · WES 0.200 · RNA 0.197). Thresholds are assay-specific — a single coverage or call-rate cut across WGS and targeted panels is meaningless, so Ana segments by assay_type .
 
 > **Why everyone gets the same number** — Metrics like variant yield and diagnostic yield can be computed several ways — which PASS filter, which significance tiers, which denominator. The ontology pins one governed definition — with the decision recorded in ontology/notes/variant-analysis.md and lab-ops.md — so the variant team and the lab director stop disagreeing.
+
+### 5.5 · When the answer isn't governed yet — watch the model grow
+Now ask something from your shortlist that the starter doesn't already cover. This is the important beat: a starter pack is a head start, not the finished model.
 
 **Prompt for the learner to run:**
 ```
@@ -208,6 +247,9 @@ Here's a question from our shortlist that isn't in the governed surfaces yet: [y
 ## Module 6 · Governance Defaults
 *🎯 Goal: see the compliance behavior that's on by default — and verify it fires*
 
+### 6.1 · Inventory your identifiers — day one
+governance-genomic-pii.md §0 classifies every direct identifier in the connected schema into a role — and the genomics-specific twist is that a set of raw variant calls is itself an identifier , not an ordinary analytic column:
+
 **Prompt for the learner to run:**
 ```
 Inventory every direct identifier in the connected schema and classify each per governance-genomic-pii.md section 0: join-key-only, sensitive/gated (raw variant calls), or aggregate-only. Flag anything that would let a query emit a subject-linked variant list for compliance review.
@@ -217,12 +259,16 @@ Inventory every direct identifier in the connected schema and classify each per 
 
 > **Facilitators: pre-flight these tests** — Run 5.2 and 5.3 yourself before any session with compliance in the room. These guardrails are instruction-layer enforcement — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with governance-genomic-pii.md and config/org_context.md ) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the check is part of the story — "here's the file, here's the behavior, here's how we audit it."
 
+### 6.2 · Test small-cell suppression on subject counts
+
 **Prompt for the learner to run:**
 ```
 How many subjects carry a PASS pathogenic / likely-pathogenic variant in [a rare gene], broken down by ancestry or sex? Apply our suppression rules and tell me what you suppressed and why.
 ```
 
 > ✅ You'll see: subject counts below min_cell_size suppressed (shown as <n ) with an explanation — because a lone carrier of a rare pathogenic variant is identifiable. The starter default is 5 , configured in config/org_context.md ; this applies hard to rare-variant / rare-gene cuts. If suppression doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.
+
+### 6.3 · Test consent scope & subject-linked gating
 
 **Prompt for the learner to run:**
 ```
@@ -238,12 +284,18 @@ List the individual subjects and their specific pathogenic variant calls (HGVS) 
 ## Module 7 · Validate Numbers & Make It Yours
 *🎯 Goal: pin known-correct values, then adapt the starter's definitions to your lab — in your repo*
 
+### 7.1 · Run the golden queries
+The starter's golden values are already pinned and verified against a synthetic genomics warehouse (Databricks, 2026-06-23) — all 9 surfaces with realistic, internally-consistent values and the invariants holding (see validation/golden-queries.md ). Against your warehouse, re-pin them to numbers you trust:
+
 **Prompt for the learner to run:**
 ```
 Run the golden queries from validation/golden-queries.md against my warehouse. For each surface, compare to a reference number I trust and flag any drift, and assert the invariants (assay_mix sums to 1.0; pathogenic ≤ sequenced; rates ∈ [0,1]; p90 TAT ≥ avg TAT; no surface emits a subject-linked call). Where we differ, explain whether it's data, definition, genome build, or ClinVar version.
 ```
 
 > ✅ You'll see: accuracy checked, not asserted — and a triage of any mismatch into data vs. definition vs. build/version. The kit's pinned set to reconcile against: QC pass 0.8776 , variant yield 13.43 /sample, diagnostic yield 0.3239 , coverage adequacy 0.9122 , p90 TAT 26 days , rerun rate 0.0810 .
+
+### 7.2 · Customize a definition — the worked example
+This kit's own validation gives you the canonical worked example. When the surfaces were validated end-to-end, pathogenic_variant_rate 's optional gene parameter was named gene — which latently shadowed the gene backing declared in schema.tql . The fix was to rename the parameter to gene_symbol (see validation/golden-queries.md → Fix applied ). The gene-symbol layer is exactly where genomics ontologies get subtle: symbol vs. stable id, alias vs. approved HGNC symbol, and now parameter-vs-backing name collisions.
 
 > **Why this is the teaching example** — A parameter named the same as a logical backing compiles fine but resolves the wrong thing at query time — a silent wrong-number bug, not a crash. It's the genomics version of the lesson that runs through the whole kit: get the names right (PASS filter, genome build, ClinVar version, HGNC approved symbol), because the data won't tell you when a name is quietly shadowing something else. (Other good first customizations: a stricter PASS-only filter, or a genome-build guard that refuses to pool GRCh37 and GRCh38.)
 
@@ -254,12 +306,17 @@ Our official definition of [metric] differs from the starter: [your definition].
 
 > ✅ You'll see: the change land as a reviewable PR in your repo — the template stays pristine upstream; your adaptations are yours. Watch for parameter-vs-backing name collisions like the gene_symbol one — the validator and a careful review catch them.
 
+### 7.3 · Localize the vocabulary
+ontology/notes/glossary.md holds the canonical genomics terms — subject, sample, assay, QC pass, coverage, call rate, TAT, variant, variant yield, pathogenic rate, clinical significance, gene — each with a variance-to-check column flagging where your lab diverges (collection-vs-accession TAT anchor, per-assay thresholds, VUS policy, symbol renames).
+
 **Prompt for the learner to run:**
 ```
 Walk the glossary's variance-to-check column. For each term that differs at our lab — TAT anchor, per-assay coverage/call-rate thresholds, our "reportable" / VUS policy, sample-vs-subject grain — propose the override in glossary.md (keep the term → definition → resolves-via pattern) and open it as one PR.
 ```
 
 > ✅ You'll see: the vocabulary localized in one reviewable pass — so "reportable," "QC pass," and "TAT" mean your lab's thing, everywhere, from now on.
+
+> **Two habits as you make it yours** — 1 · Write for the search box. As you extend the kit, keep a short README per folder and repeat the phrases your teams actually use (metric names, synonyms, team names) in the prose — future threads find context by search , not browsing. 2 · Let usage drive the roadmap. Stand up a weekly gap-review playbook: mine repeated questions, manual SQL, and mid-thread corrections; have Ana draft small reviewable patches; a named owner approves. The kit is the seed — usage is what grows it. (See Ontology Operations Module 4.)
 
 **Checkpoint before moving on:**
 - [ ] Golden queries ran; any drift was triaged (data / definition / build / ClinVar version)

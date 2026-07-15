@@ -22,9 +22,18 @@ then Module 0.
 
 > **Before you start — the 2-minute gate** — Confirm these five things now, so you don't stall at minute ten: (1) your login works; (2) you can see New Thread ; (3) at least one connector appears under the "+" menu; (4) a test question ("how many rows in our main table?") returns an answer; (5) if any of these fail — stop and ask your workspace admin or TextQL contact before investing time. Everything past this point assumes a working, connected workspace.
 
+### 0.1 · Sign in and start a thread
+
+### 0.2 · Attach a data source
+Before sending your first message, click the "+" button at the bottom-left of the chat input:
+
 > **Heads up** — Connectors and tools are chosen before the first message of a thread. To change them later, start a new thread.
 
 > **No data connected yet?** — You need at least one connected data source for this workshop. If your workspace shows no connectors: ask your workspace admin or TextQL contact — they can connect a source or provision a demo workspace with sample data in minutes. (If you ARE the admin, the Connect Your Data workshop covers every source type step by step.)
+
+### 0.3 · Orientation — what's where
+
+### 0.4 · Say hello
 
 **Prompt for the learner to run:**
 ```
@@ -32,6 +41,9 @@ What data sources do I have access to in this thread, and what kinds of question
 ```
 
 > ✅ You'll see: Ana lists the attached connectors, summarizes what's in them, and suggests starter questions tailored to your actual data.
+
+### 0.5 · Baseline check — three test questions
+Before learning anything, benchmark your workspace. Ask these three and write down the answers and how long each took — you'll compare against them at the end of the workshop:
 
 **Prompt for the learner to run:**
 ```
@@ -52,6 +64,8 @@ What was [your main metric] last month, and how does it compare to the month bef
 
 > ✅ You'll see: the hard one is your baseline . Note the number AND the definition Ana assumed. By the wrap-up — after you've learned to refine, verify, and govern definitions — re-ask it and compare. That before/after is the whole point of the workshop.
 
+### Troubleshooting
+
 **Checkpoint before moving on:**
 - [ ] You have a thread open with at least one connector attached
 - [ ] Ana answered the hello prompt with a real description of your data
@@ -61,12 +75,18 @@ What was [your main metric] last month, and how does it compare to the month bef
 ## Module 1 · Your First Question
 *🎯 Goal: ask real business questions in plain English, refine them conversationally, and understand what Ana does on your behalf*
 
+### 1.1 · Ask a simple, concrete question
+Start with something you'd normally ask an analyst.
+
 **Prompt for the learner to run:**
 ```
 How many [orders / signups / tickets / sessions] did we have last month? How does that compare to the month before?
 ```
 
 > ✅ You'll see: Ana find the right table on her own, write and run the query, and answer with the numbers plus the month-over-month change. Tool steps appear as collapsed cells — expandable, but optional.
+
+### 1.2 · Refine it — a conversation, not a query builder
+You don't have to get the question perfect on the first try. Follow up naturally.
 
 **Prompt for the learner to run:**
 ```
@@ -75,6 +95,9 @@ Break that down by [region / product / channel / team]. Which one drove the chan
 
 > ✅ You'll see: Ana reuse the context from the previous answer — no restating — and return a breakdown with the main driver called out.
 
+### 1.3 · Ask a vague question on purpose
+Real questions are fuzzy. Watch how ambiguity is handled.
+
 **Prompt for the learner to run:**
 ```
 Are we doing well this quarter?
@@ -82,12 +105,17 @@ Are we doing well this quarter?
 
 > ✅ You'll see: one of two good behaviors — Ana either asks which metric you mean (revenue? volume? retention?), or states the assumption she's making before answering. Both are correct: ambiguity gets surfaced, not silently guessed.
 
+### 1.4 · Ask something the data can't answer
+Trust also means knowing the limits.
+
 **Prompt for the learner to run:**
 ```
 What was our customer satisfaction score in 2015?
 ```
 
 > ✅ You'll see: Ana typically says plainly what's missing and what would be needed, rather than inventing a number. If she does return an answer, that's your cue for the most important skill in this workshop: ask "what data did you use for that?" — verifying is Module 2's whole job.
+
+### 1.5 · The question patterns that work best
 
 **Checkpoint before moving on:**
 - [ ] You got a correct answer to a concrete question about your data
@@ -98,12 +126,19 @@ What was our customer satisfaction score in 2015?
 ## Module 2 · Trusting the Answer
 *🎯 Goal: verify how an answer was produced — defend the number in a meeting, challenge it when something looks off*
 
+### 2.1 · Open the work
+Take any answer from Module 1 and expand the collapsed tool cells above it. You'll see the exact SQL that ran, the rows that came back, and any analysis code. You don't need to read SQL — but it's there, and your data team can review it in seconds.
+
+### 2.2 · Ask Ana to explain her own work
+
 **Prompt for the learner to run:**
 ```
 Explain in plain English exactly how you calculated that number: which table, which filters, which time window, and what you counted. What assumptions did you make?
 ```
 
 > ✅ You'll see: a step-by-step explanation a non-technical stakeholder could follow — table, filters, definitions, assumptions, caveats.
+
+### 2.3 · Check it against a number you already know
 
 **Prompt for the learner to run:**
 ```
@@ -112,12 +147,16 @@ What was [metric you already know] for [period]? I have a reference number — I
 
 > ✅ You'll see: either a match (calibration confirmed) or a mismatch. A mismatch is useful — follow with "Why might your number differ from [reference]?" Common causes: time zones, filters (test accounts? refunds?), definitions. You just found a definitional gap; Module 6 fixes it for everyone.
 
+### 2.4 · Governed answers vs. ad-hoc answers
+
 **Prompt for the learner to run:**
 ```
 For the metrics you just gave me, which came from governed ontology definitions and which did you compute ad hoc? What's the difference in how much I should trust each?
 ```
 
 > ✅ You'll see: which numbers carry your org's stamp of approval and which are best-effort. Governed numbers are consistent for everyone who asks; ad-hoc ones are transparent but not yet standardized.
+
+### 2.5 · The trust checklist
 
 **Prompt for the learner to run:**
 ```
@@ -135,12 +174,16 @@ Give me a "methodology footnote" for that answer: source, time window, filters, 
 ## Module 3 · Visualize & Go Deeper
 *🎯 Goal: turn answers into charts, and go beyond "what happened" into segmentation, trends, and "why"*
 
+### 3.1 · Your first chart
+
 **Prompt for the learner to run:**
 ```
 Show me [metric] by month for the last 12 months as a chart.
 ```
 
 > ✅ You'll see: an interactive chart rendered in the thread — hover for values; it's saved with the conversation.
+
+### 3.2 · Direct the visualization
 
 **Prompt for the learner to run:**
 ```
@@ -149,12 +192,16 @@ Make that a stacked bar chart by [segment], add the trend as a line on top, and 
 
 > ✅ You'll see: the chart rebuilt to spec. Other useful asks: "log scale", "sort descending", "show only top 8 and group the rest as Other", "add a target line at [value]".
 
+### 3.3 · Segment — who's driving the number
+
 **Prompt for the learner to run:**
 ```
 Segment [metric] by [customer tier / region / plan / cohort]. Which segments are growing, which are shrinking, and which one explains most of the overall change?
 ```
 
 > ✅ You'll see: a segment-level view plus a narrative pointing at the segments that matter. This is the workhorse move of self-service analytics.
+
+### 3.4 · Trends and seasonality
 
 **Prompt for the learner to run:**
 ```
@@ -163,6 +210,8 @@ Plot [metric] weekly for the past year. Is there a trend after accounting for se
 
 > ✅ You'll see: trend analysis with anomalies flagged and quantified, not just eyeballed.
 
+### 3.5 · Ask "why" — root-cause a change
+
 **Prompt for the learner to run:**
 ```
 [Metric] changed by [amount] in [period]. Decompose the change: how much came from each segment, and was it driven by volume, price/intensity, or mix? Rank the contributors.
@@ -170,12 +219,16 @@ Plot [metric] weekly for the past year. Is there a trend after accounting for se
 
 > ✅ You'll see: a contribution breakdown — the kind of analysis that used to take an analyst a spreadsheet afternoon — in one turn.
 
+### 3.6 · Compare and correlate
+
 **Prompt for the learner to run:**
 ```
 Is there a relationship between [metric A] and [metric B] across [customers / regions / weeks]? Show a scatter and tell me how strong the relationship is — and warn me about anything that would make it misleading.
 ```
 
 > ✅ You'll see: the relationship quantified, with honest caveats (correlation is not causation, outliers, confounders).
+
+### 3.7 · A quick forecast
 
 **Prompt for the learner to run:**
 ```
@@ -186,6 +239,8 @@ Based on the trend, project [metric] for the next quarter. Show the range of unc
 
 > **Go deeper** — Charts, reports, and live dashboards as real products — publishing, filters, refresh, maintenance — get a full workshop: Dashboards & Reporting .
 
+### Troubleshooting
+
 **Checkpoint before moving on:**
 - [ ] You produced and restyled a chart with plain-English direction
 - [ ] You ran a segmentation and identified the driving segment
@@ -195,7 +250,12 @@ Based on the trend, project [metric] for the next quarter. Show the range of unc
 ## Module 4 · From Answers to Assets
 *🎯 Goal: turn a one-off analysis into something durable — a shareable report, a live dashboard, or an exportable file*
 
+### 4.1 · Share the thread itself
+Every thread has a shareable link — your analysis, charts, and the audit trail, in one place. Open a Module 3 thread, use the share option, and send it to a teammate.
+
 > **Sharing > screenshotting** — A shared thread keeps the context and the "show your work" trail attached to the number. A screenshot strips all of that away. When a decision rides on the number, share the thread.
+
+### 4.2 · Generate a polished report
 
 **Prompt for the learner to run:**
 ```
@@ -204,12 +264,16 @@ Turn this analysis into a polished report: an executive summary up top, then the
 
 > ✅ You'll see: a structured report assembled from the thread. Ask for a PDF or a slide deck version if you need a specific format.
 
+### 4.3 · Build a live dashboard
+
 **Prompt for the learner to run:**
 ```
 Build a dashboard from this analysis with: [metric] by month, the segment breakdown, and the top-10 table. Add a filter so viewers can pick their own region and date range.
 ```
 
 > ✅ You'll see: an interactive dashboard created and linked. It appears under Dashboards, viewers can use the filters, and the data refreshes from the source — no more screenshot-and-paste reporting.
+
+### 4.4 · Iterate on the dashboard
 
 **Prompt for the learner to run:**
 ```
@@ -218,12 +282,16 @@ On that dashboard: add a week-over-week comparison card at the top, move the tab
 
 > ✅ You'll see: the dashboard updated in place. Only the creator can edit; everyone else gets view + filter.
 
+### 4.5 · Export the underlying data
+
 **Prompt for the learner to run:**
 ```
 Export the segment breakdown as a CSV I can download. Also give me the chart as a standalone image.
 ```
 
 > ✅ You'll see: downloadable files attached to the thread — CSV for spreadsheets, images for decks.
+
+### 4.6 · Which asset, when?
 
 **Checkpoint before moving on:**
 - [ ] You shared a thread link
@@ -234,6 +302,9 @@ Export the segment breakdown as a CSV I can download. Also give me the chart as 
 ## Module 5 · Automate It
 *🎯 Goal: stop re-asking the same questions — schedule recurring analyses, and set up an agent that watches your domain proactively*
 
+### 5.1 · Playbooks — the scheduled report, reinvented
+A playbook is a saved analysis instruction that runs on a schedule and delivers to email or Slack — a weekly report that writes itself.
+
 **Prompt for the learner to run:**
 ```
 Create a playbook called "[Team] Weekly Snapshot" that runs every Monday at 9am: [metric 1] and [metric 2] for last week vs the week before, the segment breakdown, and anything unusual flagged at the top. Email it to me.
@@ -243,12 +314,17 @@ Create a playbook called "[Team] Weekly Snapshot" that runs every Monday at 9am:
 
 > **Delivery prerequisites** — Slack/Teams delivery requires the org-wide integration (admin, set up once) — no channel option means that's the missing piece. Email recipients must be org members ; external addresses are silently dropped.
 
+### 5.2 · Tune the output
+
 **Prompt for the learner to run:**
 ```
 Make that playbook's report style concise — headline numbers and flags only, no methodology section. Also send it to our team Slack channel [#channel-name].
 ```
 
 > ✅ You'll see: delivery and style updated. Playbooks support email recipients, Slack channels, and executive / verbose / concise styles.
+
+### 5.3 · Feed agents — analysis that comes to you
+Playbooks answer a known question on a schedule. Feed agents investigate a domain , remember what they found before, and post anything noteworthy to your org's feed — including things you didn't think to ask.
 
 **Prompt for the learner to run:**
 ```
@@ -259,12 +335,18 @@ Create a feed agent that keeps an eye on [your domain — e.g., "our sales pipel
 
 > **Go deeper** — Reliable prompts that survive autopilot, batch templates, delivery options, and operating your automations: the Automation Deep-Dive workshop.
 
+### 5.4 · Playbook or feed agent?
+
+### 5.5 · One-off reminders
+
 **Prompt for the learner to run:**
 ```
 Remind me next Friday at 3pm to review the Q2 dashboard before the leadership meeting.
 ```
 
 > ✅ You'll see: a one-time future message scheduled to you.
+
+### Troubleshooting
 
 **Checkpoint before moving on:**
 - [ ] You created a playbook with a schedule and a delivery target
@@ -275,6 +357,9 @@ Remind me next Friday at 3pm to review the Q2 dashboard before the leadership me
 ## Module 6 · Make It Smarter
 *🎯 Goal: teach the platform your team's language, definitions, and preferences — so every future answer gets better. This is where self-service compounds.*
 
+### 6.1 · Fix a definition for everyone
+Remember the metric mismatch from Module 2? Make the right definition permanent.
+
 **Prompt for the learner to run:**
 ```
 Our official definition of [metric] is: [definition — e.g., "active user = logged in AND took at least one action, excluding internal accounts"]. Save this to the ontology so it's used consistently from now on.
@@ -284,12 +369,16 @@ Our official definition of [metric] is: [definition — e.g., "active user = log
 
 > **Governed by design** — You propose, an owner approves, every change is versioned and revertible. That's why teaching the platform is safe.
 
+### 6.2 · Teach it your vocabulary
+
 **Prompt for the learner to run:**
 ```
 Some vocabulary to remember: "NRR" means net revenue retention; "the big three" means our top 3 enterprise accounts: [names]; "EOQ crunch" means the last 2 weeks of a quarter. Save these to the ontology.
 ```
 
 > ✅ You'll see: a patch proposing the glossary additions. After approval, asking "how did the big three trend through EOQ crunch?" just works.
+
+### 6.3 · Set your personal preferences
 
 **Prompt for the learner to run:**
 ```
@@ -298,12 +387,18 @@ Remember my preferences: I want concise answers with the headline number first; 
 
 > ✅ You'll see: your personal context file created/updated. Future threads pick it up automatically. (Personal vs. role vs. org context — and full role personas — get their own workshop: The Context Stack .)
 
+### 6.4 · Capture a recurring workflow
+
 **Prompt for the learner to run:**
 ```
 Save this as my "[name]" workflow: every month I (1) pull [metric] by segment, (2) compare to the plan numbers, (3) flag segments more than 10% off plan, (4) format as an email draft to [audience]. Next time I say "run my [name] workflow," do all of it.
 ```
 
 > ✅ You'll see: the workflow documented in your context. One sentence now replaces a 30-minute ritual.
+
+### 6.5 · Know the escalation path
+
+> **Save it findable** — When you save a definition or preference, give it the words people actually use — the metric's name and its synonyms ("NRR", "net revenue retention", "retention rate"). Future threads find saved knowledge by search, so the phrasing you save it under is the phrasing that gets it found — save it findable.
 
 **Checkpoint before moving on:**
 - [ ] You proposed at least one definition or vocabulary patch

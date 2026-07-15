@@ -18,6 +18,8 @@ wait and coach me on my result. Start with what you see, then Module 0. Keep eve
 ## Module 0 · The Six Layers
 *🎯 Goal: know what's in the box and where everything lives*
 
+### The six layers
+
 > **Standards alignment** — STANDARDS.md maps the model to the industry standards it aligns with (CDISC SDTM/CDASH, MedDRA, WHODrug, NCI CTCAE, ICH-GCP / 21 CFR Part 11). The semantic layer (metrics, routing, classification) is fully separated from the physical mapping : every physical table name lives in one file , ontology/schema.tql — re-point it and the metric logic stays put. The starter is authored against a generic CTMS/EDC model in ANSI/Spark-portable SQL; MIGRATION.md is the 8-step re-point checklist and works the same on Snowflake, Redshift, BigQuery, or Databricks (budget: about a half-day with warehouse access). For a deep technical tour, read DEEP_DIVE.md .
 
 > **Two rules for a long, live session** — 1 · Checkpoint every couple of modules. Long threads have a ceiling. After every module or two, ask Ana: “Save a handoff document summarizing what we've built, what we decided, and what's next — so we can continue in a new thread.” If a thread ever maxes out, you lose nothing. 2 · Pin the scope in every prompt. Name the entity and the source-of-truth tables in each prompt (“…for [entity X], using the [base] tables, not the summary table”) — otherwise Ana may drift to a convenient summary table or query every source at once.
@@ -50,9 +52,20 @@ Help me define the North Star for our ontology before we build anything.
 ## Module 2 · Connect Three Things
 *🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat*
 
+### 2.1 · Connect the ontology repo to Ana
+This is the key step. In TextQL, add a Git connector and point it at your fork of the starter repo ( TextQLLabs/ontology-starter-kits/tree/main/clinical-trials — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every coding and blinding rule — as a reference she reads on demand.
+
 > **No second source of truth** — You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.
 
+### 2.2 · Connect your data warehouse
+Add the connector for the warehouse holding your operational trial data — CTMS, an EDC export, or a clinical data lake (Snowflake, Redshift, BigQuery, Databricks, …). Read-only access is enough — and required: the EDC/CTMS is a validated, regulated system, and analytics never mutates it (21 CFR Part 11).
+
 > **Read-only, and arm-aware** — Subjects are patients; treatment arm is blinded. Connect a read-only, governed warehouse and confirm the arm column is gated — see ontology/notes/governance-blinding-pii.md .
+
+### 2.3 · (Optional) Bring in your documents
+Your real-world context — the SDTM mapping spec, the EDC edit-check library, a study-startup tracker, the SAP, the spreadsheet where someone defined "enrolled" for this protocol — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology as corpus, not migration , and can fold what she learns into the model.
+
+### 2.4 · Say hello
 
 **Prompt for the learner to run:**
 ```
@@ -69,12 +82,17 @@ Read the ontology repo and give me a tour: what entities, metrics, and classific
 ## Module 3 · Validate Against Your Schema
 *🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — without writing SQL*
 
+### 3.1 · The dry run — required
+
 **Prompt for the learner to run:**
 ```
 Look at the ontology repo, then inspect my warehouse. Pull the information schema for my study/site/subject and event tables and tell me where the ontology's expected table and column names don't match what I actually have. Propose the exact changes to ontology/schema.tql.
 ```
 
 > ✅ You'll see: Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names. (A ready-made version of this check lives in validation/dry-run-prompt.md .)
+
+### 3.2 · Run the validator — required
+The dry run is discovery; validation/validate_tql.py is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles. Ana runs it for you — no terminal needed:
 
 **Prompt for the learner to run:**
 ```
@@ -85,6 +103,8 @@ Run validation/validate_tql.py from the ontology repo in your sandbox — static
 
 > **Prefer the terminal?** — The same gate runs locally: python3 validation/validate_tql.py (static — no warehouse needed) · --check-sql (paste the output into Ana: rows = missing columns) · --dsn "<dsn>" --explain (live column check + compile test).
 
+### 3.3 · Apply the fixes as a PR — required
+
 **Prompt for the learner to run:**
 ```
 Make those changes and open a pull request.
@@ -93,6 +113,9 @@ Make those changes and open a pull request.
 > ✅ You'll see: Ana edit the files and open a reviewable PR in your repo. Every physical table name lives in one place ( ontology/schema.tql ) — re-point it and the metric logic stays put. The join keys are study_id / site_id / subject_id ; if your subject table is named differently, it's one line.
 
 > **Why this step matters** — Every sponsor's and CRO's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those before you trust a number is the difference between a defensible metric and a debugging session in front of stakeholders.
+
+### 3.4 · Decide your subject grain & pin the data cut — required
+Two decisions shape everything downstream, and both are prompts:
 
 **Prompt for the learner to run:**
 ```
@@ -129,12 +152,17 @@ Check the dataset-specific literals in the surfaces against my data: subject.sta
 
 > **The shipped surfaces are seed-free** — The default surfaces filter on status / severity / serious on the fact , so they run with zero classification dependency. The seeds add the rollups — CTCAE labels, phase ordinal, status groups — join them federated when a question needs them.
 
+### 4.1 · Prove the groupers work
+
 **Prompt for the learner to run:**
 ```
 Using the ontology's classification layer, show me my adverse events grouped by CTCAE severity grade (1–5) with the grade labels, and my subjects grouped by status. Explain how you joined the seed CSVs without writing to the warehouse.
 ```
 
 > ✅ You'll see: raw severity codes and status values resolved to meaningful labels and groups, with the join-in-sandbox pattern explained. For MedDRA System Organ Class rollups, Ana joins your licensed MedDRA dictionary the same federated way — analyze the SOC/PT grouper, never the free-text verbatim AE term.
+
+### 4.2 · Refresh or extend the reference data — optional
+You don't need this on day one — the current seeds are already committed. Come back when a standards version updates (CDISC Controlled Terminology and CTCAE are versioned and re-release) or when you load your licensed MedDRA/WHODrug. And you don't run the scripts yourself — Ana does:
 
 **Prompt for the learner to run:**
 ```
@@ -160,12 +188,16 @@ We have a MedDRA subscription at version [vXX.X]. Wire the AE coding to our lice
 
 > **🙈 Every surface here is arm-agnostic — on purpose** — During a blinded trial, no operational metric is split by treatment arm — an arm-level cut can unblind the study, and that's not recoverable. The shipped safety surfaces ( ae_rate , sae_rate , discontinuation_rate ) never group by arm . If you ask for a by-arm breakdown, Ana declines and points to the blinding rule (covered in Module 6). Arm-level analysis is gated to unblinded roles (DSMB / unblinded statistician) only.
 
+### 5.1 · Enrollment vs target (the headline recruitment metric)
+
 **Prompt for the learner to run:**
 ```
 How is each study tracking to its planned enrollment? Use the governed enrollment_vs_target surface, and tell me what "enrolled" means in the definition you used.
 ```
 
 > ✅ You'll see: enrolled / planned_enrollment per study, with "enrolled" pinned to randomized / first-dose ( enrollment_date IS NOT NULL ) — not screened or consented. (Golden: 20 studies, 10,337 planned, 6,363 enrolled, overall 0.6156 of target.)
+
+### 5.2 · The screening funnel
 
 **Prompt for the learner to run:**
 ```
@@ -174,12 +206,16 @@ What's our screen-fail rate, and which sites are highest? Use the governed scree
 
 > ✅ You'll see: screen failures / screened — the denominator is everyone with a screen_date , a different denominator than the enrollment metrics. Don't mix funnel stages. (Golden: 8,000 screened, 1,637 failures, 0.2046 .)
 
+### 5.3 · Enrollment velocity & site activation
+
 **Prompt for the learner to run:**
 ```
 What's our enrollment velocity (subjects per site per month since first-subject-in), and our site-activation rate and average activation slippage? Use the governed enrollment_rate and site_activation surfaces. Confirm velocity divides by ACTIVATED sites, not all sites.
 ```
 
 > ✅ You'll see: velocity = enrolled / activated sites / months since FSI — a selected-but-not-activated site enrolls nobody, so dividing by all sites understates the steady-state rate. (Golden: 6,363 enrolled / 330 activated sites / 11.5 mo = 1.6743 subj/site/mo; activation 0.825 , avg slip 7.48 days .)
+
+### 5.4 · Safety — AE, SAE, and deviations (arm-agnostic)
 
 **Prompt for the learner to run:**
 ```
@@ -190,6 +226,8 @@ Give me the AE rate, SAE rate, and protocol-deviation rate across enrolled subje
 
 > **Severity is not seriousness** — CTCAE severity (grade 1–5) and SAE seriousness (the regulatory flag) are different axes: a Grade 3 (severe) AE is not automatically serious, and a serious AE can be Grade 2. The surfaces keep them straight; if you see them conflated, that's a wrong number. The decision record is in ontology/notes/safety.md .
 
+### 5.5 · Data management — query aging & discontinuation
+
 **Prompt for the learner to run:**
 ```
 What's our open EDC-query backlog, open rate, and average open-query age? And our discontinuation rate? Use the governed query_aging and discontinuation_rate surfaces, and confirm the age is measured to the data cut, not today.
@@ -198,6 +236,9 @@ What's our open EDC-query backlog, open rate, and average open-query age? And ou
 > ✅ You'll see: the database-lock-readiness signal — open queries, open rate, and average open age anchored on analysis_end_date . (Golden: 5,024 open / 20,000, open rate 0.2512 , avg open age 159.7 days ; discontinuation 0.1545 .) Remember: the backlog measures discrepancy resolution, not data correctness (that's SDV / edit checks).
 
 > **Why everyone gets the same number** — Metrics like "enrolled" and "screen-fail rate" can be computed several ways. The ontology pins one governed definition — with the decision recorded in ontology/notes/ — so ClinOps, the medical monitor, and data management stop disagreeing about whether "enrolled" means consented, screened, or randomized.
+
+### 5.6 · When the answer isn't governed yet — watch the model grow
+Now ask something from your shortlist that the starter doesn't already cover — a visit completion / missed-visit rate, an out-of-window-visit view, an inspection-readiness snapshot. This is the important beat: a starter pack is a head start, not the finished model.
 
 **Prompt for the learner to run:**
 ```
@@ -216,6 +257,9 @@ Here's a question from our shortlist that isn't in the governed surfaces yet: [y
 ## Module 6 · Governance Defaults
 *🎯 Goal: see the compliance behavior that's on by default — and verify it fires*
 
+### 6.1 · Inventory your identifiers — day one
+governance-blinding-pii.md §0 classifies every direct identifier in the connected schema into exactly one role — and the key distinction is that using an identifier as a join key is not the same as outputting it :
+
 **Prompt for the learner to run:**
 ```
 Inventory every direct identifier in the connected schema and classify each per governance-blinding-pii.md section 0: join-key-only, never-output, aggregate-only, or blinded-and-gated. Flag anything ambiguous for QA/compliance review.
@@ -225,12 +269,16 @@ Inventory every direct identifier in the connected schema and classify each per 
 
 > **Facilitators: pre-flight these tests** — Run 6.2 and 6.3 yourself before any session with QA / compliance / a medical monitor in the room. These guardrails are instruction-layer enforcement — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with governance-blinding-pii.md and config/org_context.md ) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the check is part of the story — "here's the file, here's the behavior, here's how we audit it."
 
+### 6.2 · Test the blinding rule — the trial-specific one
+
 **Prompt for the learner to run:**
 ```
 Break down the AE rate (or discontinuation rate) by treatment arm for [a study].
 ```
 
 > ✅ You'll see: Ana decline to split by arm and point to the blinding rule — arm-level cuts on a blinded study can unblind it, which compromises integrity and regulatory acceptability. subject.arm is treated like an MNPI column: present but locked, gated to unblinded roles (DSMB / unblinded statistician / pharmacovigilance) only. This is why every Module 5 surface was arm-agnostic. If a by-arm breakdown actually comes back, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.
+
+### 6.3 · Test small-cell suppression & PII
 
 **Prompt for the learner to run:**
 ```
@@ -246,12 +294,18 @@ Show me subject-level detail — initials, DOB, and site patient id — for the 
 ## Module 7 · Validate Numbers & Make It Yours
 *🎯 Goal: pin known-correct values, then adapt the starter's definitions to your organization — in your repo*
 
+### 7.1 · Run the vanilla-vs-ontology challenge
+Prove the ontology earns its keep: ask the same handful of questions in two threads against the same connector — one with the ontology repo connected, one without — and score them on correct / consistent / traceable . The hard ones (the funnel denominator, severity vs seriousness, anything by arm) are exactly where a vanilla agent guesses and a governed one cites a definition.
+
 **Prompt for the learner to run:**
 ```
 I'm scoring you on correct, consistent, and traceable. In this thread (ontology connected) answer each, cite the governed surface, name the denominator + data cut, and show the SQL: (1) how is each study tracking to enrollment target? (2) screen-fail rate? (3) AE and SAE rate across enrolled subjects? (4) break the AE rate down by treatment arm. (5) how many subjects total? Then tell me which of these a vanilla agent without the ontology would likely get wrong, and why.
 ```
 
 > ✅ You'll see: the funnel, safety, and blinding questions land on the governed definitions (and #4 gets declined for unblinding), while the control question ("how many subjects total?") shows it's not magic — it's governance where governance matters. The headline: correct on the hard ones, consistent across phrasings, traceable every time.
+
+### 7.2 · Run the golden queries
+The starter's golden values are already pinned and verified against its synthetic CTMS/EDC warehouse (data-cut 2024-12-31; see validation/golden-queries.md ). Against your warehouse, re-pin them to numbers you trust:
 
 **Prompt for the learner to run:**
 ```
@@ -260,6 +314,9 @@ Run the nine governed surfaces against my warehouse as golden queries. For each,
 
 > ✅ You'll see: accuracy checked, not asserted — and a triage of any mismatch into data vs. definition vs. data-cut. Pin each value with the data-cut and the MedDRA/CTCAE version per MIGRATION.md step 8 and notes/coding-tuple.md .
 
+### 7.3 · Customize a definition — the "enrolled" funnel denominator
+The single definition most likely to differ at your org is the recruitment funnel: screened vs. enrolled vs. randomized . The starter pins "enrolled" to randomized / first-dose ( enrollment_date IS NOT NULL ) — but some sponsors count "enrolled" at consent, and a velocity that divides by all sites instead of activated ones tells a different story. Make yours explicit:
+
 **Prompt for the learner to run:**
 ```
 Our official definition of "enrolled" differs from the starter: we count [consent / randomization / first-dose]. Update enrollment_vs_target.tql and enrollment_rate.tql in our repo to match, record the decision AND the rejected default in notes/enrollment.md, and open a PR. While you're there, confirm enrollment_rate divides velocity by ACTIVATED sites, not all sites. Add a golden-query value pinning a known enrolled count.
@@ -267,12 +324,17 @@ Our official definition of "enrolled" differs from the starter: we count [consen
 
 > ✅ You'll see: the change land as a reviewable PR in your repo — the template stays pristine upstream; your adaptations are yours. This is the field lesson from notes/enrollment.md made concrete: the most common way a clinical-ops dashboard disagrees with itself is counting "enrolled" a hair differently, or dividing velocity by the wrong site set.
 
+### 7.4 · Localize the vocabulary
+ontology/notes/glossary.md holds the canonical operational terms — study, site, subject, enrolled, screen-fail rate, enrollment velocity, AE/SAE, discontinuation, protocol deviation, EDC query, arm — each with a variance-to-check column flagging where your sponsor/CRO reality diverges (master/basket/platform sub-studies, site vs facility vs PI, deviation vs violation, withdrawal vs lost-to-follow-up vs discontinued, query types).
+
 **Prompt for the learner to run:**
 ```
 Walk the glossary's variance-to-check column for our org. For each term that differs at our sponsor/CRO — site vs PI, deviation importance categories, discontinuation reason taxonomy, query types — propose the override in glossary.md (keep the term → definition → resolves-via → variance pattern) and open it as one PR.
 ```
 
 > ✅ You'll see: the vocabulary localized in one reviewable pass — so "enrolled," "site," and "major deviation" mean your org's thing, everywhere, from now on.
+
+> **Two habits as you make it yours** — 1 · Write for the search box. As you extend the kit, keep a short README per folder and repeat the phrases your teams actually use (metric names, synonyms, team names) in the prose — future threads find context by search , not browsing. 2 · Let usage drive the roadmap. Stand up a weekly gap-review playbook: mine repeated questions, manual SQL, and mid-thread corrections; have Ana draft small reviewable patches; a named owner approves. The kit is the seed — usage is what grows it. (See Ontology Operations Module 4.)
 
 **Checkpoint before moving on:**
 - [ ] Golden queries ran; any drift was triaged (data / definition / data-cut)

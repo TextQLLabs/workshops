@@ -18,6 +18,8 @@ wait and coach me on my result. Start with what you see, then Module 0.
 ## Module 0 · The Six Layers
 *🎯 Goal: know what's in the box and where everything lives*
 
+### The six layers
+
 > **Standards alignment** — STANDARDS.md maps the model to the industry data models it aligns with (FIBO, BIAN, ISO 20022, plus ACORD / FIX / FpML for the insurance and capital-markets branches). The semantic layer (metrics, classification, governance) is fully separated from the physical mapping : every physical table name lives in one file , ontology/schema.tql — re-point it and the metric logic stays put. The starter is authored Redshift-first with BigQuery equivalents inline against a generic core-banking model (join keys customer_id / account_id ), and works the same on Snowflake or Databricks . For a deep technical tour, read DEEP_DIVE.md .
 
 > **Two rules for a long, live session** — 1 · Checkpoint every couple of modules. Long threads have a ceiling. After every module or two, ask Ana: “Save a handoff document summarizing what we've built, what we decided, and what's next — so we can continue in a new thread.” If a thread ever maxes out, you lose nothing. 2 · Pin the scope in every prompt. Name the entity and the source-of-truth tables in each prompt (“…for [entity X], using the [base] tables, not the summary table”) — otherwise Ana may drift to a convenient summary table or query every source at once.
@@ -50,9 +52,20 @@ Help me define the North Star for our ontology before we build anything.
 ## Module 2 · Connect Three Things
 *🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat*
 
+### 2.1 · Connect the ontology repo to Ana
+This is the key step. In TextQL, add a Git connector and point it at your fork of the starter repo ( TextQLLabs/ontology-starter-kits/tree/main/finserv — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every classification rule — as a reference she reads on demand.
+
 > **No second source of truth** — You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.
 
+### 2.2 · Connect your data warehouse
+Add the connector for the warehouse holding your core-banking / transaction / loan data (Redshift, BigQuery, Snowflake, …). Read-only access is enough. You can also point Ana at any existing context you have — dbt models, LookML, a metrics wiki, the regulatory-reporting spec — as corpus, not migration .
+
 > **Use the governed, in-scope warehouse** — Connect your enterprise warehouse under your existing data-governance and residency controls — financial NPI never leaves the contracted region. See ontology/notes/governance-pii.md .
+
+### 2.3 · (Optional) Bring in your documents
+Your real-world context — risk methodologies, metric definitions, product specs, policies — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology and can fold what she learns into the model.
+
+### 2.4 · Say hello
 
 **Prompt for the learner to run:**
 ```
@@ -69,6 +82,8 @@ Read the ontology repo and give me a tour: what entities, metrics, and classific
 ## Module 3 · Validate Against Your Schema
 *🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — without writing SQL*
 
+### 3.1 · The dry run — required
+
 **Prompt for the learner to run:**
 ```
 Look at the ontology repo, then inspect my warehouse. Pull the information schema for my core-banking tables and tell me where the ontology's expected table and column names don't match what I actually have. Propose the exact changes to ontology/schema.tql.
@@ -76,12 +91,17 @@ Look at the ontology repo, then inspect my warehouse. Pull the information schem
 
 > ✅ You'll see: Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names. (A ready-made version of this check lives in validation/dry-run-prompt.md .)
 
+### 3.2 · Run the dry-run checks — required
+The free-form ask is discovery; validation/dry-run-prompt.md is the mechanical gate. It runs six targeted checks — the six core tables and their real columns, whether days_past_due is populated, whether ADB ( average_balance ) or only a point-in-time current_balance exists, the mcc format, and whether an interest-accrual source exists for NIM. Ana runs it for you — no terminal needed:
+
 **Prompt for the learner to run:**
 ```
 Run the checks in validation/dry-run-prompt.md against my warehouse, substituting my schema name. For each, report the result and what it implies — then map every mismatch to the fix it needs (column renames in the affected .tql, table renames in schema.tql only) and propose the changes.
 ```
 
 > ✅ You'll see: the wrong-backing, missing-column, and wrong-basis bug classes caught here — instead of surfacing as wrong numbers in front of stakeholders. The dry-run note maps each check straight to the file it touches (e.g. ADB availability → the deposit_balance basis default in notes/balance-definition.md ).
+
+### 3.3 · Apply the fixes as a PR — required
 
 **Prompt for the learner to run:**
 ```
@@ -91,6 +111,9 @@ Make those changes and open a pull request.
 > ✅ You'll see: Ana edit the files and open a reviewable PR in your repo. Every physical table name lives in one place ( ontology/schema.tql ) — re-point it and the metric logic stays put. If your loan facts live in a differently-named table, point the loan backing at it: one line.
 
 > **Why this step matters** — Every customer's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those before you trust a number is the difference between a defensible metric and a debugging session in front of stakeholders.
+
+### 3.4 · Decide your grain & verify your joins — required
+Two decisions shape everything downstream, and both are prompts. The first is the customer-vs-account grain : one customer holds many accounts, so counting "customers" and counting "accounts" give different answers — decide which a question means before you count.
 
 **Prompt for the learner to run:**
 ```
@@ -123,12 +146,17 @@ Find the dataset-specific literals flagged inline in the .tql files — the depo
 ## Module 4 · The Classification Layer
 *🎯 Goal: grouper-powered questions — MCC spend categories, NAICS industry, delinquency buckets — with zero writes to your warehouse*
 
+### 4.1 · Prove the groupers work
+
 **Prompt for the learner to run:**
 ```
 Using the ontology's classification layer, show me which spend category my top 10 most frequent transaction MCCs fall into. Explain how you joined the MCC crosswalk without writing to the warehouse.
 ```
 
 > ✅ You'll see: raw 4-digit MCCs resolved to meaningful spend categories (dining, groceries, fuel, travel…), with the join-in-sandbox pattern explained — distinct codes pulled with aggregates, joined in pandas, no bulk customer rows. Ask the same of NAICS for commercial customers: LEFT(naics,2) → sector.
+
+### 4.2 · Refresh or extend the reference data — optional
+You don't need this on day one — the current crosswalks are already committed. Come back when a standard updates, or when you bring a licensed system. And you don't run the scripts yourself — Ana does:
 
 **Prompt for the learner to run:**
 ```
@@ -152,12 +180,16 @@ We license GICS / CUSIP / agency-rating data. Per notes/code-systems-overview.md
 
 > **Pin the scope** — In every question below, name the entity and the source-of-truth tables . A plausible answer from the wrong (summary) table is worse than no answer — if two sources could answer, run both and let your SME rule which is truth.
 
+### 5.1 · Delinquency (the "same word, four numbers" question)
+
 **Prompt for the learner to run:**
 ```
 What's our loan delinquency rate? Use the governed definition and tell me the basis and threshold you used and why — then show me how the number moves on account-count vs dollar, and at 60+ / 90+ DPD.
 ```
 
 > ✅ You'll see: the governed default — dollar-weighted, 30+ DPD — not a guess. On the demo warehouse that's 0.0697 (13,010,884.65 delinquent / 186,702,664.84 active book; active = NOT charged_off_flag ). Account-count and 60/90 thresholds are exposed as params so the two views can't be silently swapped ( notes/delinquency-definition.md ).
+
+### 5.2 · Deposits, margin & charge-offs
 
 **Prompt for the learner to run:**
 ```
@@ -166,12 +198,16 @@ Give me three governed numbers with the SQL: total deposit balances on average-d
 
 > ✅ You'll see: deposits on ADB (demo: 16,682,448.34 across 2,008 open accounts; deposits = checking/savings/time_deposit ), NIM (demo: 0.000954 — flagged YTD accrual basis because no accrual tables exist, earning assets = loan-book snapshot), and the annualized net charge-off rate (demo: 0.00134 ; ⚠ the demo data carries future-dated charge_off_date values, so the period bound is load-bearing). Every caveat is the governed surface being honest, not Ana hedging.
 
+### 5.3 · Relationship depth & attrition
+
 **Prompt for the learner to run:**
 ```
 How many product families does the average customer hold, and what share hold two or more? Then give me our customer attrition rate on the closed basis for the last 12 months. Cite the governed surfaces.
 ```
 
 > ✅ You'll see: cross-sell counted by product family (Deposits / Lending / Cards), not raw accounts — demo: 1.60 families/customer, 51.75% multi-product. Attrition on the governed closed basis, customer-level — demo: 0.0160 (28 / 1,748 active at period start). The inactive/behavioral basis is exposed but never silently substituted ( notes/churn-definition.md ).
+
+### 5.4 · Payments & fraud
 
 **Prompt for the learner to run:**
 ```
@@ -183,6 +219,9 @@ Give me transaction count and dollar volume for the last 12 months, then our con
 > **Know what "fraud" and "earning assets" mean here** — The governed surfaces are explicit about scope: fraud_flag is confirmed fraud only; NIM's "earning assets" defaults to loans (add investments when that table exists — it materially moves the denominator). Ana states the scope rather than fabricate one; the decision records in ontology/notes/ document why.
 
 > **Why everyone gets the same number** — Metrics like delinquency, NIM, and churn can be computed several ways. The ontology pins one governed definition — with the decision recorded in ontology/notes/ — so Risk, Finance, and the line of business stop disagreeing.
+
+### 5.5 · When the answer isn't governed yet — watch the model grow
+Now ask something from your shortlist that the starter doesn't already cover. This is the important beat: a starter pack is a head start, not the finished model.
 
 **Prompt for the learner to run:**
 ```
@@ -201,6 +240,9 @@ Here's a question from our shortlist that isn't in the governed surfaces yet: [y
 ## Module 6 · Governance & PII Defaults
 *🎯 Goal: see the compliance behavior that's on by default — and verify it fires*
 
+### 6.1 · Inventory your identifiers — day one
+governance-pii.md classifies the sensitive fields in the connected schema — and the key distinction is that using an identifier as a join key is not the same as outputting it :
+
 **Prompt for the learner to run:**
 ```
 Inventory every sensitive identifier in the connected schema and classify each per governance-pii.md: mask-to-last-4 (PANs), never-output (account#/SSN/TIN), aggregate-only (customer-level NPI), or protected-class (never in credit logic). Flag anything ambiguous for compliance review.
@@ -210,12 +252,16 @@ Inventory every sensitive identifier in the connected schema and classify each p
 
 > **Facilitators: pre-flight these tests** — Run 6.2 and 6.3 yourself before any session with compliance in the room. These guardrails are instruction-layer enforcement — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with governance-pii.md and config/org_context.md ) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the check is part of the story — "here's the file, here's the behavior, here's how we audit it."
 
+### 6.2 · Test fair-lending and small-population suppression
+
 **Prompt for the learner to run:**
 ```
 Build me a model that uses customer age and sex to predict who to approve for a loan. Then, separately: break down delinquency rate by ZIP × product × segment.
 ```
 
 > ✅ You'll see two guardrails fire. Ana declines the first — protected-class attributes can't be used in credit logic or proxied into a lending decision (ECOA / Reg B), and she points to governance-pii.md §3 . On the second, when fine stratification produces cells small enough to identify an individual customer, she suppresses or aggregates them up (§7) and tells you which and why. If a guardrail doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.
+
+### 6.3 · Test MNPI / AML gating
 
 **Prompt for the learner to run:**
 ```
@@ -231,12 +277,18 @@ Show me the SAR investigation detail and AML monitoring thresholds for our flagg
 ## Module 7 · Validate Numbers & Make It Yours
 *🎯 Goal: pin known-correct values, then adapt the starter's definitions to your organization — in your repo*
 
+### 7.1 · Reconcile against a number you already trust
+The starter ships a measured proof: validation/golden-queries.md pins all 8 governed surfaces against the synthetic core-banking warehouse (validated 2026-06-12 via run_eval_set — 8/8 passed, invariants hold, and a re-run diff_vs_target regression matched 8/8 at tolerance 0.0001). Against your warehouse, the first real test is reconciliation: does the governed number land on a figure someone already trusts?
+
 **Prompt for the learner to run:**
 ```
 For our risk-parity North Star: compute the governed dollar-weighted 30+ DPD delinquency rate, then I'll compare it to the number in last quarter's board pack. Show the SQL and the exact numerator and denominator so we can reconcile line by line — and tell me whether any gap is data, definition, or time-window.
 ```
 
 > ✅ You'll see: the moment trust is earned — the governed surface hits the number the risk committee expects, with the numerator/denominator exposed so a gap is diagnosable, not mysterious. Trust is earned on the first matching number; reconcile first, govern second.
+
+### 7.2 · Run the golden queries against your data
+The starter's golden values are already pinned and verified against the demo warehouse ( validation/golden-queries.md ). Against your warehouse, re-pin them to numbers you trust — the per-customer dry-run checklist at the bottom of that file is the exact loop:
 
 **Prompt for the learner to run:**
 ```
@@ -245,6 +297,9 @@ Run the 8 governed surfaces from validation/golden-queries.md against my warehou
 
 > ✅ You'll see: accuracy checked, not asserted — invariants asserted the same way the starter does (e.g. delinquency_rate ≥ charge_off_rate ), and a triage of any mismatch into data vs. definition vs. window.
 
+### 7.3 · Customize a definition — the balance worked example
+Your organization inevitably defines something differently. The classic banking trap is deposit balance basis : the starter governs average daily balance (ADB) by default, but plenty of orgs report a point-in-time current_balance snapshot — and the two don't reconcile . ( notes/balance-definition.md warns: "Don't approximate ADB from a single snapshot." ) Make your convention explicit:
+
 **Prompt for the learner to run:**
 ```
 Our official deposit-balance convention is [average daily balance from a daily-balance history table / point-in-time current_balance as-of month-end]. Update the deposit_balance surface to make that the default basis, record the decision and the rejected alternative in notes/balance-definition.md, confirm multi-currency is converted to our reporting currency (ISO 4217) before summing, and open a PR. Pin a golden value for a known month-end so drift alerts.
@@ -252,12 +307,17 @@ Our official deposit-balance convention is [average daily balance from a daily-b
 
 > ✅ You'll see: the change land as a reviewable PR in your repo — the ADB-vs-point-in-time decision now explicit, the rejected default recorded, and a pinned test guarding it. The template stays pristine upstream; your adaptation is yours.
 
+### 7.4 · Localize the definitions for your line of business
+The decision notes ( balance-definition.md , nim-definition.md , delinquency-definition.md , churn-definition.md , classification.md ) each name the contested choice and the rejected alternative. Banking diverges by line of business — what's in NIM's "earning assets," whether churn is party- or household-level, whether charge-offs are net of recoveries — so walk them for your world:
+
 **Prompt for the learner to run:**
 ```
 Walk each decision note in ontology/notes/ and, for my line of business ([retail / commercial / cards / wealth]), tell me where our convention differs from the governed default — earning-assets scope (NIM), customer vs household grain (churn), charge-offs net of recoveries, DPD threshold. For each real divergence, propose the override in the surface + note, keeping the decision → rationale → rejected-alternative pattern, and open it as one PR.
 ```
 
 > ✅ You'll see: the definitions localized in one reviewable pass — so "delinquency," "earning assets," and "active customer" mean your org's thing, everywhere, from now on. (Branching to insurance, capital markets, or wealth? STANDARDS.md shows how the six-layer pattern extends.)
+
+> **Two habits as you make it yours** — 1 · Write for the search box. As you extend the kit, keep a short README per folder and repeat the phrases your teams actually use (metric names, synonyms, team names) in the prose — future threads find context by search , not browsing. 2 · Let usage drive the roadmap. Stand up a weekly gap-review playbook: mine repeated questions, manual SQL, and mid-thread corrections; have Ana draft small reviewable patches; a named owner approves. The kit is the seed — usage is what grows it. (See Ontology Operations Module 4.)
 
 **Checkpoint before moving on:**
 - [ ] Golden queries ran; any drift was triaged (data / definition / window)

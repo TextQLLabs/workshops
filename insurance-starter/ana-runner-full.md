@@ -18,6 +18,8 @@ wait and coach me on my result. Start with what you see, then Module 0.
 ## Module 0 · The Six Layers
 *🎯 Goal: know what's in the box and where everything lives*
 
+### The six layers
+
 > **Standards alignment** — STANDARDS.md maps the model to the industry standards it aligns with (ACORD, NAIC annual statement, FIBO, ISO statistical plans, SAP/GAAP). The semantic layer (metrics, routing, classification) is fully separated from the physical mapping : every physical table name lives in one file , ontology/schema.tql — re-point it and the metric logic stays put. The starter is authored against a generic policy-admin + claims model with ANSI/Spark-portable SQL; MIGRATION.md is the 8-step re-point checklist and works the same on Redshift, BigQuery, Snowflake, or Databricks (budget: about a half-day with warehouse access). For a deep technical tour, read DEEP_DIVE.md .
 
 > **Two rules for a long, live session** — 1 · Checkpoint every couple of modules. Long threads have a ceiling. After every module or two, ask Ana: “Save a handoff document summarizing what we've built, what we decided, and what's next — so we can continue in a new thread.” If a thread ever maxes out, you lose nothing. 2 · Pin the scope in every prompt. Name the entity and the source-of-truth tables in each prompt (“…for [entity X], using the [base] tables, not the summary table”) — otherwise Ana may drift to a convenient summary table or query every source at once.
@@ -50,9 +52,20 @@ Help me define the North Star for our ontology before we build anything.
 ## Module 2 · Connect Three Things
 *🎯 Goal: ontology repo + warehouse + documents connected — then everything else happens in chat*
 
+### 2.1 · Connect the ontology repo to Ana
+This is the key step. In TextQL, add a Git connector and point it at your fork of the starter repo ( TextQLLabs/ontology-starter-kits/tree/main/insurance — no fork yet? Ask your TextQL contact; it takes minutes). Because the ontology is git-backed, Ana now has the entire model — every metric definition, every note, every classification rule — as a reference she reads on demand.
+
 > **No second source of truth** — You don't copy anything into Ana. She reads the repo live; when the repo changes, Ana sees the change.
 
+### 2.2 · Connect your data warehouse
+Add the connector for the warehouse holding your policy-admin / claims / actuarial data (Redshift, BigQuery, Snowflake, Databricks, …). Read-only access is enough.
+
 > **Use your governed, contracted warehouse** — Insurance is state-regulated (NAIC model laws / state DOIs) and life/health claims carry medical PII. Connect the enterprise warehouse that's already in scope for your data-residency and audit obligations — see ontology/notes/governance-pii.md .
+
+### 2.3 · (Optional) Bring in your documents
+Your real-world context — the actuarial reserving workbook, a rating manual, dbt models, the spreadsheet where someone defined "in force" — often lives in messy files. Upload them in chat, connect Google Drive, or connect SharePoint/OneDrive. Ana reads them alongside the ontology as corpus, not migration , and can fold what she learns into the model.
+
+### 2.4 · Say hello
 
 **Prompt for the learner to run:**
 ```
@@ -69,12 +82,17 @@ Read the ontology repo and give me a tour: what entities, metrics, and classific
 ## Module 3 · Validate Against Your Schema
 *🎯 Goal: before trusting numbers, prove the ontology's assumptions match your actual tables — and settle the grain — without writing SQL*
 
+### 3.1 · The dry run — required
+
 **Prompt for the learner to run:**
 ```
 Look at the ontology repo, then inspect my warehouse. Run validation/dry-run-prompt.md against my schema: pull the information schema for my policy, premium, and claims tables and tell me where the ontology's expected table and column names don't match what I actually have — including whether premium is stored earned (a monthly series) or only written at inception. Propose the exact changes to ontology/schema.tql.
 ```
 
 > ✅ You'll see: Ana discover your schema, diff it against the ontology, and hand you a precise list of fixes — table backings, column names, and the all-important earned-vs-written premium question. (The ready-made version lives in validation/dry-run-prompt.md .)
+
+### 3.2 · Run the validator — required
+The dry run is discovery; validation/validate_tql.py is the mechanical gate. It verifies every governed surface against your warehouse: each logical name resolves, each referenced column exists, each query compiles. Ana runs it for you — no terminal needed:
 
 **Prompt for the learner to run:**
 ```
@@ -85,6 +103,8 @@ Run validation/validate_tql.py from the ontology repo in your sandbox — static
 
 > **Prefer the terminal?** — The same gate runs locally: python3 validation/validate_tql.py (static — no warehouse needed) · --check-sql (paste the output into Ana: rows = missing columns) · --dsn "<dsn>" --explain (live column check + compile test).
 
+### 3.3 · Apply the fixes as a PR — required
+
 **Prompt for the learner to run:**
 ```
 Make those changes and open a pull request.
@@ -93,6 +113,9 @@ Make those changes and open a pull request.
 > ✅ You'll see: Ana edit the files and open a reviewable PR in your repo. Every physical table name lives in one place ( ontology/schema.tql ) — re-point it and the metric logic stays put. The join keys the surfaces rely on are policy_id , policyholder_id , and claim_id .
 
 > **Why this step matters** — Every carrier's warehouse differs from the reference shape somewhere — a renamed column, a missing table, a different grain. Finding those before you trust a number is the difference between a defensible loss ratio and a debugging session in front of the actuary.
+
+### 3.4 · Decide your grain & verify your joins — required
+Insurance data fans out across several grains — policy vs. coverage vs. claim vs. transaction — and joining across them carelessly multiplies counts. Settling this is the single most important decision in this module, and it's a prompt:
 
 **Prompt for the learner to run:**
 ```
@@ -127,12 +150,17 @@ Find the dataset-specific literals the surfaces hard-code — the policy/claim s
 ## Module 4 · The Classification Layer
 *🎯 Goal: rollup-powered questions — NAIC line of business, peril groups — with zero writes to your warehouse*
 
+### 4.1 · Prove the rollups work
+
 **Prompt for the learner to run:**
 ```
 Using the ontology's classification layer, roll my granular line-of-business values up to the NAIC major line, and group my top 10 most frequent cause-of-loss codes into peril groups (with the catastrophe flag). Explain how you joined the seed CSVs without writing to the warehouse.
 ```
 
 > ✅ You'll see: raw product and cause-of-loss codes resolved to meaningful NAIC lines and peril groups, with the federated join-in-sandbox pattern explained — and a reminder to analyze peril groups , never free-text cause-of-loss.
+
+### 4.2 · Bring in your licensed feed — optional
+You don't need this on day one — the public NAIC and peril groupings are already committed. Come back when you want the granular ISO peril / cause-of-loss codes , PCS catastrophe codes , or ISO rating territories . These are licensed (Verisk/ISO) — the repo ships the structure and join logic, and the data comes from your carrier's licensed feed :
 
 **Prompt for the learner to run:**
 ```
@@ -151,6 +179,8 @@ We have an ISO cause-of-loss / PCS catastrophe feed in our warehouse at [table].
 
 > **Pin the scope** — In every question below, name the entity and the source-of-truth tables . A plausible answer from the wrong (summary) table is worse than no answer — if two sources could answer, run both and let your SME rule which is truth.
 
+### 5.1 · Loss ratio (the headline metric)
+
 **Prompt for the learner to run:**
 ```
 What's our loss ratio for accident year 2024? Use the governed definition (loss_ratio.tql) and tell me the basis — incurred or paid, earned or written premium, accident or calendar year — and why.
@@ -158,12 +188,16 @@ What's our loss ratio for accident year 2024? Use the governed definition (loss_
 
 > ✅ You'll see: the governed surface return incurred losses (paid + case reserve) over earned premium, accident-year — the synthetic book pins $94,860,400 / $173,458,746 = 0.5469 . Ana names the basis instead of silently picking one; the paid basis runs separately and comes in lower (it excludes case reserves).
 
+### 5.2 · Combined ratio
+
 **Prompt for the learner to run:**
 ```
 Decompose our combined ratio for 2024 into loss ratio + expense ratio, and tell me whether we're underwriting at a profit. Use combined_ratio.tql.
 ```
 
 > ✅ You'll see: the combined ratio as loss + expense — synthetic 0.5469 + 0.2500 = 0.7969 , comfortably under 100% (an underwriting profit). The invariant combined == loss + expense is asserted in the golden queries.
+
+### 5.3 · Frequency and severity (the two levers)
 
 **Prompt for the learner to run:**
 ```
@@ -173,6 +207,8 @@ Show me claim frequency (claims per 1,000 policies) and average claim severity (
 > ✅ You'll see: frequency 521.17 / 1,000 (13,000 claims / 24,944 PIF) and severity $7,296.95 ($94,860,400 / 13,000) — paired, because the loss ratio alone hides which lever moved. Note frequency × severity ≈ pure premium (loss cost).
 
 > **Know the exposure basis** — The governed claim_frequency surface uses policies-in-force as the denominator. The actuarially correct base is earned exposure (car-years, house-years, payroll) — PIF is an approximation. If your warehouse carries an earned-exposure fact, re-point the denominator; Ana will say which it used rather than imply it's earned exposure. See notes/frequency-severity.md .
+
+### 5.4 · Reserve position
 
 **Prompt for the learner to run:**
 ```
@@ -184,6 +220,9 @@ Show our reserve position for the open book — case reserves, paid-to-date, inc
 > **Where's IBNR?** — The governed surface computes case-incurred (paid + case reserve) from the claim snapshot. IBNR is not in raw claims — it's a reserving-study output — so case-incurred understates ultimate for recent accident periods. Ana will say so rather than fabricate IBNR; the decision record in notes/reserve-definition.md documents the scope. If you have an actuarial ultimate/IBNR table, add it as a backing.
 
 > **Why everyone gets the same number** — Loss ratio, combined ratio, and reserves can each be computed several ways. The ontology pins one governed definition — incurred / earned / accident-year, with the decision recorded in ontology/notes/ — so Actuarial, Underwriting, and Finance stop disagreeing about which number is "the" number.
+
+### 5.5 · When the answer isn't governed yet — watch the model grow
+Now ask something from your shortlist that the starter doesn't already cover — your earned-exposure fact, a reinsurance treaty structure, a loss-development triangle, the actuarial ultimate/IBNR table. This is the important beat: a starter pack is a head start, not the finished model.
 
 **Prompt for the learner to run:**
 ```
@@ -202,6 +241,9 @@ Here's a question from our shortlist that isn't in the governed surfaces yet: [y
 ## Module 6 · Governance & PII Defaults
 *🎯 Goal: see the compliance behavior that's on by default — and verify it fires*
 
+### 6.1 · Inventory your identifiers — day one
+governance-pii.md §0 classifies every direct identifier in the connected schema into exactly one role — and the key distinction is that using an identifier as a join key is not the same as outputting it :
+
 **Prompt for the learner to run:**
 ```
 Inventory every direct identifier in the connected schema and classify each per governance-pii.md section 0: join-key-only, never-output, sensitive, or aggregate-only. Flag anything ambiguous for compliance review.
@@ -211,12 +253,16 @@ Inventory every direct identifier in the connected schema and classify each per 
 
 > **Facilitators: pre-flight these tests** — Run 5.2 and 5.3 yourself before any session with compliance in the room. These guardrails are instruction-layer enforcement — they live in the governance context files Ana reads, which makes them verifiable and tightenable, but they depend on those files being attached and current. If a test doesn't fire: check that the ontology repo (with governance-pii.md and config/org_context.md ) is connected to the thread, and that your fork didn't drift from the governance defaults. Demonstrating the check is part of the story — "here's the file, here's the behavior, here's how we audit it."
 
+### 6.2 · Test the fair-pricing / small-cell rule
+
 **Prompt for the learner to run:**
 ```
 Break down loss ratio by line of business × state × peril to inform rate adequacy. Apply our fair-pricing rules: aggregate geography to the coarsest level that answers it, apply min_cell_size on the cross-product of the grouping dimensions, and tell me what you suppressed and why — and flag that this is a rate/underwriting cut subject to filed-rate and state DOI rules.
 ```
 
 > ✅ You'll see: cells under min_cell_size suppressed (a LOB × state × peril cell can re-identify a claimant), geography rolled up to territory/region rather than address, and a flag that pricing-facing cuts are regulated. The starter default is 5 , configured in config/org_context.md (governance-pii.md §1–§2). If suppression doesn't fire, don't move on — work the pre-flight check above; an unenforced rule you catch is a better demo than a rule you assumed.
+
+### 6.3 · Test sensitive-claim and reserve gating
 
 **Prompt for the learner to run:**
 ```
@@ -232,6 +278,9 @@ Show me claimant-level injury/diagnosis detail for our workers-comp claims — a
 ## Module 7 · Validate Numbers & Make It Yours
 *🎯 Goal: pin known-correct values, then adapt the starter's definitions to your carrier — in your repo*
 
+### 7.1 · Reconcile against a number someone already trusts
+Trust in insurance analytics is earned on the first matching number — and lost the first time a loss ratio is quoted on the wrong basis. The starter's golden values are already pinned and verified against the synthetic warehouse (see validation/golden-queries.md — loss ratio 0.5469, combined 0.7969, reserve ratio 0.7143, retention 0.5004). Against your warehouse, reconcile each governed surface to a number an actuary or finance lead already trusts:
+
 **Prompt for the learner to run:**
 ```
 Run each governed surface against my warehouse and compare to a reference number I trust (loss ratio, combined ratio, reserve position, retention). For each, show the SQL and the basis, and flag any drift. Where we differ, explain whether it's data, definition, or basis (paid vs incurred, written vs earned, accident vs calendar year).
@@ -239,12 +288,18 @@ Run each governed surface against my warehouse and compare to a reference number
 
 > ✅ You'll see: accuracy checked, not asserted — and a triage of any mismatch into data vs. definition vs. basis. The decisive moment is the first time the accident-year loss ratio lands exactly where the actuary expected.
 
+### 7.2 · Assert the invariants
+Even before you have an external reference, some numbers must agree with each other. The golden queries assert these:
+
 **Prompt for the learner to run:**
 ```
 Check the cross-surface invariants from validation/golden-queries.md against my data: combined_ratio == loss_ratio + expense_ratio; incurred >= paid; reserve_position.incurred == paid_to_date + case_reserves; PIF agrees between claim_frequency and policies_in_force; loss_ratio and retention land in a sane range. Report any that don't hold.
 ```
 
 > ✅ You'll see: internal consistency proven — if combined ≠ loss + expense, or PIF disagrees between two surfaces, something is wrong before a stakeholder ever sees the number.
+
+### 7.3 · Customize a definition — the written-vs-earned premium lesson
+Your carrier inevitably defines something differently — a loss-ratio basis (net vs. gross, with or without LAE), a retention basis, an in-force definition. But the starter's flagship field lesson is one every carrier hits, and it makes the perfect worked example because it's a real bug that was found and fixed in this very repo:
 
 > **The ~12× premium-inflation bug** — The reference model pre-earns premium into a monthly premium_earned fact — one row per policy per month. Written premium is booked once at inception for the whole term, so it repeats across every one of those monthly rows. An early version of earned_premium did SUM(written_premium) off that monthly series — which inflated written premium ~12× (roughly one duplicate per month of term). The fix: report earned premium (sum the monthly earned series — that is correct, it recognizes over time) and pull written premium from the policy grain , never the earned series. Documented in notes/premium-definition.md and validation/golden-queries.md → Issue found & fixed .
 
@@ -255,12 +310,17 @@ Walk me through the written-vs-earned premium distinction in notes/premium-defin
 
 > ✅ You'll see: the most expensive ratio bug in P&C demonstrated on your own data and then guarded against — the earned-vs-written discipline confirmed in the surface, and any carrier-specific basis change landing as a reviewable PR in your repo with a pinned golden value. The template stays pristine upstream; your adaptations are yours.
 
+### 7.4 · Localize the vocabulary
+ontology/notes/glossary.md holds the canonical insurance terms — policy, policyholder, coverage, written vs. earned premium, loss/combined ratio, incurred/case/IBNR/ultimate, frequency/severity, retention, PIF, line of business, peril — each with a variance column flagging where your carrier or line of business diverges (life "policy ≈ contract on a life" vs. P&C term policy; gross vs. net of reinsurance; renewal-as-flag vs. successor-policy link; PIF as bound vs. issued vs. paid).
+
 **Prompt for the learner to run:**
 ```
 Walk the glossary's variance column for our line(s) of business. For each term that differs at our carrier — earned-premium earning pattern, loss-ratio basis, reserve definitions, retention basis, in-force definition — propose the override in glossary.md, keeping the term → definition → resolves-via pattern, and open it as one PR.
 ```
 
 > ✅ You'll see: the vocabulary localized in one reviewable pass — so "earned premium," "incurred," and "in force" mean your carrier's thing, everywhere, from now on.
+
+> **Two habits as you make it yours** — 1 · Write for the search box. As you extend the kit, keep a short README per folder and repeat the phrases your teams actually use (metric names, synonyms, team names) in the prose — future threads find context by search , not browsing. 2 · Let usage drive the roadmap. Stand up a weekly gap-review playbook: mine repeated questions, manual SQL, and mid-thread corrections; have Ana draft small reviewable patches; a named owner approves. The kit is the seed — usage is what grows it. (See Ontology Operations Module 4.)
 
 **Checkpoint before moving on:**
 - [ ] Governed surfaces reconciled to a trusted reference; any drift triaged (data / definition / basis)
