@@ -456,6 +456,7 @@
 <tr><td>Preview rows</td><td>1,000</td></tr></table>
 <p>When a user reports "my query died," check limits before assuming a bug — the fix is usually a narrower query, or a deliberate limit-raise request with a business case.</p>
 <h2>4.4 · Spend awareness</h2>
+<div class="callout"><span class="label">New — Chargeback (Beta)</span><p>Administrators can now <b>split the organization's usage bill across internal teams</b>: configurable bill lines, auto-updating rosters, what-if previews, and CSV export — past billing periods stay frozen and reproducible. If internal cost allocation is the blocker to onboarding more teams, this is the feature to turn on.</p></div>
 <p>Usage is metered in <b>ACUs</b>. Three lenses: the <b>TextQL Usage connector</b> (query your own usage in plain English), the <b>Usage API</b> (<code>https://app.textql.com/v1/billing</code>, Bearer token from Settings → Developers → API Keys), and <b>Model Analytics</b> (4.2).</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Show ACU consumption by week for the last 8 weeks, broken down by user. Who are the top 10 consumers, and is any single user trending sharply up?</pre></div>
@@ -484,6 +485,7 @@
 <li><i>Trace one user end-to-end.</i> Search their email: invite → join → roles → logins. Your offboarding-verification and auditor answer.</li></ol>
 <div class="callout">Audit logs and product metrics can stream to <b>Datadog, Splunk, Grafana, Prometheus, or S3</b> via OpenTelemetry (docs → Observability Export). If you run a SIEM, wire this — don't make the TextQL UI your only copy.</div>
 <h2>5.2 · Observability — quality monitoring</h2>
+<div class="callout"><span class="label">New — the People view</span><p>Observability now includes a <b>People view</b>: active-people trends, an engagement spectrum, and access-method breakdowns, with custom date-range filtering — your adoption dashboard, next to the quality signals below.</p></div>
   <div class="callout"><span class="label">Where to click</span><p><b>Observability</b> (left sidebar, admin-only)</p></div>
 <p>Completed threads are analyzed for quality signals — context gaps, execution errors, user frustration, potential inaccuracies — surfaced as <b>warnings</b>. The Overview tab: run volume by source (threads / playbooks / Slack / feed agents), warning trend, <b>Warning Breakdown</b> ranking, searchable run table; 7–90 day ranges.</p>
 <p><b>The weekly triage loop (15 min):</b> stats bar (warn rate trending up?) → Warning Breakdown → click the top type, read 3–5 threads → classify root cause:</p>

@@ -308,6 +308,7 @@ openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub</pre></div>
 <tr><td>Username + Private Key</td><td>service user + entire <code>rsa_key.p8</code> <i>including</i> header/footer</td></tr></table>
 <div class="callout">The <b>Role</b> field is your governance lever: create a <code>TEXTQL_ROLE</code> with explicit SELECT grants rather than reusing a broad human role. Upgrade path: per-member OAuth (Admin workshop, Module 3).</div>
 <h2>2.2 · BigQuery</h2>
+<div class="callout"><span class="label">New — Workload Identity Federation</span><p>BigQuery now also supports <b>Workload Identity Federation</b>: authenticate through federated credentials instead of a downloaded service-account key. Prefer WIF where your org restricts SA key creation — no long-lived key file to store or rotate.</p></div>
 <p><b>Prepare:</b> GCP Console → IAM → Service Accounts: create <code>textql-connector@...</code> with exactly <b>BigQuery Data Viewer</b> + <b>BigQuery Job User</b>; download a JSON key.</p>
 <p><b>Form:</b> Project ID · <b>Dataset ID (optional but recommended — scopes introspection and the test)</b> · Service Account Key (full JSON) · Region Qualifier.</p>
 <div class="callout warn">Test behavior: with a Dataset ID the test verifies that dataset; without one it checks the account can <i>list datasets in the project</i> — a key that reads one dataset but can't list will "fail" unscoped while being perfectly usable scoped. Scope it.</div>

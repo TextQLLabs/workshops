@@ -1,9 +1,7 @@
 # Admin & Governance — Ana-Led Runner (FULL)
 
-> The **full-instruction** version of this runner — every module's prompts, expected results, and checkpoints.
-> Use this in tenants **without tight token limits** (or air-gapped/VPC: upload this file directly).
-> Token-limited environment (e.g., Snowflake Cortex inference)? use the concise `ana-runner.md` instead.
-> Facilitation is identical: **interactive — the learner runs each prompt, Ana coaches, one module at a time.**
+> Full-instruction runner — every module's prompts, expected results, and checkpoints.
+> Air-gapped/VPC: upload this file. Token-limited tenants: use the concise `ana-runner.md`.
 
 ## Step-0 prompt
 
@@ -187,7 +185,8 @@ From model analytics: which models were used most in the last 30 days, by which 
 > **Where to click** — Settings → Specs — read-only; changes go through TextQL support
 
 ### 4.4 · Spend awareness
-Usage is metered in ACUs . Three lenses: the TextQL Usage connector (query your own usage in plain English), the Usage API ( https://app.textql.com/v1/billing , Bearer token from Settings → Developers → API Keys), and Model Analytics (4.2).
+
+> **New — Chargeback (Beta)** — Administrators can now split the organization's usage bill across internal teams : configurable bill lines, auto-updating rosters, what-if previews, and CSV export — past billing periods stay frozen and reproducible. If internal cost allocation is the blocker to onboarding more teams, this is the feature to turn on.
 
 **Prompt for the learner to run:**
 ```
@@ -211,6 +210,8 @@ Show ACU consumption by week for the last 8 weeks, broken down by user. Who are 
 > **Note** — Audit logs and product metrics can stream to Datadog, Splunk, Grafana, Prometheus, or S3 via OpenTelemetry (docs → Observability Export). If you run a SIEM, wire this — don't make the TextQL UI your only copy.
 
 ### 5.2 · Observability — quality monitoring
+
+> **New — the People view** — Observability now includes a People view : active-people trends, an engagement spectrum, and access-method breakdowns, with custom date-range filtering — your adoption dashboard, next to the quality signals below.
 
 > **Where to click** — Observability (left sidebar, admin-only)
 

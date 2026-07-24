@@ -1,9 +1,7 @@
 # Connect Your Data — Ana-Led Runner (FULL)
 
-> The **full-instruction** version of this runner — every module's prompts, expected results, and checkpoints.
-> Use this in tenants **without tight token limits** (or air-gapped/VPC: upload this file directly).
-> Token-limited environment (e.g., Snowflake Cortex inference)? use the concise `ana-runner.md` instead.
-> Facilitation is identical: **interactive — the learner runs each prompt, Ana coaches, one module at a time.**
+> Full-instruction runner — every module's prompts, expected results, and checkpoints.
+> Air-gapped/VPC: upload this file. Token-limited tenants: use the concise `ana-runner.md`.
 
 ## Step-0 prompt
 
@@ -86,7 +84,8 @@ Generate a 2048-bit RSA key pair for Snowflake key-pair auth in your sandbox: an
 > **Note** — The Role field is your governance lever: create a TEXTQL_ROLE with explicit SELECT grants rather than reusing a broad human role. Upgrade path: per-member OAuth (Admin workshop, Module 3).
 
 ### 2.2 · BigQuery
-Prepare: GCP Console → IAM → Service Accounts: create textql-connector@... with exactly BigQuery Data Viewer + BigQuery Job User ; download a JSON key.
+
+> **New — Workload Identity Federation** — BigQuery now also supports Workload Identity Federation : authenticate through federated credentials instead of a downloaded service-account key. Prefer WIF where your org restricts SA key creation — no long-lived key file to store or rotate.
 
 > **Note** — Test behavior: with a Dataset ID the test verifies that dataset; without one it checks the account can list datasets in the project — a key that reads one dataset but can't list will "fail" unscoped while being perfectly usable scoped. Scope it.
 
