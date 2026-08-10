@@ -319,7 +319,11 @@ openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub</pre></div>
 <p><b>Prepare:</b> SQL Warehouses → create/reuse → start it → Connection details → copy <b>Server hostname</b> and <b>HTTP path</b>. Generate a PAT (User Settings → Access tokens) — prefer a service principal's token; set a tracked expiration.</p>
 <p><b>Form:</b> Host (<i>without</i> https://) · Port 443 · HTTP Path · Catalog · Schema · PAT.</p>
 <div class="callout warn">The classic gotcha: a <b>stopped SQL warehouse</b>. The test may pass after a slow warm-up, then morning queries crawl. Set auto-stop sensibly; warn users about first-query warm-up.</div>
-<h2>2.5 · PostgreSQL (and the password family)</h2>
+<div class="callout"><span class="label">New — MongoDB (document stores)</span>
+    <p>A <b>first-party MongoDB connector</b> is now available: it samples your collections and <b>flattens them into a relational schema</b>, so Ana queries document data with ordinary SQL like every other connector. Supports SRV/Atlas hosts, custom auth sources, and TLS. Setup mirrors the warehouse flow above: host (or SRV string), credentials, database — then run the same validation prompts.</p>
+  </div>
+
+  <h2>2.5 · PostgreSQL (and the password family)</h2>
 <p>Host, Port 5432, Username, Password, Database, Schema — readable from <code>postgresql://user:pass@host:5432/db</code>. Same pattern: MySQL, Aurora, Supabase. Create a read-only user first:</p>
 <pre>CREATE USER textql_reader WITH PASSWORD '...';
 GRANT CONNECT ON DATABASE mydb TO textql_reader;

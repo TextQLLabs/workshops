@@ -181,6 +181,9 @@
   <h1>Dashboards vs Data Apps — when to reach for which</h1>
   <div class="page-meta"><span>⏱️ <b>10 min</b></span><span>🎯 Goal: know what a data app is, and when it beats a dashboard</span></div>
   <p>A <b>dashboard</b> answers a fixed set of questions on a schedule. A <b>data app</b> is interactive software: viewers set parameters, explore scenarios, and (where granted) take actions — all against governed data, with the viewer's own permissions enforced. Both are generated from conversation and stored as reviewable config, not hand-built UI code.</p>
+  <div class="callout"><span class="label">What a data app is made of</span>
+    <p>Under the hood (per the platform changelog): a <b>React front end</b> Ana builds from your description, <b>server-side compute functions</b> for live reads and write-back, and a <b>private per-app database</b>. Apps <b>live in the Ontology with version history</b>, run on persistent servers with <b>real-time multiplayer</b>, and are iterated through conversation or shared under role-based permissions.</p>
+  </div>
   <table>
     <tr><th>Reach for a…</th><th>When</th><th>Example</th></tr>
     <tr><td><b>Dashboard</b></td><td>Same view for everyone, refreshed on schedule</td><td>Weekly cost-of-care PMPM trend</td></tr>
