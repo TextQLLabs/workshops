@@ -157,7 +157,9 @@ Row-level security lives in ontology query files; anyone who could run plain SQL
 Which of our connections hold row-level-sensitive data (PHI, PII, financials with entity restrictions)? For each, tell me whether it is marked TQL-only, and which roles currently hold the raw-sql permission. I want the list of gaps where a user could still reach that data with ad-hoc SQL.
 ```
 
-> ✅ You'll see: the bypass surface, connection by connection. Target posture: sensitive connections TQL-only, raw-sql revoked from business roles, org switch per your governance board. Coach the learner to check ontology query coverage with the data team *before* flipping a connection to TQL-only (Ontology Operations §2.5) so lockdown doesn't become a help-desk queue.
+> ✅ You'll see: the bypass surface, connection by connection. Target posture: sensitive connections TQL-only, raw-sql revoked from business roles, org switch per your governance board.
+
+> ⚠️ **Prerequisite — the ontology comes first (coach this hard):** TQL-only removes the ungoverned path; it doesn't create a governed one. A connection with no ontology query files that gets locked is a connection *nobody can query*. Sequence: build the governed surfaces (Build Your Ontology) → verify coverage with the data team (Ontology Operations §2.5) → then lock. Same logic for revoking raw-sql from a role that relies on it daily.
 
 ### 3.5 · Credential lifecycle
 

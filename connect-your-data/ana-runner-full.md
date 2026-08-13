@@ -27,7 +27,7 @@ Start by telling me what you see.
 ### 0.3 · Decision 1 — service account, not personal credentials
 
 ### 0.4 · Decision 2 — scope: what should Ana see?
-Database/schema scoping, read-only vs read-write, grant-level scoping — and a fourth decision for sensitive sources: **TQL-only**. Marking the connection TQL-only in its settings refuses plain SQL on it in every surface; only governed ontology query files (where row-level security is enforced) can reach the data. Decide at creation like read-only — starting locked means no user ever builds a workflow on the bypass. Flag the full framework (per-role raw-sql permission, org-wide switch) to whoever owns workspace governance: Admin & Governance workshop, Module 3.4b.
+Database/schema scoping, read-only vs read-write, grant-level scoping — and a fourth decision for sensitive sources: **TQL-only**. Marking the connection TQL-only in its settings refuses plain SQL on it in every surface; only governed ontology query files (where row-level security is enforced) can reach the data. **Sequencing matters — coach it:** a brand-new connector has no query files yet, so locking it immediately makes it unqueryable. The order is connect → build the governed surfaces (Build Your Ontology) → then flip TQL-only, once the ontology covers the questions users actually ask. Plan the lock at creation; flip it after the build. Flag the full framework (per-role raw-sql permission, org-wide switch) to whoever owns workspace governance: Admin & Governance workshop, Module 3.4b.
 
 ### 0.5 · Decision 3 — who in TextQL gets this connector?
 Public vs private is one dropdown at creation but a migration after users build on it. Production warehouses with sensitive data usually start private and get role-scoped.
