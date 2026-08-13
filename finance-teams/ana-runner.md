@@ -22,7 +22,7 @@ A workshop of short, hands-on modules for FP&A, controllers, finance ops, and CF
 
 | # | Module | Prompt for the learner to run (resolve the brackets) |
 |---|---|---|
-| 0 | Map Your Finance Data | What financial data sources can you see in this thread? Identify which holds the general ledger, which holds billing/invoices, and which holds bookings or pipeline. For each, tell me the date range covered and how fresh the latest data is. |
+| 0 | Map Your Finance Data | What financial data sources can you see in this thread? Identify which holds the general ledger, which holds billing/invoices, and which holds bookings or pipeline. For each, tell me the date range covered and how fresh the latest data is. Then find our account master / chart of accounts and, from now on, resolve every "total" I ask for through its parent-child hierarchy — never from account-ID ranges or name guesses. |
 | 1 | Close & Flux | For [last closed month], show actuals vs budget and vs same month last year for each P&L line: revenue, COGS, gross margin, then opex by category. Flag any line where the variance exceeds [5%, or $50k] in either direction. |
 | 2 | Revenue Questions | For [last quarter], show bookings, billings, and recognized revenue as three separate numbers, each labeled with its source system. Explain in one sentence each why they differ for us. |
 | 3 | Spend & Vendors | Top 25 vendors by total spend over the trailing 12 months: total, monthly average, and the trend (growing/flat/shrinking). Flag any vendor whose last-3-month run rate exceeds their prior-9-month run rate by more than [20%]. |

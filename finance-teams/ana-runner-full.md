@@ -36,22 +36,36 @@ Our fiscal year [starts February 1 / matches the calendar year]. Our fiscal quar
 
 > ✅ You'll see: Ana restate the calendar and resolve "last quarter" to exact dates. In Module 6 you'll save this permanently to the ontology so every user gets it automatically; for now it holds for this thread.
 
-### 0.3 · The reconciliation — tie one number
+### 0.3 · Find the account master
+Before asking for any total, find where totals are defined. Ana can guess what "total revenue" means — and a really good guess is worse than a bad one, because it survives the demo and breaks in the board deck. The definition lives in the account master (chart of accounts): account ID, description, and the parent that defines the rollup.
+
+**Prompt for the learner to run:**
+```
+Find our account master / chart of accounts — the table with account ID, account description, and a parent account or hierarchy column. Show me the top two levels of the rollup: which nodes do revenue, cost of sales, and operating expenses sit under? From now on in this thread, resolve any "total" I ask for (total revenue, total opex) through this hierarchy — never by guessing from account IDs, ID ranges, or account names.
+```
+
+> ✅ You'll see: the chart-of-accounts tree, top levels first. If "total opex" on the statements isn't a simple rollup node — many companies define it as total expenses filtered by functional area — the learner should say so now; that's a calculated definition made permanent in Module 6.
+
+> ⚠️ **Facilitator note — teach the black-ice example:** Travel is account 6110 under SG&A (6100). A reorg moves it under Cost of Service (6200) by changing its **parent** in the account master — the ID never changes. Any definition that guessed hierarchy from ID ranges now silently reports the old structure. The habit: read the source; never hard-code what master data already defines.
+
+### 0.4 · The reconciliation — tie one number
 Pick a number you trust absolutely: last quarter's revenue from the financial statements, or last month's closed opex from the close package.
 
 **Prompt for the learner to run:**
 ```
-What was [total revenue / total opex] for [last closed fiscal period]? I'm going to check this against [the income statement / close package] — show the number and exactly which source and accounts you used.
+Using the account master rollup from the previous step, what was [total revenue / total opex] for [last closed fiscal period]? I'm going to check this against [the income statement / close package] — show the number, the hierarchy node you resolved it from, and exactly which source and accounts rolled into it.
 ```
 
-> ✅ You'll see: the number plus its derivation. If it matches: calibration confirmed. If it doesn't: the difference is almost always definitional — accrual vs cash timing, excluded entities or account ranges, or unposted journals in a fresher source. Triage it:
+> ✅ You'll see: the number plus its derivation. If it matches: calibration confirmed. If it doesn't: the difference is almost always definitional — accrual vs cash timing, excluded entities, a hierarchy guessed instead of read, or unposted journals in a fresher source. Triage it:
 
 **Prompt for the learner to run:**
 ```
-Your number differs from my statement by [amount]. Diagnose: are you including [intercompany / unposted journals / all entities]? Which accounts are in your total that might not be in mine? Show the reconciling items.
+Your number differs from my statement by [amount]. Diagnose: are you including [intercompany / unposted journals / all entities]? Did you resolve the total through the account master hierarchy or infer it? Which accounts are in your total that might not be in mine? Show the reconciling items.
 ```
 
-### 0.4 · Orientation
+> 📌 **Statuses are data, too:** "unposted journals" assumes you know what *posted* means. Journal statuses live in a journal header status table, and companies define their own. Have the learner ask Ana to read the status table and confirm which statuses count as posted — same habit as the account master: hit the source.
+
+### 0.5 · Orientation
 
 **Prompt for the learner to run:**
 ```
@@ -63,6 +77,7 @@ Given this finance data, give me 8 example questions I could ask — two each fo
 **Checkpoint before moving on:**
 - [ ] Ana correctly identified the GL, billing, and bookings sources with freshness dates
 - [ ] "Last quarter" resolves to the correct fiscal dates, not calendar dates
+- [ ] Ana located the account master and resolves totals through its parent-child hierarchy — not ID ranges or name guesses
 - [ ] One headline number ties to a trusted statement — or every reconciling item is explained
 - [ ] The example-question menu matches what your team actually needs to ask
 
@@ -293,10 +308,10 @@ Playbooks report on schedule; for watching , use a feed agent that only speaks w
 
 **Prompt for the learner to run:**
 ```
-Create a feed agent "Budget Watch" that checks daily and posts ONLY when: a budget owner's projected full-year landing crosses over budget; a single journal entry over [$250k] posts outside the close window; a new vendor exceeds [$50k] in its first 90 days; or month-to-date spend in any category runs more than [30%] ahead of pace. Include the item, the threshold crossed, and one sentence of context. Silent otherwise.
+Before creating anything: read the journal header status table and list the distinct statuses — confirm with me which ones count as posted. Then create a feed agent "Budget Watch" that checks daily and posts ONLY when: a budget owner's projected full-year landing crosses over budget; a single journal entry over [$250k] posts outside the close window (determine "posted" from the status table, not an assumed status value); a new vendor exceeds [$50k] in its first 90 days; or month-to-date spend in any category runs more than [30%] ahead of pace. Include the item, the threshold crossed, and one sentence of context. Silent otherwise.
 ```
 
-> ✅ You'll see: an exception-only watcher. The editorial bar is what makes it useful — finance does not need another daily digest; it needs to hear about the journal entry that posted at 11pm on a Saturday.
+> ✅ You'll see: the status list first (the learner approves it — a watcher that hard-codes "posted" misfires the day someone adds a custom status), then an exception-only watcher. The editorial bar is what makes it useful — finance does not need another daily digest; it needs to hear about the journal entry that posted at 11pm on a Saturday.
 
 ### 5.4 · The rhythm, assembled
 
@@ -321,22 +336,27 @@ Save to the ontology: our fiscal year [definition], fiscal quarters [list], and 
 > ✅ You'll see: a change proposal (patch) created — like a pull request for business logic. An admin or designated reviewer approves it; from then on, Module 0.2 never needs to happen again, for anyone.
 
 ### 6.3 · The revenue definitions
+One rule governs everything saved here: **definitions point at master data; they don't copy it.** "Revenue = accounts 4000–4999" is a snapshot that rots the day an account is re-parented. "Revenue = whatever rolls up to the Revenue node in the account master, resolved at query time" is permanently correct.
 
 **Prompt for the learner to run:**
 ```
-Save to the ontology: "bookings" means [definition, source system]; "billings" means [definition, source]; "revenue" unqualified always means recognized revenue from the GL, accounts [range], excluding [intercompany/etc.]. Also save our NRR definition: [cohort basis, expansion/contraction/churn rules]. Propose as a patch.
+Save to the ontology: "bookings" means [definition, source system]; "billings" means [definition, source]; "revenue" unqualified always means recognized revenue from the GL — defined as the accounts that roll up to [our Revenue node] in the account master, resolved from the hierarchy at query time, excluding [intercompany/etc.]. Do NOT store a hard-coded account list or ID range. Also save "total opex" as a calculated definition: [e.g., total expenses filtered to functional areas X and Y — however your statements define it]. And our NRR definition: [cohort basis, expansion/contraction/churn rules]. Propose as a patch.
 ```
 
-> ✅ You'll see: the patch that ends the bookings-vs-revenue argument permanently. This is the single most valuable definitional patch most companies can make.
+> ✅ You'll see: the patch that ends the bookings-vs-revenue argument permanently — with definitions that survive a reorg, because they read the account master instead of freezing it. This is the single most valuable definitional patch most companies can make.
+
+> 📌 **When the total isn't a rollup node:** some statement lines don't exist in the chart of accounts at all — "total opex" is often *total expenses filtered by functional area*, and only the customer knows that. These are calculated members / KPIs: teach the rule itself (the filter, the exclusions), still referencing master-data attributes rather than enumerated account IDs.
 
 ### 6.4 · The hierarchies
 
 **Prompt for the learner to run:**
 ```
-Save to the ontology: our department hierarchy [or: read it from the attached file] — which departments roll into which cost centers and functions; and our entity structure — which entities consolidate, what's eliminated. Propose as a patch.
+Save to the ontology: our account hierarchy — read it live from the account master's parent-child columns, don't snapshot it into a static list; our department hierarchy [or: read it from the attached file] — which departments roll into which cost centers and functions; and our entity structure — which entities consolidate, what's eliminated. Propose as a patch.
 ```
 
-> ✅ You'll see: the rollups codified, so "engineering opex" means the same set of departments in every analysis.
+> ✅ You'll see: the rollups codified, so "engineering opex" means the same set of departments in every analysis — and when master data moves an account to a new parent, every definition follows it automatically.
+
+> 📌 **Guard against drift:** master-data changes are silent by design. Suggest one Data Quality check: flag when any account's parent changes in the account master, so a reorg triggers a review of affected definitions instead of a quietly wrong board number.
 
 > **Go deeper** — Role personas — Finance sees methodology footnotes by default while executives get summary-first, from one governed model — are the Context Stack workshop.
 
@@ -345,7 +365,7 @@ Definitions will keep evolving, and other teams will propose changes that touch 
 
 **Checkpoint before moving on:**
 - [ ] The fiscal calendar patch is proposed (or approved)
-- [ ] Bookings / billings / revenue / NRR definitions are proposed as patches
-- [ ] Department and entity hierarchies are codified
+- [ ] Bookings / billings / revenue / opex / NRR definitions are proposed as patches — pointing at hierarchy nodes, not hard-coded ID ranges
+- [ ] Account, department, and entity hierarchies are codified — read from master data, with a drift check on account re-parenting
 - [ ] A finance owner is designated as reviewer for finance definitions
 

@@ -184,11 +184,11 @@
   </div>
 </section>
 
-<section class="page" id="m0" data-title="Module 0 · Map Your Finance Data" data-group="Getting Started" data-time="10 minutes">
+<section class="page" id="m0" data-title="Module 0 · Map Your Finance Data" data-group="Getting Started" data-time="15 minutes">
   <div class="kicker">Module 0</div>
   <h1>Module 0 · Map Your Finance Data</h1>
-  <div class="page-meta"><span>⏱️ <b>10 minutes</b></span></div>
-<p><b>Goal:</b> confirm which financial systems Ana can see, teach her your fiscal calendar, and tie one number to a trusted statement before trusting anything else.</p>
+  <div class="page-meta"><span>⏱️ <b>15 minutes</b></span></div>
+<p><b>Goal:</b> confirm which financial systems Ana can see, teach her your fiscal calendar, point her at the account master, and tie one number to a trusted statement before trusting anything else.</p>
 <h2>0.1 · What's connected?</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>What financial data sources can you see in this thread? Identify which holds the general ledger, which holds billing/invoices, and which holds bookings or pipeline. For each, tell me the date range covered and how fresh the latest data is.</pre></div>
@@ -198,21 +198,29 @@
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Our fiscal year [starts February 1 / matches the calendar year]. Our fiscal quarters are [Q1: Feb–Apr, ...]. When I say "this quarter" or "Q3," always interpret it fiscally. Confirm by telling me today's fiscal period and what date range "last quarter" means.</pre></div>
   <div class="yousee"><b>You'll see:</b> Ana restate the calendar and resolve "last quarter" to exact dates. In Module 6 you'll save this permanently to the ontology so every user gets it automatically; for now it holds for this thread.</div>
-<h2>0.3 · The reconciliation — tie one number</h2>
+<h2>0.3 · Find the account master</h2>
+<p>Before you ask for a single total, find where your totals are <i>defined</i>. Ana can make a really good guess at what "total revenue" means — and a really good guess is worse than a bad one, because it survives the demo and breaks in the board deck. The real definition lives in your <b>account master</b> (chart of accounts): every account, its description, and — the part that matters — its <b>parent</b>, which defines what rolls up into what.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Find our account master / chart of accounts — the table with account ID, account description, and a parent account or hierarchy column. Show me the top two levels of the rollup: which nodes do revenue, cost of sales, and operating expenses sit under? From now on in this thread, resolve any "total" I ask for (total revenue, total opex) through this hierarchy — never by guessing from account IDs, ID ranges, or account names.</pre></div>
+  <div class="yousee"><b>You'll see:</b> your chart-of-accounts tree, top levels first. If "total opex" on your statements isn't a simple rollup node — many companies define it as <i>total expenses filtered by functional area</i> — say so now; that's a calculated definition only you can teach, and you'll make it permanent in Module 6.</div>
+<div class="callout"><span class="label">⚠️ Black ice: hierarchies live in master data, not in account IDs</span><p>Say Travel is account 6110 and today rolls up under SG&amp;A (6100). The company reorganizes: Travel now belongs under Cost of Service (6200). Nobody renumbers the account — they change its <b>parent</b> in the account master. Any definition that guessed the hierarchy from ID ranges ("6100–6199 = SG&amp;A") now reports the old org structure — silently, and plausibly. It won't matter 99.9% of the time. The 0.1% is a restated number in front of your CFO. The habit: <b>read the source, never hard-code what master data already defines.</b></p></div>
+<h2>0.4 · The reconciliation — tie one number</h2>
 <p>Pick a number you trust absolutely: last quarter's revenue from the financial statements, or last month's closed opex from the close package.</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>What was [total revenue / total opex] for [last closed fiscal period]? I'm going to check this against [the income statement / close package] — show the number and exactly which source and accounts you used.</pre></div>
-  <div class="yousee"><b>You'll see:</b> the number plus its derivation. <b>If it matches:</b> calibration confirmed. <b>If it doesn't:</b> the difference is almost always definitional — accrual vs cash timing, excluded entities or account ranges, or unposted journals in a fresher source. Triage it:</div>
+<pre>Using the account master rollup from the previous step, what was [total revenue / total opex] for [last closed fiscal period]? I'm going to check this against [the income statement / close package] — show the number, the hierarchy node you resolved it from, and exactly which source and accounts rolled into it.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the number plus its derivation. <b>If it matches:</b> calibration confirmed. <b>If it doesn't:</b> the difference is almost always definitional — accrual vs cash timing, excluded entities, a hierarchy guessed instead of read, or unposted journals in a fresher source. Triage it:</div>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Your number differs from my statement by [amount]. Diagnose: are you including [intercompany / unposted journals / all entities]? Which accounts are in your total that might not be in mine? Show the reconciling items.</pre></div>
-<table><tr><th>Symptom</th><th>Fix</th></tr><tr><td>Off by a consistent small %</td><td>Likely an entity or department exclusion — compare entity lists</td></tr><tr><td>Off by large round amounts</td><td>Specific accounts (often intercompany or contra) in one total but not the other</td></tr><tr><td>Matches last month, not this month</td><td>Source freshness — unposted/late journals; check the load date</td></tr><tr><td>Sign differences on some lines</td><td>Natural-balance convention (credits as negatives) — state your convention</td></tr></table>
-<h2>0.4 · Orientation</h2>
+<pre>Your number differs from my statement by [amount]. Diagnose: are you including [intercompany / unposted journals / all entities]? Did you resolve the total through the account master hierarchy or infer it? Which accounts are in your total that might not be in mine? Show the reconciling items.</pre></div>
+<table><tr><th>Symptom</th><th>Fix</th></tr><tr><td>Off by a consistent small %</td><td>Likely an entity or department exclusion — compare entity lists</td></tr><tr><td>Off by large round amounts</td><td>Specific accounts (often intercompany or contra) in one total but not the other</td></tr><tr><td>Right accounts, wrong grouping</td><td>The hierarchy was inferred from account IDs or names — point Ana back at the account master parent-child rollup (0.3)</td></tr><tr><td>Matches last month, not this month</td><td>Source freshness — unposted/late journals; check the load date</td></tr><tr><td>Sign differences on some lines</td><td>Natural-balance convention (credits as negatives) — state your convention</td></tr></table>
+<div class="callout"><span class="label">Statuses are data, too</span><p>"Unposted journals" assumes you know what <i>posted</i> means. Don't let it be a hard-coded string: journal statuses live in a <b>journal header status table</b>, and companies define their own. Ask Ana to <i>read the status table and confirm which statuses count as posted for us</i> — same habit as the account master: hit the source.</p></div>
+<h2>0.5 · Orientation</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Given this finance data, give me 8 example questions I could ask — two each for close/flux, revenue, spend, and cash.</pre></div>
   <div class="yousee"><b>You'll see:</b> a menu calibrated to your actual data — a preview of Modules 1–3.</div>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Ana correctly identified the GL, billing, and bookings sources with freshness dates</label>
     <label><input type="checkbox"> "Last quarter" resolves to the correct fiscal dates, not calendar dates</label>
+    <label><input type="checkbox"> Ana located the account master and resolves totals through its parent-child hierarchy — not ID ranges or name guesses</label>
     <label><input type="checkbox"> One headline number ties to a trusted statement — or every reconciling item is explained</label>
     <label><input type="checkbox"> The example-question menu matches what your team actually needs to ask</label>
   </div>
@@ -375,8 +383,8 @@
 <h2>5.3 · The budget-break and journal watcher</h2>
 <p>Playbooks report on schedule; for <i>watching</i>, use a feed agent that only speaks when something matters:</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Create a feed agent "Budget Watch" that checks daily and posts ONLY when: a budget owner's projected full-year landing crosses over budget; a single journal entry over [$250k] posts outside the close window; a new vendor exceeds [$50k] in its first 90 days; or month-to-date spend in any category runs more than [30%] ahead of pace. Include the item, the threshold crossed, and one sentence of context. Silent otherwise.</pre></div>
-  <div class="yousee"><b>You'll see:</b> an exception-only watcher. The editorial bar is what makes it useful — finance does not need another daily digest; it needs to hear about the journal entry that posted at 11pm on a Saturday.</div>
+<pre>Before creating anything: read the journal header status table and list the distinct statuses — confirm with me which ones count as posted. Then create a feed agent "Budget Watch" that checks daily and posts ONLY when: a budget owner's projected full-year landing crosses over budget; a single journal entry over [$250k] posts outside the close window (determine "posted" from the status table, not an assumed status value); a new vendor exceeds [$50k] in its first 90 days; or month-to-date spend in any category runs more than [30%] ahead of pace. Include the item, the threshold crossed, and one sentence of context. Silent otherwise.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the status list first (approve it — this is the Module 0.4 habit paying off: a watcher that hard-codes "posted" misfires the day someone adds a custom status), then an exception-only watcher. The editorial bar is what makes it useful — finance does not need another daily digest; it needs to hear about the journal entry that posted at 11pm on a Saturday.</div>
 <h2>5.4 · The rhythm, assembled</h2>
 <table><tr><th>When</th><th>What</th><th>Primitive</th></tr><tr><td>Every business day, 7:30am</td><td>Cash position</td><td>Playbook → channel</td></tr><tr><td>Daily, exception-only</td><td>Budget breaks, unusual journals</td><td>Feed agent</td></tr><tr><td>5th business day</td><td>Monthly flux</td><td>Playbook → email</td></tr><tr><td>Monthly, post-close</td><td>Board pack regeneration + dashboard refresh</td><td>Module 4, on the close calendar</td></tr></table>
     <figure class="shot" data-todo="the monthly flux playbook with its schedule">
@@ -403,13 +411,16 @@
 <pre>Save to the ontology: our fiscal year [definition], fiscal quarters [list], and the rule that "quarter," "year," and "YTD" always mean fiscal periods unless someone explicitly says calendar. Propose this as a patch for review.</pre></div>
   <div class="yousee"><b>You'll see:</b> a change proposal (patch) created — like a pull request for business logic. An admin or designated reviewer approves it; from then on, Module 0.2 never needs to happen again, for anyone.</div>
 <h2>6.3 · The revenue definitions</h2>
+<p>One rule governs everything you save here: <b>definitions point at master data; they don't copy it.</b> A definition that stores "revenue = accounts 4000–4999" is a snapshot that rots the day an account is re-parented. A definition that stores "revenue = whatever rolls up to the Revenue node in the account master, resolved at query time" is permanently correct.</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Save to the ontology: "bookings" means [definition, source system]; "billings" means [definition, source]; "revenue" unqualified always means recognized revenue from the GL, accounts [range], excluding [intercompany/etc.]. Also save our NRR definition: [cohort basis, expansion/contraction/churn rules]. Propose as a patch.</pre></div>
-  <div class="yousee"><b>You'll see:</b> the patch that ends the bookings-vs-revenue argument permanently. This is the single most valuable definitional patch most companies can make.</div>
+<pre>Save to the ontology: "bookings" means [definition, source system]; "billings" means [definition, source]; "revenue" unqualified always means recognized revenue from the GL — defined as the accounts that roll up to [our Revenue node] in the account master, resolved from the hierarchy at query time, excluding [intercompany/etc.]. Do NOT store a hard-coded account list or ID range. Also save "total opex" as a calculated definition: [e.g., total expenses filtered to functional areas X and Y — however your statements define it]. And our NRR definition: [cohort basis, expansion/contraction/churn rules]. Propose as a patch.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the patch that ends the bookings-vs-revenue argument permanently — with definitions that survive a reorg, because they read the account master instead of freezing it. This is the single most valuable definitional patch most companies can make.</div>
+<div class="callout"><span class="label">When the total isn't a rollup node</span><p>Some statement lines don't exist in the chart of accounts at all — "total opex" is often <i>total expenses filtered by functional area</i>, and only your team knows that. These are <b>calculated members / KPIs</b>: teach the rule itself into the ontology (the filter, the exclusions), still referencing master-data attributes rather than enumerated account IDs.</p></div>
 <h2>6.4 · The hierarchies</h2>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Save to the ontology: our department hierarchy [or: read it from the attached file] — which departments roll into which cost centers and functions; and our entity structure — which entities consolidate, what's eliminated. Propose as a patch.</pre></div>
-  <div class="yousee"><b>You'll see:</b> the rollups codified, so "engineering opex" means the same set of departments in every analysis.</div>
+<pre>Save to the ontology: our account hierarchy — read it live from the account master's parent-child columns, don't snapshot it into a static list; our department hierarchy [or: read it from the attached file] — which departments roll into which cost centers and functions; and our entity structure — which entities consolidate, what's eliminated. Propose as a patch.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the rollups codified, so "engineering opex" means the same set of departments in every analysis — and when master data moves an account to a new parent, every definition follows it automatically.</div>
+<div class="callout"><span class="label">Guard against drift</span><p>Master data changes are silent by design — that's the point of re-parenting instead of renumbering. Ask your data team for one <a href="../data-quality/index.html"><b>Data Quality</b></a> check: <i>flag when any account's parent changes in the account master</i>. A reorg then triggers a review of the affected definitions instead of a quietly wrong board number.</p></div>
 <div class="callout"><span class="label">Go deeper</span><p>Role personas — Finance sees methodology footnotes by default while executives get summary-first, from one governed model — are the <a href="../context-stack/index.html"><b>Context Stack</b></a> workshop.</p></div>
 <h2>6.5 · Finance as reviewer</h2>
 <p>Definitions will keep evolving, and other teams will propose changes that touch financial terms. Ask your admin to set the finance lead as a reviewer for finance-related ontology folders (folder-level access and review routing are covered in the <a href="../ontology-operations/index.html"><b>Ontology Operations</b></a> workshop — worth sending to whoever owns your ontology). The operating posture: Finance doesn't just <i>use</i> the governed definitions; Finance <i>owns</i> them.</p>
@@ -420,8 +431,8 @@
   </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> The fiscal calendar patch is proposed (or approved)</label>
-    <label><input type="checkbox"> Bookings / billings / revenue / NRR definitions are proposed as patches</label>
-    <label><input type="checkbox"> Department and entity hierarchies are codified</label>
+    <label><input type="checkbox"> Bookings / billings / revenue / opex / NRR definitions are proposed as patches — pointing at hierarchy nodes, not hard-coded ID ranges</label>
+    <label><input type="checkbox"> Account, department, and entity hierarchies are codified — read from master data, with a drift check on account re-parenting</label>
     <label><input type="checkbox"> A finance owner is designated as reviewer for finance definitions</label>
   </div>
 </section>
@@ -479,9 +490,9 @@
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Save to the ontology: our fiscal calendar [definition]. "Quarter" always means fiscal. Propose as a patch.</pre></div>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Save to the ontology: bookings / billings / revenue definitions with source systems; unqualified "revenue" means recognized, GL accounts [range]. Propose as a patch.</pre></div>
+<pre>Save to the ontology: bookings / billings / revenue definitions with source systems; unqualified "revenue" means recognized — the accounts rolling up to [our Revenue node] in the account master, resolved at query time, no hard-coded ID ranges. Propose as a patch.</pre></div>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Save to the ontology: our department hierarchy and entity consolidation structure. Propose as a patch.</pre></div>
+<pre>Save to the ontology: our account hierarchy (read live from the account master parent-child), department hierarchy, and entity consolidation structure. Propose as a patch.</pre></div>
 </section>
 
 <div class="pager" id="pager"></div>
