@@ -371,6 +371,7 @@ get("/v2/sandbox/status"); post("/v2/sandbox/stop")</pre>
 <li><b>The thread link is the handoff</b> — paste it to a teammate; they get the full analysis, charts, SQL.</li></ul>
 <h2>4.4 · Governance notes</h2>
 <p>MCP access authenticates as <i>you</i> — your role, connector scope, ontology folders. Every MCP question is a real thread, visible in Observability like any other.</p>
+<p><b>Raw SQL is now separately governed.</b> Direct query calls (MCP <code>run_query</code>, the connector query RPCs, and raw-SQL branches of the v1/v2 APIs) are subject to three admin controls: a per-connection <b>TQL-only</b> setting, a <b>raw-sql role permission</b> independent of read/write, and an org-wide raw-SQL switch. Governed ontology queries — including everything you send as a natural-language question — are unaffected by all three. If your integration issues raw SQL, handle the refusal explicitly (the error names the restriction) and prefer routing through governed query surfaces: they're the path that survives a governance review, and every execution is audit-logged with its provenance (<code>raw_sql</code> vs <code>governed_tql</code>).</p>
 
     <figure class="shot" data-todo="Ana answering inside Claude/Cursor via MCP">
     <img src="assets/dev-m4-mcp.png" alt="Ana as an MCP server inside your IDE or Claude." onerror="this.parentElement.classList.add('missing')">

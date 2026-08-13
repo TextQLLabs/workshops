@@ -27,6 +27,7 @@ Start by telling me what you see.
 ### 0.3 · Decision 1 — service account, not personal credentials
 
 ### 0.4 · Decision 2 — scope: what should Ana see?
+Database/schema scoping, read-only vs read-write, grant-level scoping — and a fourth decision for sensitive sources: **TQL-only**. Marking the connection TQL-only in its settings refuses plain SQL on it in every surface; only governed ontology query files (where row-level security is enforced) can reach the data. Decide at creation like read-only — starting locked means no user ever builds a workflow on the bypass. Flag the full framework (per-role raw-sql permission, org-wide switch) to whoever owns workspace governance: Admin & Governance workshop, Module 3.4b.
 
 ### 0.5 · Decision 3 — who in TextQL gets this connector?
 Public vs private is one dropdown at creation but a migration after users build on it. Production warehouses with sensitive data usually start private and get role-scoped.
@@ -207,7 +208,7 @@ Using the [name] API access, make a simple authenticated request (e.g., fetch my
 
 ## Module 6 · Validate & Operate
 
-### 6.1 · The five-question smoke test
+### 6.1 · The six-question smoke test
 Run in a fresh chat against every new connector before announcing it:
 
 **Prompt for the learner to run:**
@@ -235,7 +236,12 @@ Attempt to create a temp table. I expect this to FAIL — confirm the connector 
 Run a realistic analytical query for this source: [a join + aggregation typical of real use]. How long did it take?
 ```
 
-> ✅ You'll see: Pass/fail on each. #1 catches grant gaps, #4 catches accidentally read-write connectors, #5 catches the stopped-warehouse / timeout class before a user does.
+**Prompt for the learner to run (TQL-only connections):**
+```
+Attempt a plain SQL query against this connection. I expect this to FAIL with the TQL-only restriction — then answer the same question through a governed ontology query to prove the approved path works.
+```
+
+> ✅ You'll see: Pass/fail on each. #1 catches grant gaps, #4 catches accidentally read-write connectors, #5 catches the stopped-warehouse / timeout class before a user does, #6 proves the lock is on *and* the governed path still answers — both halves matter before announcing a locked connection.
 
 ### 6.2 · Schema drift and resync
 Warehouses evolve; the schema snapshot doesn't follow automatically. Connectors → connector → Resync after tables are added/renamed/dropped. Habit: wire resync into your dbt/ETL release checklist. "Ana doesn't see the new table" → resync is triage step 1 (and check the Postgres default-privileges grant, Module 2.5).
@@ -262,7 +268,7 @@ Which dashboards, playbooks, and recent threads depend on the [name] connector? 
 Your data layer is connected with dedicated service identities, least-privilege scopes, a cleared network path, validated behavior, and operating habits for rotation, drift, and decommission.
 
 **Checkpoint before moving on:**
-- [ ] Every connector created in this workshop passed the five-question smoke test
+- [ ] Every connector created in this workshop passed the six-question smoke test
 - [ ] Resync is wired into your schema-change/release process
 - [ ] Every expiring credential has a calendared expiry
 - [ ] You know the decommission sequence, including source-side revocation

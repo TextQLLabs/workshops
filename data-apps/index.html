@@ -240,6 +240,7 @@
   <div class="callout warn"><span class="label">Verify, don't assume</span>
     <p>Before sharing broadly, test-view the app as a restricted role (or have a colleague in that role open it) and confirm the boundary holds. Governance you've verified is governance you can defend.</p>
   </div>
+  <div class="callout"><span class="label">TQL-only connections</span><p>If a connection your app reads has been marked <b>TQL-only</b> by an admin, the app's live data sources must be <b>governed ontology query files</b> — inline SQL sources are refused on that connection (that's the point: row-level security lives in the query files). Building on governed surfaces from the start costs nothing and means a later lockdown never breaks your app. If Ana proposes an inline SQL source against a sensitive connection, ask her to use (or create) a governed query surface instead.</p></div>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> The app is shared to a real audience</label>
     <label><input type="checkbox"> You verified what a restricted viewer sees</label>

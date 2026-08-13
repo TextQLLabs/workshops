@@ -170,7 +170,7 @@
 <div class="hero-card"><div class="n">MODULE 3</div><h3>Private networks</h3><p>SSH tunnels through a bastion for databases with no public endpoint.</p></div>
 <div class="hero-card"><div class="n">MODULE 4</div><h3>BI tools</h3><p>Tableau and Power BI — including the sync step everyone misses.</p></div>
 <div class="hero-card"><div class="n">MODULE 5</div><h3>Files, Drive &amp; APIs</h3><p>Zero-setup files, service-account Sheets, secure API access.</p></div>
-<div class="hero-card"><div class="n">MODULE 6</div><h3>Validate &amp; operate</h3><p>The five-question smoke test, rotation, resync, decommission.</p></div>
+<div class="hero-card"><div class="n">MODULE 6</div><h3>Validate &amp; operate</h3><p>The six-question smoke test, rotation, resync, decommission.</p></div>
 </div>
 <h2>How to use this workshop</h2>
 <ol>
@@ -218,7 +218,9 @@
 <h2>0.4 · Decision 2 — scope: what should Ana see?</h2>
 <ul><li><b>Database/schema scoping</b> — point at the analytics DB or mart schema, not the whole instance. Less noise = better SQL, faster sync, smaller blast radius.</li>
 <li><b>Read-only vs read-write</b> — read-only is the right default; read-write needs an owner and a reason.</li>
-<li><b>Grant-level scoping</b> — SELECT on what's needed, nothing more.</li></ul>
+<li><b>Grant-level scoping</b> — SELECT on what's needed, nothing more.</li>
+<li><b>Governed-queries-only (TQL-only)</b> — for sensitive sources (PHI, PII, restricted financials), mark the connection <b>TQL-only</b> in its settings: plain SQL is refused on this connection in every surface, and only approved ontology query files — where row-level security is enforced — can reach the data. Every other connection keeps full SQL. Decide at creation like read-only: retrofitting is easy (it's one toggle), but starting locked means no user ever builds a workflow on the bypass.</li></ul>
+<div class="callout"><span class="label">New — close the raw-SQL back door</span><p>Row-level security lives in ontology query files; until recently a user with SQL access could query around them. The <b>TQL-only</b> connection setting closes that per source, and admins can also revoke the <b>raw-sql role permission</b> or disable raw SQL org-wide. The full decision framework is in <a href="../admin-governance/index.html"><b>Admin &amp; Governance</b></a>, Module 3.4b — flag this to whoever owns your workspace governance.</p></div>
 <h2>0.5 · Decision 3 — who in TextQL gets this connector?</h2>
 <p>Public vs private is one dropdown at creation but a migration after users build on it. Production warehouses with sensitive data usually start private and get role-scoped.</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
@@ -485,7 +487,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA analytics
   <div class="page-meta"><span>⏱️ <b>20 min</b></span></div>
 
 <p><b>Goal:</b> the difference between "the test passed" and "production-ready" — a repeatable smoke test, plus rotation, resync, monitoring, and decommission habits.</p>
-<h2>6.1 · The five-question smoke test</h2>
+<h2>6.1 · The six-question smoke test</h2>
 <p>Run in a fresh chat against <b>every</b> new connector before announcing it:</p>
 <p><b>1 · Visibility</b></p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
@@ -502,7 +504,10 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA analytics
 <p><b>5 · Scale behavior</b></p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Run a realistic analytical query for this source: [a join + aggregation typical of real use]. How long did it take?</pre></div>
-  <div class="yousee"><b>You'll see:</b> Pass/fail on each. #1 catches grant gaps, #4 catches accidentally read-write connectors, #5 catches the stopped-warehouse / timeout class before a user does.</div>
+<p><b>6 · Query-path lock</b> (TQL-only connections)</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Attempt a plain SQL query against this connection. I expect this to FAIL with the TQL-only restriction — then answer the same question through a governed ontology query to prove the approved path works.</pre></div>
+  <div class="yousee"><b>You'll see:</b> Pass/fail on each. #1 catches grant gaps, #4 catches accidentally read-write connectors, #5 catches the stopped-warehouse / timeout class before a user does, #6 proves the lock is on <i>and</i> the governed path still answers — both halves matter before you announce a locked connection.</div>
 <h2>6.2 · Schema drift and resync</h2>
 <p>Warehouses evolve; the schema snapshot doesn't follow automatically. <b>Connectors → connector → Resync</b> after tables are added/renamed/dropped. Habit: wire resync into your dbt/ETL release checklist. "Ana doesn't see the new table" → resync is triage step 1 (and check the Postgres default-privileges grant, Module 2.5).</p>
 <h2>6.3 · Credential rotation</h2>
@@ -537,7 +542,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA analytics
     <figcaption>The validation habit: prove the connection before users find the gaps.</figcaption>
   </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
-    <label><input type="checkbox"> Every connector created in this workshop passed the five-question smoke test</label>
+    <label><input type="checkbox"> Every connector created in this workshop passed the six-question smoke test</label>
     <label><input type="checkbox"> Resync is wired into your schema-change/release process</label>
     <label><input type="checkbox"> Every expiring credential has a calendared expiry</label>
     <label><input type="checkbox"> You know the decommission sequence, including source-side revocation</label>
@@ -587,13 +592,14 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA analytics
     <tr><td><b>Google Drive/Sheets</b></td><td>GCP service account JSON</td><td>Enable Drive + Sheets APIs; <b>share content with the service account email</b>; store via API Access (preferred) or env var</td></tr>
     <tr><td><b>External APIs</b></td><td>Token / OAuth / GCP SA</td><td>Connectors → API tab → + New API Access; templates for common providers; domain whitelist = perimeter; proxy injects credentials — Ana never sees tokens</td></tr>
   </table>
-  <h2>The five-question smoke test (run on every new connector)</h2>
+  <h2>The six-question smoke test (run on every new connector)</h2>
   <ol>
     <li>List visible schemas/tables — anything missing?</li>
     <li>Trivial read: count + 5 sample rows</li>
     <li>Cross-schema read on intended scope</li>
     <li>Attempted write on a read-only connector — must FAIL</li>
     <li>One realistic join+aggregation — timing sane?</li>
+    <li>On TQL-only connections: plain SQL must FAIL, governed query must answer</li>
   </ol>
   <h2>Org default limits (triage before escalating)</h2>
   <table>

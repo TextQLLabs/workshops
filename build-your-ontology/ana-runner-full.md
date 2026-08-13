@@ -243,6 +243,8 @@ Apply these access policies to the ontology: restrict sensitive surfaces to the 
 
 > ✅ You'll see: governance expressed in the model — fail-closed access rules, reviewable like any other file. (Module 9 takes this further with full personas.)
 
+> 📌 **Make it enforceable, not advisory:** row-level rules in .tql only bind queries that go *through* the ontology. To make them the only path, the workspace admin can mark the connection **TQL-only** (plain SQL refused on it everywhere), revoke the raw-sql role permission, or disable raw SQL org-wide — Admin & Governance workshop, Module 3.4b. Coach the learner: once you write RLS into a query surface, that admin conversation is the second half of the job, and governed-surface coverage is what users rely on after the back door closes.
+
 **Checkpoint before moving on:**
 - [ ] At least one metric has a golden-query test pinning its expected value
 - [ ] Sensitive surfaces fail closed, and you can point to the access logic in the .tql

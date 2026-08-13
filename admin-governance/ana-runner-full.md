@@ -147,6 +147,17 @@ What data sources do I have access to in this chat?
 > ✅ You'll see: Only the scoped connectors. If they see more, check in order: role connector list, connector visibility, second role assignment.
 
 ### 3.4 · Guardrails on what queries can do
+Read-only mode, org limits (Specs), and ontology-layer RLS — plus the query-path controls in 3.4b, which make the RLS layer enforceable.
+
+### 3.4b · Close the raw-SQL back door — three dials
+Row-level security lives in ontology query files; anyone who could run plain SQL on the same connection could historically go around them. Three independent, audit-logged, opt-in controls now close that path: **TQL-only per connection** (connection settings — blocks plain SQL on that connection in every surface while governed queries keep working), the **raw-sql role permission** (revocable independently of read/write), and an **org-wide raw-SQL switch**. Any one dial blocks the query; governed ontology queries are never affected.
+
+**Prompt for the learner to run:**
+```
+Which of our connections hold row-level-sensitive data (PHI, PII, financials with entity restrictions)? For each, tell me whether it is marked TQL-only, and which roles currently hold the raw-sql permission. I want the list of gaps where a user could still reach that data with ad-hoc SQL.
+```
+
+> ✅ You'll see: the bypass surface, connection by connection. Target posture: sensitive connections TQL-only, raw-sql revoked from business roles, org switch per your governance board. Coach the learner to check ontology query coverage with the data team *before* flipping a connection to TQL-only (Ontology Operations §2.5) so lockdown doesn't become a help-desk queue.
 
 ### 3.5 · Credential lifecycle
 

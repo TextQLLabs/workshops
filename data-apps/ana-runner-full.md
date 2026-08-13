@@ -69,6 +69,8 @@ Explain how this app behaves for different viewers: what does a user in the [res
 
 > **Verify, don't assume** — Before sharing broadly, test-view the app as a restricted role (or have a colleague in that role open it) and confirm the boundary holds. Governance you've verified is governance you can defend.
 
+> 📌 **TQL-only connections:** if a connection the app reads is marked TQL-only by an admin, the app's live data sources must be governed ontology query files — inline SQL sources are refused there (row-level security lives in the query files). Build on governed surfaces from the start so a later lockdown never breaks the app; if Ana proposes an inline SQL source against a sensitive connection, redirect her to a governed query surface.
+
 **Checkpoint before moving on:**
 - [ ] The app is shared to a real audience
 - [ ] You verified what a restricted viewer sees

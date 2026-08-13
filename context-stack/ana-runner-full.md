@@ -219,6 +219,8 @@ If you hold review rights, open the pending patches (the Reviews surface in the 
 ### 4.1 · The model: behavior is files
 From the Role-Based Access chapter of Build Your Ontology, End to End : the ontology is files, and the behavioral context is also files — a behaviors/ folder where each persona is a directory with an org_context.md :
 
+> 📌 **Behavioral scope vs enforced scope:** a persona's "allowed data surfaces" is a behavioral instruction — Ana follows it, but raw-SQL access could still reach the connection directly. Admins can now enforce the boundary underneath: mark sensitive connections **TQL-only** and revoke the **raw-sql role permission** from business personas (Admin & Governance, Module 3.4b). Persona says *should*; query-path controls say *can* — design them together so the persona's allowed surfaces are exactly the governed surfaces the lock leaves reachable.
+
 ### 4.2 · Persona one: the restricted business persona
 A [program manager in care management / clinical operations] — domain-scoped, non-technical, in a setting where seeing the wrong data is a compliance event, not an inconvenience:
 

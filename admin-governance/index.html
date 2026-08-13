@@ -226,7 +226,7 @@
 <ol>
 <li><b>Identity</b> — who can get in at all (SSO, SCIM) → Module 1</li>
 <li><b>Authorization</b> — what a signed-in user may do (roles, permissions, sharing) → Module 2</li>
-<li><b>Data scope</b> — which data their questions can touch (connectors, credentials) → Module 3</li>
+<li><b>Data scope</b> — which data their questions can touch, and by which query path: governed ontology queries or raw SQL (connectors, credentials, query-path controls) → Module 3</li>
 <li><b>Behavior &amp; observability</b> — what tools/models run, within what limits, and how you watch it → Modules 4–5</li>
 </ol>
 <p>A request must pass <i>every</i> layer. When you debug "user X can't do Y," walk the layers in this order.</p>
@@ -336,6 +336,7 @@
 <h2>2.3 · Design a custom role</h2>
 <p>The most-requested pattern from real support tickets: a <b>viewer/analyst split</b> and <b>restricting who can publish connectors</b>.</p>
 <p><b>Do:</b> Settings → Roles → <b>Create Role</b> → <code>analyst-restricted</code> → Manage Permissions: Chat <code>read</code>+<code>write</code>; Dashboard <code>read</code> only; Connector <code>read</code> only; Playbook <code>read</code> only; Feed <code>read</code>. Assign a test user, then <b>verify as them</b>: they should fail to create a connector or edit a public dashboard.</p>
+<div class="callout"><span class="label">New: the raw-SQL permission</span><p>Connector access now has a fourth dimension: <b><code>raw sql</code></b> — revocable independently of read/write. A role can keep full access to a connector's data <i>through governed ontology queries</i> while losing the ability to run ad-hoc SQL that bypasses row-level rules. For roles serving business users, revoking it costs nothing (Ana's governed path is unaffected) and closes the bypass. Pair with the connection- and org-level controls in Module 3.4.</p></div>
 <div class="callout">Custom roles also scope <b>which connectors, context files, and models</b> the role can access — that's how "Finance sees the finance warehouse, Sales sees the CRM mirror" is done. Connector scoping: Module 3. Model scoping: Module 4.</div>
 <h2>2.4 · Sharing semantics — the other half of access</h2>
 <ul><li>A <b>private</b> item: visible to owner + explicit shares + <code>read_private</code> holders.</li>
@@ -391,7 +392,17 @@
 <h2>3.4 · Guardrails on what queries can do</h2>
 <ul><li><b>Read-only mode</b> blocks all DML/DDL regardless of warehouse grants — make it your default posture; read-write is the exception with an owner and a reason.</li>
 <li><b>Org limits</b> (Settings → Specs) cap blast radius: 2M SQL rows, 180s query timeout, 360s cell runtime. Raising them is a support request — that friction is a feature.</li>
-<li><b>Ontology-layer RLS</b> — fail-closed .tql rules filtering rows by user attributes. The data team authors these; your job is knowing they exist so you don't solve row-level problems with roles.</li></ul>
+<li><b>Ontology-layer RLS</b> — fail-closed .tql rules filtering rows by user attributes. The data team authors these (see the <a href="../ontology-operations/index.html"><b>Ontology Operations</b></a> workshop); your job is making them <i>enforceable</i> — which is what the next section does.</li></ul>
+<h2>3.4b · Close the raw-SQL back door — three dials</h2>
+<p>Row-level security lives in ontology query files. Historically, anyone who could run plain SQL on the same connection could go <i>around</i> those files. Three independent, audit-logged controls now close that path — each opt-in, so nothing changes until you turn a dial:</p>
+<table><tr><th>Dial</th><th>Scope</th><th>Where</th><th>Use when</th></tr>
+<tr><td><b>TQL-only connection</b></td><td>One connection, every surface (chat, Data Apps, dashboards, public API, MCP)</td><td>Connection settings page (admins)</td><td>A sensitive source whose RLS must be airtight — flip it there, SQL keeps working everywhere else</td></tr>
+<tr><td><b><code>raw sql</code> role permission</b></td><td>One role, all connections</td><td>Settings → Roles → Manage Permissions (Module 2.3)</td><td>Business-user roles that only ever need the governed path</td></tr>
+<tr><td><b>Org-wide raw-SQL disable</b></td><td>Every user, every connection</td><td>Org settings (kill switch)</td><td>Regulated environments where ungoverned queries are a compliance finding</td></tr></table>
+<p>Restriction composes: any one dial blocks the query. Governed ontology queries are never affected by any of them.</p>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Which of our connections hold row-level-sensitive data (PHI, PII, financials with entity restrictions)? For each, tell me whether it is marked TQL-only, and which roles currently hold the raw-sql permission. I want the list of gaps where a user could still reach that data with ad-hoc SQL.</pre></div>
+  <div class="yousee"><b>You'll see:</b> your bypass surface, connection by connection. The posture to aim for: sensitive connections TQL-only, <code>raw sql</code> revoked from business roles, and — if your governance board requires it — the org switch off with a documented exception process.</div>
 <h2>3.5 · Credential lifecycle</h2>
 <ul><li><b>Who may create connectors</b> — after 3.3, typically admins or a designated data-platform role only.</li>
 <li><b>Rotation</b> — rotate on your security schedule; edit the connector in place; test immediately after.</li>
@@ -402,6 +413,7 @@
 <h2>Troubleshooting</h2>
 <table><tr><th>Symptom</th><th>Fix</th></tr>
 <tr><td>User can't see a needed connector</td><td>Layer-walk: role scope → visibility → was it attached before the thread's first message</td></tr>
+<tr><td>"SQL query refused" on one connection</td><td>Working as configured — the connection is TQL-only, the role lacks <code>raw sql</code>, or the org switch is off (the error and the audit log name which). Route the question through governed ontology queries instead</td></tr>
 <tr><td>Per-member OAuth popup loops</td><td>Redirect URI must exactly match the warehouse OAuth integration; check token validity</td></tr>
 <tr><td>"Tables in chat don't match the warehouse"</td><td>The connector credential sees a different schema — compare service-account grants vs the user's own warehouse role</td></tr>
 <tr><td>Test passes but queries time out</td><td>Network path (firewall/allowlist) and warehouse queue — see docs Network Configuration</td></tr></table>
@@ -415,6 +427,7 @@
     <label><input type="checkbox"> You can articulate shared vs per-member credentials for your top two connectors</label>
     <label><input type="checkbox"> A test user in a scoped role sees only their connectors — verified in a real chat</label>
     <label><input type="checkbox"> You know the three guardrail layers and which problem each solves</label>
+    <label><input type="checkbox"> You ran the bypass-surface prompt and made a deliberate decision on each dial: TQL-only connections, raw-sql per role, org-wide switch</label>
   </div>
 </section>
 
@@ -482,7 +495,8 @@
 <p><b>Three drills to build the habit:</b></p>
 <ol><li><i>Who changed permissions lately?</i> Category = Roles &amp; Permissions, last 30 days. Every event should map to a change you know about.</li>
 <li><i>Failed logins.</i> Category = Authentication, action = Login failed. A burst against one account → check with that user.</li>
-<li><i>Trace one user end-to-end.</i> Search their email: invite → join → roles → logins. Your offboarding-verification and auditor answer.</li></ol>
+<li><i>Trace one user end-to-end.</i> Search their email: invite → join → roles → logins. Your offboarding-verification and auditor answer.</li>
+<li><i>Raw SQL vs governed queries.</i> Every query execution now carries a <b>provenance</b> field — <code>raw_sql</code> or <code>governed_tql</code> — and blocked attempts log the reason (TQL-only connection, raw SQL disabled for the org). Filter for <code>raw_sql</code> against sensitive connections: each hit is either a gap to close with a Module 3.4b dial, or your evidence to a governance board that the dials are working.</li></ol>
 <div class="callout">Audit logs and product metrics can stream to <b>Datadog, Splunk, Grafana, Prometheus, or S3</b> via OpenTelemetry (docs → Observability Export). If you run a SIEM, wire this — don't make the TextQL UI your only copy.</div>
 <h2>5.2 · Observability — quality monitoring</h2>
 <div class="callout"><span class="label">New — the People view</span><p>Observability now includes a <b>People view</b>: active-people trends, an engagement spectrum, and access-method breakdowns, with custom date-range filtering — your adoption dashboard, next to the quality signals below.</p></div>

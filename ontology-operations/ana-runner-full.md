@@ -80,10 +80,21 @@ What do you know about [a metric in a folder this role shouldn't see]?
 ### 2.4 · Compose with the other layers
 Folder access controls what context Ana loads . It composes with: org RBAC (who can use ontology at all), connector scoping (what data the role queries), and fail-closed RLS inside .tql files (which rows return). Restricted folder + fail-closed .tql = defense in depth.
 
+### 2.5 · Make the RLS boundary enforceable
+.tql RLS rules only bind queries that go *through* them. Admins can now close the plain-SQL bypass (per-connection **TQL-only**, per-role **raw-sql permission**, org-wide switch — Admin & Governance workshop, Module 3.4b). Two consequences for the ontology team: RLS-bearing .tql files are now security boundaries and deserve a designated reviewer; and before any connection goes TQL-only, query coverage must be checked so every legitimate question has a governed path.
+
+**Prompt for the learner to run:**
+```
+List the .tql query files for the [name] connection that contain row-level filters. For each: which user attributes drive the filter, when it last changed, and who reviewed the change. Then check the last 30 days of questions against this connection — were any answered via raw SQL rather than these files?
+```
+
+> ✅ You'll see: the RLS inventory with review history, plus the raw-SQL traffic that would be blocked (or go ungoverned) after lockdown — the pre-flight for turning on TQL-only.
+
 **Checkpoint before moving on:**
 - [ ] Your folder tree's shape matches your access policy
 - [ ] Restricted folders verified as a restricted user — both directions
 - [ ] You can name the four composing layers
+- [ ] RLS-bearing .tql files have a designated reviewer, and coverage was checked before any connection went TQL-only
 
 ## Module 3 · Accuracy Testing
 

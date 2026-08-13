@@ -475,6 +475,7 @@
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Apply these access policies to the ontology: restrict sensitive surfaces to the right roles (fail closed), apply row-level filters by scope, and limit restricted data to authorized roles. Show the access logic in the .tql.</pre></div>
   <div class="yousee"><b>You'll see:</b> governance expressed <i>in the model</i> — fail-closed access rules, reviewable like any other file. (Module 9 takes this further with full personas.)</div>
+  <div class="callout"><span class="label">Make it enforceable, not advisory</span><p>Row-level rules in .tql only bind queries that go <i>through</i> the ontology. To make them the <b>only</b> path, ask your admin to mark the connection <b>TQL-only</b> — plain SQL is then refused on that connection in every surface, and admins can also revoke the raw-sql role permission or disable raw SQL org-wide (see <a href="../admin-governance/index.html"><b>Admin &amp; Governance</b></a>, Module 3.4b). Once you write RLS into a query surface, that conversation with your admin is the second half of the job — and remember every governed surface you build here is what users will rely on once the back door closes, so coverage matters (<a href="../ontology-operations/index.html"><b>Ontology Operations</b></a> §2.5).</p></div>
 
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> At least one metric has a golden-query test pinning its expected value</label>
