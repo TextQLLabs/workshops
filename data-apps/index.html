@@ -160,7 +160,7 @@
 <section class="page" id="welcome" data-title="Welcome" data-group="Getting Started">
   <div class="kicker">Workshop · BETA</div>
   <h1>Build Data Apps with Ana</h1>
-  <div class="page-meta"><span>⏱️ <b>~2 hours</b></span><span>🎯 Analysts & builders turning analysis into interactive apps</span><span>🧪 <b>Data Apps is in beta</b> — flows may differ slightly from your build</span></div>
+  <div class="page-meta"><span>⏱️ <b>~3 hours</b></span><span>🎯 Analysts & builders turning analysis into interactive apps</span><span>🧪 <b>Data Apps is in beta</b> — flows may differ slightly from your build</span></div>
   <p>Dashboards show people answers. <b>Data apps let them interact</b>: pick their own filters, run what-ifs, trigger governed actions — an application generated from a conversation, running on your governed data. This workshop takes you from a finished analysis to a shared, interactive data app.</p>
   <div class="callout warn"><span class="label">Beta workshop</span>
     <p>Data Apps is a <b>beta feature</b> — ask your TextQL team to confirm it's enabled in your workspace. This workshop tracks the current beta; details may shift as the feature hardens. Feedback very welcome.</p>
@@ -264,10 +264,95 @@
   </div>
 </section>
 
+<section class="page" id="m5" data-title="Module 5 · Import a Power BI / Tableau Dashboard" data-group="Hands-On Modules" data-time="30 min">
+  <div class="kicker">Module 5</div>
+  <h1>Duplicate an existing dashboard — <code>.pbit</code> or <code>.twb</code> → data app</h1>
+  <div class="page-meta"><span>⏱️ <b>30 min</b></span><span>🎯 Goal: rebuild one real Power BI / Tableau dashboard as a governed data app, reconciled to the source</span></div>
+  <p>The fastest way off Power BI / Fabric / Tableau isn't a rewrite — it's handing Ana the source file and rebuilding the flagship dashboard on governed data. You keep the old tool running and prove parity side-by-side.</p>
+  <div class="callout"><span class="label">What the source files expose</span>
+    <p>A <b>Power BI template (<code>.pbit</code>)</b> carries the data model, the DAX measures, and the report layout — Ana reads all three (this replaced the old zip/xlsx/unpack-prompt hack). A <b>Tableau workbook (<code>.twb</code>)</b> is XML: datasource fields, calculated fields, and the worksheet/dashboard layout. Either gives Ana enough to reconstruct the dashboard.</p>
+  </div>
+  <ol class="steps">
+    <li><b>Hand Ana the file.</b> Upload the <code>.pbit</code> / <code>.twb</code> and ask her to read the model, measures, and layout before building anything.</li>
+    <li><b>Map measures → governed metrics.</b> Bind each visual to an ontology metric instead of re-implementing DAX/Tableau calcs ad hoc — that's what makes the number deterministic and auditable. Any measure with no clean mapping gets flagged, not guessed.</li>
+    <li><b>Build a static-first snapshot</b> for the visuals actually shown (Module 6 is the how + why).</li>
+    <li><b>Replicate the layout</b> — tiles, filters, trend — against the snapshot.</li>
+    <li><b>Reconcile figure-for-figure</b> to the source dashboard before you trust it.</li>
+  </ol>
+  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
+<pre>Here's a [Power BI .pbit / Tableau .twb] dashboard. Read its data model, its measures, and its layout — don't build yet. Then: (1) list every measure and map each to a governed ontology metric, flagging any that don't map cleanly; (2) propose the equivalent data-app layout (cards, trend, breakdown, filters); (3) tell me which source tables/joins each metric needs. Show me the plan before you build.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a measure-by-measure mapping (source measure → ontology metric), a layout proposal that mirrors the original, and a flagged list of anything that needs a definition before it can be rebuilt faithfully.</div>
+  <div class="prompt"><span class="tag">PROMPT · RECONCILE</span><button>Copy</button>
+<pre>Now build it, then reconcile: reproduce the source dashboard's default (unfiltered) headline numbers exactly, and pick one filtered slice and match it to the dollar against a fresh query on the warehouse. Show me both dashboards' numbers side by side and call out any difference and why.</pre></div>
+  <div class="yousee"><b>You'll see:</b> the rebuilt app with its numbers lined up against the source — matching figures where the logic is faithful, and an explicit note on any intentional difference.</div>
+  <div class="callout warn"><span class="label">Keep the old tool running</span>
+    <p>Don't cut over on faith. Run the data app <b>alongside</b> the Power BI / Tableau original until the numbers reconcile and the team trusts it. For estate-wide migration (inventory, semantic-layer translation, cutover, adoption), the <a href="../bi-migration/index.html">Migrate from Your BI Tool</a> workshop is the bigger playbook — this module is the single-dashboard hands-on.</p>
+  </div>
+  <details><summary>What usually doesn't come across cleanly</summary><div class="body">
+    <p>Visual-level DAX with no governed equivalent, report-only calculated columns, custom visuals/plugins, and pixel-exact formatting. Rebuild the <b>logic</b> as governed metrics and the <b>intent</b> of the layout — not every cosmetic detail. Flag anything you can't map rather than approximating a number.</p>
+  </div></details>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> The app reproduces the source dashboard's headline numbers to the dollar</label>
+    <label><input type="checkbox"> Every source measure maps to a governed metric (or the unmapped ones are flagged)</label>
+    <label><input type="checkbox"> The app runs alongside the original for parity testing</label>
+  </div>
+</section>
+
+<section class="page" id="m6" data-title="Module 6 · Make It Fast & Troubleshoot" data-group="Hands-On Modules" data-time="25 min">
+  <div class="kicker">Module 6</div>
+  <h1>Make it fast — and a prop library for troubleshooting data apps</h1>
+  <div class="page-meta"><span>⏱️ <b>25 min</b></span><span>🎯 Goal: build apps that don't time out, and diagnose one that does</span></div>
+  <p>A data app on a big fact table will time out if every filter re-queries the warehouse. The fix is an architecture — <b>static-first</b> — and the diagnostic prompts below are a reusable <b>prop library</b> for investigating any slow or wrong app. (Drawn from a real fix: an authorizations app that hung on every filter and, once static-first, filtered instantly.)</p>
+
+  <h2>The failure mode — the "scan storm"</h2>
+  <p>One "Apply filters" click fanning out into 15+ full scans of a multi-million-row fact table, each joined to several dimensions, <b>nothing cached</b> because filter combinations never repeat. The browser hangs. The bottleneck is the <b>scans</b>, not the payload — raising a payload limit doesn't help, and parallelizing the scans just multiplies warehouse cost.</p>
+
+  <h2>The fix — static-first snapshot</h2>
+  <ol class="steps">
+    <li><b>Pre-aggregate once, at refresh.</b> Push the <code>GROUP BY</code> into the warehouse a single time into a small snapshot (a base metrics cube + breakdown tables + supporting series).</li>
+    <li><b>Filter in the browser.</b> Every filter, sort, tab, and chart interaction runs against that snapshot — <b>zero warehouse queries on routine use</b>. Filters apply instantly, no Apply button, no spinner.</li>
+    <li><b>Show the snapshot timestamp</b>, and serve the <b>last good snapshot</b> if a refresh fails.</li>
+    <li><b>Reserve live queries</b> for genuinely un-cacheable detail (e.g. distinct counts under a custom filter) — <b>one bounded, debounced query, never a fan-out</b>.</li>
+  </ol>
+  <div class="callout warn"><span class="label">Correctness trap: duplicate dimension rows double-count</span>
+    <p>A dimension with more than one row per key <b>silently doubles every dollar and count</b> the moment a filtered query joins it — and the default (unfiltered) view often <i>doesn't</i> hit that join, so it looks fine until someone filters. De-duplicate dimensions before joining, and always verify a <b>filtered</b> slice, not just the landing screen.</p>
+  </div>
+
+  <h2>Prop library — diagnostic prompts</h2>
+  <p>Copy these when investigating an app. They go from symptom → cause → fix → proof.</p>
+  <div class="prompt"><span class="tag">PROMPT · DIAGNOSE</span><button>Copy</button>
+<pre>This data app is slow / times out when I apply a filter. Trace exactly what happens on one filter click: how many warehouse queries fire, against which tables, how many rows each scans, and what (if anything) is cached. Tell me whether the bottleneck is the scans or the payload — don't guess, show the query count.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT · CONVERT TO STATIC-FIRST</span><button>Copy</button>
+<pre>Re-architect this app static-first: pre-aggregate the metrics once at refresh into an in-memory snapshot (base cube + breakdown tables + supporting series) and run all filter/sort/tab/chart interaction in the browser against it — no warehouse query on routine filtering. Apply filters instantly (drop the Apply button), show the snapshot timestamp, and fall back to the last good snapshot on refresh failure. Use at most one bounded, debounced live query for un-cacheable distinct counts under a custom filter.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT · CHECK DOUBLE-COUNTING</span><button>Copy</button>
+<pre>Check every dimension this app joins for more than one row per key. For any that fan out, show me how much it inflates a filtered total, and de-duplicate at the source. Confirm a filtered total matches before and after the fix.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT · RECONCILE TO THE DOLLAR</span><button>Copy</button>
+<pre>Reconcile this app: reproduce the default (unfiltered) headline numbers exactly, then pick one filtered slice (e.g. one region + one category + a rolling window) and match it to the dollar against a fresh query on the warehouse. Then tell me which dimensions the breakdown tiles do and don't slice by, so I know the tradeoffs.</pre></div>
+
+  <h2>Troubleshooting quick-reference</h2>
+  <table>
+    <tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr>
+    <tr><td>Filters hang / endless spinner</td><td>Scan storm — every filter re-queries the fact</td><td>Static-first snapshot; filter in-browser</td></tr>
+    <tr><td>Numbers double the moment you filter</td><td>Dimension with &gt;1 row per key fans out on join</td><td>De-duplicate the dimension at the source</td></tr>
+    <tr><td>Fine by default, wrong once filtered</td><td>Default view skips the offending join</td><td>Always verify a filtered slice, not just the landing view</td></tr>
+    <tr><td>Distinct counts wrong under a filter</td><td>Summed from a pre-aggregated cube</td><td>One bounded, debounced live query for that count only</td></tr>
+    <tr><td>Slow only on first load / after refresh</td><td>Snapshot rebuild is the cost</td><td>Schedule a daily refresh; serve the last good snapshot meanwhile</td></tr>
+    <tr><td>"Just raise the payload / row limit"</td><td>Misdiagnosis — payload isn't the bottleneck</td><td>Cut the scans, don't ship more rows</td></tr>
+  </table>
+  <div class="callout"><span class="label">State the tradeoffs — no silent caps</span>
+    <p>By design, breakdown tiles slice by a chosen subset of dimensions (to keep the snapshot small) and distinct counts under a custom filter use the one bounded query. Say so in the app's notes — a silent cap reads as "we covered everything" when you didn't.</p>
+  </div>
+  <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> No warehouse query fires on an ordinary filter (you counted)</label>
+    <label><input type="checkbox"> The default view and one filtered slice both reconcile to the dollar</label>
+    <label><input type="checkbox"> You can name which dimensions the breakdowns do and don't slice by</label>
+  </div>
+</section>
+
 <section class="page" id="wrapup" data-title="Wrap-Up & Next Steps" data-group="Reference">
   <div class="kicker">Wrap-Up</div>
   <h1>You shipped an app from a conversation</h1>
-  <p>The arc: a trusted analysis → a generated app → viewer-driven interactivity → shared under real governance → maintained conversationally. Next: <a href="../automation/index.html">Automation</a> to schedule what feeds it, and <a href="../dashboards-reporting/index.html">Dashboards &amp; Reporting</a> for the presentation-layer deep-dive.</p>
+  <p>The arc: a trusted analysis → a generated app → viewer-driven interactivity → shared under real governance → maintained conversationally → an existing Power BI / Tableau dashboard imported → made fast and kept honest with the troubleshooting prop library. Next: <a href="../automation/index.html">Automation</a> to schedule what feeds it, <a href="../bi-migration/index.html">Migrate from Your BI Tool</a> for the estate-wide playbook, and <a href="../dashboards-reporting/index.html">Dashboards &amp; Reporting</a> for the presentation-layer deep-dive.</p>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> Your app is live, shared, and interactive</label>
     <label><input type="checkbox"> You know when you'd build the next one (and when a dashboard is enough)</label>
