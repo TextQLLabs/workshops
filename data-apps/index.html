@@ -209,6 +209,11 @@
   <div class="callout"><span class="label">Migrating an existing HTML / Streamlit artifact?</span>
     <p>If you already have an HTML report or Streamlit-style artifact from an earlier thread, hand it to Ana: <i>"convert this into a data app, preserving the layout."</i> That's the fastest path from legacy one-off outputs to a governed, shareable app.</p>
   </div>
+  <div class="callout warn"><span class="label">Building on a large fact table? Start static-first</span>
+    <p>If the analysis behind your app scans a multi-million-row fact table, the default build will re-query the warehouse on every filter click — and time out the first time a viewer touches it. Don't build naive and fix later: build <b>static-first from the start</b> (Module 6 has the why and the failure story). Use this variant of the build prompt:</p>
+  </div>
+  <div class="prompt"><span class="tag">PROMPT · LARGE-TABLE VARIANT</span><button>Copy</button>
+<pre>Take the analysis in this thread and turn it into a STATIC-FIRST data app: pre-aggregate the metrics once at refresh into an in-memory snapshot (base cube + breakdown tables + supporting series) and run all filter/sort/tab/chart interaction in the browser against that snapshot — no warehouse query on routine filtering. De-duplicate every dimension before joining so filtered totals can't double-count. Apply filters instantly (no Apply button); show the snapshot timestamp and fall back to the last good snapshot on refresh failure. Use at most one bounded, debounced live query for un-cacheable distinct counts under a custom filter — never a fan-out of full scans. After building, reconcile the default view and one filtered slice to the dollar against a fresh warehouse query, and tell me which dimensions the breakdowns do and don't slice by. Show me a preview before saving.</pre></div>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
     <label><input type="checkbox"> An app preview rendered from your real analysis</label>
     <label><input type="checkbox"> You changed the layout conversationally at least once</label>
@@ -325,7 +330,14 @@
     <li><b>Filter in the browser.</b> Every filter, sort, tab, and chart interaction runs against that snapshot — <b>zero warehouse queries on routine use</b>. Filters apply instantly, no Apply button, no spinner.</li>
     <li><b>Show the snapshot timestamp</b>, and serve the <b>last good snapshot</b> if a refresh fails.</li>
     <li><b>Reserve live queries</b> for genuinely un-cacheable detail (e.g. distinct counts under a custom filter) — <b>one bounded, debounced query, never a fan-out</b>.</li>
+    <li><b>Tune the client side too.</b> Update charts in place instead of rebuilding them on every interaction, and make one optimized pass over the snapshot in the filter engine. Target: cached interactions land well within ~250&nbsp;ms — instant to a human.</li>
   </ol>
+  <h2>Which serving strategy — the decision rule</h2>
+  <table><tr><th>Situation</th><th>Strategy</th></tr>
+  <tr><td>The aggregate fits in a shippable snapshot</td><td><b>Ship the snapshot, filter in-browser</b> — the default above</td></tr>
+  <tr><td>The aggregate is too big to ship, but still ≪ the raw fact</td><td>Build a <b>pre-aggregated serving table</b> in the warehouse; the app queries <i>that</i>, never the raw fact</td></tr>
+  <tr><td>Genuinely on-demand, un-cacheable detail</td><td>One bounded, debounced live query</td></tr>
+  <tr><td colspan="2"><b>Never:</b> re-scan the raw fact per interaction · parallelize many full scans · treat a payload/row limit as the fix</td></tr></table>
   <div class="callout warn"><span class="label">Correctness trap: duplicate dimension rows double-count</span>
     <p>A dimension with more than one row per key <b>silently doubles every dollar and count</b> the moment a filtered query joins it — and the default (unfiltered) view often <i>doesn't</i> hit that join, so it looks fine until someone filters. De-duplicate dimensions before joining, and always verify a <b>filtered</b> slice, not just the landing screen.</p>
   </div>
