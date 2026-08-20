@@ -268,20 +268,31 @@
   <div class="kicker">Module 5</div>
   <h1>Duplicate an existing dashboard — <code>.pbit</code> or <code>.twb</code> → data app</h1>
   <div class="page-meta"><span>⏱️ <b>30 min</b></span><span>🎯 Goal: rebuild one real Power BI / Tableau dashboard as a governed data app, reconciled to the source</span></div>
-  <p>The fastest way off Power BI / Fabric / Tableau isn't a rewrite — it's handing Ana the source file and rebuilding the flagship dashboard on governed data. You keep the old tool running and prove parity side-by-side.</p>
-  <div class="callout"><span class="label">What the source files expose</span>
-    <p>A <b>Power BI template (<code>.pbit</code>)</b> carries the data model, the DAX measures, and the report layout — Ana reads all three (this replaced the old zip/xlsx/unpack-prompt hack). A <b>Tableau workbook (<code>.twb</code>)</b> is XML: datasource fields, calculated fields, and the worksheet/dashboard layout. Either gives Ana enough to reconstruct the dashboard.</p>
+  <p>The fastest way off Power BI / Fabric / Tableau isn't a rewrite — it's giving Ana what the original dashboard is made of and rebuilding it on governed data. You keep the old tool running and prove parity side-by-side.</p>
+
+  <h2>Two ways to bring the dashboard in</h2>
+  <div class="hero-grid">
+    <div class="hero-card"><div class="n">PATH A</div><h3>Source file (.pbit / .twb)</h3><p>Export the template/workbook and upload it. Best when you have the file and want the model, measures, and layout in one shot.</p></div>
+    <div class="hero-card"><div class="n">PATH B</div><h3>Live BI connector</h3><p>Power BI or Tableau is connected as a data source in your workspace. Ana reads the published datasets, measures, and metadata directly — no export needed. Best when the file is locked down, or you want the rebuild to track a report that keeps changing.</p></div>
+  </div>
+  <div class="callout"><span class="label">What each path exposes</span>
+    <p>A <b>Power BI template (<code>.pbit</code>)</b> carries the data model, DAX measures, and report layout — Ana reads all three (this replaced the old zip/xlsx/unpack hack). A <b>Tableau workbook (<code>.twb</code>)</b> is XML: datasource fields, calculated fields, and worksheet/dashboard layout. A <b>connected Power BI / Tableau source</b> exposes the published datasets, measures, and field metadata through the connector. Any of them gives Ana the logic to reconstruct the dashboard.</p>
+  </div>
+  <div class="callout warn"><span class="label">Add screenshots — this is what nails the look &amp; feel</span>
+    <p>Whichever path you use, <b>attach 2–3 screenshots of the original dashboard</b> (the full view, plus any key tiles). The file or connector gives Ana the <i>logic</i>; the screenshots give her the <i>look</i> — layout, color, card styling, chart types. Rebuilds come out far closer to the original when Ana can <b>see</b> it, not just read its model. This is the single highest-leverage thing you can hand her.</p>
   </div>
   <ol class="steps">
-    <li><b>Hand Ana the file.</b> Upload the <code>.pbit</code> / <code>.twb</code> and ask her to read the model, measures, and layout before building anything.</li>
+    <li><b>Give Ana the source + screenshots.</b> Path A: upload the <code>.pbit</code> / <code>.twb</code>. Path B: point her at the connected Power BI / Tableau source. Either way, attach 2–3 screenshots of the original and ask her to read the model, measures, and layout before building anything.</li>
     <li><b>Map measures → governed metrics.</b> Bind each visual to an ontology metric instead of re-implementing DAX/Tableau calcs ad hoc — that's what makes the number deterministic and auditable. Any measure with no clean mapping gets flagged, not guessed.</li>
     <li><b>Build a static-first snapshot</b> for the visuals actually shown (Module 6 is the how + why).</li>
     <li><b>Replicate the layout</b> — tiles, filters, trend — against the snapshot.</li>
     <li><b>Reconcile figure-for-figure</b> to the source dashboard before you trust it.</li>
   </ol>
-  <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
-<pre>Here's a [Power BI .pbit / Tableau .twb] dashboard. Read its data model, its measures, and its layout — don't build yet. Then: (1) list every measure and map each to a governed ontology metric, flagging any that don't map cleanly; (2) propose the equivalent data-app layout (cards, trend, breakdown, filters); (3) tell me which source tables/joins each metric needs. Show me the plan before you build.</pre></div>
-  <div class="yousee"><b>You'll see:</b> a measure-by-measure mapping (source measure → ontology metric), a layout proposal that mirrors the original, and a flagged list of anything that needs a definition before it can be rebuilt faithfully.</div>
+  <div class="prompt"><span class="tag">PROMPT · PATH A (FILE)</span><button>Copy</button>
+<pre>Here's a [Power BI .pbit / Tableau .twb] dashboard, plus screenshots of how it looks today. Read its data model, its measures, and its layout — and study the screenshots for the look and feel — don't build yet. Then: (1) list every measure and map each to a governed ontology metric, flagging any that don't map cleanly; (2) propose the equivalent data-app layout (cards, trend, breakdown, filters) matching the screenshots; (3) tell me which source tables/joins each metric needs. Show me the plan before you build.</pre></div>
+  <div class="prompt"><span class="tag">PROMPT · PATH B (CONNECTED SOURCE)</span><button>Copy</button>
+<pre>Power BI / Tableau is connected as a data source in this workspace. Read the published dataset and its measures for the [dashboard/report name] directly through the connector — and here are screenshots of how it looks today. Same plan: map each measure to a governed ontology metric (flag any that don't map), propose the matching data-app layout from the screenshots, and tell me which underlying tables/joins each metric needs. Show me the plan before you build.</pre></div>
+  <div class="yousee"><b>You'll see:</b> a measure-by-measure mapping (source measure → ontology metric), a layout proposal that mirrors the original's look from your screenshots, and a flagged list of anything that needs a definition before it can be rebuilt faithfully.</div>
   <div class="prompt"><span class="tag">PROMPT · RECONCILE</span><button>Copy</button>
 <pre>Now build it, then reconcile: reproduce the source dashboard's default (unfiltered) headline numbers exactly, and pick one filtered slice and match it to the dollar against a fresh query on the warehouse. Show me both dashboards' numbers side by side and call out any difference and why.</pre></div>
   <div class="yousee"><b>You'll see:</b> the rebuilt app with its numbers lined up against the source — matching figures where the logic is faithful, and an explicit note on any intentional difference.</div>
@@ -292,6 +303,7 @@
     <p>Visual-level DAX with no governed equivalent, report-only calculated columns, custom visuals/plugins, and pixel-exact formatting. Rebuild the <b>logic</b> as governed metrics and the <b>intent</b> of the layout — not every cosmetic detail. Flag anything you can't map rather than approximating a number.</p>
   </div></details>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
+    <label><input type="checkbox"> You gave Ana the source (file or connected) <em>and</em> screenshots of the original</label>
     <label><input type="checkbox"> The app reproduces the source dashboard's headline numbers to the dollar</label>
     <label><input type="checkbox"> Every source measure maps to a governed metric (or the unmapped ones are flagged)</label>
     <label><input type="checkbox"> The app runs alongside the original for parity testing</label>
