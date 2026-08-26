@@ -286,6 +286,7 @@
   <h1>Module 3 · Parity Testing</h1>
   <div class="page-meta"><span>⏱️ <b>20 minutes</b></span></div>
 <p><b>Goal:</b> prove the numbers match with golden queries pinned to the old tool's trusted values — and triage every mismatch to data, definition, or time-window. <b>Parity proof is the trust moment of the whole migration; be rigorous here and everything downstream gets easier.</b></p>
+<div class="callout"><span class="label">New — governed queries run against Tableau directly</span><p>Ontology <code>.tql</code> library queries now <b>execute directly against Tableau data sources</b>, the same way they run against SQL connectors. For migration this cuts both ways: you can run the <i>same governed definition</i> against the Tableau-published data and the warehouse and compare — parity testing without hand-exporting numbers — and teams still living in Tableau get governed metrics before their cutover date.</p></div>
 <h2>3.1 · Pin the golden values</h2>
 <p>From the old tool, capture the numbers people actually trust — the flagship's headline figures for <b>closed periods</b> (a closed quarter's value never moves; "this month" never stops moving):</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>

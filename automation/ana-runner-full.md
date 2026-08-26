@@ -158,7 +158,7 @@ Create a playbook "Weekly Ontology Gap Review" that runs Monday 9am: review the 
 ## Module 5 · Feed Agents
 
 ### 5.1 · What an agent is
-A specialist analyst watching one slice of your business. On each trigger it opens a behind-the-scenes thread with Ana, runs its instructions with the same tools as a chat (SQL, Python, web search, ontology), and publishes to its outputs.
+A specialist analyst watching one slice of your business. On each trigger it opens a behind-the-scenes thread with Ana, runs its instructions with the same tools as a chat (SQL, Python, bash (Beta, where enabled), web search, ontology), and publishes to its outputs.
 
 ### 5.2 · Create one
 

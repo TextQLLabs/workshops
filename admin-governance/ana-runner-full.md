@@ -19,7 +19,7 @@ Start by telling me what you see.
 ### 0.1 · Confirm you're an admin
 Open Settings from the left sidebar. As an admin you should see all of these sections; members see only a subset.
 
-> **Note** — If a section is missing, you don't have the admin role — get it assigned before continuing. Also confirm Observability appears in the left sidebar (admin-only; Module 5).
+> **Note** — If a section is missing, you don't have the admin role — get it assigned before continuing. Also confirm Observability appears in the left sidebar (visible to admins by default; grantable to non-admin members via permission — Module 5).
 
 ### 0.2 · The two other admin surfaces
 
@@ -226,7 +226,9 @@ Show ACU consumption by week for the last 8 weeks, broken down by user. Who are 
 
 > **New — the People view** — Observability now includes a People view : active-people trends, an engagement spectrum, and access-method breakdowns, with custom date-range filtering — your adoption dashboard, next to the quality signals below.
 
-> **Where to click** — Observability (left sidebar, admin-only)
+> **Where to click** — Observability (left sidebar)
+
+> 📌 **No longer admin-only:** Observability access can be granted to non-admin members holding the required permission — data-team leads can run the triage loop without the admin role. Grant deliberately: quality signals reveal what users ask about.
 
 ### 5.3 · Spend monitoring
 Weekly review: total ACUs vs plan, top consumers, per-model split, anomalies (one user 10x-ing, a runaway playbook). Lenses from Module 4.4.

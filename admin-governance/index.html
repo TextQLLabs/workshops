@@ -214,7 +214,7 @@
 <tr><td><b>Audit Log</b></td><td>Security and admin action history</td><td>5</td></tr>
 <tr><td><b>Specs</b></td><td>Org limits (row caps, timeouts)</td><td>4</td></tr>
 <tr><td><b>Developers</b></td><td>API keys, service accounts</td><td>5–6</td></tr></table>
-<div class="callout warn">If a section is missing, you don't have the admin role — get it assigned before continuing. Also confirm <b>Observability</b> appears in the left sidebar (admin-only; Module 5).</div>
+<div class="callout warn">If a section is missing, you don't have the admin role — get it assigned before continuing. Also confirm <b>Observability</b> appears in the left sidebar (visible to admins by default; it can now also be granted to non-admin members via permission — Module 5).</div>
 <h2>0.2 · The two other admin surfaces</h2>
 <ul><li><b>Connectors</b> (sidebar) — data source management, credentials, access. Module 3.</li>
 <li><b>Ontology / Context Library</b> (sidebar) — governed business knowledge; admins review patches. Module 6.</li></ul>
@@ -501,7 +501,8 @@
 <div class="callout">Audit logs and product metrics can stream to <b>Datadog, Splunk, Grafana, Prometheus, or S3</b> via OpenTelemetry (docs → Observability Export). If you run a SIEM, wire this — don't make the TextQL UI your only copy.</div>
 <h2>5.2 · Observability — quality monitoring</h2>
 <div class="callout"><span class="label">New — the People view</span><p>Observability now includes a <b>People view</b>: active-people trends, an engagement spectrum, and access-method breakdowns, with custom date-range filtering — your adoption dashboard, next to the quality signals below.</p></div>
-  <div class="callout"><span class="label">Where to click</span><p><b>Observability</b> (left sidebar, admin-only)</p></div>
+  <div class="callout"><span class="label">Where to click</span><p><b>Observability</b> (left sidebar)</p></div>
+<div class="callout"><span class="label">No longer admin-only</span><p>Observability access can now be <b>granted to non-admin members</b> who hold the required permission — so your data-team leads can run the triage loop below without holding the admin role. Grant it deliberately (Module 2's role design): quality signals reveal what users ask about, which is itself sensitive.</p></div>
 <p>Completed threads are analyzed for quality signals — context gaps, execution errors, user frustration, potential inaccuracies — surfaced as <b>warnings</b>. The Overview tab: run volume by source (threads / playbooks / Slack / feed agents), warning trend, <b>Warning Breakdown</b> ranking, searchable run table; 7–90 day ranges.</p>
 <p><b>The weekly triage loop (15 min):</b> stats bar (warn rate trending up?) → Warning Breakdown → click the top type, read 3–5 threads → classify root cause:</p>
 <table><tr><th>Root cause</th><th>Owner / fix</th></tr>
