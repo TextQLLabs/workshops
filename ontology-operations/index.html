@@ -267,8 +267,9 @@
 <tr><td><b>Open</b></td><td>Visible to everyone in the org (the default)</td></tr>
 <tr><td><b>Restricted</b></td><td>Listed roles only — <b>Ana will not reference, load, or reveal the existence</b> of the folder to anyone else</td></tr>
 <tr><td><b>Viewer</b> (per role)</td><td>Files load into that role's threads; read-only in the UI</td></tr>
-<tr><td><b>Editor</b> (per role)</td><td>Viewer + edit</td></tr></table>
-<p>Admins always retain full access. The invisible-restriction property matters: not a locked door people rattle — genuinely unknown.</p>
+<tr><td><b>Editor</b> (per role)</td><td>Viewer + edit</td></tr>
+<tr><td><b>Member grant</b> (per person)</td><td>OWNERS files can grant read or write to an <i>individual member</i>, not only roles — for the one analyst who needs a restricted folder without minting a whole role</td></tr></table>
+<p>Admins always retain full access. The invisible-restriction property matters: not a locked door people rattle — genuinely unknown. Prefer role grants for anything recurring; member grants are the escape hatch for genuine one-offs (and worth auditing periodically, since they don't show up in your role design).</p>
   <div class="callout"><span class="label">Where to click</span><p>Ontology → folder row → <b>Manage access</b> icon → Open/Restricted → add roles with levels</p></div>
 <h2>2.2 · Design the folder tree for access</h2>
 <pre>ontology/

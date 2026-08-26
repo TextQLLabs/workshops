@@ -10,6 +10,7 @@ Each workshop is a **self-contained `index.html`** (plus a local `assets/` folde
 |---|---|---|---|
 | [Self-Service Analytics](self-service-analytics/) | Business users — no SQL, no data background | ~2 hours | ✅ Ready (screenshots pending — see [SHOT_LIST](self-service-analytics/SHOT_LIST.md)) |
 | [Dashboards & Reporting](dashboards-reporting/) | Anyone who turns analysis into something others consume | ~2 hours | ✅ Ready |
+| [Build Data Apps with Ana](data-apps/) | Analysts & builders turning analyses into interactive apps | ~2 hours | 🧪 Beta |
 | [Automation Deep-Dive](automation/) | Analysts/operators automating recurring analysis | ~2 hours | ✅ Ready |
 | [TextQL for Sales & GTM](sales-gtm/) | Sellers, sales leaders, RevOps, CS | ~90 min | ✅ Ready |
 | [Connect Your Data](connect-your-data/) | Data engineers, platform admins | ~2.5 hours | ✅ Ready |

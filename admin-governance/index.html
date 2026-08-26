@@ -380,7 +380,7 @@
 <h2>3.2 · The credential decision</h2>
 <table><tr><th>Model</th><th>How it works</th><th>Use when</th></tr>
 <tr><td><b>Shared service account</b></td><td>One credential; everyone queries as it</td><td>Simplicity; non-sensitive or broadly shared data</td></tr>
-<tr><td><b>Per-member OAuth</b> (Snowflake, Databricks)</td><td>Each member queries as <i>themselves</i> — one-time popup, or silently via SSO token exchange</td><td>Per-user warehouse audit trails; warehouse-enforced row/column security</td></tr></table>
+<tr><td><b>Per-member OAuth</b> (Snowflake, Databricks, BigQuery)</td><td>Each member queries as <i>themselves</i> — one-time popup, or silently via SSO token exchange; BigQuery runs queries under each user's own Google credentials</td><td>Per-user warehouse audit trails; warehouse-enforced row/column security</td></tr></table>
 <p><b>Per-member setup (Snowflake sketch):</b> create an OAuth security integration in the warehouse (<code>CREATE SECURITY INTEGRATION ... OAUTH_REDIRECT_URI='https://app.textql.com/auth/snowflake/callback'</code>), retrieve client credentials, select <b>Per-Member OAuth</b> on the connector, paste credentials. SSO token exchange is optional; the popup is the fallback.</p>
 <div class="callout">Governance principle for shared accounts: the service account's warehouse role <i>is</i> your ceiling — grant the narrowest role that serves the use case, never a superuser. With per-member auth, the warehouse's own grants do the row-level work.</div>
 <h2>3.3 · Scope connectors by role</h2>
