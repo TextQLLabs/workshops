@@ -15,6 +15,7 @@ Each workshop is a **self-contained `index.html`** (plus a local `assets/` folde
 | [TextQL for Sales & GTM](sales-gtm/) | Sellers, sales leaders, RevOps, CS | ~90 min | ✅ Ready |
 | [Connect Your Data](connect-your-data/) | Data engineers, platform admins | ~2.5 hours | ✅ Ready |
 | [Ontology Operations](ontology-operations/) | Data teams running an ontology in production | ~2 hours | ✅ Ready |
+| [Ontology as Code — the Refinery CLI](refinery-cli/) | Data/platform engineers scripting the platform | ~2 hours | ✅ Ready |
 | [Row-Level Security & Identity-Aware Access](row-level-security/) | DBAs + workspace admins securing data access | ~2.5 hours | ✅ Ready |
 | [Admin & Governance](admin-governance/) | Workspace administrators | ~2.5 hours | ✅ Ready |
 | [Developer Workshop — API & MCP](developer/) | Developers and technical integrators | ~2 hours | ✅ Ready |

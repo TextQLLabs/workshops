@@ -197,6 +197,7 @@
 <tr><td><b>Usage/Billing API</b></td><td><code>/v1/billing</code></td><td>ACU consumption records</td></tr>
 <tr><td><b>MCP endpoint</b></td><td><code>/mcp</code></td><td>Ana as a tool in MCP clients (Module 4)</td></tr></table>
 <p>v2 conventions: <code>GET/POST/PATCH/DELETE</code>, IDs in paths (<code>/v2/playbooks/{id}</code>), query-param pagination, errors as <code>{"error": {"code", "message"}}</code>, SSE via <code>text/event-stream</code>.</p>
+<div class="callout"><span class="label">New — the Refinery CLI</span><p>Everything in this workshop's API surface (and more — sandboxes, governed .tql execution, ontology writes) is also drivable from the terminal via the <b>refinery</b> CLI: one JSON document per command, built for scripting and CI. The full loop is its own workshop: <a href="../refinery-cli/index.html"><b>Ontology as Code — the Refinery CLI</b></a>.</p></div>
 <h2>0.2 · Get a key</h2>
   <div class="callout"><span class="label">Where to click</span><p>Settings → Configuration → <b>API Keys</b></p></div>
 <p>Vault it, name it for its purpose, rotate on policy. Key creation is permission-gated — if you can't create one, that's a role conversation (Admin workshop).</p>

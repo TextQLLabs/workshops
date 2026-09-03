@@ -226,7 +226,8 @@
 <table><tr><th>Path</th><th>Who uses it</th><th>Review gate</th></tr>
 <tr><td><b>GitHub sync</b></td><td>Engineers in their own editors; bulk imports</td><td>Git PRs (optionally) or in-app Reviews</td></tr>
 <tr><td><b>Direct file editing</b> (in-app)</td><td>Admins/owners, surgical fixes</td><td>Direct or via Reviews</td></tr>
-<tr><td><b>Thread-driven proposals</b></td><td><i>Everyone else</i> — analysts mid-thread</td><td>Always the approval flow</td></tr></table>
+<tr><td><b>Thread-driven proposals</b></td><td><i>Everyone else</i> — analysts mid-thread</td><td>Always the approval flow</td></tr>
+<tr><td><b>Refinery CLI / CI</b></td><td>Engineers scripting installs and automation pipelines</td><td>Direct upsert (pre-users / sandboxes) or git-sync PRs — see <a href="../refinery-cli/index.html"><b>Ontology as Code</b></a></td></tr></table>
 <div class="callout"><span class="label">Execution targets</span><p>.tql library queries now execute <b>directly against Tableau data sources</b>, the same way they run against SQL connectors — one governed definition can serve warehouse and Tableau-published data alike. Operationally: your golden-suite runs (Module 3) and RLS coverage checks (§2.5) should include any Tableau-backed surfaces, not just warehouse connectors.</p></div>
 <p>The third path is your growth engine (Module 4); the first is engineering rigor; the second is for surgery. Trouble = wrong-path traffic (bulk imports through the UI; unreviewed direct edits to governed metrics).</p>
 <h2>1.2 · Connect (or audit) the Git sync</h2>
