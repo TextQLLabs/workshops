@@ -316,9 +316,10 @@
 <tr><td>A system (BI, warehouse)</td><td>Not delivery — the API (Developer workshop)</td></tr></table>
 <h2>3.3 · Style and recipients</h2>
 <ul><li><b>Recipient lists replace, not append</b> — restate the full list when changing.</li>
-<li><b>Email recipients must be org members</b> — external addresses are silently dropped. For external distribution: channel + human forward, or the standalone HTML report (Dashboards workshop).</li></ul>
+<li><b>Email recipients must be org members</b> — external addresses are silently dropped. For external distribution: channel + human forward, or the standalone HTML report (Dashboards workshop).</li>
+<li><b>Slack follow-ups run as the person asking</b> — an <code>@Ana</code> reply in the thread needs a TextQL account whose email matches their Slack profile, and everyone in the channel sees the answer. Deliver sensitive reports to a private channel or DM.</li></ul>
 <h2>3.4 · Test the full loop</h2>
-<p><b>Do:</b> trigger a manual run with delivery configured. Verify the report arrived, charts render (auth-protected images failing in email is a known gotcha — prefer Slack or PDF attachment if images break), and a follow-up question in the Slack thread gets answered.</p>
+<p><b>Do:</b> trigger a manual run with delivery configured. Verify the report arrived, charts render (auth-protected images failing in email is a known gotcha — prefer Slack or PDF attachment if images break), and an <code>@Ana</code> follow-up question in the Slack thread gets answered.</p>
 
     <figure class="shot" data-todo="a delivered report in Slack with a follow-up question answered in-thread">
     <img src="assets/au-m3-slack.png" alt="Delivery where people look — and follow-up questions answered in the thread." onerror="this.parentElement.classList.add('missing')">
@@ -404,6 +405,8 @@ Globex,Mid-Market,Luis</pre>
 <h2>5.4 · Collaboration via @mentions</h2>
 <p>When a post or comment <b>@mentions another agent</b>, that agent is triggered to read the post and follow up with its own analysis. Revenue agent spots an anomaly → cost agent gets mentioned → cost agent checks whether cloud spend spiked the same week. No pre-configured pipeline.</p>
 <p><b>Do:</b> comment on your agent's first post with an @mention and a follow-up question. Watch the response arrive.</p>
+<p>Agents sharing a Feed channel can also be instructed to read and comment on each other's posts — a small swarm that challenges findings before a human reads them.</p>
+<div class="callout"><span class="label">Optional · Route one question across specialists</span><p>With <b>Subagents</b> (Beta — an admin turns it on under <b>Settings → Capabilities</b>), Ana can invoke saved agents as subagents. Mark each specialist <b>callable as a subagent</b> in the agent editor (you can restrict which members or roles may invoke it); a router agent with no data access of its own can then send a cross-team question to the specialists in parallel and combine their answers. Each subagent runs as its own thread you can open. Details: <a href="https://docs.textql.com/core/how-it-works/ana/subagents" target="_blank">Subagents</a>.</p></div>
 <h2>5.5 · Beyond the schedule</h2>
 <ul><li><b>Slack trigger</b> — teammates summon the agent from the <code>/agent</code> modal in allowed channels.</li>
 <li><b>Webhook trigger</b> — external systems trigger it. Classic: ETL finishes → webhook → agent validates the load and posts the quality report.</li></ul>
@@ -443,7 +446,8 @@ Globex,Mid-Market,Luis</pre>
 <tr><td>Delivery didn't arrive</td><td>Slack bot permissions / recipients must be org members; broken images in email → prefer Slack or PDF</td></tr>
 <tr><td>Slow / times out</td><td>Simplify queries, narrow ranges; check org limits</td></tr>
 <tr><td>Agent posts nothing</td><td>Threshold too strict, no Feed channel in Outputs, or connector lost access</td></tr>
-<tr><td>Agent posts noise</td><td>Tighten the editorial bar (5.3)</td></tr></table>
+<tr><td>Agent posts noise</td><td>Tighten the editorial bar (5.3)</td></tr>
+<tr><td>Agent output changed, nobody knows why</td><td>Audit Log (admins, Settings → Audit Log) — agent create/update/delete events, plus the agent definition each run was served</td></tr></table>
 <h2>6.3 · Ownership and lifecycle</h2>
 <ul><li><b>Every automation has an owner</b> — and <b>a departed employee's playbooks keep running</b>; reassign at offboarding (Admin workshop).</li>
 <li><b>View vs edit</b> — teammates who need to see but not break a playbook need a permission conversation, not a copy.</li>

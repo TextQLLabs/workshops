@@ -198,7 +198,7 @@
 <h2>0.2 · Authenticate</h2>
   <div class="prompt"><span class="tag">TERMINAL</span><button>Copy</button>
 <pre>refinery auth login</pre></div>
-  <div class="yousee"><b>You'll see:</b> a device-flow URL + code (approve in the browser), or use <code>refinery auth login --api-key KEY</code> with a workspace API key for headless setups. Then check who you are: <code>refinery auth status</code>.</div>
+  <div class="yousee"><b>You'll see:</b> a device-flow URL + code (approve in the browser), or use <code>refinery auth login --api-key KEY</code> with a workspace API key for headless setups. On a single-tenant / VPC deployment, add <code>--url [your deployment URL]</code> — without it the CLI signs in to TextQL cloud — and pick your org on the approval page. Then check who you are: <code>refinery auth status</code>.</div>
 <div class="callout warn"><span class="label">⚠️ Multi-workspace users: isolate your credentials</span><p>The approval page defaults to the workspace you last used in the web app — it's easy to authorize the wrong one, and the CLI won't warn you. For any work targeting a specific workspace, give it its own config dir and verify:</p>
 <pre>REFINERY_CONFIG_DIR=~/.config/refinery/acme refinery auth login --api-key KEY
 REFINERY_CONFIG_DIR=~/.config/refinery/acme refinery info</pre></div>
@@ -279,6 +279,7 @@ refinery rpc call textql.rpc.public.patches.OntologyManagementService/GetSkill -
 <table><tr><th>You'll try</th><th>The language wants</th></tr>
 <tr><td><code>metrics: Set&lt;"a"|"b"&gt; = ["a"]</code></td><td>Set defaults may only be <code>[]</code> — handle the empty case in the body with <code>isEmpty</code></td></tr>
 <tr><td><code>concatSep(", ", frags)</code></td><td>Application syntax, no parens/commas: <code>concatSep ", " frags</code></td></tr>
+<tr><td>Hand-building <code>VALUES (…), (…)</code> or <code>ARRAY[…]</code> from a list</td><td>Map each item to a fragment, then join: <code>concatSep ", " (map (\r -&gt; sql"${r}") rows)</code>. Type rows as a tuple param (<code>List&lt;[Int, String]&gt;</code>); records don't interpolate directly — project them: <code>sql"${[r.id, r.name]}"</code>. Guard the empty list — it leaves <code>VALUES</code> invalid</td></tr>
 <tr><td><code>matchSet</code> as a function</td><td>It's syntax: <code>matchSet metrics { "label" -&gt; sql"...", }</code> (arrow arms; trailing comma allowed here only)</td></tr>
 <tr><td><code>'${param}'</code> in SQL</td><td>Unquoted <code>${param}</code> — the renderer handles quoting; <code>IN ${list}</code> adds parens</td></tr>
 <tr><td><code>''</code> inside a <code>sql''…''</code> body</td><td>No adjacent single quotes there — put quoted SQL literals in <code>sql"…"</code> fragments</td></tr></table>

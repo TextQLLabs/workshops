@@ -253,7 +253,7 @@
 <h2>1.1 · Why SSO first</h2>
 <p>Until SSO is on, users sign in with magic links or Google — fine for a pilot, not for governance. SSO gives you central credential policy (MFA, session length), instant deprovisioning, and a single audit point. Supported: <b>Okta, Microsoft Entra ID (Azure AD), Ping Identity</b> — anything OIDC-compliant.</p>
 <h2>1.2 · Configure OIDC</h2>
-  <div class="callout"><span class="label">Where to click</span><p>Settings → <b>Configuration</b> tab → Authentication section → <b>OIDC Settings</b></p></div>
+  <div class="callout"><span class="label">Where to click</span><p>Settings → <b>Configuration</b> tab → Authentication section → <b>OIDC Settings</b>. Requires a role with the organization <code>write</code> permission (the built-in admin role has it).</p></div>
 <table><tr><th>Field</th><th>Where it comes from</th></tr>
 <tr><td><b>Redirect URL</b></td><td>System-generated, read-only — copy it <i>into your IdP</i> as the callback/redirect URI</td></tr>
 <tr><td><b>Display Name</b></td><td>Your choice — the login button users see (e.g., "Acme SSO")</td></tr>
@@ -276,6 +276,7 @@
 <li>In your IdP, add SCIM provisioning to the TextQL app: <b>SCIM Base URL</b> <code>https://app.textql.com/scim/v2</code> (own host for VPC), <b>Bearer token</b> auth.</li>
 <li>Enable: <b>Create Users</b>, <b>Update User Attributes</b>, <b>Deactivate Users</b>, <b>Push Groups</b>.</li>
 <li>Ping only: map <code>given_name</code> ← <code>\${user.name.given}</code> and <code>family_name</code> ← <code>\${user.name.family}</code>, or display names won't populate.</li></ol>
+<div class="callout"><span class="label">Self-hosted with many orgs: one deployment-wide token</span><p>Your deployment operator can enable a single <b>deployment-wide SCIM token</b>. Recommended pattern: one IdP app pointed at <code>https://&lt;your host&gt;/scim/v2/deployment</code> pushes users and groups into a shared directory, and each org's admin links the groups it wants under <b>Settings → Security → Deployment SCIM Groups</b> → <b>Link</b>. Nobody joins an org until a group is linked. Any org admin with SCIM write permission can see and link every directory group, so enable this only when every org on the deployment belongs to the same company. An org should get users from the shared directory <i>or</i> its own SCIM app, not both.</p></div>
 <h2>1.5 · Test the joiner / leaver loop</h2>
 <ol><li><b>Joiner:</b> assign a test user to the TextQL app in your IdP → they appear in Settings → Members.</li>
 <li><b>Leaver:</b> unassign them → they are deactivated in TextQL.</li>
@@ -337,6 +338,7 @@
 <p>The most-requested pattern from real support tickets: a <b>viewer/analyst split</b> and <b>restricting who can publish connectors</b>.</p>
 <p><b>Do:</b> Settings → Roles → <b>Create Role</b> → <code>analyst-restricted</code> → Manage Permissions: Chat <code>read</code>+<code>write</code>; Dashboard <code>read</code> only; Connector <code>read</code> only; Playbook <code>read</code> only; Feed <code>read</code>. Assign a test user, then <b>verify as them</b>: they should fail to create a connector or edit a public dashboard.</p>
 <div class="callout"><span class="label">New: the raw-SQL permission</span><p>Connector access now has a fourth dimension: <b><code>raw sql</code></b> — revocable independently of read/write. A role can keep full access to a connector's data <i>through governed ontology queries</i> while losing the ability to run ad-hoc SQL that bypasses row-level rules. For roles serving business users, revoking it costs nothing (Ana's governed path is unaffected) and closes the bypass. Pair with the connection- and org-level controls in Module 3.4.</p></div>
+<div class="callout"><span class="label">New: import roles from a spreadsheet</span><p>Settings → Roles → <b>Import / Export → Import roles</b> takes a CSV or XLSX matrix (first column <code>Permission</code>, one column per new role), opens an editable draft, and creates nothing until you click <b>Approve and create</b>. <b>Export roles</b> downloads every current role against the full permission catalog — a ready-made audit artifact and a template. Import needs <code>role:write</code> + <code>role_permission:write</code>; it never changes existing roles or assigns members.</p></div>
 <div class="callout">Custom roles also scope <b>which connectors, context files, and models</b> the role can access — that's how "Finance sees the finance warehouse, Sales sees the CRM mirror" is done. Connector scoping: Module 3. Model scoping: Module 4.</div>
 <h2>2.4 · Sharing semantics — the other half of access</h2>
 <ul><li>A <b>private</b> item: visible to owner + explicit shares + <code>read_private</code> holders.</li>
@@ -444,7 +446,7 @@
 <table><tr><th>Toggle</th><th>Governance question it answers</th></tr>
 <tr><td>Web Search</td><td>May Ana send queries to the public internet? (data-exfil sensitive orgs often disable)</td></tr>
 <tr><td>SQL Execution</td><td>May Ana run SQL at all?</td></tr>
-<tr><td>Ontology Access / Editing</td><td>May Ana use the semantic layer; may users propose edits?</td></tr>
+<tr><td>Ontology Access / Editing</td><td>May Ana use the semantic layer; may users propose edits? (After your org switches to Ontology 3.0, the Ontology toggle controls <code>.tql</code> queries, not access to the Ontology library.)</td></tr>
 <tr><td>File Uploads</td><td>May users bring ad-hoc files into chats? (data-ingress policy)</td></tr>
 <tr><td>PowerBI / Tableau Integration</td><td>Are BI connectors allowed?</td></tr>
 <tr><td>Multiple Connector Selection</td><td>Can one chat join across sources? (widens single-thread blast radius)</td></tr>
@@ -471,7 +473,7 @@
 <p>When a user reports "my query died," check limits before assuming a bug — the fix is usually a narrower query, or a deliberate limit-raise request with a business case.</p>
 <h2>4.4 · Spend awareness</h2>
 <div class="callout"><span class="label">New — Chargeback (Beta)</span><p>Administrators can now <b>split the organization's usage bill across internal teams</b>: configurable bill lines, auto-updating rosters, what-if previews, and CSV export — past billing periods stay frozen and reproducible. If internal cost allocation is the blocker to onboarding more teams, this is the feature to turn on.</p></div>
-<p>Usage is metered in <b>ACUs</b>. Three lenses: the <b>TextQL Usage connector</b> (query your own usage in plain English), the <b>Usage API</b> (<code>https://app.textql.com/v1/billing</code>, Bearer token from Settings → Developers → API Keys), and <b>Model Analytics</b> (4.2).</p>
+<p>Usage is metered in <b>ACUs</b>. Three lenses: the <b>TextQL Console connector</b> (query ACU spend and token counts in plain English — the separate TextQL Usage connector covers threads, not ACUs; requires <code>billing:read</code>, and per-user <code>email</code>/<code>roles</code> columns appear only for roles holding org-wide <code>chat:read_private</code>), the <b>Usage API</b> (<code>https://app.textql.com/v1/billing</code>, Bearer token from Settings → Developers → API Keys), and <b>Model Analytics</b> (4.2).</p>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>Show ACU consumption by week for the last 8 weeks, broken down by user. Who are the top 10 consumers, and is any single user trending sharply up?</pre></div>
   <div class="yousee"><b>You'll see:</b> Your spend early-warning system — Module 5 turns it into a scheduled playbook.</div>
@@ -493,11 +495,12 @@
 <h2>5.1 · The audit log</h2>
   <div class="callout"><span class="label">Where to click</span><p>Settings → <b>Audit Log</b> — filters: free-text + category + action + date range (Today / 7 / 30 / 90 days)</p></div>
 <p>Every security/admin action: <b>time, actor, action, category, resource</b>; click a row for actor ID, auth method, IP, metadata. Categories include Authentication, Member Management, Roles &amp; Permissions, SCIM Provisioning.</p>
-<p><b>Three drills to build the habit:</b></p>
+<p><b>Five drills to build the habit:</b></p>
 <ol><li><i>Who changed permissions lately?</i> Category = Roles &amp; Permissions, last 30 days. Every event should map to a change you know about.</li>
 <li><i>Failed logins.</i> Category = Authentication, action = Login failed. A burst against one account → check with that user.</li>
 <li><i>Trace one user end-to-end.</i> Search their email: invite → join → roles → logins. Your offboarding-verification and auditor answer.</li>
-<li><i>Raw SQL vs governed queries.</i> Every query execution now carries a <b>provenance</b> field — <code>raw_sql</code> or <code>governed_tql</code> — and blocked attempts log the reason (TQL-only connection, raw SQL disabled for the org). Filter for <code>raw_sql</code> against sensitive connections: each hit is either a gap to close with a Module 3.4b dial, or your evidence to a governance board that the dials are working.</li></ol>
+<li><i>Raw SQL vs governed queries.</i> Every query execution now carries a <b>provenance</b> field — <code>raw_sql</code> or <code>governed_tql</code> — and blocked attempts log the reason (TQL-only connection, raw SQL disabled for the org). Filter for <code>raw_sql</code> against sensitive connections: each hit is either a gap to close with a Module 3.4b dial, or your evidence to a governance board that the dials are working.</li>
+<li><i>What configuration did a run use?</i> The <b>Agents</b> category logs agent created / updated / deleted, plus <b>Agent run config recorded</b> — the definition served to each run, with a hash of that configuration. Library <i>Materialized to sandbox</i> events now record the library commit and a digest of the tree served — your provenance answer when someone asks "which version of the ontology produced this number?"</li></ol>
 <div class="callout">Audit logs and product metrics can stream to <b>Datadog, Splunk, Grafana, Prometheus, or S3</b> via OpenTelemetry (docs → Observability Export). If you run a SIEM, wire this — don't make the TextQL UI your only copy.</div>
 <h2>5.2 · Observability — quality monitoring</h2>
 <div class="callout"><span class="label">New — the People view</span><p>Observability now includes a <b>People view</b>: active-people trends, an engagement spectrum, and access-method breakdowns, with custom date-range filtering — your adoption dashboard, next to the quality signals below.</p></div>
@@ -523,7 +526,7 @@
     <figcaption>Monitoring and audit: what ran, by whom, with what quality.</figcaption>
   </figure>
   <div class="checkpoint"><h4>✅ Checkpoint</h4>
-    <label><input type="checkbox"> You ran all three audit drills and can produce one user's full access history on demand</label>
+    <label><input type="checkbox"> You ran all five audit drills and can produce one user's full access history on demand</label>
     <label><input type="checkbox"> You know the weekly observability triage loop and the four root-cause owners</label>
     <label><input type="checkbox"> OpenTelemetry export is wired to your SIEM, or consciously deferred</label>
     <label><input type="checkbox"> The Admin Weekly Review playbook exists, is scheduled, and delivers to you</label>

@@ -73,7 +73,11 @@ not help, and parallelizing the scans multiplies warehouse cost.
 
 ## Governance
 
-Data apps run under each viewer's own permissions. On connections restricted to
+Data apps run under each viewer's own permissions, but the shared snapshot is
+the same for every viewer. When viewers are entitled to different rows, serve
+those rows from a governed .tql that reads the viewer's identity (`_tql`) and
+fails closed; such sources are live-only — read them through a compute function,
+never bake them into the static-first snapshot. On connections restricted to
 governed queries (TQL-only), app data sources must be governed ontology query
 files — build on governed surfaces from the start so a later lockdown never
 breaks the app.

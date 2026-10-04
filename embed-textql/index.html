@@ -268,8 +268,7 @@ client = TextQLClient(api_key=minted_key)   # Module 1's short-lived key
 tools = {
     "connector_ids": [TENANT_CONNECTOR_ID],
     "sql_enabled": True,
-    "python_enabled": True,
-    "ontology_enabled": True,
+    "ontology_enabled": True,               # legacy Ontology only; ignored on Ontology 3.0
     "web_search_enabled": False,            # lock down what the embed can do
 }
 
@@ -347,10 +346,10 @@ for asset in chat.assets:
 <h2>4.1 · The embed URL, parameterized</h2>
 <p>The full Ana experience embeds with one URL — and the query parameters are your per-embed configuration surface:</p>
 <pre>&lt;iframe
-  src="https://app.textql.com/embed?authKey=MINTED_KEY_HASH&amp;connectorIds=42,99&amp;sqlEnabled=true&amp;ontologyEnabled=true&amp;pythonEnabled=false&amp;webSearchEnabled=false"
+  src="https://app.textql.com/embed?authKey=MINTED_KEY_HASH&amp;connectorIds=42,99&amp;sqlEnabled=true&amp;webSearchEnabled=false"
   width="100%" height="600px" frameBorder="0" allow="clipboard-write"&gt;
 &lt;/iframe&gt;</pre>
-<table><tr><th>Parameter group</th><th>Parameters</th><th>Use</th></tr><tr><td>Auth &amp; session</td><td><code>authKey</code> (the minted key hash from Module 1.3), <code>chatId</code> (resume a specific chat)</td><td>Identity and continuity</td></tr><tr><td>Connector selection</td><td><code>connectorIds=42,99</code> (comma-separated; takes precedence over legacy <code>connectorId</code>)</td><td>Pin the embed to exactly its data</td></tr><tr><td>Tool toggles</td><td><code>sqlEnabled</code>, <code>ontologyEnabled</code>, <code>pythonEnabled</code>, <code>webSearchEnabled</code>, <code>googleDriveEnabled</code>, <code>tableauEnabled</code>, <code>powerbiEnabled</code> — each <code>true</code>/<code>false</code></td><td>Per-embed capability lockdown; omitted params fall back to org/role defaults</td></tr></table>
+<table><tr><th>Parameter group</th><th>Parameters</th><th>Use</th></tr><tr><td>Auth &amp; session</td><td><code>authKey</code> (the minted key hash from Module 1.3), <code>chatId</code> (resume a specific chat)</td><td>Identity and continuity</td></tr><tr><td>Connector selection</td><td><code>connectorIds=42,99</code> (comma-separated; takes precedence over legacy <code>connectorId</code>)</td><td>Pin the embed to exactly its data</td></tr><tr><td>Tool toggles</td><td><code>sqlEnabled</code>, <code>webSearchEnabled</code>, <code>googleDriveEnabled</code>, <code>tableauEnabled</code>, <code>powerbiEnabled</code> — each <code>true</code>/<code>false</code>. <code>ontologyEnabled</code> applies to the legacy Ontology only; on Ontology 3.0 it is ignored and TQL queries are always on unless the org forbids the tool</td><td>Per-embed capability lockdown; omitted params fall back to org/role defaults</td></tr></table>
 <p>Notes that save debugging time: height of <b>500px+</b> (Ana's UI needs the room); <code>allow="clipboard-write"</code> so users can copy answers; the lockdown story is <b>parameters + role</b> together — the URL params shape the <i>session</i>, the key's role caps what's <i>possible</i> (params can't grant what the role denies).</p>
 <h2>4.2 · Where the iframe goes</h2>
 <p>Anywhere that hosts web content:</p>
@@ -358,6 +357,7 @@ for asset in chat.assets:
 <h2>4.3 · Embedding dashboards</h2>
 <p>TextQL dashboards (built and published per the <a href="../dashboards-reporting/index.html"><b>Dashboards &amp; Reporting</b></a> workshop) embed two ways, by trust level:</p>
 <table><tr><th>Pattern</th><th>How</th><th>When</th></tr><tr><td><b>Authenticated view</b></td><td>The dashboard inside the embed surface, viewer scoped by the minted key's role — RLS on the underlying connector applies automatically</td><td>Internal portals; per-tenant views where the role/RLS does the scoping (Module 5)</td></tr><tr><td><b>Frozen artifact</b></td><td>The standalone interactive HTML report (Module 3.3) served from your storage</td><td>External/customer surfaces where no live connection should exist</td></tr></table>
+<div class="callout"><span class="label">Embedding a data app on its own</span><p>To render a TextQL <b>data app</b> inside your page, use the TypeScript SDK (<code>@textql/sdk</code>), not an iframe of the app's TextQL URL: a published app refuses to be framed by any other origin (<code>frame-ancestors</code>), and the <code>/embed?authKey=</code> URL above opens a chat surface. The SDK splits the work in two — <code>createEmbedHandler()</code> mounts one catch-all route on <i>your</i> server (the only place the API key lives; add an <code>authorize</code> hook, or anyone who can reach the route sees the app), and <code>&lt;TextqlApp /&gt;</code> (React) or the <code>&lt;textql-app&gt;</code> custom element renders it in the browser. Full reference: <a href="https://docs.textql.com/api-reference/sdk/embed" target="_blank" rel="noopener">docs.textql.com/api-reference/sdk/embed</a>.</p></div>
 <p>White-label depth (chrome removal, theming of the embedded surface) is <b>deployment-dependent</b> — org logo and report theming are configurable (Settings → Appearance), deeper UI customization varies by plan and deployment; confirm specifics with your TextQL contact before promising pixel-level branding in your product spec.</p>
 <h2>4.4 · Filters and refresh behavior</h2>
 <p>Two behaviors to design around rather than discover:</p>

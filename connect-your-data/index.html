@@ -216,13 +216,14 @@
 <li>A Databricks PAT from a service principal where possible — not your personal token</li></ul>
 <p>Personal credentials break when you leave or rotate a password, can't be least-privileged without affecting you, and muddy warehouse-side audit.</p>
 <h2>0.4 · Decision 2 — scope: what should Ana see?</h2>
-<ul><li><b>Database/schema scoping</b> — point at the analytics DB or mart schema, not the whole instance. Less noise = better SQL, faster sync, smaller blast radius.</li>
+<ul><li><b>Database/schema scoping</b> — point at the analytics DB or mart schema, not the whole instance. Less noise = better SQL, faster sync, smaller blast radius. On Snowflake these fields set query defaults and discovery scope, not permissions, unless you turn on <b>Restrict queries to these schemas</b> (Module 2.1).</li>
 <li><b>Read-only vs read-write</b> — read-only is the right default; read-write needs an owner and a reason.</li>
 <li><b>Grant-level scoping</b> — SELECT on what's needed, nothing more.</li>
 <li><b>Governed-queries-only (TQL-only)</b> — for sensitive sources (PHI, PII, restricted financials), mark the connection <b>TQL-only</b> in its settings: plain SQL is refused on this connection in every surface, and only approved ontology query files — where row-level security is enforced — can reach the data. Every other connection keeps full SQL. <b>Sequencing matters:</b> TQL-only makes governed query files the <i>only</i> door — so the ontology for this source must exist first. A brand-new connector has no query files yet; lock it immediately and nothing can query it at all. The order is: connect → build the governed surfaces (<a href="../build-your-ontology/index.html"><b>Build Your Ontology</b></a>) → <i>then</i> flip TQL-only. Plan the lock at creation; flip it when the ontology covers the questions users actually ask. For the whole identity story — per-member auth vs guards — see <a href="../row-level-security/index.html"><b>Row-Level Security &amp; Identity-Aware Access</b></a>.</li></ul>
 <div class="callout"><span class="label">New — close the raw-SQL back door</span><p>Row-level security lives in ontology query files; until recently a user with SQL access could query around them. The <b>TQL-only</b> connection setting closes that per source, and admins can also revoke the <b>raw-sql role permission</b> or disable raw SQL org-wide. The full decision framework is in <a href="../admin-governance/index.html"><b>Admin &amp; Governance</b></a>, Module 3.4b — flag this to whoever owns your workspace governance.</p></div>
 <h2>0.5 · Decision 3 — who in TextQL gets this connector?</h2>
 <p>Public vs private is one dropdown at creation but a migration after users build on it. Production warehouses with sensitive data usually start private and get role-scoped.</p>
+<div class="callout warn"><span class="label">Slack channel context bypasses connector scoping</span><p>If a Slack channel has a channel-context playbook, its connectors are used for <b>everyone who asks in that channel</b> — Ana checks that they exist, not that the asker can access them — and answers posted in a channel are visible to all its members. Don't attach a role-scoped connector to a playbook used in a broad channel.</p></div>
   <div class="prompt"><span class="tag">PROMPT</span><button>Copy</button>
 <pre>List the connectors that already exist in this org with their types and visibility. I'm about to add [source] — flag anything that looks like a duplicate or overlapping source.</pre></div>
   <div class="yousee"><b>You'll see:</b> The current fleet — surprisingly often the source is already half-connected, and your job is consolidation, not creation.</div>
@@ -305,10 +306,11 @@ openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub</pre></div>
 <pre>ALTER USER textql_svc SET RSA_PUBLIC_KEY='&lt;public key, no header/footer lines&gt;';</pre>
 <table><tr><th>Field</th><th>Example</th></tr>
 <tr><td>Account Identifier</td><td><code>xy12345.us-east-1</code></td></tr>
-<tr><td>Database / Schema / Warehouse</td><td><code>ANALYTICS_DB</code> / <code>PUBLIC</code> / <code>COMPUTE_WH</code></td></tr>
+<tr><td>Database / Schemas (one per line) / Warehouse</td><td><code>ANALYTICS_DB</code> / <code>PUBLIC</code>, <code>SALES</code> / <code>COMPUTE_WH</code></td></tr>
 <tr><td>Role (optional)</td><td><code>TEXTQL_ROLE</code></td></tr>
 <tr><td>Username + Private Key</td><td>service user + entire <code>rsa_key.p8</code> <i>including</i> header/footer</td></tr></table>
 <div class="callout">The <b>Role</b> field is your governance lever: create a <code>TEXTQL_ROLE</code> with explicit SELECT grants rather than reusing a broad human role. Upgrade path: per-member OAuth (Admin workshop, Module 3).</div>
+<div class="callout"><span class="label">New — Restrict queries to these schemas</span><p>Turn this on to make TextQL <b>enforce</b> the configured database and listed schemas: references to other databases or unlisted schemas are rejected before the SQL runs, and joins across the listed schemas still work (the first schema is the default for unqualified names). It is read-only (can't be combined with SQL write operations) and off by default on existing connectors. It restricts direct table references, not data: an allowed view can still expose another schema, and it doesn't replace Snowflake grants — keep the narrow role above.</p></div>
 <h2>2.2 · BigQuery</h2>
 <div class="callout"><span class="label">New — Workload Identity Federation</span><p>BigQuery now also supports <b>Workload Identity Federation</b>: authenticate through federated credentials instead of a downloaded service-account key. Prefer WIF where your org restricts SA key creation — no long-lived key file to store or rotate.</p></div>
 <p><b>Prepare:</b> GCP Console → IAM → Service Accounts: create <code>textql-connector@...</code> with exactly <b>BigQuery Data Viewer</b> + <b>BigQuery Job User</b>; download a JSON key.</p>
@@ -559,7 +561,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA analytics
   <h2>Warehouses &amp; databases</h2>
   <table>
     <tr><th>Source</th><th>Auth</th><th>Key fields</th><th>Default port</th><th>Gotchas</th></tr>
-    <tr><td><b>Snowflake</b></td><td>Key-pair (required for new)</td><td>Account identifier, DB, schema, warehouse, role, username, RSA private key</td><td>—</td><td>Public key must be set on the user; Role field = governance lever; passwords deprecated for service users by Oct 2026</td></tr>
+    <tr><td><b>Snowflake</b></td><td>Key-pair (required for new)</td><td>Account identifier, DB, schemas, warehouse, role, username, RSA private key</td><td>—</td><td>Public key must be set on the user; Role field = governance lever; passwords deprecated for service users by Oct 2026</td></tr>
     <tr><td><b>BigQuery</b></td><td>Service account JSON</td><td>Project ID, Dataset ID (optional), key JSON, region</td><td>—</td><td>Needs Data Viewer + Job User roles; unscoped test requires dataset-list permission — scope with Dataset ID</td></tr>
     <tr><td><b>Redshift</b></td><td>Password or IAM role</td><td>Host, port, user/pass, DB, schema, dialect; or Role ARN + region + cluster ID</td><td>5439</td><td>IAM: access key ID + secret both-or-neither; provisioned + no Group Federation needs Database User</td></tr>
     <tr><td><b>Databricks</b></td><td>PAT</td><td>Host (no https://), port, HTTP path, catalog, schema, PAT</td><td>443</td><td>SQL warehouse must be running; PATs expire — calendar it</td></tr>
